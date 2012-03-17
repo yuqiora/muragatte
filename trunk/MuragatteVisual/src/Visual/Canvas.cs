@@ -1,0 +1,193 @@
+﻿// ------------------------------------------------------------------------
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Visualization Library
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+// ------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Media.Imaging;
+using Muragatte.Core;
+using Muragatte.Core.Environment;
+
+namespace Muragatte.Visual
+{
+    public enum VisualizationMode { Replay, Simulation }
+
+    public class Canvas
+    {
+        #region Fields
+
+        private WriteableBitmap _wb = null;
+        private double _dScale = 1;
+        private System.Windows.Rect _canvasArea;
+        private bool _bEnvironment = true;
+        private bool _bNeighbourhoods = false;
+        private bool _bTracks = false;
+        private bool _bTrails = false;
+        private bool _bAgents = true;
+        private bool _bCentroids = false;
+        private MultiAgentSystem _model = null;
+        private VisualizationMode _visMode = VisualizationMode.Simulation;
+
+        #endregion
+
+        #region Constructors
+
+        public Canvas(int width, int height)
+        {
+            _canvasArea = new System.Windows.Rect(0, 0, width, height);
+            _wb = BitmapFactory.New(width, height);
+        }
+
+        public Canvas(int width, int height, double scale)
+            : this((int)(width * scale), (int)(height * scale))
+        {
+            _dScale = scale;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public WriteableBitmap Image
+        {
+            get { return _wb; }
+        }
+
+        public int UnitWidth
+        {
+            get { return (int)(_wb.PixelWidth / _dScale); }
+        }
+
+        public int PixelWidth
+        {
+            get { return _wb.PixelWidth; }
+        }
+
+        public int UnitHeight
+        {
+            get { return (int)(_wb.PixelHeight / _dScale); }
+        }
+
+        public int PixelHeight
+        {
+            get { return _wb.PixelHeight; }
+        }
+
+        public double Scale
+        {
+            get { return _dScale; }
+            //set { _dScale = value; }
+        }
+
+        public bool IsEnvironmentEnabled
+        {
+            get { return _bEnvironment; }
+            set { _bEnvironment = value; }
+        }
+
+        public bool IsNeighbourhoodsEnabled
+        {
+            get { return _bNeighbourhoods; }
+            set { _bNeighbourhoods = value; }
+        }
+
+        public bool IsTracksEnabled
+        {
+            get { return _bTracks; }
+            set { _bTracks = value; }
+        }
+
+        public bool IsTrailsEnabled
+        {
+            get { return _bTrails; }
+            set { _bTrails = value; }
+        }
+
+        public bool IsAgentsEnabled
+        {
+            get { return _bAgents; }
+            set { _bAgents = value; }
+        }
+
+        public bool IsCentroidsEnabled
+        {
+            get { return _bCentroids; }
+            set { _bCentroids = value; }
+        }
+
+        public MultiAgentSystem Model
+        {
+            get { return _model; }
+            set { _model = value; }
+        }
+
+        public VisualizationMode VisMode
+        {
+            get { return _visMode; }
+            set { _visMode = value; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void Clear()
+        {
+            _wb.Clear();
+        }
+
+        public void Redraw()
+        {
+            _wb.Clear();
+            if (_visMode == VisualizationMode.Simulation)
+            {
+                foreach (Element e in Model.Elements)
+                {
+                    //will be reworked to take ordering into account
+                    //env > neigh > ... > agents
+                    e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+                }
+            }
+            else
+            {
+                //draw from history
+            }
+        }
+
+        public void DrawItems(IEnumerable<Element> items)
+        { }
+        
+        public void DrawEnvironment(IEnumerable<Element> items)
+        { }
+
+        public void DrawCentroids(IEnumerable<Centroid> items)
+        { }
+
+        public void DrawAgents(IEnumerable<Agent> items)
+        { }
+
+        public void DrawNeighbourhoods(IEnumerable<Agent> items)
+        { }
+
+        public void DrawTracks(IEnumerable<Agent> items)
+        { }
+
+        public void DrawTrails(IEnumerable<Agent> items)
+        { }
+
+        private int Scaled(double value)
+        {
+            return (int)(value * _dScale);
+        }
+
+        #endregion
+    }
+}
