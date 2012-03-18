@@ -66,7 +66,7 @@ namespace Muragatte.Core
             get { return _storage; }
         }
 
-        public Region GetRegion
+        public Region Region
         {
             get { return _region; }
         }
@@ -81,7 +81,15 @@ namespace Muragatte.Core
 
         #region Virtual Methods
         
-        public virtual void Clear() { }
+        public virtual void Clear()
+        {
+            _iCurrentStep = 0;
+            _iSteps = 0;
+            _species.Clear();
+            Environment.Species.ResetIDCounter();
+            _storage.Clear();
+            Element.ResetIDCounter();
+        }
 
         public virtual void NextStep() { }
 
@@ -90,10 +98,17 @@ namespace Muragatte.Core
         //possibly temporary
         public virtual void Initialize()
         {
+            Scatter();
+        }
+
+        public virtual void Scatter()
+        {
             IEnumerable<Agent> agents = _storage.Agents;
             foreach (Agent a in agents)
             {
-                a.SetMovementInfo(RandVec(false), RandVec(true));
+                a.SetMovementInfo(
+                    Vector2.RandomUniform(0, _region.Width, 0, _region.Height),
+                    Vector2.RandomUniform().Normalized());
             }
         }
 
@@ -105,7 +120,7 @@ namespace Muragatte.Core
             }
             foreach (Element e in _storage)
             {
-                e.AfterUpdate();
+                e.ConfirmUpdate();
             }
             _iCurrentStep = _iSteps;
             _iSteps++;
@@ -114,16 +129,25 @@ namespace Muragatte.Core
         #endregion
 
         //temporary
-        private Vector2 RandVec(bool normalize)
-        {
-            double x = RNGs.Ran2.Gauss(_region.Width / 2, _region.Width / 2);
-            double y = RNGs.Ran2.Gauss(_region.Height / 2, _region.Height / 2);
-            Vector2 v = new Vector2(x, y);
-            if (normalize)
-            {
-                v.Normalize();
-            }
-            return v;
-        }
+        //public Vector2 RandVec(bool normalize)
+        //{
+        //    //double x = RNGs.Ran2.Gauss(_region.Width / 2, _region.Width / 2);
+        //    //double y = RNGs.Ran2.Gauss(_region.Height / 2, _region.Height / 2);
+        //    double x = RNGs.Ran2.Uniform(0, _region.Width);
+        //    double y = RNGs.Ran2.Uniform(0, _region.Height);
+        //    Vector2 v = new Vector2(x, y);
+        //    if (normalize)
+        //    {
+        //        v.Normalize();
+        //    }
+        //    return v;
+        //}
+
+        //public Vector2 NoiseVec()
+        //{
+        //    double x = RNGs.Ran2.Gauss();
+        //    double y = RNGs.Ran2.Gauss();
+        //    return new Vector2(x, y);
+        //}
     }
 }

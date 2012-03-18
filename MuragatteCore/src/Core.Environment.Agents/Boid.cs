@@ -20,13 +20,13 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public Boid(int id, MultiAgentSystem model,
-            Vector2 position, Vector2 direction, double speed,
-            Neighbourhood personalSpace, Neighbourhood fieldOfView,
-            double turningAngle)
-            : base(id, model, personalSpace, fieldOfView, null, turningAngle)
+        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, double turningAngle)
+            : base(model, fieldOfView, turningAngle) { }
+
+        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
+            double speed, Neighbourhood fieldOfView, double turningAngle)
+            : base(model, fieldOfView, turningAngle)
         {
-            _position = position;
             _direction = direction;
             _dSpeed = speed;
         }
@@ -42,16 +42,18 @@ namespace Muragatte.Core.Environment.Agents
             ApplyRules(fov);
         }
 
-        public override void AfterUpdate()
+        public override void ConfirmUpdate()
         {
-            _position = _altPosition;
+            _position = _model.Region.Outside(_altPosition);
             _direction = _altDirection;
         }
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Separation(locals) + Cohesion(locals) + Alignment(locals);
-            _altDirection = (_direction + dirDelta).Normalized();
+            //noise temporary, needs further work
+            //doesn't check if inside turning angles
+            _altDirection = (_direction + dirDelta + Vector2.RandomGauss()).Normalized();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
 

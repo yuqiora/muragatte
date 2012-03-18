@@ -16,38 +16,28 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class Extras : Element
+    public class PositionGoal : Goal
     {
         #region Constructors
 
-        public Extras(MultiAgentSystem model, bool stationary)
-           : base(model)
-        {
-            _bStationary = stationary;
-        }
+        public PositionGoal(MultiAgentSystem model)
+            : base(model) { }
 
-        public Extras(MultiAgentSystem model, Vector2 position, bool stationary)
-            : base(model, position)
-        {
-            _bStationary = stationary;
-        }
+        public PositionGoal(MultiAgentSystem model, Vector2 position)
+            : base(model, position) { }
 
         #endregion
 
         #region Properties
 
-        public override ElementNature DefaultNature
+        public override double Width
         {
-            get { return ElementNature.Ignored; }
+            get { return 1; }
         }
 
-        #endregion
-
-        #region Methods
-
-        public override ElementNature RelationshipWith(Element e)
+        public override double Height
         {
-            return ElementNature.Ignored;
+            get { return 1; }
         }
 
         #endregion

@@ -15,6 +15,8 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Muragatte.Common;
+using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 using SysWin = System.Windows;
 
 namespace Muragatte.Visual
@@ -74,15 +76,16 @@ namespace Muragatte.Visual
 
         public void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction)
         {
-            double angle = Vector2.AngleBetween(Vector2.UpOne(), direction);
-            SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - (position.Y - YC));
+            double angle = direction.DirectedAngle();
+            SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
+            //SysWin.Point point = new SysWin.Point(position.X - XC, (position.Y - YC));
             if (double.IsNaN(angle) || angle == 0)
             {
                 wb.Blit(point, _wb, _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
             }
             else
             {
-                wb.Blit(point, _wb.Rotate((int)angle), _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
+                wb.Blit(point, _wb.RotateFree((int)angle), _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
             }
         }
 
@@ -92,9 +95,14 @@ namespace Muragatte.Visual
 
         public static Particle Default(int size, Color color)
         {
-            WriteableBitmap wb = BitmapFactory.New(size, size);
+            return Default(size, size, color);
+        }
+
+        public static Particle Default(int width, int height, Color color)
+        {
+            WriteableBitmap wb = BitmapFactory.New(width, height);
             wb.Clear();
-            wb.FillEllipse(0, 0, size, size, Colors.White);
+            wb.FillEllipse(0, 0, width - 1, height - 1, Colors.White);
             return new Particle(wb, color);
         }
 
@@ -102,10 +110,15 @@ namespace Muragatte.Visual
         {
             WriteableBitmap wb = BitmapFactory.New(size, size);
             wb.Clear();
-            wb.FillEllipse(0, 0, size, size, Colors.White);
+            wb.FillEllipse(0, 0, size - 1, size - 1, Colors.White);
             int dirWidth = Math.Max(1, size / 5);
             wb.FillRectangle((size - dirWidth) / 2, 0, (size + dirWidth) / 2, size / 2, Colors.Transparent);
             return new Particle(wb, color);
+        }
+
+        public static Particle Ellipse(int size, Color color, bool filled)
+        {
+            return Ellipse(size, size, color, filled);
         }
 
         public static Particle Ellipse(int width, int height, Color color, bool filled)
@@ -114,13 +127,18 @@ namespace Muragatte.Visual
             wb.Clear();
             if (filled)
             {
-                wb.FillEllipse(0, 0, width, height, Colors.White);
+                wb.FillEllipse(0, 0, width - 1, height - 1, Colors.White);
             }
             else
             {
-                wb.DrawEllipse(0, 0, width, height, Colors.White);
+                wb.DrawEllipse(0, 0, width - 1, height - 1, Colors.White);
             }
             return new Particle(wb, color);
+        }
+
+        public static Particle Rectangle(int size, Color color, bool filled)
+        {
+            return Rectangle(size, size, color, filled);
         }
 
         public static Particle Rectangle(int width, int height, Color color, bool filled)
@@ -133,7 +151,7 @@ namespace Muragatte.Visual
             else
             {
                 wb.Clear();
-                wb.DrawRectangle(0, 0, width, height, Colors.White);
+                wb.DrawRectangle(0, 0, width - 1, height - 1, Colors.White);
             }
             return new Particle(wb, color);
         }

@@ -1,8 +1,22 @@
 ﻿<Window x:Class="Muragatte.GUI.SandboxMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SandboxMainWindow" Height="350" Width="525">
+        Title="Muragatte Sandbox" Height="350" Width="525" Closing="Window_Closing">
     <Grid>
-        
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="txtWidth" VerticalAlignment="Top" Width="120" Text="40" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,43,0,0" Name="txtHeight" VerticalAlignment="Top" Width="120" Text="40" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,76,0,0" Name="txtScale" VerticalAlignment="Top" Width="120" Text="15" />
+        <CheckBox Content="Horizontal Borders" Height="16" HorizontalAlignment="Left" Margin="10,109,0,0" Name="chbHorizontal" VerticalAlignment="Top" />
+        <CheckBox Content="Vertical Borders" Height="16" HorizontalAlignment="Left" Margin="10,135,0,0" Name="chbVertical" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,161,0,0" Name="txtAgentCount" VerticalAlignment="Top" Width="120" Text="40" />
+        <Button Content="Environment" Height="23" HorizontalAlignment="Left" Margin="189,12,0,0" Name="btnEnvironment" VerticalAlignment="Top" Width="75" Click="btnEnvironment_Click" />
+        <Button Content="Agents" Height="23" HorizontalAlignment="Left" Margin="189,41,0,0" Name="btnAgents" VerticalAlignment="Top" Width="75" Click="btnAgents_Click" />
+        <Button Content="Update" Height="23" HorizontalAlignment="Left" Margin="189,128,0,0" Name="btnUpdate" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click" />
+        <Button Content="Clear" Height="23" HorizontalAlignment="Left" Margin="189,70,0,0" Name="btnClear" VerticalAlignment="Top" Width="75" Click="btnClear_Click" />
+        <Button Content="Play" Height="23" HorizontalAlignment="Left" Margin="189,157,0,0" Name="btnPlayPause" VerticalAlignment="Top" Width="75" Click="btnPlayPause_Click" />
+        <Button Content="Scatter" Height="23" HorizontalAlignment="Left" Margin="189,99,0,0" Name="btnScatter" VerticalAlignment="Top" Width="75" Click="btnScatter_Click" />
+        <CheckBox Content="Show Agents" Height="16" HorizontalAlignment="Left" Margin="10,219,0,0" Name="chbAgents" VerticalAlignment="Top" IsChecked="True" Checked="chbAgents_Checked" Unchecked="chbAgents_Unchecked" />
+        <CheckBox Content="Show Neighbourhoods" Height="16" HorizontalAlignment="Left" Margin="10,241,0,0" Name="chbNeighbourhoods" VerticalAlignment="Top" Checked="chbNeighbourhoods_Checked" Unchecked="chbNeighbourhoods_Unchecked" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,190,0,0" Name="txtFieldOfView" VerticalAlignment="Top" Width="120" Text="5" />
     </Grid>
 </Window>

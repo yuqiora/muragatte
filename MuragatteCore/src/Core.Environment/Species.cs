@@ -17,9 +17,18 @@ namespace Muragatte.Core.Environment
 {
     public class Species : Storage.ISpareItem
     {
-        #region Fields
+        #region Statics
 
         private static Counter IdCounter = new Counter();
+
+        public static void ResetIDCounter()
+        {
+            IdCounter.Reset();
+        }
+
+        #endregion
+
+        #region Fields
 
         private int _iSpeciesID = -1;
         private string _sName = null;
@@ -31,6 +40,13 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
+
+        public Species(string name)
+        {
+            _iSpeciesID = IdCounter.Next();
+            _sName = name;
+            _sFullName = name;
+        }
 
         public Species(string name, Species ancestor)
         {
@@ -44,7 +60,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
-        public int GetID
+        public int ID
         {
             get { return _iSpeciesID; }
         }
@@ -101,12 +117,19 @@ namespace Muragatte.Core.Environment
             { return false; }
         }
 
-        public bool RelationshipWith(Species s, out ElementNature n)
+        public bool RelationshipWith(Species species, out ElementNature nature)
         {
-            bool isSpecified = _relationships.TryGetValue(s, out n);
+            bool isSpecified = _relationships.TryGetValue(species, out nature);
             if (!isSpecified)
             {
-                n = ElementNature.Unknown;
+                if (species._ancestor == null)
+                {
+                    nature = ElementNature.Unknown;
+                }
+                else
+                {
+                    return RelationshipWith(species._ancestor, out nature);
+                }
             }
             return isSpecified;
         }
@@ -124,20 +147,13 @@ namespace Muragatte.Core.Environment
             }
             else
             {
-                if (_item is T)
-                {
-                    return (T)_item;
-                }
-                else
-                {
-                    return null;
-                }
+                return _item is T ? (T)_item : null;
             }
         }
 
         public bool Equals(Species s)
         {
-            return _sFullName == s._sFullName;
+            return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
         }
 
         public override bool Equals(object obj)
@@ -145,7 +161,7 @@ namespace Muragatte.Core.Environment
             if (obj != null && obj is Species)
             {
                 Species s = (Species)obj;
-                return _sFullName == s._sFullName;
+                return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
             }
             else { return false; }
         }

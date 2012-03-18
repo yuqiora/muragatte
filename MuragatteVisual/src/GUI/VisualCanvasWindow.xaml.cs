@@ -37,6 +37,12 @@ namespace Muragatte.GUI
             InitializeComponent();
         }
 
+        public VisualCanvasWindow(Visual.Canvas canvas)
+        {
+            InitializeComponent();
+            SetCanvas(canvas);
+        }
+
         public void SetCanvas(Visual.Canvas canvas)
         {
             _canvas = canvas;

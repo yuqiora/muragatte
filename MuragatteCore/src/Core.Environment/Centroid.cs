@@ -18,31 +18,68 @@ namespace Muragatte.Core.Environment
 {
     public class Centroid : Extras
     {
+        #region Fields
+
+        private Vector2 _direction = new Vector2(0, 1);
+        private double _dSpeed = 1;
         //group
 
-        public Centroid(int id, MultiAgentSystem model)
-            : base(id, model)
+        #endregion
+
+        #region Constructors
+
+        public Centroid(MultiAgentSystem model)
+            : base(model, false) { }
+
+        public Centroid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed)
+            : base(model, position, false)
         {
-            _bStationary = false;
+            _direction = direction;
+            _dSpeed = speed;
         }
 
-        public Centroid(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed)
-            : base(id, model, position, direction, speed)
+        #endregion
+
+        #region Properties
+
+        public override Vector2 Direction
         {
-            _bStationary = false;
+            get { return _direction; }
+            set { _direction = value; }
         }
 
-        //update fields according to group members
-        public override void AfterUpdate() { }
+        public override double Speed
+        {
+            get { return _dSpeed; }
+            set { _dSpeed = value; }
+        }
 
-        public override double Size
+        public override double Width
         {
             get { return 1; }
+        }
+
+        public override double Height
+        {
+            get { return 1; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override void Update() { }
+
+        public override void ConfirmUpdate()
+        {
+            //update fields according to group members
         }
 
         public override string ToString()
         {
             return "C-" + base.ToString();
         }
+
+        #endregion
     }
 }

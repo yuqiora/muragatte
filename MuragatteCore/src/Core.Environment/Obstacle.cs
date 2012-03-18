@@ -18,23 +18,45 @@ namespace Muragatte.Core.Environment
 {
     public abstract class Obstacle : Element
     {
-        //shapes
+        //shapes? (ellipse, rectangle)
         //size
 
-        public Obstacle(int id, MultiAgentSystem model)
-            : base(id, model) { }
+        #region Constructors
 
-        public Obstacle(int id, MultiAgentSystem model, Vector2 position, Vector2 direction)
-            : base(id, model, position, direction, 0) { }
+        public Obstacle(MultiAgentSystem model)
+            : base(model) { }
+
+        public Obstacle(MultiAgentSystem model, Vector2 position)
+            : base(model, position) { }
+
+        #endregion
+
+        #region Properties
+
+        public override Vector2 Direction
+        {
+            get { return new Vector2(0, 0); }
+            set { }
+        }
+
+        public override double Speed
+        {
+            get { return 0; }
+            set { }
+        }
 
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Obstacle; }
         }
 
+        #endregion
+
+        #region Methods
+
         public override void Update() { }
 
-        public override void AfterUpdate() { }
+        public override void ConfirmUpdate() { }
 
         public override ElementNature RelationshipWith(Element e)
         {
@@ -46,5 +68,6 @@ namespace Muragatte.Core.Environment
             return "O-" + base.ToString();
         }
 
+        #endregion
     }
 }
