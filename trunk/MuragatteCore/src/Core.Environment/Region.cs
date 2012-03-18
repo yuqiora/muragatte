@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
@@ -36,12 +37,14 @@ namespace Muragatte.Core.Environment
             _bBorderedVertical = borderedVertical;
         }
 
-        public Region(int width, int height, bool bordered) : this(width, height, bordered, bordered) { }
+        public Region(int width, int height, bool bordered)
+            : this(width, height, bordered, bordered) { }
 
         public Region(int length, bool borderedHorizontal, bool borderedVertical) :
             this(length, length, borderedHorizontal, borderedVertical) { }
 
-        public Region(int length, bool bordered) : this(length, length, bordered, bordered) { }
+        public Region(int length, bool bordered)
+            : this(length, length, bordered, bordered) { }
         
         #endregion
 
@@ -79,6 +82,27 @@ namespace Muragatte.Core.Environment
             set { _bBorderedVertical= value; }
         }
         
+        #endregion
+
+        #region Methods
+
+        public Vector2 Outside(Vector2 position)
+        {
+            return new Vector2(Outside(position.X, _iWidth), Outside(position.Y, _iHeight));
+        }
+
+        private double Outside(double value, double size) {
+            if (value < 0)
+            {
+                return size + value;
+            }
+            if (value >= size)
+            {
+                return value - size;
+            }
+            return value;
+        }
+
         #endregion
 
     }

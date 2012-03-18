@@ -1,7 +1,7 @@
 ﻿<Application x:Class="Muragatte.Sandbox.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="SandboxMainWindow.xaml">
+             StartupUri="src/GUI/SandboxMainWindow.xaml">
     <Application.Resources>
          
     </Application.Resources>

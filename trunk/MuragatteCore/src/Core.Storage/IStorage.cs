@@ -31,6 +31,8 @@ namespace Muragatte.Core.Storage
         IEnumerable<Goal> Goals { get; }
 
         IEnumerable<Extras> Extras { get; }
+
+        IEnumerable<Element> Stationary { get; }
         
         #endregion
 

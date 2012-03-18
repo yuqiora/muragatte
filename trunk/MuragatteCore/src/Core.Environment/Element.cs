@@ -18,17 +18,23 @@ namespace Muragatte.Core.Environment
 {
     public abstract class Element : Storage.ISpareItem
     {
-        #region Fields
+        #region Statics
 
         protected static Counter IdCounter = new Counter();
+
+        public static void ResetIDCounter()
+        {
+            IdCounter.Reset();
+        }
+
+        #endregion
+
+        #region Fields
 
         protected int _iElementID = -1;
         protected MultiAgentSystem _model = null;
         //list containing history instead of one vector?
         protected Vector2 _position = new Vector2(0, 0);
-        //direction and speed not needed for all elements
-        protected Vector2 _direction = new Vector2(0, 0);
-        protected double _dSpeed = 0;
         protected bool _bStationary = true;
         protected bool _bEnabled = true;
         protected Species _species = null;
@@ -44,26 +50,17 @@ namespace Muragatte.Core.Environment
             _model = model;
         }
 
-        public Element(int id, MultiAgentSystem model)
+        public Element(MultiAgentSystem model, Vector2 position)
+            : this(model)
         {
-            _iElementID = id;
-            _model = model;
-        }
-
-        public Element(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed)
-        {
-            _iElementID = id;
-            _model = model;
             _position = position;
-            _direction = direction;
-            _dSpeed = speed;
         }
 
         #endregion
 
         #region Properties
 
-        public int GetID
+        public int ID
         {
             get { return _iElementID; }
         }
@@ -72,6 +69,12 @@ namespace Muragatte.Core.Environment
         {
             get { return _model; }
             set { _model = value; }
+        }
+
+        public Vector2 Position
+        {
+            get { return _position; }
+            set { _position = value; }
         }
 
         public bool IsStationary
@@ -100,29 +103,15 @@ namespace Muragatte.Core.Environment
 
         #endregion
 
-        #region Virtual Properties
-
-        public virtual Vector2 Position
-        {
-            get { return _position; }
-            set { _position = value; }
-        }
-
-        public virtual Vector2 Direction
-        {
-            get { return _direction; }
-        }
-
-        public virtual double Speed
-        {
-            get { return _dSpeed; }
-        }
-
-        #endregion
-
         #region Abstract Properties
 
-        public abstract double Size { get; }
+        public abstract Vector2 Direction { get; set; }
+
+        public abstract double Speed { get; set; }
+
+        public abstract double Width { get; }
+
+        public abstract double Height { get; }
 
         public abstract ElementNature DefaultNature { get; }
 
@@ -159,14 +148,7 @@ namespace Muragatte.Core.Environment
             }
             else
             {
-                if (_item is T)
-                {
-                    return (T)_item;
-                }
-                else
-                {
-                    return null;
-                }
+                return _item is T ? (T)_item : null;
             }
         }
 
@@ -185,7 +167,7 @@ namespace Muragatte.Core.Environment
 
         public abstract void Update();
 
-        public abstract void AfterUpdate();
+        public abstract void ConfirmUpdate();
 
         public abstract ElementNature RelationshipWith(Element e);
 

@@ -144,16 +144,68 @@ namespace Muragatte.Visual
             _wb.Clear();
         }
 
+        public void Initialize()
+        {
+            if (_model != null)
+            {
+                Redraw();
+            }
+        }
+
+        public void Initialize(MultiAgentSystem model)
+        {
+            _model = model;
+            Redraw();
+        }
+
         public void Redraw()
         {
             _wb.Clear();
             if (_visMode == VisualizationMode.Simulation)
             {
-                foreach (Element e in Model.Elements)
+                //if (_bEnvironment)
+                //{
+                //    DrawItems(_model.Elements.Stationary);
+                //}
+                //IEnumerable<Agent> agents = _model.Elements.Agents;
+                //if (_bNeighbourhoods)
+                //{
+                //    DrawNeighbourhoods(agents);
+                //}
+                //if (_bTracks)
+                //{
+                //    DrawTracks(agents);
+                //}
+                //if (_bTrails)
+                //{
+                //    DrawTrails(agents);
+                //}
+                //if (_bAgents)
+                //{
+                //    DrawItems(agents);
+                //}
+                //if (_bCentroids)
+                //{
+                //}
+
+                //will be reworked to take ordering into account
+                //env > neigh > ... > agents
+                if (_bNeighbourhoods)
                 {
-                    //will be reworked to take ordering into account
-                    //env > neigh > ... > agents
-                    e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+                    foreach (Element e in _model.Elements)
+                    {
+                        if (e is Agent)
+                        {
+                            ((Agent)e).FieldOfView.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, Common.Vector2.UpOne());
+                        }
+                    }
+                }
+                if (_bAgents)
+                {
+                    foreach (Element e in _model.Elements)
+                    {
+                        e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+                    }
                 }
             }
             else
@@ -162,20 +214,24 @@ namespace Muragatte.Visual
             }
         }
 
-        public void DrawItems(IEnumerable<Element> items)
-        { }
+        public void DrawItems<T>(IEnumerable<T> items) where T : Element
+        {
+            foreach (T e in items)
+            {
+                e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+            }
+        }
         
-        public void DrawEnvironment(IEnumerable<Element> items)
-        { }
-
         public void DrawCentroids(IEnumerable<Centroid> items)
         { }
 
-        public void DrawAgents(IEnumerable<Agent> items)
-        { }
-
         public void DrawNeighbourhoods(IEnumerable<Agent> items)
-        { }
+        {
+            foreach (Agent a in items)
+            {
+                a.FieldOfView.GetItemAs<Particle>().DrawInto(_wb, a.Position * _dScale, a.Direction);
+            }
+        }
 
         public void DrawTracks(IEnumerable<Agent> items)
         { }

@@ -55,7 +55,7 @@ namespace Muragatte.Core.Storage
         {
             get
             {
-                int index = _items.FindIndex(e => e.GetID == id);
+                int index = _items.FindIndex(e => e.ID == id);
                 return index < 0 ? null : _items[index];
             }
         }
@@ -84,7 +84,12 @@ namespace Muragatte.Core.Storage
         {
             get { return ItemsOfType<Extras>(); }
         }
-        
+
+        public IEnumerable<Element> Stationary
+        {
+            get { return _items.Where(e => e.IsStationary); }
+        }
+
         #endregion
 
         #region Methods
@@ -121,7 +126,7 @@ namespace Muragatte.Core.Storage
 
         public bool Remove(int id)
         {
-            int index = _items.FindIndex(e => e.GetID == id);
+            int index = _items.FindIndex(e => e.ID == id);
             if (index < 0)
             {
                 return false;

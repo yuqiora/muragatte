@@ -50,6 +50,8 @@
     <Compile Include="src\Core.Environment.Agents\Boid.cs" />
     <Compile Include="src\Core.Environment\CircularNeighbourhood.cs" />
     <Compile Include="src\Core.Environment\Counter.cs" />
+    <Compile Include="src\Core.Environment\AreaGoal.cs" />
+    <Compile Include="src\Core.Environment\PositionGoal.cs" />
     <Compile Include="src\Core.Environment\Neighbourhood.cs" />
     <Compile Include="src\Core.Environment\Centroid.cs" />
     <Compile Include="src\Core.Environment\Element.cs" />

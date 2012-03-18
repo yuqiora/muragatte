@@ -32,63 +32,79 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Fields
-        
-        protected Vector2 _altPosition = new Vector2();
-        protected Vector2 _altDirection = new Vector2();
+
+        protected Vector2 _direction = new Vector2(0, 1);
+        protected double _dSpeed = 1;
+        protected Vector2 _altPosition = new Vector2(0, 0);
+        protected Vector2 _altDirection = new Vector2(0, 1);
+        protected Neighbourhood _fieldOfView = null;
+        protected double _dTurningAngle = 180;
         //might be left for specific agents, not everyone will be changing speed
-        protected double _dAltSpeed = 1;
+        //protected double _dAltSpeed = 1;
         //might leave assertivity and credibility for concrete agents that will be using it
         //not needed in base agent class
-        protected double _dAssertivity = 0.5;
-        protected double _dCredibility = 1;
+        //protected double _dAssertivity = 0.5;
+        //protected double _dCredibility = 1;
         //might remove personal space, leave only one neighbourhood, FOV, as default
-        protected Neighbourhood _personalSpace = null;
-        protected Neighbourhood _fieldOfView = null;
+        //protected Neighbourhood _personalSpace = null;
         //will probably be moved to specific agents
-        protected Goal _goal = null;
-        protected double _dTurningAngle = 180;
+        //protected Goal _goal = null;
         //line of sight neighbourhood?
         
         #endregion
 
         #region Constructors
 
-        public Agent(int id, MultiAgentSystem model,
-            Vector2 position, Vector2 direction, double speed,
-            double asseritvity, double credibility,
-            Neighbourhood personalSpace, Neighbourhood fieldOfView,
-            Goal goal, double turningAngle)
-            : base(id, model, position, direction, speed)
+        public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction,
+            double speed, Neighbourhood fieldOfView, double turningAngle)
+            : base(model, position)
         {
+            _direction = direction;
+            _dSpeed = speed;
             _bStationary = false;
-            _dAssertivity = asseritvity;
-            _dCredibility = credibility;
-            _personalSpace = personalSpace;
             _fieldOfView = fieldOfView;
-            _goal = goal;
+            _fieldOfView.Source = this;
             _dTurningAngle = turningAngle;
         }
 
-        public Agent(int id, MultiAgentSystem model,
-            Neighbourhood personalSpace, Neighbourhood fieldOfView,
-            Goal goal, double turningAngle)
-            : base(id, model)
+        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, double turningAngle)
+            : base(model)
         {
             _bStationary = false;
-            _personalSpace = personalSpace;
             _fieldOfView = fieldOfView;
-            _goal = goal;
-            TurningAngle = turningAngle;
+            _fieldOfView.Source = this;
+            _dTurningAngle = turningAngle;
         }
         
         #endregion
 
         #region Properties
 
-        public Goal Goal
+        public override Vector2 Direction
         {
-            get { return _goal; }
-            set { _goal = value; }
+            get { return _direction; }
+            set { _direction = value; }
+        }
+
+        public override double Speed
+        {
+            get { return _dSpeed; }
+            set { _dSpeed = value; }
+        }
+
+        public override double Width
+        {
+            get { return 1; }
+        }
+
+        public override double Height
+        {
+            get { return 1; }
+        }
+
+        public Neighbourhood FieldOfView
+        {
+            get { return _fieldOfView; }
         }
 
         public double TurningAngle
@@ -100,11 +116,6 @@ namespace Muragatte.Core.Environment
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Companion; }
-        }
-
-        public override double Size
-        {
-            get { return 1; }
         }
 
         #endregion
@@ -257,17 +268,11 @@ namespace Muragatte.Core.Environment
             {
                 return MinAngle;
             }
-            else
+            if (value > MaxAngle)
             {
-                if (value > MaxAngle)
-                {
-                    return MaxAngle;
-                }
-                else
-                {
-                    return value;
-                }
+                return MaxAngle;
             }
+            return value;
         }
 
         #endregion

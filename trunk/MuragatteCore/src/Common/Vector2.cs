@@ -96,6 +96,11 @@ namespace Muragatte.Common
             return v;
         }
 
+        public double DirectedAngle() {
+            double angle = AngleBetween(UpOne(), this);
+            return _dX < 0 ? -angle : angle;
+        }
+
         public bool Equals(Vector2 v)
         {
             return _dX == v.X && _dY == v.Y;
@@ -170,7 +175,37 @@ namespace Muragatte.Common
         public static Vector2 Zero() { return new Vector2(0, 0); }
 
         public static Vector2 UpOne() { return new Vector2(0, 1); }
-        
+
+        //will be modified accordingly when Muragatte.Random is done
+
+        public static Vector2 RandomUniform()
+        {
+            double x = Core.Environment.RNGs.Ran2.Uniform();
+            double y = Core.Environment.RNGs.Ran2.Uniform();
+            return new Vector2(x, y);
+        }
+
+        public static Vector2 RandomUniform(double xLow, double xHigh, double yLow, double yHigh)
+        {
+            double x = Core.Environment.RNGs.Ran2.Uniform(xLow, xHigh);
+            double y = Core.Environment.RNGs.Ran2.Uniform(yLow, yHigh);
+            return new Vector2(x, y);
+        }
+
+        public static Vector2 RandomGauss()
+        {
+            double x = Core.Environment.RNGs.Ran2.Gauss();
+            double y = Core.Environment.RNGs.Ran2.Gauss();
+            return new Vector2(x, y);
+        }
+
+        public static Vector2 RandomGauss(double xMean, double xDeviation, double yMean, double yDeviation)
+        {
+            double x = Core.Environment.RNGs.Ran2.Gauss(xMean, xDeviation);
+            double y = Core.Environment.RNGs.Ran2.Gauss(yMean, yDeviation);
+            return new Vector2(x, y);
+        }
+
         #endregion
 
         #region Operators

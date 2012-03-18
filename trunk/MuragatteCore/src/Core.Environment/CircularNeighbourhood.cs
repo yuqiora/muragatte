@@ -27,13 +27,13 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public CircularNeighbourhood(double range, double angle)
+        public CircularNeighbourhood(double range, double angle = Agent.MaxAngle)
             : base(range)
         {
             _dAngle = angle;
         }
 
-        public CircularNeighbourhood(Agent source, double range, double angle)
+        public CircularNeighbourhood(Agent source, double range, double angle = Agent.MaxAngle)
             : base(source, range)
         {
             _dAngle = angle;
