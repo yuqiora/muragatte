@@ -59,6 +59,7 @@ namespace Muragatte.Core
         public double TimePerStep
         {
             get { return _dTimePerStep; }
+            set { _dTimePerStep = value; }
         }
 
         public IStorage Elements
@@ -107,7 +108,7 @@ namespace Muragatte.Core
             foreach (Agent a in agents)
             {
                 a.SetMovementInfo(
-                    Vector2.RandomUniform(0, _region.Width, 0, _region.Height),
+                    Vector2.RandomUniform(_region.Width, _region.Height),
                     Vector2.RandomUniform().Normalized());
             }
         }
@@ -127,27 +128,5 @@ namespace Muragatte.Core
         }
         
         #endregion
-
-        //temporary
-        //public Vector2 RandVec(bool normalize)
-        //{
-        //    //double x = RNGs.Ran2.Gauss(_region.Width / 2, _region.Width / 2);
-        //    //double y = RNGs.Ran2.Gauss(_region.Height / 2, _region.Height / 2);
-        //    double x = RNGs.Ran2.Uniform(0, _region.Width);
-        //    double y = RNGs.Ran2.Uniform(0, _region.Height);
-        //    Vector2 v = new Vector2(x, y);
-        //    if (normalize)
-        //    {
-        //        v.Normalize();
-        //    }
-        //    return v;
-        //}
-
-        //public Vector2 NoiseVec()
-        //{
-        //    double x = RNGs.Ran2.Gauss();
-        //    double y = RNGs.Ran2.Gauss();
-        //    return new Vector2(x, y);
-        //}
     }
 }

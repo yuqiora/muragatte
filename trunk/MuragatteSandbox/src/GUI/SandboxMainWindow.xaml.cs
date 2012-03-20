@@ -39,10 +39,13 @@ namespace Muragatte.GUI
     /// </summary>
     public partial class SandboxMainWindow : Window
     {
+        private const double TimePerStep = 0.5;
+
         private MultiAgentSystem _mas = null;
         private Visual.Canvas _canvas = null;
         private VisualCanvasWindow _view = null;
         private bool _bPlaying = false;
+        private List<Goal> _goals = new List<Goal>();
 
         public SandboxMainWindow()
         {
@@ -51,43 +54,38 @@ namespace Muragatte.GUI
 
         private void btnEnvironment_Click(object sender, RoutedEventArgs e)
         {
-            int width = int.Parse(txtWidth.Text);
-            int height = int.Parse(txtHeight.Text);
-            _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
-                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value));
-            double scale = double.Parse(txtScale.Text);
-            _canvas = new Visual.Canvas(width, height, scale);
-            if (_view != null)
-            {
-                _view.Close();
-            }
-            _view = new VisualCanvasWindow(_canvas);
-            _view.Show();
+            CreateGoals();
+            _canvas.Redraw();
         }
 
         private void btnAgents_Click(object sender, RoutedEventArgs e)
         {
             double fovRange = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             int agentCount = int.Parse(txtAgentCount.Text);
-            SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
-            Species b = new Species("Boids");
-            b.Item = Particle.Agent((int)_canvas.Scale, Colors.Blue);
-            species.Add(b.ID, b);
-            _mas.Species = species;
+            CreateSpecies();
             Color fovC = Colors.LightGreen;
             fovC.A = 64;
-            Particle fovImg = Particle.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC, true);
-            for (int i = 0; i < agentCount; i++)
-            {
-                Neighbourhood n = new CircularNeighbourhood(fovRange);
-                n.Item = fovImg;
-                Agent a = new Boid(_mas, n, 180);
-                a.Speed = 1;
-                a.Species = b;
-                _mas.Elements.Add(a);
-            }
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC, true);
+            CreateBoids(agentCount, fovRange, fovImg);
             _mas.Initialize();
-            _canvas.Initialize(_mas);
+            _canvas.Redraw();
+        }
+
+        private void btnAgentsWG_Click(object sender, RoutedEventArgs e)
+        {
+            double fovRange = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            double paRange = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            int agentCount = int.Parse(txtAgentCount.Text);
+            int guideCount = int.Parse(txtGuideCount.Text);
+            int intruderCount = int.Parse(txtIntruderCount.Text);
+            int naiveCount = agentCount - guideCount - intruderCount;
+            CreateSpecies();
+            Color fovC = Colors.LightGreen;
+            fovC.A = 64;
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC, true);
+            CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
+            _mas.Initialize();
+            _canvas.Redraw();
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -98,7 +96,25 @@ namespace Muragatte.GUI
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             _mas.Clear();
+            _goals.Clear();
             _canvas.Clear();
+        }
+
+        private void btnInitialize_Click(object sender, RoutedEventArgs e)
+        {
+            int width = int.Parse(txtWidth.Text);
+            int height = int.Parse(txtHeight.Text);
+            _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
+                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TimePerStep);
+            double scale = double.Parse(txtScale.Text);
+            _canvas = new Visual.Canvas(width, height, scale);
+            _canvas.Initialize(_mas);
+            if (_view != null)
+            {
+                _view.Close();
+            }
+            _view = new VisualCanvasWindow(_canvas);
+            _view.Show();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -172,7 +188,80 @@ namespace Muragatte.GUI
         {
             if (_canvas != null)
             {
-                _canvas.IsNeighbourhoodsEnabled = chbAgents.IsChecked.Value;
+                _canvas.IsNeighbourhoodsEnabled = chbNeighbourhoods.IsChecked.Value;
+            }
+        }
+
+        private void CreateGoals()
+        {
+            Goal g1 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
+            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _canvas.Scale), Colors.Blue, false);
+            Goal g2 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
+            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _canvas.Scale), Colors.Red, false);
+            _goals.Add(g1);
+            _goals.Add(g2);
+            _mas.Elements.Add(_goals);
+        }
+        
+        private void CreateSpecies()
+        {
+            SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
+            Species boids = new Species("Boids");
+            boids.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Black);
+            species.Add(boids.ID, boids);
+            Species guides = boids.CreateSubSpecies("Guides");
+            guides.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Blue);
+            species.Add(guides.ID, guides);
+            Species intruders = boids.CreateSubSpecies("Intruders");
+            intruders.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Red);
+            species.Add(intruders.ID, intruders);
+            _mas.Species = species;
+        }
+
+        private void CreateBoids(int count, double fovRange, Particle fovImg)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                n.Item = fovImg;
+                Agent a = new Boid(_mas, n, 180);
+                a.Speed = 1;
+                a.Species = _mas.Species[0];
+                _mas.Elements.Add(a);
+            }
+        }
+
+        private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, Particle fovImg, double paRange)
+        {
+            for (int i = 0; i < naive; i++)
+            {
+                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                n.Item = fovImg;
+                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Agent a = new AdvancedBoid(_mas, n, 180, null, 0, n2);
+                a.Speed = 1.05;
+                a.Species = _mas.Species[0];
+                _mas.Elements.Add(a);
+            }
+            for (int i = 0; i < guides; i++)
+            {
+                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                n.Item = fovImg;
+                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Agent a = new AdvancedBoid(_mas, n, 180, _goals[0], 0.7, n2);
+                a.Speed = 1;
+                a.Species = _mas.Species[1];
+                _mas.Elements.Add(a);
+            }
+            for (int i = 0; i < intruders; i++)
+            {
+                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                n.Item = fovImg;
+                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Agent a = new AdvancedBoid(_mas, n, 180, _goals[1], 0.85, n2);
+                a.Speed = 0.95;
+                a.Species = _mas.Species[2];
+                _mas.Elements.Add(a);
             }
         }
     }

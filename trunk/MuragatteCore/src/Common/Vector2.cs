@@ -177,12 +177,18 @@ namespace Muragatte.Common
         public static Vector2 UpOne() { return new Vector2(0, 1); }
 
         //will be modified accordingly when Muragatte.Random is done
+        //or more likely moved under Random
 
         public static Vector2 RandomUniform()
         {
             double x = Core.Environment.RNGs.Ran2.Uniform();
             double y = Core.Environment.RNGs.Ran2.Uniform();
             return new Vector2(x, y);
+        }
+
+        public static Vector2 RandomUniform(double xHigh, double yHigh)
+        {
+            return RandomUniform(0, xHigh, 0, yHigh);
         }
 
         public static Vector2 RandomUniform(double xLow, double xHigh, double yLow, double yHigh)

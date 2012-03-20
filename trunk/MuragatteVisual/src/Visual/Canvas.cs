@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
@@ -160,6 +161,8 @@ namespace Muragatte.Visual
 
         public void Redraw()
         {
+            //no tracks/trails in simulation, only in replay when history available
+
             _wb.Clear();
             if (_visMode == VisualizationMode.Simulation)
             {
