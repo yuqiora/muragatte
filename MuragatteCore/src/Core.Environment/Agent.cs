@@ -182,6 +182,8 @@ namespace Muragatte.Core.Environment
 
         #region Virtual Methods (Steering)
 
+        //might need some simplification, a lot of these rules will be very similar
+
         protected virtual Vector2 SeekPursue(IEnumerable<Element> elements)
         {
             return new Vector2();
@@ -189,7 +191,13 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Seek(IEnumerable<Element> elements)
         {
-            return new Vector2();
+            //same as cohesion
+            Vector2 x = new Vector2();
+            foreach (Element e in elements)
+            {
+                x += (e.Position - _position).Normalized();
+            }
+            return x;
         }
 
         protected virtual Vector2 Pursue(IEnumerable<Element> elements)

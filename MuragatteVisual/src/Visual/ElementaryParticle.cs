@@ -15,48 +15,38 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Muragatte.Common;
-using SysWin = System.Windows;
 
 namespace Muragatte.Visual
 {
-    public abstract class Particle
+    public class ElementaryParticle : Particle
     {
-        #region Fields
-
-        protected Color _color = Colors.Black;
-
-        #endregion
-
         #region Constructors
 
-        public Particle(Color color)
-        {
-            _color = color;
-        }
+        public ElementaryParticle(Color color)
+            : base(color) { }
 
         #endregion
 
         #region Properties
 
-        public Color Color
+        public override int XC
         {
-            get { return _color; }
-            set { _color = value; }
+            get { return 0; }
+        }
+
+        public override int YC
+        {
+            get { return 0; }
         }
 
         #endregion
 
-        #region Abstract Properties
+        #region Methods
 
-        public abstract int XC { get; }
-
-        public abstract int YC { get; }
-
-        #endregion
-
-        #region Abstract Methods
-
-        public abstract void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction);
+        public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction)
+        {
+            wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, _color);
+        }
 
         #endregion
     }
