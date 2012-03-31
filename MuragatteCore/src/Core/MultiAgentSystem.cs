@@ -109,7 +109,26 @@ namespace Muragatte.Core
             {
                 a.SetMovementInfo(
                     Vector2.RandomUniform(_region.Width, _region.Height),
-                    Vector2.RandomUniform().Normalized());
+                    Vector2.RandomNormalized());
+            }
+        }
+
+        public virtual void GroupStart(double size)
+        {
+            Vector2 centre = Vector2.RandomUniform(_region.Width, _region.Height);
+            IEnumerable<Agent> agents = _storage.Agents;
+            Vector2 direction = Vector2.RandomNormalized();
+            foreach (Agent a in agents)
+            {
+                double x;
+                double y;
+                double ss;
+                RNGs.Ran2.Disk(out x, out y, out ss);
+                Vector2 pos = new Vector2(x, y);
+                //Vector2 pos = Vector2.RandomGauss();
+                pos *= size;
+                pos += new Vector2(_region.Width / 2, Region.Height / 2);
+                a.SetMovementInfo(pos, direction + Angle.Random(5));
             }
         }
 

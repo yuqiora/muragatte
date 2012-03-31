@@ -21,19 +21,25 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected double _dAngle = Agent.MaxAngle;
+        protected Angle _dAngle = Angle.Deg180();
 
         #endregion
 
         #region Constructors
 
-        public CircularNeighbourhood(double range, double angle = Agent.MaxAngle)
+        public CircularNeighbourhood(double range)
+            : base(range) { }
+
+        public CircularNeighbourhood(double range, Angle angle)
             : base(range)
         {
             _dAngle = angle;
         }
 
-        public CircularNeighbourhood(Agent source, double range, double angle = Agent.MaxAngle)
+        public CircularNeighbourhood(Agent source, double range)
+            : base(source, range) { }
+
+        public CircularNeighbourhood(Agent source, double range, Angle angle)
             : base(source, range)
         {
             _dAngle = angle;
@@ -43,10 +49,10 @@ namespace Muragatte.Core.Environment
 
         #region Properties
         
-        public double Angle
+        public Angle Angle
         {
             get { return _dAngle; }
-            set { _dAngle = Agent.ProperAngle(value); }
+            set { _dAngle = value; }
         }
         
         #endregion
@@ -72,7 +78,7 @@ namespace Muragatte.Core.Environment
             foreach (T e in elements)
             {
                 if (Vector2.Distance(_source.Position, e.Position) < _dRange &&
-                    Math.Abs(Vector2.AngleBetween(_source.Direction, e.Direction)) <= _dAngle)
+                    Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= _dAngle)
                 {
                     result.Add(e);
                 }
@@ -82,7 +88,7 @@ namespace Muragatte.Core.Environment
 
         public override IEnumerable<T> Within<T>(IEnumerable<T> elements)
         {
-            if (_dAngle == Agent.MaxAngle)
+            if (_dAngle.Degrees == Angle.MaxDegree)
             {
                 return WithinFull(elements);
             }

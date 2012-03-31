@@ -94,11 +94,11 @@ namespace Muragatte.Core.Environment
         private double Outside(double value, double size) {
             if (value < 0)
             {
-                return size + value;
+                return value % size + size;
             }
             if (value >= size)
             {
-                return value - size;
+                return value % size;
             }
             return value;
         }

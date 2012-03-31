@@ -20,11 +20,11 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, double turningAngle)
+        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle)
             : base(model, fieldOfView, turningAngle) { }
 
         public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, double turningAngle)
+            double speed, Neighbourhood fieldOfView, Angle turningAngle)
             : base(model, fieldOfView, turningAngle)
         {
             _direction = direction;
@@ -53,7 +53,9 @@ namespace Muragatte.Core.Environment.Agents
             Vector2 dirDelta = Separation(locals) + Cohesion(locals) + Alignment(locals);
             //noise temporary, needs further work
             //doesn't check if inside turning angles
-            _altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
+            //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
+            _altDirection = (_direction + dirDelta + Angle.Random(2)).Normalized();
+            DirectionInBounds();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
 
@@ -69,7 +71,7 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Constructors
 
-        public AdvancedBoid(MultiAgentSystem model, Neighbourhood fieldOfView, double turningAngle,
+        public AdvancedBoid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
             Goal goal, double assertivity, Neighbourhood personalArea)
             : base(model, fieldOfView, turningAngle)
         {
@@ -80,7 +82,7 @@ namespace Muragatte.Core.Environment.Agents
         }
 
         public AdvancedBoid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, double turningAngle, Goal goal, double assertivity, Neighbourhood personalArea)
+            Neighbourhood fieldOfView, Angle turningAngle, Goal goal, double assertivity, Neighbourhood personalArea)
             : base(model, position, direction, speed, fieldOfView, turningAngle)
         {
             _goal = goal;
@@ -110,45 +112,29 @@ namespace Muragatte.Core.Environment.Agents
             ApplyRules(fov);
         }
 
+        //based on Couzinetal2005
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            List<Element> companions = new List<Element>(locals);
-            //List<Element> companions = new List<Element>();
-            //foreach (Element e in locals)
-            //{
-            //    if (RelationshipWith(e) == ElementNature.Companion)
-            //    {
-            //        companions.Add(e);
-            //    }
-            //}
             Vector2 dirDelta = Vector2.Zero();
-            IEnumerable<Element> tooClose = _personalArea.Within(companions);
+            IEnumerable<Element> tooClose = _personalArea.Within(locals);
             if (tooClose.Count() > 0)
             {
-                //double sepMod = 1 / tooClose.Count();
-                double sepMod = 1;
-                dirDelta = sepMod * Separation(tooClose);
+                dirDelta = Separation(tooClose).Normalized();    
             }
             else
             {
-                //double cohAliMod = companions.Count == 0 ? 0 : (1 / companions.Count);
-                double cohAliMod = 1;
-                dirDelta = cohAliMod * (Cohesion(companions) + Alignment(companions));
-                //dirDelta = Separation(companions) + cohAliMod * (Cohesion(companions) + Alignment(companions));
+                dirDelta = (Cohesion(locals) + Alignment(locals)).Normalized();
             }
-            //double sepMod = tooClose.Count() == 0 ? 0 : (1 / tooClose.Count());
-            //double cohAliMod = companions.Count == 0 ? 0 : (1 / (4*companions.Count));
-            //double sepMod = 1;
-            //double cohAliMod = 1;
-            //Vector2 dirDelta = sepMod * Separation(tooClose) + cohAliMod * Cohesion(companions) + cohAliMod * Alignment(companions);
             if (_goal != null)
             {
-                dirDelta += _dAssertivity * 0.5 * (_goal.Position - _position).Normalized();
+                dirDelta += _dAssertivity * (_goal.Position - _position).Normalized();
+                dirDelta.Normalize();
             }
             //noise temporary, needs further work
             //doesn't check if inside turning angles
-            _altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
-            //_altDirection = (_direction + dirDelta).Normalized();
+            //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
+            _altDirection = (_direction + dirDelta + Angle.Random(1)).Normalized();
+            DirectionInBounds();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
 
