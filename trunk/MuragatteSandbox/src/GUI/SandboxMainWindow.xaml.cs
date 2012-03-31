@@ -98,6 +98,7 @@ namespace Muragatte.GUI
             _mas.Clear();
             _goals.Clear();
             _canvas.Clear();
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
         }
 
         private void btnInitialize_Click(object sender, RoutedEventArgs e)
@@ -115,6 +116,7 @@ namespace Muragatte.GUI
             }
             _view = new VisualCanvasWindow(_canvas);
             _view.Show();
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -148,6 +150,7 @@ namespace Muragatte.GUI
         private void UpdateAndRedraw()
         {
             _mas.Update();
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
             _canvas.Redraw();
         }
 
@@ -222,9 +225,9 @@ namespace Muragatte.GUI
         {
             for (int i = 0; i < count; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                Neighbourhood n = new CircularNeighbourhood(fovRange, new Angle(150));
                 n.Item = fovImg;
-                Agent a = new Boid(_mas, n, 180);
+                Agent a = new Boid(_mas, n, new Angle(60));
                 a.Speed = 1;
                 a.Species = _mas.Species[0];
                 _mas.Elements.Add(a);
@@ -233,36 +236,44 @@ namespace Muragatte.GUI
 
         private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, Particle fovImg, double paRange)
         {
+            Angle turn = new Angle(60);
+            Angle fovAng = new Angle(150);
             for (int i = 0; i < naive; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
                 n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, 180, null, 0, n2);
+                Agent a = new AdvancedBoid(_mas, n, turn, null, 0, n2);
                 a.Speed = 1.05;
                 a.Species = _mas.Species[0];
                 _mas.Elements.Add(a);
             }
             for (int i = 0; i < guides; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
                 n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, 180, _goals[0], 0.7, n2);
+                Agent a = new AdvancedBoid(_mas, n, turn, _goals[0], 0.75, n2);
                 a.Speed = 1;
                 a.Species = _mas.Species[1];
                 _mas.Elements.Add(a);
             }
             for (int i = 0; i < intruders; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange);
+                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
                 n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, 180, _goals[1], 0.85, n2);
+                Agent a = new AdvancedBoid(_mas, n, turn, _goals[1], 1, n2);
                 a.Speed = 0.95;
                 a.Species = _mas.Species[2];
                 _mas.Elements.Add(a);
             }
+        }
+
+        private void btnGroup_Click(object sender, RoutedEventArgs e)
+        {
+            double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            _mas.GroupStart(fov * 3);
         }
     }
 }

@@ -26,8 +26,8 @@ namespace Muragatte.Core.Environment
 
         //will probably make Angle struct/class
 
-        public const double MinAngle = 1;
-        public const double MaxAngle = 180;
+        //public const double MinAngle = 1;
+        //public const double MaxAngle = 180;
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace Muragatte.Core.Environment
         protected Vector2 _altPosition = new Vector2(0, 0);
         protected Vector2 _altDirection = new Vector2(0, 1);
         protected Neighbourhood _fieldOfView = null;
-        protected double _dTurningAngle = 180;
+        protected Angle _dTurningAngle = Angle.Deg180();
         //might be left for specific agents, not everyone will be changing speed
         //protected double _dAltSpeed = 1;
         //might leave assertivity and credibility for concrete agents that will be using it
@@ -56,7 +56,7 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, double turningAngle)
+            double speed, Neighbourhood fieldOfView, Angle turningAngle)
             : base(model, position)
         {
             _direction = direction;
@@ -67,7 +67,7 @@ namespace Muragatte.Core.Environment
             _dTurningAngle = turningAngle;
         }
 
-        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, double turningAngle)
+        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle)
             : base(model)
         {
             _bStationary = false;
@@ -107,10 +107,10 @@ namespace Muragatte.Core.Environment
             get { return _fieldOfView; }
         }
 
-        public double TurningAngle
+        public Angle TurningAngle
         {
             get { return _dTurningAngle; }
-            set { _dTurningAngle = ProperAngle(value); }
+            set { _dTurningAngle = value; }
         }
 
         public override ElementNature DefaultNature
@@ -144,7 +144,7 @@ namespace Muragatte.Core.Environment
             _dSpeed = speed;
         }
 
-        public void SetMovementInfo(Vector2 position, Vector2 direction, double speed, double turningAngle)
+        public void SetMovementInfo(Vector2 position, Vector2 direction, double speed, Angle turningAngle)
         {
             _position = position;
             _direction = direction;
@@ -176,6 +176,18 @@ namespace Muragatte.Core.Environment
         public override string ToString()
         {
             return "A-" + base.ToString();
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        protected void DirectionInBounds()
+        {
+            if (Vector2.AngleBetween(_direction, _altDirection) > _dTurningAngle)
+            {
+                _altDirection = _direction - (new Angle(_altDirection) - new Angle(_direction)).Sign() * _dTurningAngle;
+            }
         }
 
         #endregion
@@ -232,7 +244,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Separation(IEnumerable<Element> elements)
         {
-            Vector2 x = new Vector2();
+            Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
                 x -= (e.Position - _position).Normalized();
@@ -242,7 +254,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Cohesion(IEnumerable<Element> elements)
         {
-            Vector2 x = new Vector2();
+            Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
                 x += (e.Position - _position).Normalized();
@@ -252,7 +264,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Alignment(IEnumerable<Element> elements)
         {
-            Vector2 x = new Vector2();
+            Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
                 x += e.Direction;
@@ -268,21 +280,21 @@ namespace Muragatte.Core.Environment
 
         #endregion
 
-        #region Static Methods
+        //#region Static Methods
 
-        public static double ProperAngle(double value)
-        {
-            if (value < MinAngle)
-            {
-                return MinAngle;
-            }
-            if (value > MaxAngle)
-            {
-                return MaxAngle;
-            }
-            return value;
-        }
+        //public static double ProperAngle(double value)
+        //{
+        //    if (value < MinAngle)
+        //    {
+        //        return MinAngle;
+        //    }
+        //    if (value > MaxAngle)
+        //    {
+        //        return MaxAngle;
+        //    }
+        //    return value;
+        //}
 
-        #endregion
+        //#endregion
     }
 }

@@ -3,25 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Muragatte Sandbox" Height="350" Width="525" Closing="Window_Closing">
     <Grid>
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="txtWidth" VerticalAlignment="Top" Width="120" Text="60" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,43,0,0" Name="txtHeight" VerticalAlignment="Top" Width="120" Text="60" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,76,0,0" Name="txtScale" VerticalAlignment="Top" Width="120" Text="10" />
-        <CheckBox Content="Horizontal Borders" Height="16" HorizontalAlignment="Left" Margin="136,10,0,0" Name="chbHorizontal" VerticalAlignment="Top" />
-        <CheckBox Content="Vertical Borders" Height="16" HorizontalAlignment="Left" Margin="136,36,0,0" Name="chbVertical" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,163,0,0" Name="txtAgentCount" VerticalAlignment="Top" Width="120" Text="50" />
-        <Button Content="Environment" Height="23" HorizontalAlignment="Left" Margin="293,68,0,0" Name="btnEnvironment" VerticalAlignment="Top" Width="75" Click="btnEnvironment_Click" />
-        <Button Content="Boids" Height="23" HorizontalAlignment="Left" Margin="293,97,0,0" Name="btnAgents" VerticalAlignment="Top" Width="75" Click="btnAgents_Click" />
-        <Button Content="Update" Height="23" HorizontalAlignment="Left" Margin="293,184,0,0" Name="btnUpdate" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click" />
-        <Button Content="Clear" Height="23" HorizontalAlignment="Left" Margin="293,39,0,0" Name="btnClear" VerticalAlignment="Top" Width="75" Click="btnClear_Click" />
-        <Button Content="Play" Height="23" HorizontalAlignment="Left" Margin="293,213,0,0" Name="btnPlayPause" VerticalAlignment="Top" Width="75" Click="btnPlayPause_Click" />
-        <Button Content="Scatter" Height="23" HorizontalAlignment="Left" Margin="293,155,0,0" Name="btnScatter" VerticalAlignment="Top" Width="75" Click="btnScatter_Click" />
-        <CheckBox Content="Show Agents" Height="16" HorizontalAlignment="Left" Margin="136,58,0,0" Name="chbAgents" VerticalAlignment="Top" IsChecked="True" Checked="chbAgents_Checked" Unchecked="chbAgents_Unchecked" />
-        <CheckBox Content="Show Neighbourhoods" Height="16" HorizontalAlignment="Left" Margin="136,80,0,0" Name="chbNeighbourhoods" VerticalAlignment="Top" Checked="chbNeighbourhoods_Checked" Unchecked="chbNeighbourhoods_Unchecked" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,105,0,0" Name="txtFieldOfView" VerticalAlignment="Top" Width="120" Text="10" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,192,0,0" Name="txtGuideCount" VerticalAlignment="Top" Width="120" Text="5" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,221,0,0" Name="txtIntruderCount" VerticalAlignment="Top" Width="120" Text="1" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,134,0,0" Name="txtPersonalArea" VerticalAlignment="Top" Width="120" Text="2" />
-        <Button Content="Initialize" Height="23" HorizontalAlignment="Left" Margin="293,10,0,0" Name="btnInitialize" VerticalAlignment="Top" Width="75" Click="btnInitialize_Click" />
-        <Button Content="Agents w/G" Height="23" HorizontalAlignment="Left" Margin="293,126,0,0" Name="btnAgentsWG" VerticalAlignment="Top" Width="75" Click="btnAgentsWG_Click" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,12,0,0" Name="txtWidth" VerticalAlignment="Top" Width="120" Text="120" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,45,0,0" Name="txtHeight" VerticalAlignment="Top" Width="120" Text="120" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,78,0,0" Name="txtScale" VerticalAlignment="Top" Width="120" Text="5" />
+        <CheckBox Content="Horizontal Borders" Height="16" HorizontalAlignment="Left" Margin="234,12,0,0" Name="chbHorizontal" VerticalAlignment="Top" />
+        <CheckBox Content="Vertical Borders" Height="16" HorizontalAlignment="Left" Margin="234,38,0,0" Name="chbVertical" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,165,0,0" Name="txtAgentCount" VerticalAlignment="Top" Width="120" Text="50" />
+        <Button Content="Environment" Height="23" HorizontalAlignment="Left" Margin="391,70,0,0" Name="btnEnvironment" VerticalAlignment="Top" Width="75" Click="btnEnvironment_Click" />
+        <Button Content="Boids" Height="23" HorizontalAlignment="Left" Margin="391,99,0,0" Name="btnAgents" VerticalAlignment="Top" Width="75" Click="btnAgents_Click" />
+        <Button Content="Update" Height="23" HorizontalAlignment="Left" Margin="391,215,0,0" Name="btnUpdate" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click" />
+        <Button Content="Clear" Height="23" HorizontalAlignment="Left" Margin="391,41,0,0" Name="btnClear" VerticalAlignment="Top" Width="75" Click="btnClear_Click" />
+        <Button Content="Play" Height="23" HorizontalAlignment="Left" Margin="391,244,0,0" Name="btnPlayPause" VerticalAlignment="Top" Width="75" Click="btnPlayPause_Click" />
+        <Button Content="Scatter" Height="23" HorizontalAlignment="Left" Margin="391,186,0,0" Name="btnScatter" VerticalAlignment="Top" Width="75" Click="btnScatter_Click" />
+        <CheckBox Content="Show Agents" Height="16" HorizontalAlignment="Left" Margin="234,60,0,0" Name="chbAgents" VerticalAlignment="Top" IsChecked="True" Checked="chbAgents_Checked" Unchecked="chbAgents_Unchecked" />
+        <CheckBox Content="Show Neighbourhoods" Height="16" HorizontalAlignment="Left" Margin="234,82,0,0" Name="chbNeighbourhoods" VerticalAlignment="Top" Checked="chbNeighbourhoods_Checked" Unchecked="chbNeighbourhoods_Unchecked" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,107,0,0" Name="txtFieldOfView" VerticalAlignment="Top" Width="120" Text="7.5" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,194,0,0" Name="txtGuideCount" VerticalAlignment="Top" Width="120" Text="5" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,223,0,0" Name="txtIntruderCount" VerticalAlignment="Top" Width="120" Text="1" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,136,0,0" Name="txtPersonalArea" VerticalAlignment="Top" Width="120" Text="2" />
+        <Button Content="Initialize" Height="23" HorizontalAlignment="Left" Margin="391,12,0,0" Name="btnInitialize" VerticalAlignment="Top" Width="75" Click="btnInitialize_Click" />
+        <Button Content="Agents w/G" Height="23" HorizontalAlignment="Left" Margin="391,128,0,0" Name="btnAgentsWG" VerticalAlignment="Top" Width="75" Click="btnAgentsWG_Click" />
+        <Label Content="Width:" Height="28" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="Height:" Height="28" HorizontalAlignment="Left" Margin="10,43,0,0" Name="label2" VerticalAlignment="Top" />
+        <Label Content="Scale:" Height="28" HorizontalAlignment="Left" Margin="10,76,0,0" Name="label3" VerticalAlignment="Top" />
+        <Label Content="Field of View:" Height="28" HorizontalAlignment="Left" Margin="10,105,0,0" Name="label4" VerticalAlignment="Top" />
+        <Label Content="Personal Area:" Height="28" HorizontalAlignment="Left" Margin="10,134,0,0" Name="label5" VerticalAlignment="Top" />
+        <Label Content="# Agents:" Height="28" HorizontalAlignment="Left" Margin="10,163,0,0" Name="label6" VerticalAlignment="Top" />
+        <Label Content="# Guides:" Height="28" HorizontalAlignment="Left" Margin="10,192,0,0" Name="label7" VerticalAlignment="Top" />
+        <Label Content="# Intruders:" Height="28" HorizontalAlignment="Left" Margin="10,221,0,0" Name="label8" VerticalAlignment="Top" />
+        <Button Content="Group" Height="23" HorizontalAlignment="Left" Margin="391,157,0,0" Name="btnGroup" VerticalAlignment="Top" Width="75" Click="btnGroup_Click" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="108,252,0,0" Name="txtSteps" VerticalAlignment="Top" Width="120" Text="0" IsEnabled="False" />
+        <Label Content="Steps:" Height="28" HorizontalAlignment="Left" Margin="12,250,0,0" Name="label9" VerticalAlignment="Top" />
     </Grid>
 </Window>

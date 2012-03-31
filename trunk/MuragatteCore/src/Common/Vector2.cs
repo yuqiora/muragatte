@@ -26,10 +26,14 @@ namespace Muragatte.Common
 
         #region Constructors
 
-        public Vector2(double x, double y)
+        public Vector2(double x, double y, bool normalize = false)
         {
             _dX = x;
             _dY = y;
+            if (normalize)
+            {
+                Normalize();
+            }
         }
 
         #endregion
@@ -73,6 +77,11 @@ namespace Muragatte.Common
             get { return _dX == 0 && _dY == 0; }
         }
 
+        public Angle Angle
+        {
+            get { return new Angle(this); }
+        }
+
         #endregion
 
         #region Methods
@@ -85,8 +94,12 @@ namespace Muragatte.Common
 
         public void Normalize()
         {
-            _dX /= Length;
-            _dY /= Length;
+            double l = Length;
+            if (l > 0)
+            {
+                _dX /= l;
+                _dY /= l;
+            }
         }
 
         public Vector2 Normalized()
@@ -96,10 +109,10 @@ namespace Muragatte.Common
             return v;
         }
 
-        public double DirectedAngle() {
-            double angle = AngleBetween(UpOne(), this);
-            return _dX < 0 ? -angle : angle;
-        }
+        //public double DirectedAngle() {
+        //    double angle = AngleBetween(UpOne(), this);
+        //    return _dX < 0 ? -angle : angle;
+        //}
 
         public bool Equals(Vector2 v)
         {
@@ -130,22 +143,40 @@ namespace Muragatte.Common
 
         #region Static Methods
         
-        public static Vector2 Add(Vector2 a, Vector2 b) { return a + b; }
-
-        public static double AngleBetween(Vector2 a, Vector2 b)
+        public static Vector2 Add(Vector2 a, Vector2 b)
         {
-            return Math.Acos((a * b) / (a.Length * b.Length)) * (180 / Math.PI);
+            return a + b;
         }
 
-        public static Vector2 Divide(Vector2 vector, double scalar) { return vector / scalar; }
+        public static Angle AngleBetween(Vector2 a, Vector2 b)
+        {
+            return new Angle(Math.Acos((a * b) / (a.Length * b.Length)) * (180 / Math.PI));
+        }
 
-        public static bool Equals(Vector2 a, Vector2 b) { return a == b; }
+        public static Vector2 Divide(Vector2 vector, double scalar)
+        {
+            return vector / scalar;
+        }
 
-        public static Vector2 Multiply(double scalar, Vector2 vector) { return scalar * vector; }
+        public static bool Equals(Vector2 a, Vector2 b)
+        {
+            return a == b;
+        }
 
-        public static Vector2 Multiply(Vector2 vector, double scalar) { return vector * scalar; }
+        public static Vector2 Multiply(double scalar, Vector2 vector)
+        {
+            return scalar * vector;
+        }
 
-        public static double Multiply(Vector2 a, Vector2 b) { return a * b; }
+        public static Vector2 Multiply(Vector2 vector, double scalar)
+        {
+            return vector * scalar;
+        }
+
+        public static double Multiply(Vector2 a, Vector2 b)
+        {
+            return a * b;
+        }
 
         public static Vector2 Parse(string s)
         {
@@ -156,25 +187,48 @@ namespace Muragatte.Common
             }
             else
             {
-                double dx = 0;
-                double dy = 0;
+                double dx;
+                double dy;
                 if (!double.TryParse(sTmp[0], out dx)) { dx = 0; }
                 if (!double.TryParse(sTmp[1], out dy)) { dy = 0; }
                 return new Vector2(dx, dy);
             }
         }
 
-        public static Vector2 Subtract(Vector2 a, Vector2 b) { return a - b; }
+        public static Vector2 Subtract(Vector2 a, Vector2 b)
+        {
+            return a - b;
+        }
 
-        public static double Distance(Vector2 a, Vector2 b) { return (a - b).Length; }
+        public static double Distance(Vector2 a, Vector2 b)
+        {
+            return (a - b).Length;
+        }
 
-        public static double DistanceX(Vector2 a, Vector2 b) { return Math.Abs(a.X - b.X); }
+        public static double DistanceX(Vector2 a, Vector2 b)
+        {
+            return Math.Abs(a.X - b.X);
+        }
 
-        public static double DistanceY(Vector2 a, Vector2 b) { return Math.Abs(a.Y - b.Y); }
+        public static double DistanceY(Vector2 a, Vector2 b)
+        {
+            return Math.Abs(a.Y - b.Y);
+        }
 
-        public static Vector2 Zero() { return new Vector2(0, 0); }
+        public static Vector2 Rotate(Vector2 vector, Angle angle)
+        {
+            return vector + angle;
+        }
 
-        public static Vector2 UpOne() { return new Vector2(0, 1); }
+        public static Vector2 Zero()
+        {
+            return new Vector2(0, 0);
+        }
+
+        public static Vector2 UpOne()
+        {
+            return new Vector2(0, 1);
+        }
 
         //will be modified accordingly when Muragatte.Random is done
         //or more likely moved under Random
@@ -212,6 +266,14 @@ namespace Muragatte.Common
             return new Vector2(x, y);
         }
 
+        public static Vector2 RandomNormalized()
+        {
+            double x;
+            double y;
+            Core.Environment.RNGs.Ran2.Circle(out x, out y);
+            return new Vector2(x, y, true);
+        }
+
         #endregion
 
         #region Operators
@@ -219,6 +281,14 @@ namespace Muragatte.Common
         public static Vector2 operator +(Vector2 a, Vector2 b)
         {
             return new Vector2(a.X + b.X, a.Y + b.Y);
+        }
+
+        public static Vector2 operator +(Vector2 vector, Angle angle)
+        {
+            double radians = angle.Radians;
+            double sin = Math.Sin(radians);
+            double cos = Math.Cos(radians);
+            return new Vector2(vector.X * cos - vector.Y * sin, vector.X * sin + vector.Y * cos);
         }
 
         public static Vector2 operator /(Vector2 vector, double scalar)
@@ -254,6 +324,14 @@ namespace Muragatte.Common
         public static Vector2 operator -(Vector2 a, Vector2 b)
         {
             return new Vector2(a.X - b.X, a.Y - b.Y);
+        }
+
+        public static Vector2 operator -(Vector2 vector, Angle angle)
+        {
+            double radians = -angle.Radians;
+            double sin = Math.Sin(radians);
+            double cos = Math.Cos(radians);
+            return new Vector2(vector.X * cos - vector.Y * sin, vector.X * sin + vector.Y * cos);
         }
 
         public static Vector2 operator -(Vector2 vector)

@@ -57,15 +57,15 @@ namespace Muragatte.Visual
 
         public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction)
         {
-            double angle = direction.DirectedAngle();
+            Angle angle = new Angle(direction);
             SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
-            if (double.IsNaN(angle) || angle == 0)
+            if (angle.IsZero)
             {
                 wb.Blit(point, _wb, _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
             }
             else
             {
-                wb.Blit(point, _wb.RotateFree((int)angle), _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
+                wb.Blit(point, _wb.RotateFree(angle.Degrees), _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
             }
         }
         
