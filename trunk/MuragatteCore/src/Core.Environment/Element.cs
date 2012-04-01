@@ -113,6 +113,8 @@ namespace Muragatte.Core.Environment
 
         public abstract double Height { get; }
 
+        public abstract double Radius { get; }
+
         public abstract ElementNature DefaultNature { get; }
 
         #endregion

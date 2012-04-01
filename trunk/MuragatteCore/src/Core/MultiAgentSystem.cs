@@ -125,7 +125,6 @@ namespace Muragatte.Core
                 double ss;
                 RNGs.Ran2.Disk(out x, out y, out ss);
                 Vector2 pos = new Vector2(x, y);
-                //Vector2 pos = Vector2.RandomGauss();
                 pos *= size;
                 pos += new Vector2(_region.Width / 2, Region.Height / 2);
                 a.SetMovementInfo(pos, direction + Angle.Random(5));

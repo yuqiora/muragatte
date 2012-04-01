@@ -63,6 +63,25 @@ namespace Muragatte.Visual
             return new ComplexParticle(wb, color);
         }
 
+        public static Particle Agent2(int size, Color color)
+        {
+            if (size == 1)
+            {
+                return new ElementaryParticle(color);
+            }
+            WriteableBitmap wb = BitmapFactory.New(size, size);
+            if (size <= 2)
+            {
+                wb.Clear(color);
+            }
+            else
+            {
+                wb.Clear();
+                wb.FillTriangle(size / 2, 0, 1, size - 1, size - 2, size - 1, color);
+            }
+            return new ComplexParticle(wb, color);
+        }
+
         public static Particle Ellipse(int size, Color color, bool filled = true)
         {
             return Ellipse(size, size, color, filled);
