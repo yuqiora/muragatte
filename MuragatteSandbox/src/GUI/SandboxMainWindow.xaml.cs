@@ -275,5 +275,41 @@ namespace Muragatte.GUI
             double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             _mas.GroupStart(fov * 3);
         }
+
+        private void chbHorizontal_Checked(object sender, RoutedEventArgs e)
+        {
+            HorizontalBorders();
+        }
+
+        private void chbHorizontal_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HorizontalBorders();
+        }
+
+        private void chbVertical_Checked(object sender, RoutedEventArgs e)
+        {
+            VerticalBorders();
+        }
+
+        private void chbVertical_Unchecked(object sender, RoutedEventArgs e)
+        {
+            VerticalBorders();
+        }
+
+        private void HorizontalBorders()
+        {
+            if (_mas != null)
+            {
+                _mas.Region.IsBorderedHorizontally = chbHorizontal.IsChecked.Value;
+            }
+        }
+
+        private void VerticalBorders()
+        {
+            if (_mas != null)
+            {
+                _mas.Region.IsBorderedVertically = chbVertical.IsChecked.Value;
+            }
+        }
     }
 }

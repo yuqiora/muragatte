@@ -64,6 +64,11 @@ namespace Muragatte.Core.Environment
             get { return 1; }
         }
 
+        public override double Radius
+        {
+            get { return 0.5; }
+        }
+
         #endregion
 
         #region Methods

@@ -52,10 +52,9 @@ namespace Muragatte.Core.Environment.Agents
         {
             Vector2 dirDelta = Separation(locals) + Cohesion(locals) + Alignment(locals);
             //noise temporary, needs further work
-            //doesn't check if inside turning angles
             //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
             _altDirection = (_direction + dirDelta + Angle.Random(2)).Normalized();
-            DirectionInBounds();
+            ProperDirection();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
 
@@ -127,14 +126,13 @@ namespace Muragatte.Core.Environment.Agents
             }
             if (_goal != null)
             {
-                dirDelta += _dAssertivity * (_goal.Position - _position).Normalized();
+                dirDelta += Seek(_goal, _dAssertivity);
                 dirDelta.Normalize();
             }
             //noise temporary, needs further work
-            //doesn't check if inside turning angles
             //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
             _altDirection = (_direction + dirDelta + Angle.Random(1)).Normalized();
-            DirectionInBounds();
+            ProperDirection();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
 

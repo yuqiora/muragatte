@@ -6,8 +6,8 @@
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,12,0,0" Name="txtWidth" VerticalAlignment="Top" Width="120" Text="120" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,45,0,0" Name="txtHeight" VerticalAlignment="Top" Width="120" Text="120" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,78,0,0" Name="txtScale" VerticalAlignment="Top" Width="120" Text="5" />
-        <CheckBox Content="Horizontal Borders" Height="16" HorizontalAlignment="Left" Margin="234,12,0,0" Name="chbHorizontal" VerticalAlignment="Top" />
-        <CheckBox Content="Vertical Borders" Height="16" HorizontalAlignment="Left" Margin="234,38,0,0" Name="chbVertical" VerticalAlignment="Top" />
+        <CheckBox Content="Horizontal Borders" Height="16" HorizontalAlignment="Left" Margin="234,12,0,0" Name="chbHorizontal" VerticalAlignment="Top" Checked="chbHorizontal_Checked" Unchecked="chbHorizontal_Unchecked" />
+        <CheckBox Content="Vertical Borders" Height="16" HorizontalAlignment="Left" Margin="234,38,0,0" Name="chbVertical" VerticalAlignment="Top" Checked="chbVertical_Checked" Unchecked="chbVertical_Unchecked" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,165,0,0" Name="txtAgentCount" VerticalAlignment="Top" Width="120" Text="50" />
         <Button Content="Environment" Height="23" HorizontalAlignment="Left" Margin="391,70,0,0" Name="btnEnvironment" VerticalAlignment="Top" Width="75" Click="btnEnvironment_Click" />
         <Button Content="Boids" Height="23" HorizontalAlignment="Left" Margin="391,99,0,0" Name="btnAgents" VerticalAlignment="Top" Width="75" Click="btnAgents_Click" />

@@ -22,15 +22,6 @@ namespace Muragatte.Core.Environment
         //will be simplified
         //currently has too much for base agent
 
-        #region Constants
-
-        //will probably make Angle struct/class
-
-        //public const double MinAngle = 1;
-        //public const double MaxAngle = 180;
-
-        #endregion
-
         #region Fields
 
         protected Vector2 _direction = new Vector2(0, 1);
@@ -100,6 +91,11 @@ namespace Muragatte.Core.Environment
         public override double Height
         {
             get { return 1; }
+        }
+
+        public override double Radius
+        {
+            get { return 0.5; }
         }
 
         public Neighbourhood FieldOfView
@@ -182,6 +178,17 @@ namespace Muragatte.Core.Environment
 
         #region Protected Methods
 
+        protected void ProperDirection()
+        {
+            ContainedInRegion();
+            DirectionInBounds();
+        }
+
+        protected void ContainedInRegion()
+        {
+            _altDirection = _model.Region.Containment(_position, _altDirection, VisibleRange);
+        }
+
         protected void DirectionInBounds()
         {
             if (Vector2.AngleBetween(_direction, _altDirection) > _dTurningAngle)
@@ -194,40 +201,32 @@ namespace Muragatte.Core.Environment
 
         #region Virtual Methods (Steering)
 
-        //might need some simplification, a lot of these rules will be very similar
-
-        protected virtual Vector2 SeekPursue(IEnumerable<Element> elements)
+        protected virtual Vector2 SeekOrPursuit(IEnumerable<Element> elements, double weight = 1)
         {
             return new Vector2();
         }
 
-        protected virtual Vector2 Seek(IEnumerable<Element> elements)
+        protected virtual Vector2 Seek(Element element, double weight = 1)
         {
-            //same as cohesion
-            Vector2 x = new Vector2();
-            foreach (Element e in elements)
-            {
-                x += (e.Position - _position).Normalized();
-            }
-            return x;
+            return weight * (element.Position - _position).Normalized();
         }
 
-        protected virtual Vector2 Pursue(IEnumerable<Element> elements)
+        protected virtual Vector2 Pursuit(IEnumerable<Element> elements, double weight = 1)
         {
             return new Vector2();
         }
 
-        protected virtual Vector2 FleeEvade(IEnumerable<Element> elements)
+        protected virtual Vector2 FleeOrEvasion(IEnumerable<Element> elements, double weight = 1)
         {
             return new Vector2();
         }
 
-        protected virtual Vector2 Flee(IEnumerable<Element> elements)
+        protected virtual Vector2 Flee(Element element, double weight = 1)
         {
-            return new Vector2();
+            return Seek(element, -weight);
         }
 
-        protected virtual Vector2 Evade(IEnumerable<Element> elements)
+        protected virtual Vector2 Evasion(IEnumerable<Element> elements, double weight = 1)
         {
             return new Vector2();
         }
@@ -237,39 +236,41 @@ namespace Muragatte.Core.Environment
             return new Vector2();
         }
 
-        protected virtual Vector2 Wander()
+        protected virtual Vector2 Wander(double weight)
         {
             return new Vector2();
         }
 
-        protected virtual Vector2 Separation(IEnumerable<Element> elements)
+        protected virtual Vector2 Separation(IEnumerable<Element> elements, double weight = 1)
         {
-            Vector2 x = new Vector2(0, 0);
-            foreach (Element e in elements)
-            {
-                x -= (e.Position - _position).Normalized();
-            }
-            return x;
+            return Cohesion(elements, -weight);
         }
 
-        protected virtual Vector2 Cohesion(IEnumerable<Element> elements)
+        protected virtual Vector2 Cohesion(IEnumerable<Element> elements, double weight = 1)
         {
             Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
                 x += (e.Position - _position).Normalized();
             }
-            return x;
+            return weight * SteerAverage(x, elements.Count());
         }
 
-        protected virtual Vector2 Alignment(IEnumerable<Element> elements)
+        protected virtual Vector2 Alignment(IEnumerable<Element> elements, double weight = 1)
         {
             Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
                 x += e.Direction;
             }
-            return x;
+            return weight * SteerAverage(x, elements.Count());
+        }
+
+        //not sure if really needed, vectors normalized
+        protected virtual Vector2 SteerAverage(Vector2 vector, int count)
+        {
+            return vector;
+            //return count > 0 ? vector / count : vector;
         }
         
         #endregion
@@ -279,22 +280,5 @@ namespace Muragatte.Core.Environment
         protected abstract void ApplyRules(IEnumerable<Element> locals);
 
         #endregion
-
-        //#region Static Methods
-
-        //public static double ProperAngle(double value)
-        //{
-        //    if (value < MinAngle)
-        //    {
-        //        return MinAngle;
-        //    }
-        //    if (value > MaxAngle)
-        //    {
-        //        return MaxAngle;
-        //    }
-        //    return value;
-        //}
-
-        //#endregion
     }
 }

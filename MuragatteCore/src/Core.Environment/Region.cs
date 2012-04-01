@@ -22,8 +22,8 @@ namespace Muragatte.Core.Environment
 
         private int _iWidth = 0;
         private int _iHeight = 0;
-        private bool _bBorderedHorizontal = true;
-        private bool _bBorderedVertical = true;
+        private bool _bBorderedHorizontal = true;   // - (y)
+        private bool _bBorderedVertical = true;     // | (x)
 
         #endregion
 
@@ -85,6 +85,23 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Methods
+
+        public Vector2 Containment(Vector2 position, Vector2 direction, double weight)
+        {
+            bool changed = false;
+            Vector2 v = position + direction * weight;
+            if (_bBorderedVertical && (v.X < 0 || v.X >= _iWidth))
+            {
+                v.X -= 2 * (v.X % _iWidth);
+                changed = true;
+            }
+            if (_bBorderedHorizontal && (v.Y < 0 || v.Y >= _iHeight))
+            {
+                v.Y -= 2 * (v.Y % _iHeight);
+                changed = true;
+            }
+            return changed ? (v - position).Normalized() : direction;
+        }
 
         public Vector2 Outside(Vector2 position)
         {

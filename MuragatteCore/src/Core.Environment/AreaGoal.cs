@@ -55,6 +55,11 @@ namespace Muragatte.Core.Environment
             get { return _dHeight; }
         }
 
+        public override double Radius
+        {
+            get { return Math.Max(_dWidth, _dHeight) / 2.0; }
+        }
+
         #endregion
 
         #region Methods

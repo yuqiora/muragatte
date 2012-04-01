@@ -64,7 +64,7 @@ namespace Muragatte.Core.Environment
             List<T> result = new List<T>();
             foreach (T e in elements)
             {
-                if (Vector2.Distance(_source.Position, e.Position) < _dRange)
+                if (Vector2.Distance(_source.Position, e.Position) - e.Radius < _dRange)
                 {
                     result.Add(e);
                 }
@@ -77,7 +77,7 @@ namespace Muragatte.Core.Environment
             List<T> result = new List<T>();
             foreach (T e in elements)
             {
-                if (Vector2.Distance(_source.Position, e.Position) < _dRange &&
+                if (Vector2.Distance(_source.Position, e.Position) - e.Radius < _dRange &&
                     Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= _dAngle)
                 {
                     result.Add(e);
