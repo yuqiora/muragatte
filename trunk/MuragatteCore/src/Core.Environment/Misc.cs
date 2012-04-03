@@ -46,5 +46,35 @@ namespace Muragatte.Core.Environment
         {
             get { return _ran2; }
         }
+
+        public static double Uniform()
+        {
+            return _ran2.Uniform();
+        }
+
+        public static double Uniform(double high)
+        {
+            return _ran2.Uniform(0, high);
+        }
+
+        public static double Uniform(double low, double high)
+        {
+            return _ran2.Uniform(low, high);
+        }
+
+        public static double Gauss()
+        {
+            return _ran2.Gauss();
+        }
+
+        public static double Gauss(double deviation)
+        {
+            return _ran2.Gauss(0, deviation);
+        }
+
+        public static double Gauss(double mean, double deviation)
+        {
+            return _ran2.Gauss(mean, deviation);
+        }
     }
 }

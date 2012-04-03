@@ -170,7 +170,7 @@ namespace Muragatte.Visual
                 //{
                 //    DrawItems(_model.Elements.Stationary);
                 //}
-                //IEnumerable<Agent> agents = _model.Elements.Agents;
+                //IEnumerable<AgentA> agents = _model.Elements.Agents;
                 //if (_bNeighbourhoods)
                 //{
                 //    DrawNeighbourhoods(agents);

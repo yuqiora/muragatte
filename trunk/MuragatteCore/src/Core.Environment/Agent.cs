@@ -231,14 +231,53 @@ namespace Muragatte.Core.Environment
             return new Vector2();
         }
 
-        protected virtual Vector2 Avoid(IEnumerable<Element> elements)
+        protected virtual Vector2 Avoid(IEnumerable<Element> elements, double weight = 1)
         {
-            return new Vector2();
+            if (elements.Count() == 0)
+            {
+                return new Vector2(0, 0);
+            }
+            Vector2 lineOfSight = VisibleRange * _direction;
+            double nearest = lineOfSight.Length;
+            Vector2 nearestPos = new Vector2(0, 0);
+            Vector2 r1 = _position + new Vector2(_direction.Y * Radius, -_direction.X * Radius);
+            Vector2 r2 = r1 + lineOfSight;
+            Vector2 l1 = _position + new Vector2(-_direction.Y * Radius, _direction.X * Radius);
+            Vector2 l2 = l1 + lineOfSight;
+            foreach (Element e in elements)
+            {
+                if (Vector2.Distance(_position, e.Position) > e.Radius + _dSpeed)
+                {
+                    continue;
+                }
+                Vector2 ip;
+                if (e.IntersectsWith(r1, r2, out ip))
+                {
+                    double dist = Vector2.Distance(_position, ip);
+                    if (dist < nearest)
+                    {
+                        nearest = dist;
+                        nearestPos = e.Position;
+                        //nearestPos = ip;
+                    }
+                }
+                if (e.IntersectsWith(l1, l2, out ip))
+                {
+                    double dist = Vector2.Distance(_position, ip);
+                    if (dist < nearest)
+                    {
+                        nearest = dist;
+                        nearestPos = e.Position;
+                        //nearestPos = ip;
+                    }
+                }
+            }
+            return nearest < lineOfSight.Length ? -weight * (nearestPos - _position).Normalized() : new Vector2(0, 0);
         }
 
-        protected virtual Vector2 Wander(double weight)
+        protected virtual Vector2 Wander(double weight = 10)
         {
-            return new Vector2();
+            return Direction + Angle.Random(weight);
         }
 
         protected virtual Vector2 Separation(IEnumerable<Element> elements, double weight = 1)

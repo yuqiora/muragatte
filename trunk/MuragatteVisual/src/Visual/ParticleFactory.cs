@@ -39,7 +39,7 @@ namespace Muragatte.Visual
             return Ellipse(size, size, color);
         }
 
-        public static Particle Agent(int size, Color color)
+        public static Particle AgentA(int size, Color color)
         {
             if (size == 1)
             {
@@ -63,7 +63,7 @@ namespace Muragatte.Visual
             return new ComplexParticle(wb, color);
         }
 
-        public static Particle Agent2(int size, Color color)
+        public static Particle AgentB(int size, Color color)
         {
             if (size == 1)
             {
