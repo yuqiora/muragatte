@@ -163,6 +163,36 @@ namespace Muragatte.Core.Environment
             return _iElementID == e._iElementID;
         }
 
+        public virtual bool IntersectsWith(Vector2 l1, Vector2 l2, out Vector2 ip)
+        {
+            Vector2 l2ml1 = l2 - l1;
+            double u = ((_position - l1) * l2ml1) / (l2ml1 * l2ml1);
+            ip = l1 + u * l2ml1;
+            if (u < 0 || u > 1 || Vector2.Distance(_position, ip) > Radius)
+            {
+                return false;
+            }
+            double a = Math.Pow(l2.X - l1.X, 2) + Math.Pow(l2.Y - l1.Y, 2);
+            double b = 2 * ((l2.X - l1.X) * (l1.X - _position.X) + (l2.Y - l1.Y) * (l1.Y - _position.Y));
+            double c = _position.X * _position.X + _position.Y * _position.Y + l1.X * l1.X + l1.Y * l1.Y -
+                       2 * (_position.X * l1.X + _position.Y * l1.Y) - Radius * Radius;
+            double bb4ac = b * b - 4 * a * c;
+            if (bb4ac < 0)
+            {
+                return false;
+            }
+            if (bb4ac == 0)
+            {
+                double u0 = -b / (2 * a);
+                ip = l1 + u0 * l2ml1;
+                return true;
+            }
+            double u1 = (-b + Math.Sqrt(bb4ac)) / (2 * a);
+            double u2 = (-b - Math.Sqrt(bb4ac)) / (2 * a);
+            ip = l1 + Math.Min(u1, u2) * l2ml1;
+            return true;
+        }
+
         #endregion
 
         #region Abstract Methods

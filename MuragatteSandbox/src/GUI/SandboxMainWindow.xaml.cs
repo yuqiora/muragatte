@@ -46,6 +46,7 @@ namespace Muragatte.GUI
         private VisualCanvasWindow _view = null;
         private bool _bPlaying = false;
         private List<Goal> _goals = new List<Goal>();
+        private List<Obstacle> _obstacles = new List<Obstacle>();
 
         public SandboxMainWindow()
         {
@@ -54,6 +55,7 @@ namespace Muragatte.GUI
 
         private void btnEnvironment_Click(object sender, RoutedEventArgs e)
         {
+            CreateObstacles();
             CreateGoals();
             _canvas.Redraw();
         }
@@ -97,6 +99,7 @@ namespace Muragatte.GUI
         {
             _mas.Clear();
             _goals.Clear();
+            _obstacles.Clear();
             _canvas.Clear();
             txtSteps.Text = _mas.NumberOfSteps.ToString();
         }
@@ -205,18 +208,29 @@ namespace Muragatte.GUI
             _goals.Add(g2);
             _mas.Elements.Add(_goals);
         }
+
+        private void CreateObstacles()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, _mas.Region.Width / 3));
+                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _canvas.Scale), Colors.Gray);
+                _obstacles.Add(o);
+            }
+            _mas.Elements.Add(_obstacles);
+        }
         
         private void CreateSpecies()
         {
             SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
             Species boids = new Species("Boids");
-            boids.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Black);
+            boids.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Black);
             species.Add(boids.ID, boids);
             Species guides = boids.CreateSubSpecies("Guides");
-            guides.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Blue);
+            guides.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Blue);
             species.Add(guides.ID, guides);
             Species intruders = boids.CreateSubSpecies("Intruders");
-            intruders.Item = ParticleFactory.Agent((int)_canvas.Scale, Colors.Red);
+            intruders.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Red);
             species.Add(intruders.ID, intruders);
             _mas.Species = species;
         }

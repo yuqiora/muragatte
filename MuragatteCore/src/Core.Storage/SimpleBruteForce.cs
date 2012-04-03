@@ -187,7 +187,7 @@ namespace Muragatte.Core.Storage
             foreach (Element n in _items)
             {
                 if (e != n && n.IsEnabled && n is T &&
-                    Vector2.Distance(e.Position, n.Position) < range)
+                    Vector2.Distance(e.Position, n.Position) - n.Radius < range)
                 {
                     inRange.Add((T)n);
                 }
@@ -206,7 +206,7 @@ namespace Muragatte.Core.Storage
             foreach (Element n in _items)
             {
                 if (e != n && n.IsEnabled && n is T &&
-                    Vector2.Distance(e.Position, n.Position) < range && match(n))
+                    Vector2.Distance(e.Position, n.Position) - n.Radius < range && match(n))
                 {
                     inRange.Add((T)n);
                 }

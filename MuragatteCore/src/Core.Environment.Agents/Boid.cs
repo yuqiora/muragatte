@@ -115,20 +115,38 @@ namespace Muragatte.Core.Environment.Agents
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Vector2.Zero();
-            IEnumerable<Element> tooClose = _personalArea.Within(locals);
+            IEnumerable<Element> companions = locals.Where(e => RelationshipWith(e) == ElementNature.Companion);
+            //IEnumerable<Element> goals = locals.Where(e => RelationshipWith(e) == ElementNature.Goal);
+            IEnumerable<Element> obstacles = locals.Where(e => RelationshipWith(e) == ElementNature.Obstacle);
+            IEnumerable<Element> tooClose = _personalArea.Within(companions);
             if (tooClose.Count() > 0)
             {
-                dirDelta = Separation(tooClose).Normalized();    
+                dirDelta = Separation(tooClose);    
             }
             else
             {
-                dirDelta = (Cohesion(locals) + Alignment(locals)).Normalized();
+                Vector2 avoid = Avoid(obstacles);
+                if (!avoid.IsZero)
+                {
+                    dirDelta = avoid;
+                }
+                else
+                {
+                    if (companions.Count() > 0)
+                    {
+                        dirDelta = Cohesion(companions) + Alignment(companions);
+                        if (_goal != null)
+                        {
+                            dirDelta += Seek(_goal, _dAssertivity);
+                        }
+                    }
+                    else
+                    {
+                        dirDelta = _goal == null ? Wander() : Seek(_goal, _dAssertivity);
+                    }
+                }
             }
-            if (_goal != null)
-            {
-                dirDelta += Seek(_goal, _dAssertivity);
-                dirDelta.Normalize();
-            }
+            dirDelta.Normalize();
             //noise temporary, needs further work
             //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
             _altDirection = (_direction + dirDelta + Angle.Random(1)).Normalized();

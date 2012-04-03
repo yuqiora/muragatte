@@ -107,6 +107,8 @@ namespace Muragatte.Common
             Vector2 v = new Vector2(_dX, _dY);
             v.Normalize();
             return v;
+            //Normalize();
+            //return this;
         }
 
         //public double DirectedAngle() {
