@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 
@@ -166,50 +167,28 @@ namespace Muragatte.Visual
             _wb.Clear();
             if (_visMode == VisualizationMode.Simulation)
             {
-                //if (_bEnvironment)
-                //{
-                //    DrawItems(_model.Elements.Stationary);
-                //}
-                //IEnumerable<AgentA> agents = _model.Elements.Agents;
+                IEnumerable<Element> stationary = _model.Elements.Stationary;
+                IEnumerable<Agent> agents = _model.Elements.Agents;
+                DrawNeighbourhoods(agents);
+                DrawEnvironment(stationary);
+                DrawAgents(agents);
                 //if (_bNeighbourhoods)
                 //{
-                //    DrawNeighbourhoods(agents);
-                //}
-                //if (_bTracks)
-                //{
-                //    DrawTracks(agents);
-                //}
-                //if (_bTrails)
-                //{
-                //    DrawTrails(agents);
+                //    foreach (Element e in _model.Elements)
+                //    {
+                //        if (e is Agent)
+                //        {
+                //            ((Agent)e).FieldOfView.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, Vector2.UpOne());
+                //        }
+                //    }
                 //}
                 //if (_bAgents)
                 //{
-                //    DrawItems(agents);
+                //    foreach (Element e in _model.Elements)
+                //    {
+                //        e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+                //    }
                 //}
-                //if (_bCentroids)
-                //{
-                //}
-
-                //will be reworked to take ordering into account
-                //env > neigh > ... > agents
-                if (_bNeighbourhoods)
-                {
-                    foreach (Element e in _model.Elements)
-                    {
-                        if (e is Agent)
-                        {
-                            ((Agent)e).FieldOfView.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, Common.Vector2.UpOne());
-                        }
-                    }
-                }
-                if (_bAgents)
-                {
-                    foreach (Element e in _model.Elements)
-                    {
-                        e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
-                    }
-                }
             }
             else
             {
@@ -217,22 +196,34 @@ namespace Muragatte.Visual
             }
         }
 
-        public void DrawItems<T>(IEnumerable<T> items) where T : Element
+        public void DrawEnvironment(IEnumerable<Element> items)
         {
-            foreach (T e in items)
+            if (_bEnvironment)
             {
-                e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
+                DrawItems(items);
             }
         }
         
         public void DrawCentroids(IEnumerable<Centroid> items)
         { }
 
+        public void DrawAgents(IEnumerable<Agent> items)
+        {
+            if (_bAgents)
+            {
+                DrawItems(items);
+            }
+        }
+
         public void DrawNeighbourhoods(IEnumerable<Agent> items)
         {
-            foreach (Agent a in items)
+            if (_bNeighbourhoods)
             {
-                a.FieldOfView.GetItemAs<Particle>().DrawInto(_wb, a.Position * _dScale, a.Direction);
+                Vector2 up = Vector2.UpOne();
+                foreach (Agent a in items)
+                {
+                    DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, up);
+                }
             }
         }
 
@@ -242,9 +233,22 @@ namespace Muragatte.Visual
         public void DrawTrails(IEnumerable<Agent> items)
         { }
 
-        private int Scaled(double value)
+        //private int Scaled(double value)
+        //{
+        //    return (int)(value * _dScale);
+        //}
+
+        private void DrawItems<T>(IEnumerable<T> items) where T : Element
         {
-            return (int)(value * _dScale);
+            foreach (T e in items)
+            {
+                DrawParticle(e.GetItemAs<Particle>(), e.Position, e.Direction);
+            }
+        }
+
+        private void DrawParticle(Particle particle, Vector2 position, Vector2 direction)
+        {
+            particle.DrawInto(_wb, position * _dScale, direction);
         }
 
         #endregion

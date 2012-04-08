@@ -146,7 +146,7 @@ namespace Muragatte.Core.Environment.Agents
                     }
                 }
             }
-            dirDelta.Normalize();
+            //dirDelta.Normalize();
             //noise temporary, needs further work
             //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
             _altDirection = (_direction + dirDelta + Angle.Random(1)).Normalized();

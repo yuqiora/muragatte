@@ -66,14 +66,5 @@ namespace Muragatte.Core.Environment
         }
 
         #endregion
-
-        #region Virtual Methods
-
-        public virtual Vector2 GetPosition()
-        {
-            return _position;
-        }
-
-        #endregion
     }
 }
