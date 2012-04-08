@@ -68,9 +68,10 @@ namespace Muragatte.Core.Environment
         {
             double x;
             double y;
+            double ss;
             //temporary
             //proper rng when Muragatte.Random done
-            Muragatte.Core.Environment.RNGs.Ran2.Circle(out x, out y);
+            Muragatte.Core.Environment.RNGs.Ran2.Disk(out x, out y, out ss);
             x = _position.X + x * _dWidth - (_dWidth / 2);
             y = _position.Y + y * _dHeight - (_dHeight / 2);
             return new Vector2(x, y);

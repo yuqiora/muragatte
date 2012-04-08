@@ -39,7 +39,7 @@ namespace Muragatte.GUI
     /// </summary>
     public partial class SandboxMainWindow : Window
     {
-        private const double TimePerStep = 0.5;
+        private const double TimePerStep = 0.25;
 
         private MultiAgentSystem _mas = null;
         private Visual.Canvas _canvas = null;
@@ -211,9 +211,10 @@ namespace Muragatte.GUI
 
         private void CreateObstacles()
         {
-            for (int i = 0; i < 20; i++)
+            int obstacles = int.Parse(txtObstacles.Text);
+            for (int i = 0; i < obstacles; i++)
             {
-                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, _mas.Region.Width / 3));
+                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, 30));
                 o.Item = ParticleFactory.Ellipse((int)(o.Radius * _canvas.Scale), Colors.Gray);
                 _obstacles.Add(o);
             }
@@ -323,6 +324,24 @@ namespace Muragatte.GUI
             if (_mas != null)
             {
                 _mas.Region.IsBorderedVertically = chbVertical.IsChecked.Value;
+            }
+        }
+
+        private void chbEnvironment_Checked(object sender, RoutedEventArgs e)
+        {
+            SetShowEnvironment();
+        }
+
+        private void chbEnvironment_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetShowEnvironment();
+        }
+
+        private void SetShowEnvironment()
+        {
+            if (_canvas != null)
+            {
+                _canvas.IsEnvironmentEnabled = chbEnvironment.IsChecked.Value;
             }
         }
     }

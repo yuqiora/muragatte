@@ -163,19 +163,18 @@ namespace Muragatte.Core.Environment
             return _iElementID == e._iElementID;
         }
 
-        public virtual bool IntersectsWith(Vector2 l1, Vector2 l2, out Vector2 ip)
+        public virtual bool IntersectsWith(Vector2 p1, Vector2 p2, out Vector2 ip)
         {
-            Vector2 l2ml1 = l2 - l1;
-            double u = ((_position - l1) * l2ml1) / (l2ml1 * l2ml1);
-            ip = l1 + u * l2ml1;
+            Vector2 p2mp1 = p2 - p1;
+            double u = ((_position - p1) * p2mp1) / (p2mp1 * p2mp1);
+            ip = p1 + u * p2mp1;
             if (u < 0 || u > 1 || Vector2.Distance(_position, ip) > Radius)
             {
                 return false;
             }
-            double a = Math.Pow(l2.X - l1.X, 2) + Math.Pow(l2.Y - l1.Y, 2);
-            double b = 2 * ((l2.X - l1.X) * (l1.X - _position.X) + (l2.Y - l1.Y) * (l1.Y - _position.Y));
-            double c = _position.X * _position.X + _position.Y * _position.Y + l1.X * l1.X + l1.Y * l1.Y -
-                       2 * (_position.X * l1.X + _position.Y * l1.Y) - Radius * Radius;
+            double a = p2mp1.LengthSquared;
+            double b = 2 * p2mp1 * (p1 - _position);
+            double c = _position.LengthSquared + p1.LengthSquared - 2 * _position * p1 - Radius * Radius;
             double bb4ac = b * b - 4 * a * c;
             if (bb4ac < 0)
             {
@@ -184,13 +183,28 @@ namespace Muragatte.Core.Environment
             if (bb4ac == 0)
             {
                 double u0 = -b / (2 * a);
-                ip = l1 + u0 * l2ml1;
+                ip = p1 + u0 * p2mp1;
                 return true;
             }
             double u1 = (-b + Math.Sqrt(bb4ac)) / (2 * a);
             double u2 = (-b - Math.Sqrt(bb4ac)) / (2 * a);
-            ip = l1 + Math.Min(u1, u2) * l2ml1;
+            ip = p1 + Math.Min(u1, u2) * p2mp1;
             return true;
+        }
+
+        public virtual Vector2 GetPosition()
+        {
+            return Position;
+        }
+
+        public virtual Vector2 GetDirection()
+        {
+            return Direction;
+        }
+
+        public virtual double GetSpeed()
+        {
+            return Speed;
         }
 
         #endregion

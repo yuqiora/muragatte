@@ -208,7 +208,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Seek(Element element, double weight = 1)
         {
-            return weight * (element.Position - _position).Normalized();
+            return weight * (element.GetPosition() - _position).Normalized();
         }
 
         protected virtual Vector2 Pursuit(IEnumerable<Element> elements, double weight = 1)
@@ -237,6 +237,7 @@ namespace Muragatte.Core.Environment
             {
                 return new Vector2(0, 0);
             }
+            int ytox = 0;
             Vector2 lineOfSight = VisibleRange * _direction;
             double nearest = lineOfSight.Length;
             Vector2 nearestPos = new Vector2(0, 0);
@@ -246,7 +247,7 @@ namespace Muragatte.Core.Environment
             Vector2 l2 = l1 + lineOfSight;
             foreach (Element e in elements)
             {
-                if (Vector2.Distance(_position, e.Position) > e.Radius + _dSpeed)
+                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + _dSpeed)
                 {
                     continue;
                 }
@@ -257,8 +258,8 @@ namespace Muragatte.Core.Environment
                     if (dist < nearest)
                     {
                         nearest = dist;
-                        nearestPos = e.Position;
-                        //nearestPos = ip;
+                        nearestPos = e.GetPosition();
+                        ytox = -1;
                     }
                 }
                 if (e.IntersectsWith(l1, l2, out ip))
@@ -267,17 +268,18 @@ namespace Muragatte.Core.Environment
                     if (dist < nearest)
                     {
                         nearest = dist;
-                        nearestPos = e.Position;
-                        //nearestPos = ip;
+                        nearestPos = e.GetPosition();
+                        ytox = 1;
                     }
                 }
             }
-            return nearest < lineOfSight.Length ? -weight * (nearestPos - _position).Normalized() : new Vector2(0, 0);
+            Vector2 v = (_position - nearestPos);
+            return nearest < lineOfSight.Length ? weight * new Vector2(ytox * v.Y, -ytox * v.X) : new Vector2(0, 0);
         }
 
         protected virtual Vector2 Wander(double weight = 10)
         {
-            return Direction + Angle.Random(weight);
+            return _direction + Angle.Random(weight);
         }
 
         protected virtual Vector2 Separation(IEnumerable<Element> elements, double weight = 1)
@@ -290,7 +292,7 @@ namespace Muragatte.Core.Environment
             Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
-                x += (e.Position - _position).Normalized();
+                x += (e.GetPosition() - _position).Normalized();
             }
             return weight * SteerAverage(x, elements.Count());
         }
@@ -300,7 +302,7 @@ namespace Muragatte.Core.Environment
             Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
-                x += e.Direction;
+                x += e.GetDirection();
             }
             return weight * SteerAverage(x, elements.Count());
         }
@@ -308,7 +310,7 @@ namespace Muragatte.Core.Environment
         //not sure if really needed, vectors normalized
         protected virtual Vector2 SteerAverage(Vector2 vector, int count)
         {
-            return vector;
+            return vector.Normalized();
             //return count > 0 ? vector / count : vector;
         }
         
