@@ -136,6 +136,27 @@ namespace Muragatte.Visual
             }
             return new ComplexParticle(wb, color);
         }
+
+        public static Particle Neighbourhood(int width, int height, Color color, Common.Angle angle)
+        {
+            if (width == 1 && height == 1)
+            {
+                return new ElementaryParticle(color);
+            }
+            WriteableBitmap wb = BitmapFactory.New(width, height);
+            if (width <= 2 || height <= 2)
+            {
+                wb.Clear(color);
+            }
+            else
+            {
+                wb.FillEllipse(0, 0, width - 1, height - 1, Colors.White);
+                Common.Vector2 v = new Common.Vector2(0, (width + height) / 2.0) + angle;
+                wb.FillTriangle(width / 2, height / 2, v.Xi, v.Yi, width - v.Xi, v.Yi, Colors.Transparent);
+                wb = wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
+            }
+            return new ComplexParticle(wb, color);
+        }
         
         #endregion
     }

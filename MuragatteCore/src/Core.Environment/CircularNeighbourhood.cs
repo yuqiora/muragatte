@@ -72,13 +72,13 @@ namespace Muragatte.Core.Environment
             return result;
         }
 
-        protected IEnumerable<T> WithinPartial<T>(IEnumerable<T> elements) where T : Environment.Element
+        protected IEnumerable<T> WithinPartial<T>(IEnumerable<T> elements, Angle angle) where T : Environment.Element
         {
             List<T> result = new List<T>();
             foreach (T e in elements)
             {
                 if (Vector2.Distance(_source.Position, e.Position) - e.Radius < _dRange &&
-                    Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= _dAngle)
+                    Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= angle)
                 {
                     result.Add(e);
                 }
@@ -88,13 +88,26 @@ namespace Muragatte.Core.Environment
 
         public override IEnumerable<T> Within<T>(IEnumerable<T> elements)
         {
-            if (_dAngle.Degrees == Angle.MaxDegree)
+            //if (_dAngle.Degrees == Angle.MaxDegree)
+            //{
+            //    return WithinFull(elements);
+            //}
+            //else
+            //{
+            //    return WithinPartial(elements, _dAngle);
+            //}
+            return Within(elements, _dAngle);
+        }
+
+        public override IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle)
+        {
+            if (angle.Degrees == Angle.MaxDegree)
             {
                 return WithinFull(elements);
             }
             else
             {
-                return WithinPartial(elements);
+                return WithinPartial(elements, angle);
             }
         }
 

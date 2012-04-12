@@ -79,6 +79,8 @@ namespace Muragatte.Core.Environment
 
         public abstract IEnumerable<T> Within<T>(IEnumerable<T> elements) where T : Environment.Element;
 
+        public abstract IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle) where T : Environment.Element;
+
         #endregion
 
     }

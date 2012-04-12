@@ -172,23 +172,6 @@ namespace Muragatte.Visual
                 DrawNeighbourhoods(agents);
                 DrawEnvironment(stationary);
                 DrawAgents(agents);
-                //if (_bNeighbourhoods)
-                //{
-                //    foreach (Element e in _model.Elements)
-                //    {
-                //        if (e is Agent)
-                //        {
-                //            ((Agent)e).FieldOfView.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, Vector2.UpOne());
-                //        }
-                //    }
-                //}
-                //if (_bAgents)
-                //{
-                //    foreach (Element e in _model.Elements)
-                //    {
-                //        e.GetItemAs<Particle>().DrawInto(_wb, e.Position * _dScale, e.Direction);
-                //    }
-                //}
             }
             else
             {
@@ -223,6 +206,7 @@ namespace Muragatte.Visual
                 foreach (Agent a in items)
                 {
                     DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, up);
+                    //DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, a.Direction);
                 }
             }
         }

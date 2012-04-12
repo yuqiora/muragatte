@@ -86,36 +86,47 @@ namespace Muragatte.Core.Environment
 
         #region Methods
 
-        public Vector2 Containment(Vector2 position, Vector2 direction, double weight)
+        public Vector2 Containment(Vector2 position, Vector2 direction, double range)
         {
             bool changed = false;
-            Vector2 v = position + direction * weight;
+            Vector2 v = position + direction * range;
+            Angle offset = new Angle(0);
+            Angle b = new Angle(direction);
             if (_bBorderedVertical && (v.X < 0 || v.X >= _iWidth))
             {
-                v.X -= 2 * (v.X % _iWidth);
+                Angle a = new Angle(new Vector2(v.X, 0));
+                offset = b - a;
+                offset.Normalize();
                 changed = true;
             }
             if (_bBorderedHorizontal && (v.Y < 0 || v.Y >= _iHeight))
             {
-                v.Y -= 2 * (v.Y % _iHeight);
+                Angle a = new Angle(new Vector2(0, v.Y));
+                Angle c = b - a;
+                c.Normalize();
+                if (c > offset)
+                {
+                    offset = c;
+                }
                 changed = true;
             }
-            return changed ? (v - position).Normalized() : direction;
+            return changed ? direction + offset.Sign() * Vector2.Perpendicular(v - position) : direction;
         }
 
         public Vector2 Outside(Vector2 position)
         {
-            return new Vector2(Outside(position.X, _iWidth), Outside(position.Y, _iHeight));
+            return new Vector2(Outside(position.X, _iWidth, _bBorderedVertical), Outside(position.Y, _iHeight, _bBorderedHorizontal));
         }
 
-        private double Outside(double value, double size) {
+        private double Outside(double value, double size, bool borders) {
+            double tmp = value - value % size;
             if (value < 0)
             {
-                return value % size + size;
+                return borders ? tmp : value % size + size;
             }
             if (value >= size)
             {
-                return value % size;
+                return borders ? tmp : value % size;
             }
             return value;
         }
