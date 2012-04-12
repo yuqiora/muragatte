@@ -51,9 +51,8 @@ namespace Muragatte.Core.Environment.Agents
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Separation(locals) + Cohesion(locals) + Alignment(locals);
-            //noise temporary, needs further work
-            //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
-            _altDirection = (_direction + dirDelta + Angle.Random(2)).Normalized();
+            //noise temporary, might need further work
+            _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(2));
             ProperDirection();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }
@@ -148,8 +147,7 @@ namespace Muragatte.Core.Environment.Agents
             }
             //dirDelta.Normalize();
             //noise temporary, needs further work
-            //_altDirection = (_direction + dirDelta + 0.3 * Vector2.RandomGauss().Normalized()).Normalized();
-            _altDirection = (_direction + dirDelta + Angle.Random(1)).Normalized();
+            _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(1));
             ProperDirection();
             _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
         }

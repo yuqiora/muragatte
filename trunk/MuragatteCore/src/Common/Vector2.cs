@@ -102,20 +102,6 @@ namespace Muragatte.Common
             }
         }
 
-        public Vector2 Normalized()
-        {
-            Vector2 v = new Vector2(_dX, _dY);
-            v.Normalize();
-            return v;
-            //Normalize();
-            //return this;
-        }
-
-        //public double DirectedAngle() {
-        //    double angle = AngleBetween(UpOne(), this);
-        //    return _dX < 0 ? -angle : angle;
-        //}
-
         public bool Equals(Vector2 v)
         {
             return _dX == v.X && _dY == v.Y;
@@ -220,6 +206,18 @@ namespace Muragatte.Common
         public static Vector2 Rotate(Vector2 vector, Angle angle)
         {
             return vector + angle;
+        }
+
+        public static Vector2 Normalized(Vector2 vector)
+        {
+            Vector2 v = vector;
+            v.Normalize();
+            return v;
+        }
+
+        public static Vector2 Perpendicular(Vector2 vector)
+        {
+            return new Vector2(vector._dY, -vector._dX);
         }
 
         public static Vector2 Zero()

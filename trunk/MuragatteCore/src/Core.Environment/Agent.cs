@@ -182,6 +182,7 @@ namespace Muragatte.Core.Environment
         {
             ContainedInRegion();
             DirectionInBounds();
+            _altDirection.Normalize();
         }
 
         protected void ContainedInRegion()
@@ -208,7 +209,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 Seek(Element element, double weight = 1)
         {
-            return weight * (element.GetPosition() - _position).Normalized();
+            return weight * Vector2.Normalized(element.GetPosition() - _position);
         }
 
         protected virtual Vector2 Pursuit(IEnumerable<Element> elements, double weight = 1)
@@ -241,9 +242,9 @@ namespace Muragatte.Core.Environment
             Vector2 lineOfSight = VisibleRange * _direction;
             double nearest = lineOfSight.Length;
             Vector2 nearestPos = new Vector2(0, 0);
-            Vector2 r1 = _position + new Vector2(_direction.Y * Radius, -_direction.X * Radius);
+            Vector2 r1 = _position + Vector2.Perpendicular(_direction * Radius);
             Vector2 r2 = r1 + lineOfSight;
-            Vector2 l1 = _position + new Vector2(-_direction.Y * Radius, _direction.X * Radius);
+            Vector2 l1 = _position - Vector2.Perpendicular(_direction * Radius);
             Vector2 l2 = l1 + lineOfSight;
             foreach (Element e in elements)
             {
@@ -273,8 +274,7 @@ namespace Muragatte.Core.Environment
                     }
                 }
             }
-            Vector2 v = (_position - nearestPos);
-            return nearest < lineOfSight.Length ? weight * new Vector2(ytox * v.Y, -ytox * v.X) : new Vector2(0, 0);
+            return nearest < lineOfSight.Length ? weight * ytox * Vector2.Perpendicular(_position - nearestPos) : new Vector2(0, 0);
         }
 
         protected virtual Vector2 Wander(double weight = 10)
@@ -292,7 +292,7 @@ namespace Muragatte.Core.Environment
             Vector2 x = new Vector2(0, 0);
             foreach (Element e in elements)
             {
-                x += (e.GetPosition() - _position).Normalized();
+                x += Vector2.Normalized(e.GetPosition() - _position);
             }
             return weight * SteerAverage(x, elements.Count());
         }
@@ -310,7 +310,8 @@ namespace Muragatte.Core.Environment
         //not sure if really needed, vectors normalized
         protected virtual Vector2 SteerAverage(Vector2 vector, int count)
         {
-            return vector.Normalized();
+            return vector;
+            //return Vector2.Normalized(vector);
             //return count > 0 ? vector / count : vector;
         }
         

@@ -48,6 +48,8 @@ namespace Muragatte.GUI
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
 
+        private Angle boidFOVAngle = new Angle(150);
+
         public SandboxMainWindow()
         {
             InitializeComponent();
@@ -67,7 +69,8 @@ namespace Muragatte.GUI
             CreateSpecies();
             Color fovC = Colors.LightGreen;
             fovC.A = 64;
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC, true);
+            //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, boidFOVAngle);
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateBoids(agentCount, fovRange, fovImg);
             _mas.Initialize();
             _canvas.Redraw();
@@ -84,7 +87,7 @@ namespace Muragatte.GUI
             CreateSpecies();
             Color fovC = Colors.LightGreen;
             fovC.A = 64;
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC, true);
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
             _mas.Initialize();
             _canvas.Redraw();
@@ -240,7 +243,7 @@ namespace Muragatte.GUI
         {
             for (int i = 0; i < count; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, new Angle(150));
+                Neighbourhood n = new CircularNeighbourhood(fovRange, boidFOVAngle);
                 n.Item = fovImg;
                 Agent a = new Boid(_mas, n, new Angle(60));
                 a.Speed = 1;
