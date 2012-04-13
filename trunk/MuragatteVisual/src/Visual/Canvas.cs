@@ -202,7 +202,7 @@ namespace Muragatte.Visual
         {
             if (_bNeighbourhoods)
             {
-                Vector2 up = Vector2.UpOne();
+                Vector2 up = Vector2.X0Y1();
                 foreach (Agent a in items)
                 {
                     DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, up);

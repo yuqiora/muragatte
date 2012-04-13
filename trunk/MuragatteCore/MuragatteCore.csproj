@@ -47,6 +47,8 @@
     <Compile Include="src\Common\Angle.cs" />
     <Compile Include="src\Common\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Core.Environment.Agents\LoneWanderer.cs" />
+    <Compile Include="src\Core.Environment.Agents\Versatile.cs" />
     <Compile Include="src\Core.Environment\Agent.cs" />
     <Compile Include="src\Core.Environment.Agents\Boid.cs" />
     <Compile Include="src\Core.Environment\CircularNeighbourhood.cs" />

@@ -225,9 +225,14 @@ namespace Muragatte.Common
             return new Vector2(0, 0);
         }
 
-        public static Vector2 UpOne()
+        public static Vector2 X0Y1()
         {
             return new Vector2(0, 1);
+        }
+
+        public static Vector2 X1Y0()
+        {
+            return new Vector2(1, 0);
         }
 
         //will be modified accordingly when Muragatte.Random is done
