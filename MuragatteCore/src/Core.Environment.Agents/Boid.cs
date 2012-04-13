@@ -50,14 +50,17 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = Separation(locals) + Cohesion(locals) + Alignment(locals);
+            Vector2 dirDelta = SteeringSeparation(locals) + SteeringCohesion(locals) + SteeringAlignment(locals);
             //noise temporary, might need further work
             _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(2));
             ProperDirection();
-            _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
+            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
         #endregion
+
+        public override void SetModifiers(params double[] values)
+        { }
     }
 
     //temporary
@@ -115,41 +118,40 @@ namespace Muragatte.Core.Environment.Agents
         {
             Vector2 dirDelta = Vector2.Zero();
             IEnumerable<Element> companions = locals.Where(e => RelationshipWith(e) == ElementNature.Companion);
-            //IEnumerable<Element> goals = locals.Where(e => RelationshipWith(e) == ElementNature.Goal);
             IEnumerable<Element> obstacles = locals.Where(e => RelationshipWith(e) == ElementNature.Obstacle);
             IEnumerable<Element> tooClose = _personalArea.Within(companions);
-            if (tooClose.Count() > 0)
+            Vector2 avoid = SteeringAvoid(obstacles, VisibleRange);
+            if (!avoid.IsZero)
             {
-                dirDelta = Separation(tooClose);    
+                dirDelta = avoid;
             }
             else
             {
-                Vector2 avoid = Avoid(obstacles);
-                if (!avoid.IsZero)
+                if (tooClose.Count() > 0)
                 {
-                    dirDelta = avoid;
+                    dirDelta = SteeringSeparation(tooClose);    
                 }
                 else
                 {
                     if (companions.Count() > 0)
                     {
-                        dirDelta = Cohesion(companions) + Alignment(companions);
+                        dirDelta = SteeringCohesion(companions) + SteeringAlignment(companions);
                         if (_goal != null)
                         {
-                            dirDelta += Seek(_goal, _dAssertivity);
+                            dirDelta += SteeringSeek(_goal, _dAssertivity);
                         }
                     }
                     else
                     {
-                        dirDelta = _goal == null ? Wander() : Seek(_goal, _dAssertivity);
+                        dirDelta = _goal == null ? SteeringWander() : SteeringSeek(_goal, _dAssertivity);
                     }
                 }
             }
-            //dirDelta.Normalize();
+            dirDelta.Normalize();
             //noise temporary, needs further work
             _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(1));
             ProperDirection();
-            _altPosition = _position + _altDirection * _dSpeed * _model.TimePerStep;
+            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
     }

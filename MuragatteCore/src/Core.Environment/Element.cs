@@ -154,6 +154,16 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        public Vector2 PredictPositionAfter()
+        {
+            return PredictPositionAfter((int)Math.Ceiling(1 / _model.TimePerStep));
+        }
+
+        public Vector2 PredictPositionAfter(int steps)
+        {
+            return _bStationary || steps == 0 ? _position : _position + Speed * _model.TimePerStep * steps * Direction;
+        }
+
         #endregion
 
         #region Virtual Methods
