@@ -20,20 +20,20 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Fields
 
-        private double _dAltSpeed = 1;
-        private Goal _goal = null;
-        private Neighbourhood _personalArea = null;
-        private bool _bAdjustSpeed = true;
-        private double _dAssertivity = 0.5;
-        private double _dCredibility = 1;
-        private double _dWeightSeparation = 1;
-        private double _dWeightCohesion = 1;
-        private double _dWeightAlignment = 1;
-        private double _dWeightAvoid = 1;
-        private double _dWeightSeekPursuit = 1;
-        private double _dWeightFleeEvasion = 1;
-        private double _dWeightAdjustSpeed = 1;
-        private double _dWanderRate = 10;
+        protected double _dAltSpeed = 1;
+        protected Goal _goal = null;
+        protected Neighbourhood _personalArea = null;
+        protected bool _bAdjustSpeed = true;
+        protected double _dAssertivity = 0.5;
+        protected double _dCredibility = 1;
+        protected double _dWeightSeparation = 1;
+        protected double _dWeightCohesion = 1;
+        protected double _dWeightAlignment = 1;
+        protected double _dWeightAvoid = 1;
+        protected double _dWeightSeekPursuit = 1;
+        protected double _dWeightFleeEvasion = 1;
+        protected double _dWeightAdjustSpeed = 1;
+        protected double _dWanderRate = 10;
 
         #endregion
 
@@ -309,7 +309,14 @@ namespace Muragatte.Core.Environment.Agents
             _direction = _altDirection;
             _dSpeed = _dAltSpeed;
         }
-        
+
+        public override ElementStatus ReportStatus()
+        {
+            return ReportStatus(_bAdjustSpeed ? 1 : 0, _dAssertivity, _dCredibility,
+                _dWeightSeparation, _dWeightCohesion, _dWeightAlignment, _dWeightAvoid,
+                _dWeightSeekPursuit, _dWeightFleeEvasion, _dWeightAdjustSpeed, _dWanderRate);
+        }
+
         #endregion
     }
 }

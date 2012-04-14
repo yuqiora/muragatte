@@ -19,9 +19,6 @@ namespace Muragatte.Core.Environment
 {
     public abstract class Agent : Element
     {
-        //will be simplified
-        //currently has too much for base agent
-
         #region Fields
 
         protected Vector2 _direction = new Vector2(0, 1);
@@ -203,8 +200,19 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringSeekOrPursuit(IEnumerable<Element> elements, double weight = 1)
         {
-            //temporary until pursuit is done
-            return SteeringSeek(elements, weight);
+            Element target = null;
+            double distance = double.MaxValue;
+            foreach (Element e in elements)
+            {
+                Vector2 v = e.IsStationary ? e.GetPosition() : e.PredictPositionAfter();
+                double x = Vector2.Distance(_position, v);
+                if (x < distance)
+                {
+                    distance = x;
+                    target = e;
+                }
+            }
+            return target.IsStationary ? SteeringSeek(target, weight) : SteeringPursuit(target, weight);
         }
 
         protected virtual Vector2 SteeringSeek(Vector2 position, double weight = 1)
@@ -233,19 +241,31 @@ namespace Muragatte.Core.Environment
             return SteeringSeek(target, weight);
         }
 
+        //same as SteeringSeek
         protected virtual Vector2 SteeringPursuit(Vector2 position, double weight = 1)
         {
-            return new Vector2();
+            return SteeringSeek(position, weight);
         }
 
         protected virtual Vector2 SteeringPursuit(Element element, double weight = 1)
         {
-            return new Vector2();
+            return element == null ? Vector2.Zero() : SteeringSeek(element.PredictPositionAfter(), weight);
         }
 
         protected virtual Vector2 SteeringPursuit(IEnumerable<Element> elements, double weight = 1)
         {
-            return new Vector2();
+            Element target = null;
+            double distance = double.MaxValue;
+            foreach (Element e in elements)
+            {
+                double x = Vector2.Distance(_position, e.PredictPositionAfter());
+                if (x < distance)
+                {
+                    distance = x;
+                    target = e;
+                }
+            }
+            return SteeringPursuit(target, weight);
         }
 
         protected virtual Vector2 SteeringFleeOrEvasion(Element element, double weight = 1)
@@ -284,19 +304,30 @@ namespace Muragatte.Core.Environment
             return SteeringFlee(SteerAverage(v, count), weight);
         }
 
+        //same as SteeringFlee
         protected virtual Vector2 SteeringEvasion(Vector2 position, double weight = 1)
         {
-            return new Vector2();
+            return SteeringSeek(position, -weight);
         }
 
         protected virtual Vector2 SteeringEvasion(Element element, double weight = 1)
         {
-            return new Vector2();
+            return SteeringPursuit(element, -weight);
         }
 
         protected virtual Vector2 SteeringEvasion(IEnumerable<Element> elements, double weight = 1)
         {
-            return new Vector2();
+            Vector2 v = Vector2.Zero();
+            int count = elements.Count();
+            if (count == 0)
+            {
+                return v;
+            }
+            foreach (Element e in elements)
+            {
+                v += e.IsStationary ? e.GetPosition() : e.PredictPositionAfter();
+            }
+            return SteeringFlee(SteerAverage(v, count), weight);
         }
 
         protected virtual Vector2 SteeringAvoid(IEnumerable<Element> elements, double range, double weight = 1)
