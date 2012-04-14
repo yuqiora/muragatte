@@ -161,7 +161,13 @@ namespace Muragatte.Core.Environment
 
         public Vector2 PredictPositionAfter(int steps)
         {
-            return _bStationary || steps == 0 ? _position : _position + Speed * _model.TimePerStep * steps * Direction;
+            return _bStationary || steps == 0 ? GetPosition() : GetPosition() + Speed * _model.TimePerStep * steps * Direction;
+        }
+
+        protected ElementStatus ReportStatus(params double[] modifiers)
+        {
+            return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
+                _species == null ? -1 : _species.ID, modifiers);
         }
 
         #endregion
@@ -215,6 +221,11 @@ namespace Muragatte.Core.Environment
         public virtual double GetSpeed()
         {
             return Speed;
+        }
+
+        public virtual ElementStatus ReportStatus()
+        {
+            return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled, _species == null ? -1 : _species.ID);
         }
 
         #endregion

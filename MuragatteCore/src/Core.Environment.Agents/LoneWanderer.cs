@@ -20,8 +20,8 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Fields
 
-        private double _dWanderRate;
-        private double _dAvoidWeight;
+        protected double _dWanderRate;
+        protected double _dAvoidWeight;
 
         #endregion
 
@@ -103,7 +103,12 @@ namespace Muragatte.Core.Environment.Agents
             }
         }
 
-        private bool NotIgnoredOrUnknown(ElementNature nature)
+        public override ElementStatus ReportStatus()
+        {
+            return ReportStatus(_dWanderRate, _dAvoidWeight);
+        }
+
+        protected bool NotIgnoredOrUnknown(ElementNature nature)
         {
             return nature != ElementNature.Ignored && nature != ElementNature.Unknown;
         }

@@ -18,17 +18,62 @@ namespace Muragatte.Core.Environment.Agents
 {
     public class Boid : Agent
     {
+        #region Fields
+
+        protected double _dWeightSeparation = 1;
+        protected double _dWeightCohesion = 1;
+        protected double _dWeightAlignment = 1;
+
+        #endregion
+
         #region Constructors
 
         public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle)
             : base(model, fieldOfView, turningAngle) { }
 
-        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle)
+        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
+            double wSeparation, double wCohesion, double wAlignment)
             : base(model, fieldOfView, turningAngle)
         {
-            _direction = direction;
-            _dSpeed = speed;
+            _dWeightSeparation = wSeparation;
+            _dWeightCohesion = wCohesion;
+            _dWeightAlignment = wAlignment;
+        }
+
+        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
+            double speed, Neighbourhood fieldOfView, Angle turningAngle)
+            : base(model, position, direction, speed, fieldOfView, turningAngle) { }
+
+        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
+            double speed, Neighbourhood fieldOfView, Angle turningAngle,
+            double wSeparation, double wCohesion, double wAlignment)
+            : base(model, position, direction, speed, fieldOfView, turningAngle)
+        {
+            _dWeightSeparation = wSeparation;
+            _dWeightCohesion = wCohesion;
+            _dWeightAlignment = wAlignment;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public double WeightSeparation
+        {
+            get { return _dWeightSeparation; }
+            set { _dWeightSeparation = value; }
+        }
+
+        public double WeightCohesion
+        {
+            get { return _dWeightCohesion; }
+            set { _dWeightCohesion = value; }
+        }
+
+        public double WeightAlignment
+        {
+            get { return _dWeightAlignment; }
+            set { _dWeightAlignment = value; }
         }
 
         #endregion
@@ -50,20 +95,44 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = SteeringSeparation(locals) + SteeringCohesion(locals) + SteeringAlignment(locals);
+            Vector2 dirDelta = SteeringSeparation(locals, _dWeightSeparation) +
+                SteeringCohesion(locals, _dWeightCohesion) +
+                SteeringAlignment(locals, _dWeightAlignment);
             //noise temporary, might need further work
             _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(2));
             ProperDirection();
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
-        #endregion
-
         public override void SetModifiers(params double[] values)
-        { }
+        {
+            if (values.Length >= 3)
+            {
+                if (ChangeModifier(values[0]))
+                {
+                    _dWeightSeparation = values[0];
+                }
+                if (ChangeModifier(values[1]))
+                {
+                    _dWeightCohesion = values[1];
+                }
+                if (ChangeModifier(values[2]))
+                {
+                    _dWeightAlignment = values[2];
+                }
+            }
+        }
+
+        public override ElementStatus ReportStatus()
+        {
+            return ReportStatus(_dWeightSeparation, _dWeightCohesion, _dWeightAlignment);
+        }
+
+        #endregion
     }
 
     //temporary
+    //base for the one used in thesis experiments
     public class AdvancedBoid : Boid
     {
         private Goal _goal = null;
@@ -113,7 +182,6 @@ namespace Muragatte.Core.Environment.Agents
             ApplyRules(fov);
         }
 
-        //based on Couzinetal2005
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Vector2.Zero();
