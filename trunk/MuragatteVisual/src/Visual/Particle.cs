@@ -56,7 +56,7 @@ namespace Muragatte.Visual
 
         #region Abstract Methods
 
-        public abstract void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction);
+        public abstract void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction, float alpha = 1);
 
         #endregion
     }

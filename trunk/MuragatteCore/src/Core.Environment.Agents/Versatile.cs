@@ -310,7 +310,7 @@ namespace Muragatte.Core.Environment.Agents
             _dSpeed = _dAltSpeed;
         }
 
-        public override ElementStatus ReportStatus()
+        public override Storage.ElementStatus ReportStatus()
         {
             return ReportStatus(_bAdjustSpeed ? 1 : 0, _dAssertivity, _dCredibility,
                 _dWeightSeparation, _dWeightCohesion, _dWeightAlignment, _dWeightAvoid,

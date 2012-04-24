@@ -64,6 +64,9 @@
     <Compile Include="src\Core.Environment\Obstacle.cs" />
     <Compile Include="src\Core.Environment\Region.cs" />
     <Compile Include="src\Core.Environment\Species.cs" />
+    <Compile Include="src\Core.Storage\ElementStatus.cs" />
+    <Compile Include="src\Core.Storage\History.cs" />
+    <Compile Include="src\Core.Storage\HistoryRecord.cs" />
     <Compile Include="src\Core.Storage\ISpareItem.cs" />
     <Compile Include="src\Core.Storage\IStorage.cs" />
     <Compile Include="src\Core.Storage\SimpleBruteForce.cs" />

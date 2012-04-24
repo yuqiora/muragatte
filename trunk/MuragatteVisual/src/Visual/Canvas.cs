@@ -17,26 +17,25 @@ using System.Windows.Media.Imaging;
 using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 
 namespace Muragatte.Visual
 {
-    public enum VisualizationMode { Replay, Simulation }
-
     public class Canvas
     {
         #region Fields
 
         private WriteableBitmap _wb = null;
         private double _dScale = 1;
-        private System.Windows.Rect _canvasArea;
+        private System.Windows.Rect _canvasArea;    //probably not needed
         private bool _bEnvironment = true;
         private bool _bNeighbourhoods = false;
         private bool _bTracks = false;
         private bool _bTrails = false;
         private bool _bAgents = true;
         private bool _bCentroids = false;
+        private int _iTrailLength = 10;
         private MultiAgentSystem _model = null;
-        private VisualizationMode _visMode = VisualizationMode.Simulation;
 
         #endregion
 
@@ -125,16 +124,16 @@ namespace Muragatte.Visual
             set { _bCentroids = value; }
         }
 
+        public int TrailLength
+        {
+            get { return _iTrailLength; }
+            set { _iTrailLength = value; }
+        }
+
         public MultiAgentSystem Model
         {
             get { return _model; }
             set { _model = value; }
-        }
-
-        public VisualizationMode VisMode
-        {
-            get { return _visMode; }
-            set { _visMode = value; }
         }
 
         #endregion
@@ -162,21 +161,12 @@ namespace Muragatte.Visual
 
         public void Redraw()
         {
-            //no tracks/trails in simulation, only in replay when history available
-
             _wb.Clear();
-            if (_visMode == VisualizationMode.Simulation)
-            {
-                IEnumerable<Element> stationary = _model.Elements.Stationary;
-                IEnumerable<Agent> agents = _model.Elements.Agents;
-                DrawNeighbourhoods(agents);
-                DrawEnvironment(stationary);
-                DrawAgents(agents);
-            }
-            else
-            {
-                //draw from history
-            }
+            IEnumerable<Element> stationary = _model.Elements.Stationary;
+            IEnumerable<Agent> agents = _model.Elements.Agents;
+            DrawNeighbourhoods(agents);
+            DrawEnvironment(stationary);
+            DrawAgents(agents);
         }
 
         public void DrawEnvironment(IEnumerable<Element> items)
@@ -217,11 +207,6 @@ namespace Muragatte.Visual
         public void DrawTrails(IEnumerable<Agent> items)
         { }
 
-        //private int Scaled(double value)
-        //{
-        //    return (int)(value * _dScale);
-        //}
-
         private void DrawItems<T>(IEnumerable<T> items) where T : Element
         {
             foreach (T e in items)
@@ -230,10 +215,144 @@ namespace Muragatte.Visual
             }
         }
 
-        private void DrawParticle(Particle particle, Vector2 position, Vector2 direction)
+        private void DrawParticle(Particle particle, Vector2 position, Vector2 direction, float alpha = 1)
         {
-            particle.DrawInto(_wb, position * _dScale, direction);
+            particle.DrawInto(_wb, position * _dScale, direction, alpha);
         }
+
+        #region From History
+
+        public void DrawEnvironment(IEnumerable<Element> items, HistoryRecord record)
+        {
+            if (_bEnvironment)
+            {
+                DrawItems(items, record);
+            }
+        }
+
+        public void DrawAgents(IEnumerable<Agent> items, HistoryRecord record, float alpha = 1)
+        {
+            if (_bAgents)
+            {
+                DrawItems(items, record, alpha);
+            }
+        }
+
+        public void DrawNeighbourhoods(IEnumerable<Agent> items, HistoryRecord record)
+        {
+            if (_bNeighbourhoods)
+            {
+                Vector2 up = Vector2.X0Y1();
+                foreach (Agent a in items)
+                {
+                    ElementStatus es = record[a.ID];
+                    if (es.IsEnabled)
+                    {
+                        DrawParticle(a.FieldOfView.GetItemAs<Particle>(), es.Position, up);
+                        //DrawParticle(a.FieldOfView.GetItemAs<Particle>(), es.Position, es.Direction);
+                    }
+                }
+            }
+        }
+
+        public void DrawTracks(IEnumerable<Agent> items, History history, int step)
+        {
+            if (_bTracks)
+            {
+                int time = Math.Min(step, history.Count);
+                foreach (Agent a in items)
+                {
+                    List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, time));
+                    foreach (int[] segment in segments)
+                    {
+                        _wb.DrawPolyline(segment, a.GetItemAs<Particle>().Color);
+                    }
+                }
+            }
+        }
+
+        public void DrawTrails(IEnumerable<Agent> items, History history, int step)
+        {
+            if (_bTrails)
+            {
+                float alphaInc = 1.0f / (_iTrailLength + 1);
+                float alpha = alphaInc;
+                for (int i = Math.Max(0, step - _iTrailLength); i < step; i++)
+                {
+                    DrawItems(items, history[i], alpha);
+                    alpha += alphaInc;
+                }
+            }
+        }
+
+        private void DrawItems<T>(IEnumerable<T> items, HistoryRecord record, float alpha = 1) where T : Element
+        {
+            foreach (T e in items)
+            {
+                ElementStatus es = record[e.ID];
+                if (es.IsEnabled)
+                {
+                    DrawParticle(e.GetItemAs<Particle>(), es.Position, es.Direction, alpha);
+                }
+            }
+        }
+
+        public void Redraw(History history, int step)
+        {
+            _wb.Clear();
+            IEnumerable<Element> stationary = _model.Elements.Stationary;
+            IEnumerable<Agent> agents = _model.Elements.Agents;
+            DrawNeighbourhoods(agents, history[step]);
+            DrawEnvironment(stationary, history[step]);
+            DrawTracks(agents, history, step);
+            //DrawTracks(agents, history, history.Count);
+            DrawTrails(agents, history, step);
+            DrawAgents(agents, history[step]);
+        }
+
+        public void Redraw(History history)
+        {
+            Redraw(history, history.Count - 1);
+        }
+
+        private List<int[]> TrackLinePoints(List<Vector2> positions)
+        {
+            int limit = Math.Min(UnitWidth, UnitHeight) / 3;
+            List<int[]> points = new List<int[]>();
+            if (positions.Count > 0)
+            {
+                List<int> part = new List<int>();
+                part.Add(Scaled(positions[0].X));
+                part.Add(_wb.PixelHeight - Scaled(positions[0].Y) - 1);
+                for (int i = 1; i < positions.Count; i++)
+                {
+                    if (IsOutside(positions[i - 1], positions[i], limit))
+                    {
+                        points.Add(part.ToArray());
+                        part.Clear();
+                    }
+                    part.Add(Scaled(positions[i].X));
+                    part.Add(_wb.PixelHeight - Scaled(positions[i].Y) - 1);
+                }
+                points.Add(part.ToArray());
+            }
+            return points;
+        }
+
+        private bool IsOutside(Vector2 a, Vector2 b, int limit)
+        {
+            return (a.X < limit && b.X > UnitWidth - limit) ||
+                (a.X > UnitWidth - limit && b.X < limit) ||
+                (a.Y < limit && b.Y > UnitHeight - limit) ||
+                (a.Y > UnitHeight - limit && b.Y < limit);
+        }
+
+        private int Scaled(double value)
+        {
+            return (int)(value * _dScale);
+        }
+
+        #endregion
 
         #endregion
     }

@@ -103,7 +103,7 @@ namespace Muragatte.Core.Environment.Agents
             }
         }
 
-        public override ElementStatus ReportStatus()
+        public override Storage.ElementStatus ReportStatus()
         {
             return ReportStatus(_dWanderRate, _dAvoidWeight);
         }
