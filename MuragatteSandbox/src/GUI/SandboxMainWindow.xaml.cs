@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
@@ -39,7 +40,13 @@ namespace Muragatte.GUI
     /// </summary>
     public partial class SandboxMainWindow : Window
     {
+        #region Constants
+
         private const double TimePerStep = 0.25;
+
+        #endregion
+
+        #region Fields
 
         private MultiAgentSystem _mas = null;
         private Visual.Canvas _canvas = null;
@@ -50,11 +57,34 @@ namespace Muragatte.GUI
 
         private Angle boidFOVAngle = new Angle(150);
 
+        //private BackgroundWorker _worker = new BackgroundWorker();
+
+        #endregion
+
         public SandboxMainWindow()
         {
+            //_worker.WorkerReportsProgress = true;
+            //_worker.WorkerSupportsCancellation = true;
+            //_worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+            //_worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
+            //_worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
             InitializeComponent();
         }
 
+        //void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        //{
+        //}
+
+        //void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        //{
+        //}
+
+        //void _worker_DoWork(object sender, DoWorkEventArgs e)
+        //{
+        //}
+
+        #region Button Events
+        
         private void btnEnvironment_Click(object sender, RoutedEventArgs e)
         {
             CreateObstacles();
@@ -95,6 +125,10 @@ namespace Muragatte.GUI
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < 499; i++)
+            {
+                _mas.Update();
+            }
             UpdateAndRedraw();
         }
 
@@ -125,17 +159,10 @@ namespace Muragatte.GUI
             txtSteps.Text = _mas.NumberOfSteps.ToString();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (_view != null)
-            {
-                _view.Close();
-            }
-        }
-
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
         {
-            if (_bPlaying) {
+            if (_bPlaying)
+            {
                 _bPlaying = false;
                 btnPlayPause.Content = "Play";
                 CompositionTarget.Rendering -= CompositionTarget_Rendering;
@@ -148,22 +175,31 @@ namespace Muragatte.GUI
             }
         }
 
-        void CompositionTarget_Rendering(object sender, EventArgs e)
-        {
-            UpdateAndRedraw();
-        }
-
-        private void UpdateAndRedraw()
-        {
-            _mas.Update();
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
-            _canvas.Redraw();
-        }
-
         private void btnScatter_Click(object sender, RoutedEventArgs e)
         {
             _mas.Scatter();
         }
+
+        private void btnGroup_Click(object sender, RoutedEventArgs e)
+        {
+            double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            _mas.GroupStart(fov * 3);
+        }
+
+        private void btnReplay_Click(object sender, RoutedEventArgs e)
+        {
+            //if (_mas.NumberOfSteps > 0 && !_bPlaying && !_worker.IsBusy)
+            //{
+            //    prbReplay.Value = 0;
+            //    prbReplay.Visibility = System.Windows.Visibility.Visible;
+            //    _worker.RunWorkerAsync(_mas.NumberOfSteps);
+            //    //_canvas.Redraw(_mas.History);
+            //}
+        }
+
+        #endregion
+
+        #region Checkbox Events
 
         private void chbAgents_Checked(object sender, RoutedEventArgs e)
         {
@@ -183,6 +219,102 @@ namespace Muragatte.GUI
         private void chbNeighbourhoods_Unchecked(object sender, RoutedEventArgs e)
         {
             SetShowNeighbourhoods();
+        }
+
+        private void chbHorizontal_Checked(object sender, RoutedEventArgs e)
+        {
+            HorizontalBorders();
+        }
+
+        private void chbHorizontal_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HorizontalBorders();
+        }
+
+        private void chbVertical_Checked(object sender, RoutedEventArgs e)
+        {
+            VerticalBorders();
+        }
+
+        private void chbVertical_Unchecked(object sender, RoutedEventArgs e)
+        {
+            VerticalBorders();
+        }
+
+        private void chbEnvironment_Checked(object sender, RoutedEventArgs e)
+        {
+            SetShowEnvironment();
+        }
+
+        private void chbEnvironment_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetShowEnvironment();
+        }
+
+        private void chbTracks_Checked(object sender, RoutedEventArgs e)
+        {
+            SetShowTracks();
+        }
+
+        private void chbTracks_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetShowTracks();
+        }
+
+        private void chbTrails_Checked(object sender, RoutedEventArgs e)
+        {
+            SetShowTrails();
+        }
+
+        private void chbTrails_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetShowTrails();
+        }
+
+        private void chbCentroids_Checked(object sender, RoutedEventArgs e)
+        {
+            SetShowCentroids();
+        }
+
+        private void chbCentroids_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetShowCentroids();
+        }
+
+        #endregion
+
+        #region Other Events
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_view != null)
+            {
+                _view.Close();
+            }
+        }
+
+        void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            UpdateAndRedraw();
+        }
+
+        private void sldSteps_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_mas.NumberOfSteps > 0 && !_bPlaying)
+            {
+                _canvas.Redraw(_mas.History, (int)sldSteps.Value);
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void UpdateAndRedraw()
+        {
+            _mas.Update();
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
+            Redraw();
         }
 
         private void SetShowAgents()
@@ -288,32 +420,6 @@ namespace Muragatte.GUI
             }
         }
 
-        private void btnGroup_Click(object sender, RoutedEventArgs e)
-        {
-            double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            _mas.GroupStart(fov * 3);
-        }
-
-        private void chbHorizontal_Checked(object sender, RoutedEventArgs e)
-        {
-            HorizontalBorders();
-        }
-
-        private void chbHorizontal_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HorizontalBorders();
-        }
-
-        private void chbVertical_Checked(object sender, RoutedEventArgs e)
-        {
-            VerticalBorders();
-        }
-
-        private void chbVertical_Unchecked(object sender, RoutedEventArgs e)
-        {
-            VerticalBorders();
-        }
-
         private void HorizontalBorders()
         {
             if (_mas != null)
@@ -330,16 +436,6 @@ namespace Muragatte.GUI
             }
         }
 
-        private void chbEnvironment_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowEnvironment();
-        }
-
-        private void chbEnvironment_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowEnvironment();
-        }
-
         private void SetShowEnvironment()
         {
             if (_canvas != null)
@@ -347,5 +443,40 @@ namespace Muragatte.GUI
                 _canvas.IsEnvironmentEnabled = chbEnvironment.IsChecked.Value;
             }
         }
+
+        private void SetShowTracks()
+        {
+            if (_canvas != null)
+            {
+                _canvas.IsTracksEnabled = chbTracks.IsChecked.Value;
+            }
+        }
+
+        private void SetShowTrails()
+        {
+            if (_canvas != null)
+            {
+                _canvas.IsTrailsEnabled = chbTrails.IsChecked.Value;
+            }
+        }
+
+        private void SetShowCentroids()
+        {
+            if (_canvas != null)
+            {
+                _canvas.IsCentroidsEnabled = chbCentroids.IsChecked.Value;
+            }
+        }
+
+        private void Redraw()
+        {
+            if (chbVisualize.IsChecked.Value)
+            {
+                //_canvas.Redraw();
+                _canvas.Redraw(_mas.History);
+            }
+        }
+
+        #endregion
     }
 }

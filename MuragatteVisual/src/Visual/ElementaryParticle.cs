@@ -43,9 +43,11 @@ namespace Muragatte.Visual
 
         #region Methods
 
-        public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction)
+        public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction, float alpha = 1)
         {
-            wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, _color);
+            Color c = _color;
+            c.ScA *= alpha;
+            wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, c);
         }
 
         #endregion

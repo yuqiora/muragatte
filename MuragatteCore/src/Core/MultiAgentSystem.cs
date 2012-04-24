@@ -28,7 +28,7 @@ namespace Muragatte.Core
         protected IStorage _storage = null;
         protected Region _region = null;
         protected SortedDictionary<int, Species> _species = null;
-        //history
+        protected History _history = new History();
 
         #endregion
 
@@ -77,6 +77,11 @@ namespace Muragatte.Core
             get { return _species; }
             set { _species = value; }
         }
+
+        public History History
+        {
+            get { return _history; }
+        }
         
         #endregion
 
@@ -90,6 +95,7 @@ namespace Muragatte.Core
             Environment.Species.ResetIDCounter();
             _storage.Clear();
             Element.ResetIDCounter();
+            _history.Clear();
         }
 
         public virtual void NextStep() { }
@@ -100,6 +106,12 @@ namespace Muragatte.Core
         public virtual void Initialize()
         {
             Scatter();
+            HistoryRecord record = new HistoryRecord();
+            foreach (Element e in _storage)
+            {
+                record.Add(e.ReportStatus());
+            }
+            _history.Add(record);
         }
 
         public virtual void Scatter()
@@ -137,10 +149,13 @@ namespace Muragatte.Core
             {
                 e.Update();
             }
+            HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
                 e.ConfirmUpdate();
+                record.Add(e.ReportStatus());
             }
+            _history.Add(record);
             _iCurrentStep = _iSteps;
             _iSteps++;
         }

@@ -15,8 +15,13 @@
         <Button Content="Clear" Height="23" HorizontalAlignment="Left" Margin="391,41,0,0" Name="btnClear" VerticalAlignment="Top" Width="75" Click="btnClear_Click" />
         <Button Content="Play" Height="23" HorizontalAlignment="Left" Margin="391,244,0,0" Name="btnPlayPause" VerticalAlignment="Top" Width="75" Click="btnPlayPause_Click" />
         <Button Content="Scatter" Height="23" HorizontalAlignment="Left" Margin="391,186,0,0" Name="btnScatter" VerticalAlignment="Top" Width="75" Click="btnScatter_Click" />
-        <CheckBox Content="Show Agents" Height="16" HorizontalAlignment="Left" Margin="234,100,0,0" Name="chbAgents" VerticalAlignment="Top" IsChecked="True" Checked="chbAgents_Checked" Unchecked="chbAgents_Unchecked" />
+        <CheckBox Content="Show Environment" Height="16" HorizontalAlignment="Left" Margin="234,56,0,0" Name="chbEnvironment" VerticalAlignment="Top" IsChecked="True" Checked="chbEnvironment_Checked" Unchecked="chbEnvironment_Unchecked" />
         <CheckBox Content="Show Neighbourhoods" Height="16" HorizontalAlignment="Left" Margin="234,78,0,0" Name="chbNeighbourhoods" VerticalAlignment="Top" Checked="chbNeighbourhoods_Checked" Unchecked="chbNeighbourhoods_Unchecked" />
+        <CheckBox Content="Show Tracks" Height="16" HorizontalAlignment="Left" Margin="234,100,0,0" Name="chbTracks" VerticalAlignment="Top" Checked="chbTracks_Checked" Unchecked="chbTracks_Unchecked" />
+        <CheckBox Content="Show Trails" Height="16" HorizontalAlignment="Left" Margin="234,122,0,0" Name="chbTrails" VerticalAlignment="Top" Checked="chbTrails_Checked" Unchecked="chbTrails_Unchecked" />
+        <CheckBox Content="Show Agents" Height="16" HorizontalAlignment="Left" Margin="234,144,0,0" Name="chbAgents" VerticalAlignment="Top" IsChecked="True" Checked="chbAgents_Checked" Unchecked="chbAgents_Unchecked" />
+        <CheckBox Content="Show Centroids" Height="16" HorizontalAlignment="Left" Margin="234,166,0,0" Name="chbCentroids" VerticalAlignment="Top" Checked="chbCentroids_Checked" Unchecked="chbCentroids_Unchecked" />
+        <CheckBox Content="Visualize" Height="16" HorizontalAlignment="Left" Margin="234,188,0,0" Name="chbVisualize" VerticalAlignment="Top" IsChecked="True" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,107,0,0" Name="txtFieldOfView" VerticalAlignment="Top" Width="120" Text="7.5" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,194,0,0" Name="txtGuideCount" VerticalAlignment="Top" Width="120" Text="5" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,223,0,0" Name="txtIntruderCount" VerticalAlignment="Top" Width="120" Text="1" />
@@ -34,8 +39,9 @@
         <Button Content="Group" Height="23" HorizontalAlignment="Left" Margin="391,157,0,0" Name="btnGroup" VerticalAlignment="Top" Width="75" Click="btnGroup_Click" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,252,0,0" Name="txtSteps" VerticalAlignment="Top" Width="120" Text="0" IsEnabled="False" />
         <Label Content="Steps:" Height="28" HorizontalAlignment="Left" Margin="10,250,0,0" Name="label9" VerticalAlignment="Top" />
-        <CheckBox Content="Show Environment" Height="16" HorizontalAlignment="Left" Margin="234,56,0,0" Name="chbEnvironment" VerticalAlignment="Top" IsChecked="True" Checked="chbEnvironment_Checked" Unchecked="chbEnvironment_Unchecked" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,281,0,0" Name="txtObstacles" VerticalAlignment="Top" Width="120" Text="10" />
         <Label Content="# Obstacles:" Height="28" HorizontalAlignment="Left" Margin="10,279,0,0" Name="label10" VerticalAlignment="Top" />
+        <Button Content="Replay" Height="23" HorizontalAlignment="Left" Margin="391,273,0,0" Name="btnReplay" VerticalAlignment="Top" Width="75" Click="btnReplay_Click" IsEnabled="False" />
+        <Slider Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="sldSteps" VerticalAlignment="Bottom" Width="480" TickPlacement="BottomRight" SmallChange="1" TickFrequency="25" LargeChange="10" IsMoveToPointEnabled="True" Maximum="{Binding ElementName=txtSteps, Path=Text, StringFormat=\{0:D\}, IsAsync=True}" ValueChanged="sldSteps_ValueChanged" />
     </Grid>
 </Window>

@@ -55,17 +55,19 @@ namespace Muragatte.Visual
 
         #region Methods
 
-        public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction)
+        public override void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction, float alpha = 1)
         {
+            Color c = _color;
+            c.ScA *= alpha;
             Angle angle = new Angle(direction);
             SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
             if (angle.IsZero)
             {
-                wb.Blit(point, _wb, _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
+                wb.Blit(point, _wb, _sourceRect, c, WriteableBitmapExtensions.BlendMode.Alpha);
             }
             else
             {
-                wb.Blit(point, _wb.RotateFree(angle.Degrees), _sourceRect, _color, WriteableBitmapExtensions.BlendMode.Alpha);
+                wb.Blit(point, _wb.RotateFree(angle.Degrees), _sourceRect, c, WriteableBitmapExtensions.BlendMode.Alpha);
             }
         }
         
