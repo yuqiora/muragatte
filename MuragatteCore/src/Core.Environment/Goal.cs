@@ -62,7 +62,7 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
-            return "G-" + base.ToString();
+            return ToString("G");
         }
 
         #endregion

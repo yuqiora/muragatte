@@ -50,6 +50,137 @@ namespace Muragatte.Core.Environment
             return ElementNature.Ignored;
         }
 
+        public override string ToString()
+        {
+            return ToString("E");
+        }
+
+        #endregion
+    }
+
+    public class AttractSpot : Extras
+    {
+        #region Fields
+
+        protected double _dRadius;
+
+        #endregion
+
+        #region Constructors
+
+        public AttractSpot(MultiAgentSystem model, double radius = DEFAULT_RADIUS)
+            : base(model, true)
+        {
+            _dRadius = radius;
+        }
+
+        public AttractSpot(MultiAgentSystem model, Vector2 position, double radius = DEFAULT_RADIUS)
+            : base(model, position, true)
+        {
+            _dRadius = radius;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override Vector2 Direction
+        {
+            get { return Vector2.Zero(); }
+            set { }
+        }
+
+        public override double Speed
+        {
+            get { return 0; }
+            set { }
+        }
+
+        public override double Width
+        {
+            get { return 2 * _dRadius; }
+        }
+
+        public override double Height
+        {
+            get { return 2 * _dRadius; }
+        }
+
+        public override double Radius
+        {
+            get { return _dRadius; }
+        }
+
+        public override ElementNature DefaultNature
+        {
+            get { return ElementNature.Companion; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override void Update() { }
+
+        public override void ConfirmUpdate() { }
+
+        #endregion
+    }
+
+    public class RepelSpot : AttractSpot
+    {
+        #region Constructors
+
+        public RepelSpot(MultiAgentSystem model, double radius = DEFAULT_RADIUS)
+            : base(model, radius) { }
+
+        public RepelSpot(MultiAgentSystem model, Vector2 position, double radius = DEFAULT_RADIUS)
+            : base(model, position, radius) { }
+
+        #endregion
+
+        #region Properties
+
+        public override ElementNature DefaultNature
+        {
+            get { return ElementNature.Threat; }
+        }
+
+        #endregion
+    }
+
+    public class Guidepost : AttractSpot
+    {
+        #region Fields
+
+        private Vector2 _direction;
+
+        #endregion
+
+        #region Constructors
+
+        public Guidepost(MultiAgentSystem model, Vector2 direction)
+            : base(model)
+        {
+            _direction = direction;
+        }
+
+        public Guidepost(MultiAgentSystem model, Vector2 position, Vector2 direction)
+            : base(model, position)
+        {
+            _direction = direction;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override Vector2 Direction
+        {
+            get { return _direction; }
+            set { _direction = value; }
+        }
+
         #endregion
     }
 }

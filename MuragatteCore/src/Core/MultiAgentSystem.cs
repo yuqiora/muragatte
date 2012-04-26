@@ -49,6 +49,7 @@ namespace Muragatte.Core
         public int CurrentStep
         {
             get { return _iCurrentStep; }
+            set { _iCurrentStep = value >= _iSteps ? _iSteps - 1 : value; }
         }
 
         public int NumberOfSteps
@@ -60,6 +61,11 @@ namespace Muragatte.Core
         {
             get { return _dTimePerStep; }
             set { _dTimePerStep = value; }
+        }
+
+        public int Substeps
+        {
+            get { return (int)Math.Ceiling(1 / _dTimePerStep); }
         }
 
         public IStorage Elements

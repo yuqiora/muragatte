@@ -42,7 +42,10 @@ namespace Muragatte.Core.Storage
 
         public void Add(ElementStatus status)
         {
-            _items.Add(status.ElementID, status);
+            if (status != null)
+            {
+                _items.Add(status.ElementID, status);
+            }
         }
 
         public void Clear()
