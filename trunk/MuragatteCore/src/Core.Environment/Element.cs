@@ -30,6 +30,12 @@ namespace Muragatte.Core.Environment
 
         #endregion
 
+        #region Constants
+
+        public const double DEFAULT_RADIUS = 0.5;
+
+        #endregion
+
         #region Fields
 
         protected int _iElementID = -1;
@@ -141,6 +147,11 @@ namespace Muragatte.Core.Environment
         {
             return string.Format("{0}{1}{2} @({3})",
                 _iElementID, _bStationary ? "s" : "", _bEnabled ? "" : "d", _position);
+        }
+
+        protected string ToString(string prefix)
+        {
+            return string.Format("{0}-{1}", prefix, ToString());
         }
 
         public T GetItemAs<T>() where T : class

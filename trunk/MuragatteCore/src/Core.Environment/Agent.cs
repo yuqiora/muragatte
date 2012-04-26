@@ -81,7 +81,7 @@ namespace Muragatte.Core.Environment
 
         public override double Radius
         {
-            get { return 0.5; }
+            get { return DEFAULT_RADIUS; }
         }
 
         public Neighbourhood FieldOfView
@@ -157,7 +157,7 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
-            return "A-" + base.ToString();
+            return ToString("A");
         }
 
         #endregion
@@ -184,9 +184,12 @@ namespace Muragatte.Core.Environment
             }
         }
 
-        protected bool ChangeModifier(double value)
+        protected void ChangeModifier(ref double modifier, double value)
         {
-            return !double.IsNaN(value) && !double.IsInfinity(value);
+            if (!double.IsNaN(value) && !double.IsInfinity(value))
+            {
+                modifier = value;
+            }
         }
 
         #endregion

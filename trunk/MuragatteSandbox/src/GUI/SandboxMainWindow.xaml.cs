@@ -38,11 +38,12 @@ namespace Muragatte.GUI
     /// <summary>
     /// Interaction logic for SandboxMainWindow.xaml
     /// </summary>
-    public partial class SandboxMainWindow : Window
+    public partial class SandboxMainWindow : Window, INotifyPropertyChanged
     {
         #region Constants
 
-        private const double TimePerStep = 0.25;
+        private const double TIME_PER_STEP = 0.25;
+        private const int DEFAULT_DELAY = 15;
 
         #endregion
 
@@ -54,35 +55,68 @@ namespace Muragatte.GUI
         private bool _bPlaying = false;
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
+        private Duration replayDuration = new Duration();
 
-        private Angle boidFOVAngle = new Angle(150);
+        private Angle _boidFOVAngle = new Angle(150);
 
-        //private BackgroundWorker _worker = new BackgroundWorker();
+        private BackgroundWorker _worker = new BackgroundWorker();
+
+        #endregion
+
+        #region Properties
+
+        public Duration ReplayDuration
+        {
+            get { return replayDuration; }
+            set
+            {
+                replayDuration = value;
+                this.OnPropertyChanged("ReplayDuration");
+            }
+        }
 
         #endregion
 
         public SandboxMainWindow()
         {
-            //_worker.WorkerReportsProgress = true;
-            //_worker.WorkerSupportsCancellation = true;
-            //_worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
-            //_worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
-            //_worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
+            _worker.WorkerReportsProgress = true;
+            _worker.WorkerSupportsCancellation = true;
+            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+            _worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
+            _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
             InitializeComponent();
+            this.DataContext = this;
         }
 
-        //void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        //{
-        //}
+        void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            prbUpdate.Visibility = System.Windows.Visibility.Hidden;
+            Redraw();
+        }
 
-        //void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //}
+        void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            prbUpdate.Value = e.ProgressPercentage;
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
+        }
 
-        //void _worker_DoWork(object sender, DoWorkEventArgs e)
-        //{
-        //}
+        void _worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int stepsToUpdate = 500;
+            for (int i = 0; i < stepsToUpdate; i++)
+            {
+                _mas.Update();
+                _worker.ReportProgress(100 * i / stepsToUpdate);
+            }
+        }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string strPropertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(strPropertyName));
+        }
+        
         #region Button Events
         
         private void btnEnvironment_Click(object sender, RoutedEventArgs e)
@@ -99,11 +133,11 @@ namespace Muragatte.GUI
             CreateSpecies();
             Color fovC = Colors.LightGreen;
             fovC.A = 64;
-            //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, boidFOVAngle);
+            //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, _boidFOVAngle);
             Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateBoids(agentCount, fovRange, fovImg);
             _mas.Initialize();
-            _canvas.Redraw();
+            Redraw();
         }
 
         private void btnAgentsWG_Click(object sender, RoutedEventArgs e)
@@ -120,16 +154,13 @@ namespace Muragatte.GUI
             Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
             _mas.Initialize();
-            _canvas.Redraw();
+            Redraw();
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < 499; i++)
-            {
-                _mas.Update();
-            }
-            UpdateAndRedraw();
+            prbUpdate.Visibility = System.Windows.Visibility.Visible;
+            _worker.RunWorkerAsync();
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
@@ -146,7 +177,7 @@ namespace Muragatte.GUI
             int width = int.Parse(txtWidth.Text);
             int height = int.Parse(txtHeight.Text);
             _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
-                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TimePerStep);
+                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
             _canvas = new Visual.Canvas(width, height, scale);
             _canvas.Initialize(_mas);
@@ -157,6 +188,7 @@ namespace Muragatte.GUI
             _view = new VisualCanvasWindow(_canvas);
             _view.Show();
             txtSteps.Text = _mas.NumberOfSteps.ToString();
+            UpdateReplayDuration();
         }
 
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
@@ -182,8 +214,11 @@ namespace Muragatte.GUI
 
         private void btnGroup_Click(object sender, RoutedEventArgs e)
         {
-            double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            _mas.GroupStart(fov * 3);
+            //double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            //_mas.GroupStart(fov * 3);
+            double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa * 1.5;
+            _mas.GroupStart(size);
         }
 
         private void btnReplay_Click(object sender, RoutedEventArgs e)
@@ -302,8 +337,18 @@ namespace Muragatte.GUI
         {
             if (_mas.NumberOfSteps > 0 && !_bPlaying)
             {
+                //int fullStep = (int)Math.Ceiling(1 / _mas.TIME_PER_STEP);
+                //if ((int)sldSteps.Value % fullStep == 0)
+                //{
+                //    _canvas.Redraw(_mas.History, (int)sldSteps.Value);
+                //}
                 _canvas.Redraw(_mas.History, (int)sldSteps.Value);
             }
+        }
+
+        private void txtDelay_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateReplayDuration();
         }
 
         #endregion
@@ -315,6 +360,19 @@ namespace Muragatte.GUI
             _mas.Update();
             txtSteps.Text = _mas.NumberOfSteps.ToString();
             Redraw();
+        }
+
+        private void UpdateReplayDuration()
+        {
+            if (_mas != null)
+            {
+                int ms;
+                if (!int.TryParse(txtDelay.Text, out ms))
+                {
+                    ms = DEFAULT_DELAY;
+                }
+                ReplayDuration = new Duration(TimeSpan.FromMilliseconds(ms * _mas.NumberOfSteps));
+            }
         }
 
         private void SetShowAgents()
@@ -375,7 +433,7 @@ namespace Muragatte.GUI
         {
             for (int i = 0; i < count; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, boidFOVAngle);
+                Neighbourhood n = new CircularNeighbourhood(fovRange, _boidFOVAngle);
                 n.Item = fovImg;
                 Agent a = new Boid(_mas, n, new Angle(60));
                 a.Speed = 1;

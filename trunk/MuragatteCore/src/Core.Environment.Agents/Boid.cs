@@ -108,18 +108,9 @@ namespace Muragatte.Core.Environment.Agents
         {
             if (values.Length >= 3)
             {
-                if (ChangeModifier(values[0]))
-                {
-                    _dWeightSeparation = values[0];
-                }
-                if (ChangeModifier(values[1]))
-                {
-                    _dWeightCohesion = values[1];
-                }
-                if (ChangeModifier(values[2]))
-                {
-                    _dWeightAlignment = values[2];
-                }
+                ChangeModifier(ref _dWeightSeparation, values[0]);
+                ChangeModifier(ref _dWeightCohesion, values[1]);
+                ChangeModifier(ref _dWeightAlignment, values[2]);
             }
         }
 

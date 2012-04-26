@@ -78,4 +78,22 @@ namespace Muragatte.Core.Environment
             return _ran2.Gauss(mean, deviation);
         }
     }
+
+    public class Group
+    {
+        #region Fields
+
+        private Centroid _representative = null;
+
+        #endregion
+
+        #region Constructors
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Methods
+        #endregion
+    }
 }

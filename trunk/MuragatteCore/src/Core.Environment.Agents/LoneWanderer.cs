@@ -92,14 +92,8 @@ namespace Muragatte.Core.Environment.Agents
         {
             if (values.Length >= 2)
             {
-                if (ChangeModifier(values[0]))
-                {
-                    _dWanderRate = values[0];
-                }
-                if (ChangeModifier(values[1]))
-                {
-                    _dAvoidWeight = values[1];
-                }
+                ChangeModifier(ref _dWanderRate, values[0]);
+                ChangeModifier(ref _dAvoidWeight, values[1]);
             }
         }
 

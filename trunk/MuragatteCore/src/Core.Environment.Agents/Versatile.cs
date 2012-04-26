@@ -178,50 +178,19 @@ namespace Muragatte.Core.Environment.Agents
         {
             if (values.Length >= 11)
             {
-                if (ChangeModifier(values[0]))
-                {
-                    _dAssertivity = values[0];
-                }
-                if (ChangeModifier(values[1]))
-                {
-                    _dCredibility = values[1];
-                }
-                if (ChangeModifier(values[2]))
-                {
-                    _dWeightSeparation = values[2];
-                }
-                if (ChangeModifier(values[3]))
-                {
-                    _dWeightCohesion = values[3];
-                }
-                if (ChangeModifier(values[4]))
-                {
-                    _dWeightAlignment = values[4];
-                }
-                if (ChangeModifier(values[5]))
-                {
-                    _dWeightAvoid = values[5];
-                }
-                if (ChangeModifier(values[6]))
-                {
-                    _dWeightSeekPursuit = values[6];
-                }
-                if (ChangeModifier(values[7]))
-                {
-                    _dWeightFleeEvasion = values[7];
-                }
-                if (ChangeModifier(values[8]))
-                {
-                    _dWeightAdjustSpeed = values[8];
-                }
-                if (ChangeModifier(values[9]))
-                {
-                    _dWanderRate = values[9];
-                }
-                if (ChangeModifier(values[10]))
-                {
-                    _bAdjustSpeed = values[10] != 0;
-                }
+                ChangeModifier(ref _dAssertivity, values[0]);
+                ChangeModifier(ref _dCredibility, values[1]);
+                ChangeModifier(ref _dWeightSeparation, values[2]);
+                ChangeModifier(ref _dWeightCohesion, values[3]);
+                ChangeModifier(ref _dWeightAlignment, values[4]);
+                ChangeModifier(ref _dWeightAvoid, values[5]);
+                ChangeModifier(ref _dWeightSeekPursuit, values[6]);
+                ChangeModifier(ref _dWeightFleeEvasion, values[7]);
+                ChangeModifier(ref _dWeightAdjustSpeed, values[8]);
+                ChangeModifier(ref _dWanderRate, values[9]);
+                double tmp = _bAdjustSpeed ? 1 : 0;
+                ChangeModifier(ref tmp, values[10]);
+                _bAdjustSpeed = tmp != 0;
             }
         }
 

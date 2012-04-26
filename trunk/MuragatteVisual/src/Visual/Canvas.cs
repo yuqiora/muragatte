@@ -275,9 +275,10 @@ namespace Muragatte.Visual
         {
             if (_bTrails)
             {
+                int substep = _model.Substeps;
                 float alphaInc = 1.0f / (_iTrailLength + 1);
                 float alpha = alphaInc;
-                for (int i = Math.Max(0, step - _iTrailLength); i < step; i++)
+                for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
                 {
                     DrawItems(items, history[i], alpha);
                     alpha += alphaInc;

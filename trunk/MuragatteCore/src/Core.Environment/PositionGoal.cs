@@ -42,7 +42,7 @@ namespace Muragatte.Core.Environment
 
         public override double Radius
         {
-            get { return 0.5; }
+            get { return DEFAULT_RADIUS; }
         }
 
         #endregion
