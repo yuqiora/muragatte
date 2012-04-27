@@ -57,6 +57,13 @@ namespace Muragatte.GUI
         private List<Obstacle> _obstacles = new List<Obstacle>();
         private Duration replayDuration = new Duration();
 
+        private Color _colorNeighbourhood = Colors.LightYellow;
+        private Color _colorObstacle = Colors.Gray;
+        private Color _colorAgentDefault = Colors.Black;
+        private Color _colorAgentGuide = Colors.Blue;
+        private Color _colorAgentIntruder = Colors.Red;
+        private Color _colorCentroid = Colors.LightGreen;
+
         private Angle _boidFOVAngle = new Angle(150);
 
         private BackgroundWorker _worker = new BackgroundWorker();
@@ -91,6 +98,7 @@ namespace Muragatte.GUI
         void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             prbUpdate.Visibility = System.Windows.Visibility.Hidden;
+            UpdateReplayDuration();
             Redraw();
         }
 
@@ -131,13 +139,12 @@ namespace Muragatte.GUI
             double fovRange = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             int agentCount = int.Parse(txtAgentCount.Text);
             CreateSpecies();
-            Color fovC = Colors.LightGreen;
+            Color fovC = _colorNeighbourhood;
             fovC.A = 64;
             //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, _boidFOVAngle);
             Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateBoids(agentCount, fovRange, fovImg);
-            _mas.Initialize();
-            Redraw();
+            Initialize();
         }
 
         private void btnAgentsWG_Click(object sender, RoutedEventArgs e)
@@ -149,12 +156,11 @@ namespace Muragatte.GUI
             int intruderCount = int.Parse(txtIntruderCount.Text);
             int naiveCount = agentCount - guideCount - intruderCount;
             CreateSpecies();
-            Color fovC = Colors.LightGreen;
+            Color fovC = _colorNeighbourhood;
             fovC.A = 64;
             Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
             CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
-            _mas.Initialize();
-            Redraw();
+            Initialize();
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -198,6 +204,7 @@ namespace Muragatte.GUI
                 _bPlaying = false;
                 btnPlayPause.Content = "Play";
                 CompositionTarget.Rendering -= CompositionTarget_Rendering;
+                UpdateReplayDuration();
             }
             else
             {
@@ -394,9 +401,9 @@ namespace Muragatte.GUI
         private void CreateGoals()
         {
             Goal g1 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _canvas.Scale), Colors.Blue, false);
+            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _canvas.Scale), _colorAgentGuide, true);
             Goal g2 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _canvas.Scale), Colors.Red, false);
+            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _canvas.Scale), _colorAgentIntruder, true);
             _goals.Add(g1);
             _goals.Add(g2);
             _mas.Elements.Add(_goals);
@@ -408,7 +415,7 @@ namespace Muragatte.GUI
             for (int i = 0; i < obstacles; i++)
             {
                 Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, 30));
-                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _canvas.Scale), Colors.Gray);
+                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _canvas.Scale), _colorObstacle);
                 _obstacles.Add(o);
             }
             _mas.Elements.Add(_obstacles);
@@ -418,14 +425,17 @@ namespace Muragatte.GUI
         {
             SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
             Species boids = new Species("Boids");
-            boids.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Black);
+            boids.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentDefault);
             species.Add(boids.ID, boids);
             Species guides = boids.CreateSubSpecies("Guides");
-            guides.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Blue);
+            guides.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentGuide);
             species.Add(guides.ID, guides);
             Species intruders = boids.CreateSubSpecies("Intruders");
-            intruders.Item = ParticleFactory.AgentB((int)_canvas.Scale, Colors.Red);
+            intruders.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentIntruder);
             species.Add(intruders.ID, intruders);
+            Species centroids = new Species("Centroids");
+            centroids.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorCentroid);
+            species.Add(centroids.ID, centroids);
             _mas.Species = species;
         }
 
@@ -475,6 +485,14 @@ namespace Muragatte.GUI
                 a.Speed = 0.95;
                 a.Species = _mas.Species[2];
                 _mas.Elements.Add(a);
+            }
+        }
+
+        private void SetCentroidSpecies(IEnumerable<Centroid> items, Species species)
+        {
+            foreach (Centroid c in items)
+            {
+                c.Species = species;
             }
         }
 
@@ -533,6 +551,13 @@ namespace Muragatte.GUI
                 //_canvas.Redraw();
                 _canvas.Redraw(_mas.History);
             }
+        }
+
+        private void Initialize()
+        {
+            _mas.Initialize();
+            SetCentroidSpecies(_mas.Elements.Centroids, _mas.Species[3]);
+            Redraw();
         }
 
         #endregion

@@ -81,6 +81,10 @@ namespace Muragatte.Core.Environment
 
         public abstract IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle) where T : Environment.Element;
 
+        public abstract bool Covers(Element e);
+
+        public abstract bool Covers(Element e, Angle angle);
+
         #endregion
 
     }

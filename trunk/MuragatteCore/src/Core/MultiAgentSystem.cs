@@ -29,6 +29,7 @@ namespace Muragatte.Core
         protected Region _region = null;
         protected SortedDictionary<int, Species> _species = null;
         protected History _history = new History();
+        protected List<Group> _groups = new List<Group>();
 
         #endregion
 
@@ -108,10 +109,14 @@ namespace Muragatte.Core
 
         public virtual void GoToStep(int i) { }
 
-        //possibly temporary
         public virtual void Initialize()
         {
             Scatter();
+            foreach (Agent a in _storage.Agents)
+            {
+                a.CreateRepresentative();
+                _storage.Add(a.Representative);
+            }
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
@@ -158,8 +163,29 @@ namespace Muragatte.Core
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
-                e.ConfirmUpdate();
-                record.Add(e.ReportStatus());
+                if (!(e is Centroid))
+                {
+                    e.ConfirmUpdate();
+                    record.Add(e.ReportStatus());
+                }
+            }
+            //the following is for centroids/groups
+            foreach (Group g in _groups)
+            {
+                g.Clear();
+            }
+            _groups.Clear();
+            foreach (Agent a in _storage.Agents)
+            {
+                if (a.Group == null)
+                {
+                    _groups.Add(new Group(a, a.GroupSearch()));
+                }
+            }
+            foreach (Centroid c in _storage.Centroids)
+            {
+                c.ConfirmUpdate();
+                record.Add(c.ReportStatus());
             }
             _history.Add(record);
             _iCurrentStep = _iSteps;

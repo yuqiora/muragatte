@@ -90,6 +90,11 @@ namespace Muragatte.Core.Storage
             get { return _items.Where(e => e.IsStationary); }
         }
 
+        public IEnumerable<Centroid> Centroids
+        {
+            get { return ItemsOfType<Centroid>(); }
+        }
+
         #endregion
 
         #region Methods

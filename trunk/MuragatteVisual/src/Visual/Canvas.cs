@@ -255,12 +255,12 @@ namespace Muragatte.Visual
             }
         }
 
-        public void DrawTracks(IEnumerable<Agent> items, History history, int step)
+        public void DrawTracks(IEnumerable<Element> items, History history, int step)
         {
             if (_bTracks)
             {
                 int time = Math.Min(step, history.Count);
-                foreach (Agent a in items)
+                foreach (Element a in items)
                 {
                     List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, time));
                     foreach (int[] segment in segments)
@@ -271,7 +271,7 @@ namespace Muragatte.Visual
             }
         }
 
-        public void DrawTrails(IEnumerable<Agent> items, History history, int step)
+        public void DrawTrails(IEnumerable<Element> items, History history, int step)
         {
             if (_bTrails)
             {
@@ -283,6 +283,14 @@ namespace Muragatte.Visual
                     DrawItems(items, history[i], alpha);
                     alpha += alphaInc;
                 }
+            }
+        }
+
+        public void DrawCentroids(IEnumerable<Centroid> items, HistoryRecord record, float alpha = 1)
+        {
+            if (_bCentroids)
+            {
+                DrawItems(items, record, alpha);
             }
         }
 
@@ -303,12 +311,22 @@ namespace Muragatte.Visual
             _wb.Clear();
             IEnumerable<Element> stationary = _model.Elements.Stationary;
             IEnumerable<Agent> agents = _model.Elements.Agents;
+            IEnumerable<Centroid> centroids = _model.Elements.Centroids;
             DrawNeighbourhoods(agents, history[step]);
             DrawEnvironment(stationary, history[step]);
-            DrawTracks(agents, history, step);
-            //DrawTracks(agents, history, history.Count);
-            DrawTrails(agents, history, step);
+            if (_bAgents)
+            {
+                DrawTracks(agents, history, step);
+                //DrawTracks(agents, history, history.Count);
+                DrawTrails(agents, history, step);
+            }
+            if (_bCentroids)
+            {
+                DrawTracks(centroids, history, step);
+                DrawTrails(centroids, history, step);
+            }
             DrawAgents(agents, history[step]);
+            DrawCentroids(centroids, history[step]);
         }
 
         public void Redraw(History history)

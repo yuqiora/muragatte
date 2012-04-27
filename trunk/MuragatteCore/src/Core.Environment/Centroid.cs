@@ -22,7 +22,8 @@ namespace Muragatte.Core.Environment
 
         private Vector2 _direction = new Vector2(0, 1);
         private double _dSpeed = 1;
-        //group
+        private Group _group = null;
+        private bool _bInGroup = false;
 
         #endregion
 
@@ -37,6 +38,9 @@ namespace Muragatte.Core.Environment
             _direction = direction;
             _dSpeed = speed;
         }
+
+        public Centroid(Agent source)
+            : this(source.Model, source.Position, source.Direction, source.Speed) { }
 
         #endregion
 
@@ -56,28 +60,68 @@ namespace Muragatte.Core.Environment
 
         public override double Width
         {
-            get { return 1; }
+            get { return 2 * Radius; }
         }
 
         public override double Height
         {
-            get { return 1; }
+            get { return 2 * Radius; }
         }
 
         public override double Radius
         {
-            get { return 0.5; }
+            get { return DEFAULT_RADIUS; }
+        }
+
+        public Group Group
+        {
+            get { return _group; }
+            set { _group = value; }
+        }
+
+        public bool IsInGroup
+        {
+            get { return _bInGroup; }
+            set { _bInGroup = value; }
         }
 
         #endregion
 
         #region Methods
 
-        public override void Update() { }
+        public override void Update()
+        {
+            _bEnabled = false;
+            _group = null;
+            _bInGroup = false;
+        }
 
         public override void ConfirmUpdate()
         {
-            //update fields according to group members
+            if (_group != null)
+            {
+                if (_bEnabled)
+                {
+                    _position = new Vector2(0, 0);
+                    _direction = new Vector2(0, 0);
+                    _dSpeed = 0;
+                    foreach (Agent a in _group)
+                    {
+                        _position += a.Position;
+                        _direction += a.Direction;
+                        _dSpeed += a.Speed;
+                    }
+                    _position /= _group.Count;
+                    _direction.Normalize();
+                    _dSpeed /= _group.Count;
+                }
+                else
+                {
+                    _position = _group.FirstMember.Representative._position;
+                    _direction = _group.FirstMember.Representative._direction;
+                    _dSpeed = _group.FirstMember.Representative._dSpeed;
+                }
+            }
         }
 
         public override string ToString()
