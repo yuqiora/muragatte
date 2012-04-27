@@ -27,6 +27,7 @@ namespace Muragatte.Core.Environment
         protected Vector2 _altDirection = new Vector2(0, 1);
         protected Neighbourhood _fieldOfView = null;
         protected Angle _dTurningAngle = Angle.Deg180();
+        protected Centroid _representative = null;
         
         #endregion
 
@@ -100,6 +101,16 @@ namespace Muragatte.Core.Environment
             get { return ElementNature.Companion; }
         }
 
+        public Centroid Representative
+        {
+            get { return _representative; }
+        }
+
+        public Group Group
+        {
+            get { return _representative == null ? null : _representative.Group; }
+        }
+
         #endregion
 
         #region Virtual Properties
@@ -160,6 +171,16 @@ namespace Muragatte.Core.Environment
             return ToString("A");
         }
 
+        public void CreateRepresentative()
+        {
+            _representative = new Centroid(this);
+        }
+
+        protected bool IsGroupCandidate(Agent a)
+        {
+            return a.IsEnabled && !a.Representative.IsInGroup && (_fieldOfView.Covers(a) || a.FieldOfView.Covers(this));
+        }
+
         #endregion
 
         #region Protected Methods
@@ -190,6 +211,22 @@ namespace Muragatte.Core.Environment
             {
                 modifier = value;
             }
+        }
+
+        #endregion
+
+        #region Virtual Methods
+
+        public virtual IEnumerable<Agent> GroupSearch()
+        {
+            _representative.IsInGroup = true;
+            IEnumerable<Agent> candidates = _model.Elements.RangeSearch<Agent>(this, VisibleRange, e => IsGroupCandidate((Agent)e));
+            List<Agent> members = new List<Agent>(candidates);
+            foreach (Agent a in candidates)
+            {
+                members.AddRange(a.GroupSearch());
+            }
+            return members;
         }
 
         #endregion

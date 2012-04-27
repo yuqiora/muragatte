@@ -21,7 +21,7 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected Angle _dAngle = Angle.Deg180();
+        protected Angle _angle = Angle.Deg180();
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace Muragatte.Core.Environment
         public CircularNeighbourhood(double range, Angle angle)
             : base(range)
         {
-            _dAngle = angle;
+            _angle = angle;
         }
 
         public CircularNeighbourhood(Agent source, double range)
@@ -42,7 +42,7 @@ namespace Muragatte.Core.Environment
         public CircularNeighbourhood(Agent source, double range, Angle angle)
             : base(source, range)
         {
-            _dAngle = angle;
+            _angle = angle;
         }
         
         #endregion
@@ -51,8 +51,8 @@ namespace Muragatte.Core.Environment
         
         public Angle Angle
         {
-            get { return _dAngle; }
-            set { _dAngle = value; }
+            get { return _angle; }
+            set { _angle = value; }
         }
         
         #endregion
@@ -77,8 +77,7 @@ namespace Muragatte.Core.Environment
             List<T> result = new List<T>();
             foreach (T e in elements)
             {
-                if (Vector2.Distance(_source.Position, e.Position) - e.Radius < _dRange &&
-                    Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= angle)
+                if (Covers(e, angle))
                 {
                     result.Add(e);
                 }
@@ -88,15 +87,7 @@ namespace Muragatte.Core.Environment
 
         public override IEnumerable<T> Within<T>(IEnumerable<T> elements)
         {
-            //if (_dAngle.Degrees == Angle.MaxDegree)
-            //{
-            //    return WithinFull(elements);
-            //}
-            //else
-            //{
-            //    return WithinPartial(elements, _dAngle);
-            //}
-            return Within(elements, _dAngle);
+            return Within(elements, _angle);
         }
 
         public override IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle)
@@ -109,6 +100,17 @@ namespace Muragatte.Core.Environment
             {
                 return WithinPartial(elements, angle);
             }
+        }
+
+        public override bool Covers(Element e)
+        {
+            return Covers(e, _angle);
+        }
+
+        public override bool Covers(Element e, Angle angle)
+        {
+            return Vector2.Distance(_source.Position, e.Position) - e.Radius < _dRange &&
+                Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= angle;
         }
 
         #endregion

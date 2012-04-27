@@ -33,7 +33,9 @@ namespace Muragatte.Core.Storage
         IEnumerable<Extras> Extras { get; }
 
         IEnumerable<Element> Stationary { get; }
-        
+
+        IEnumerable<Centroid> Centroids { get; }
+
         #endregion
 
         #region Methods
