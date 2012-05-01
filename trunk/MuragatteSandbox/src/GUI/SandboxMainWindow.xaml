@@ -44,13 +44,11 @@
         <Button Content="Replay" Height="23" HorizontalAlignment="Left" Margin="391,273,0,0" Name="btnReplay" VerticalAlignment="Top" Width="75" Click="btnReplay_Click" >
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.Click">
-                    <EventTrigger.Actions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="sldSteps" Storyboard.TargetProperty="Value" To="{Binding ElementName=txtSteps, Path=Text, IsAsync=True}" Duration="{Binding ReplayDuration, IsAsync=True}" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger.Actions>
+                    <BeginStoryboard Name="replayAnimation">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="sldSteps" Storyboard.TargetProperty="Value" From="0" To="{Binding ElementName=txtSteps, Path=Text, IsAsync=True}" Duration="{Binding ReplayDuration, IsAsync=True}" />
+                        </Storyboard>
+                    </BeginStoryboard>
                 </EventTrigger>
             </Button.Triggers>
         </Button>
@@ -58,5 +56,9 @@
         <Label Content="Delay (ms):" Height="28" HorizontalAlignment="Left" Margin="10,308,0,0" Name="label11" VerticalAlignment="Top" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="108,310,0,0" Name="txtDelay" VerticalAlignment="Top" Width="120" Text="15" TextChanged="txtDelay_TextChanged" />
         <ProgressBar HorizontalAlignment="Left" Margin="10,0,0,40" Name="prbUpdate" Width="480" Height="10" VerticalAlignment="Bottom" Visibility="Hidden" />
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="234,210,0,0" Name="cmbStartState" VerticalAlignment="Top" Width="120">
+            <ComboBoxItem Content="Start Scattered" IsSelected="True" />
+            <ComboBoxItem Content="Start in Group" />
+        </ComboBox>
     </Grid>
 </Window>

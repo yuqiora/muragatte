@@ -175,11 +175,16 @@ namespace Muragatte.GUI
             _goals.Clear();
             _obstacles.Clear();
             _canvas.Clear();
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
+            txtSteps.Text = "0";
+            sldSteps.Value = 0;
         }
 
         private void btnInitialize_Click(object sender, RoutedEventArgs e)
         {
+            _goals.Clear();
+            _obstacles.Clear();
+            txtSteps.Text = "0";
+            sldSteps.Value = 0;
             int width = int.Parse(txtWidth.Text);
             int height = int.Parse(txtHeight.Text);
             _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
@@ -193,7 +198,6 @@ namespace Muragatte.GUI
             }
             _view = new VisualCanvasWindow(_canvas);
             _view.Show();
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
             UpdateReplayDuration();
         }
 
@@ -221,11 +225,7 @@ namespace Muragatte.GUI
 
         private void btnGroup_Click(object sender, RoutedEventArgs e)
         {
-            //double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            //_mas.GroupStart(fov * 3);
-            double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa * 1.5;
-            _mas.GroupStart(size);
+            FormGroup();
         }
 
         private void btnReplay_Click(object sender, RoutedEventArgs e)
@@ -342,6 +342,7 @@ namespace Muragatte.GUI
 
         private void sldSteps_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            int step = (int)sldSteps.Value;
             if (_mas.NumberOfSteps > 0 && !_bPlaying)
             {
                 //int fullStep = (int)Math.Ceiling(1 / _mas.TIME_PER_STEP);
@@ -349,7 +350,8 @@ namespace Muragatte.GUI
                 //{
                 //    _canvas.Redraw(_mas.History, (int)sldSteps.Value);
                 //}
-                _canvas.Redraw(_mas.History, (int)sldSteps.Value);
+                //replayAnimation.Storyboard.Seek(TimeSpan.FromMilliseconds(step * int.Parse(txtDelay.Text)), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+                _canvas.Redraw(_mas.History, step);
             }
         }
 
@@ -555,9 +557,22 @@ namespace Muragatte.GUI
 
         private void Initialize()
         {
+            if (cmbStartState.SelectedIndex == 0)
+            { _mas.Scatter(); }
+            else
+            { FormGroup(); }
             _mas.Initialize();
             SetCentroidSpecies(_mas.Elements.Centroids, _mas.Species[3]);
             Redraw();
+        }
+
+        private void FormGroup()
+        {
+            //double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            //_mas.GroupStart(fov * 3);
+            double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa * 1.5;
+            _mas.GroupStart(size);
         }
 
         #endregion

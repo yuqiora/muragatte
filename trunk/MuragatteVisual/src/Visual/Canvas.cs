@@ -308,6 +308,10 @@ namespace Muragatte.Visual
 
         public void Redraw(History history, int step)
         {
+            if (step >= history.Count)
+            {
+                return;
+            }
             _wb.Clear();
             IEnumerable<Element> stationary = _model.Elements.Stationary;
             IEnumerable<Agent> agents = _model.Elements.Agents;

@@ -181,6 +181,18 @@ namespace Muragatte.Core.Environment
             return a.IsEnabled && !a.Representative.IsInGroup && (_fieldOfView.Covers(a) || a.FieldOfView.Covers(this));
         }
 
+        public IEnumerable<Agent> GroupSearch()
+        {
+            _representative.IsInGroup = true;
+            IEnumerable<Agent> candidates = _model.Elements.RangeSearch<Agent>(this, VisibleRange, e => IsGroupCandidate((Agent)e));
+            List<Agent> members = new List<Agent>(candidates);
+            foreach (Agent a in candidates)
+            {
+                members.AddRange(a.GroupSearch());
+            }
+            return members;
+        }
+
         #endregion
 
         #region Protected Methods
@@ -211,22 +223,6 @@ namespace Muragatte.Core.Environment
             {
                 modifier = value;
             }
-        }
-
-        #endregion
-
-        #region Virtual Methods
-
-        public virtual IEnumerable<Agent> GroupSearch()
-        {
-            _representative.IsInGroup = true;
-            IEnumerable<Agent> candidates = _model.Elements.RangeSearch<Agent>(this, VisibleRange, e => IsGroupCandidate((Agent)e));
-            List<Agent> members = new List<Agent>(candidates);
-            foreach (Agent a in candidates)
-            {
-                members.AddRange(a.GroupSearch());
-            }
-            return members;
         }
 
         #endregion
