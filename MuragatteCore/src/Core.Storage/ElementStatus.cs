@@ -95,10 +95,24 @@ namespace Muragatte.Core.Storage
 
         #region Methods
 
+        private string ModifiersToString()
+        {
+            if (_dModifiers == null)
+            {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (double mod in _dModifiers)
+            {
+                sb.AppendFormat(" {0}", mod);
+            }
+            return sb.ToString();
+        }
+
         public override string ToString()
         {
-            return string.Format("{0} {1} {2} {3} {4} {5} {6}",
-                _iElementID, _position, _direction, _dSpeed, _bEnabled, _iSpeciesID, _dModifiers);
+            return string.Format("{0} {1} {2} {3} {4} {5}{6}",
+                _iElementID, _position, _direction, _dSpeed, _bEnabled, _iSpeciesID, ModifiersToString());
         }
 
         #endregion

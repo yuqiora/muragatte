@@ -111,12 +111,12 @@ namespace Muragatte.Core
 
         public virtual void Initialize()
         {
-            Scatter();
             foreach (Agent a in _storage.Agents)
             {
                 a.CreateRepresentative();
                 _storage.Add(a.Representative);
             }
+            UpdateGroupsAndCentroids(null);
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
@@ -169,7 +169,14 @@ namespace Muragatte.Core
                     record.Add(e.ReportStatus());
                 }
             }
-            //the following is for centroids/groups
+            UpdateGroupsAndCentroids(record);
+            _history.Add(record);
+            _iCurrentStep = _iSteps;
+            _iSteps++;
+        }
+
+        public virtual void UpdateGroupsAndCentroids(HistoryRecord record)
+        {
             foreach (Group g in _groups)
             {
                 g.Clear();
@@ -179,17 +186,28 @@ namespace Muragatte.Core
             {
                 if (a.Group == null)
                 {
-                    _groups.Add(new Group(a, a.GroupSearch()));
+                    IEnumerable<Agent> members = a.GroupSearch();
+                    if (members.Count() > 0)
+                    {
+                        _groups.Add(new Group(a, members));
+                    }
                 }
             }
-            foreach (Centroid c in _storage.Centroids)
+            if (record == null)
             {
-                c.ConfirmUpdate();
-                record.Add(c.ReportStatus());
+                foreach (Centroid c in _storage.Centroids)
+                {
+                    c.ConfirmUpdate();
+                }
             }
-            _history.Add(record);
-            _iCurrentStep = _iSteps;
-            _iSteps++;
+            else
+            {
+                foreach (Centroid c in _storage.Centroids)
+                {
+                    c.ConfirmUpdate();
+                    record.Add(c.ReportStatus());
+                }
+            }
         }
         
         #endregion
