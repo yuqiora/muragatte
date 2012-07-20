@@ -243,7 +243,8 @@ namespace Muragatte.Core.Environment.Agents
                     {
                         if (companions.Count + goals.Count > 0)
                         {
-                            dirDelta = SteeringCohesion(companions, _dWeightCohesion) +
+                            dirDelta = //SteeringSeparation(companions, _dWeightSeparation / 2) +
+                                SteeringCohesion(companions, _dWeightCohesion) +
                                 SteeringAlignment(companions, _dWeightAlignment) +
                                 SteeringSeekOrPursuit(goals, _dWeightSeekPursuit);
                             if (_goal != null)

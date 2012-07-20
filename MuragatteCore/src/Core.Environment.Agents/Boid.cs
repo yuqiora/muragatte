@@ -194,8 +194,8 @@ namespace Muragatte.Core.Environment.Agents
                 {
                     if (companions.Count() > 0)
                     {
-                        //dirDelta = SteeringCohesion(companions) + SteeringAlignment(companions);
-                        dirDelta = SteeringSeparation(companions, 0.5) + SteeringCohesion(companions) + SteeringAlignment(companions);
+                        dirDelta = SteeringCohesion(companions) + SteeringAlignment(companions);
+                        //dirDelta = SteeringSeparation(companions, 0.5) + SteeringCohesion(companions) + SteeringAlignment(companions);
                         if (_goal != null)
                         {
                             dirDelta += SteeringSeek(_goal, _dAssertivity);
