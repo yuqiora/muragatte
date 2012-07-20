@@ -166,7 +166,10 @@ namespace Muragatte.GUI
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             prbUpdate.Visibility = System.Windows.Visibility.Visible;
-            _worker.RunWorkerAsync();
+            if (!_worker.IsBusy)
+            {
+                _worker.RunWorkerAsync();
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
@@ -438,6 +441,12 @@ namespace Muragatte.GUI
             Species centroids = new Species("Centroids");
             centroids.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorCentroid);
             species.Add(centroids.ID, centroids);
+            Species wanderers = new Species("Wanderers");
+            wanderers.Item = ParticleFactory.AgentA((int)_canvas.Scale, _colorAgentDefault);
+            species.Add(wanderers.ID, wanderers);
+            Species versatiles = new Species("Versatiles");
+            versatiles.Item = ParticleFactory.AgentA((int)_canvas.Scale, _colorAgentGuide);
+            species.Add(versatiles.ID, versatiles);
             _mas.Species = species;
         }
 
@@ -488,6 +497,12 @@ namespace Muragatte.GUI
                 a.Species = _mas.Species[2];
                 _mas.Elements.Add(a);
             }
+            //Neighbourhood lwn = new CircularNeighbourhood(fovRange, fovAng);
+            //lwn.Item = fovImg;
+            //LoneWanderer lw = new LoneWanderer(_mas, lwn, turn, 10, 2);
+            //lw.Speed = 1;
+            //lw.Species = _mas.Species[4];
+            //_mas.Elements.Add(lw);
         }
 
         private void SetCentroidSpecies(IEnumerable<Centroid> items, Species species)
@@ -571,7 +586,7 @@ namespace Muragatte.GUI
             //double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             //_mas.GroupStart(fov * 3);
             double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa * 1.5;
+            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa;
             _mas.GroupStart(size);
         }
 

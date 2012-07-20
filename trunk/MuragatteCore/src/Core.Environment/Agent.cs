@@ -211,9 +211,9 @@ namespace Muragatte.Core.Environment
 
         protected void DirectionInBounds()
         {
-            if (Vector2.AngleBetween(_direction, _altDirection) > _dTurningAngle)
+            if (Vector2.AngleBetween(_direction, _altDirection) > _dTurningAngle * _model.TimePerStep)
             {
-                _altDirection = _direction - (new Angle(_altDirection) - new Angle(_direction)).Sign() * _dTurningAngle;
+                _altDirection = _direction - (new Angle(_altDirection) - new Angle(_direction)).Sign() * _dTurningAngle * _model.TimePerStep;
             }
         }
 
