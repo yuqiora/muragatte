@@ -8,8 +8,8 @@
     <ProjectGuid>{CCA9E1C0-1F8D-457D-88B7-A8E8B6B803F5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Muragatte</RootNamespace>
-    <AssemblyName>Muragatte</AssemblyName>
+    <RootNamespace>Muragatte.Thesis</RootNamespace>
+    <AssemblyName>MuragatteThesis</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -55,7 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="src\GUI\MainWindow.xaml">
+    <Page Include="src\GUI\ThesisMainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -63,8 +63,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\GUI\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="src\GUI\ThesisMainWindow.xaml.cs">
+      <DependentUpon>ThesisMainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

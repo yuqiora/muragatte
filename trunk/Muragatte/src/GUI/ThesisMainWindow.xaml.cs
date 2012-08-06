@@ -12,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Muragatte
+namespace Muragatte.GUI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ThesisMainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ThesisMainWindow : Window
     {
-        public MainWindow()
+        public ThesisMainWindow()
         {
             InitializeComponent();
         }

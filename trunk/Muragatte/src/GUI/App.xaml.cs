@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace Muragatte
+namespace Muragatte.Thesis
 {
     /// <summary>
     /// Interaction logic for App.xaml
