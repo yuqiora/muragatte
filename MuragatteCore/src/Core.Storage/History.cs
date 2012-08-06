@@ -93,13 +93,24 @@ namespace Muragatte.Core.Storage
 
         public List<Vector2> GetElementPositions(int id)
         {
-            return GetElementPositions(id, _records.Count);
+            return GetElementPositions(id, 0, _records.Count);
         }
 
         public List<Vector2> GetElementPositions(int id, int count)
         {
+            return GetElementPositions(id, 0, count);
+            //List<Vector2> positions = new List<Vector2>();
+            //for (int i = 0; i < count; i++)
+            //{
+            //    positions.Add(_records[i][id].Position);
+            //}
+            //return positions;
+        }
+
+        public List<Vector2> GetElementPositions(int id, int start, int count)
+        {
             List<Vector2> positions = new List<Vector2>();
-            for (int i = 0; i < count; i++)
+            for (int i = start; i < start + count; i++)
             {
                 positions.Add(_records[i][id].Position);
             }

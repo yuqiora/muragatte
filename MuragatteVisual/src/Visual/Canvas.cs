@@ -27,7 +27,7 @@ namespace Muragatte.Visual
 
         private WriteableBitmap _wb = null;
         private double _dScale = 1;
-        private System.Windows.Rect _canvasArea;    //probably not needed
+        //private System.Windows.Rect _canvasArea;    //probably not needed
         private bool _bEnvironment = true;
         private bool _bNeighbourhoods = false;
         private bool _bTracks = false;
@@ -35,20 +35,22 @@ namespace Muragatte.Visual
         private bool _bAgents = true;
         private bool _bCentroids = false;
         private int _iTrailLength = 10;
-        private MultiAgentSystem _model = null;
+        //private MultiAgentSystem _model = null;
+        private Visualization _visual = null;
 
         #endregion
 
         #region Constructors
 
-        public Canvas(int width, int height)
+        public Canvas(int width, int height, Visualization visualization)
         {
-            _canvasArea = new System.Windows.Rect(0, 0, width, height);
+            //_canvasArea = new System.Windows.Rect(0, 0, width, height);
             _wb = BitmapFactory.New(width, height);
+            _visual = visualization;
         }
 
-        public Canvas(int width, int height, double scale)
-            : this((int)(width * scale), (int)(height * scale))
+        public Canvas(int width, int height, double scale, Visualization visualization)
+            : this((int)(width * scale), (int)(height * scale), visualization)
         {
             _dScale = scale;
         }
@@ -130,40 +132,46 @@ namespace Muragatte.Visual
             set { _iTrailLength = value; }
         }
 
-        public MultiAgentSystem Model
-        {
-            get { return _model; }
-            set { _model = value; }
-        }
+        //public MultiAgentSystem Model
+        //{
+        //    get { return _model; }
+        //    set { _model = value; }
+        //}
 
         #endregion
 
         #region Methods
 
+        //public void Rescale(double newScale)
+        //{
+        //    _wb = BitmapFactory.New((int)(_wb.PixelWidth * newScale), (int)(_wb.PixelHeight * newScale));
+        //    _dScale = newScale;
+        //}
+
         public void Clear()
         {
             _wb.Clear();
         }
+        
+        //public void Initialize()
+        //{
+        //    if (_model != null)
+        //    {
+        //        Redraw();
+        //    }
+        //}
 
-        public void Initialize()
-        {
-            if (_model != null)
-            {
-                Redraw();
-            }
-        }
-
-        public void Initialize(MultiAgentSystem model)
-        {
-            _model = model;
-            Redraw();
-        }
+        //public void Initialize(MultiAgentSystem model)
+        //{
+        //    _model = model;
+        //    Redraw();
+        //}
 
         public void Redraw()
         {
             _wb.Clear();
-            IEnumerable<Element> stationary = _model.Elements.Stationary;
-            IEnumerable<Agent> agents = _model.Elements.Agents;
+            IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
+            IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
             DrawNeighbourhoods(agents);
             DrawEnvironment(stationary);
             DrawAgents(agents);
@@ -275,13 +283,37 @@ namespace Muragatte.Visual
         {
             if (_bTrails)
             {
-                int substep = _model.Substeps;
+                int substep = _visual.GetModel.Substeps;
                 float alphaInc = 1.0f / (_iTrailLength + 1);
                 float alpha = alphaInc;
                 for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
                 {
                     DrawItems(items, history[i], alpha);
                     alpha += alphaInc;
+                }
+            }
+        }
+
+        public void DrawTrails2(IEnumerable<Element> items, History history, int step)
+        {
+            if (_bTrails)
+            {
+                int substep = _visual.GetModel.Substeps;
+                //float alphaInc = 1.0f / (_iTrailLength + 1);
+                //float alpha = alphaInc;
+                //for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
+                //{
+                //    DrawItems(items, history[i], alpha);
+                //    alpha += alphaInc;
+                //}
+                int time = Math.Min(substep * _iTrailLength, history.Count);
+                foreach (Element a in items)
+                {
+                    List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, Math.Max(0, step - substep * _iTrailLength), time));
+                    foreach (int[] segment in segments)
+                    {
+                        _wb.DrawPolyline(segment, a.GetItemAs<Particle>().Color);
+                    }
                 }
             }
         }
@@ -313,9 +345,9 @@ namespace Muragatte.Visual
                 return;
             }
             _wb.Clear();
-            IEnumerable<Element> stationary = _model.Elements.Stationary;
-            IEnumerable<Agent> agents = _model.Elements.Agents;
-            IEnumerable<Centroid> centroids = _model.Elements.Centroids;
+            IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
+            IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
+            IEnumerable<Centroid> centroids = _visual.GetModel.Elements.Centroids;
             DrawNeighbourhoods(agents, history[step]);
             DrawEnvironment(stationary, history[step]);
             if (_bAgents)
