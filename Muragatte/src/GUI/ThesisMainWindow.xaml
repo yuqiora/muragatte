@@ -1,7 +1,7 @@
-﻿<Window x:Class="Muragatte.MainWindow"
+﻿<Window x:Class="Muragatte.GUI.ThesisMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="ThesisMainWindow" Height="350" Width="525">
     <Grid>
         
     </Grid>
