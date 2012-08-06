@@ -50,8 +50,9 @@ namespace Muragatte.GUI
         #region Fields
 
         private MultiAgentSystem _mas = null;
-        private Visual.Canvas _canvas = null;
-        private VisualCanvasWindow _view = null;
+        private Visualization _visual = null;
+        //private Visual.Canvas _canvas = null;
+        //private VisualCanvasWindow _view = null;
         private bool _bPlaying = false;
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
@@ -106,6 +107,7 @@ namespace Muragatte.GUI
         {
             prbUpdate.Value = e.ProgressPercentage;
             txtSteps.Text = _mas.NumberOfSteps.ToString();
+            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
         }
 
         void _worker_DoWork(object sender, DoWorkEventArgs e)
@@ -131,7 +133,7 @@ namespace Muragatte.GUI
         {
             CreateObstacles();
             CreateGoals();
-            _canvas.Redraw();
+            _visual.GetCanvas.Redraw();
         }
 
         private void btnAgents_Click(object sender, RoutedEventArgs e)
@@ -142,7 +144,7 @@ namespace Muragatte.GUI
             Color fovC = _colorNeighbourhood;
             fovC.A = 64;
             //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, _boidFOVAngle);
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _visual.GetCanvas.Scale), fovC);
             CreateBoids(agentCount, fovRange, fovImg);
             Initialize();
         }
@@ -158,7 +160,7 @@ namespace Muragatte.GUI
             CreateSpecies();
             Color fovC = _colorNeighbourhood;
             fovC.A = 64;
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _canvas.Scale), fovC);
+            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _visual.GetCanvas.Scale), fovC);
             CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
             Initialize();
         }
@@ -177,7 +179,7 @@ namespace Muragatte.GUI
             _mas.Clear();
             _goals.Clear();
             _obstacles.Clear();
-            _canvas.Clear();
+            _visual.GetCanvas.Clear();
             txtSteps.Text = "0";
             sldSteps.Value = 0;
         }
@@ -193,14 +195,16 @@ namespace Muragatte.GUI
             _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
                 width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
-            _canvas = new Visual.Canvas(width, height, scale);
-            _canvas.Initialize(_mas);
-            if (_view != null)
-            {
-                _view.Close();
-            }
-            _view = new VisualCanvasWindow(_canvas);
-            _view.Show();
+            _visual = new Visualization(_mas, width, height, scale);
+            _visual.Initialize();
+            //_canvas = new Visual.Canvas(width, height, scale);
+            //_canvas.Initialize(_mas);
+            //if (_view != null)
+            //{
+            //    _view.Close();
+            //}
+            //_view = new VisualCanvasWindow(_canvas);
+            //_view.Show();
             UpdateReplayDuration();
         }
 
@@ -332,10 +336,11 @@ namespace Muragatte.GUI
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (_view != null)
-            {
-                _view.Close();
-            }
+            _visual.Close();
+            //if (_view != null)
+            //{
+            //    _view.Close();
+            //}
         }
 
         void CompositionTarget_Rendering(object sender, EventArgs e)
@@ -354,7 +359,7 @@ namespace Muragatte.GUI
                 //    _canvas.Redraw(_mas.History, (int)sldSteps.Value);
                 //}
                 //replayAnimation.Storyboard.Seek(TimeSpan.FromMilliseconds(step * int.Parse(txtDelay.Text)), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
-                _canvas.Redraw(_mas.History, step);
+                _visual.GetCanvas.Redraw(_mas.History, step);
             }
         }
 
@@ -371,6 +376,7 @@ namespace Muragatte.GUI
         {
             _mas.Update();
             txtSteps.Text = _mas.NumberOfSteps.ToString();
+            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
             Redraw();
         }
 
@@ -389,26 +395,26 @@ namespace Muragatte.GUI
 
         private void SetShowAgents()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsAgentsEnabled = chbAgents.IsChecked.Value;
+                _visual.GetCanvas.IsAgentsEnabled = chbAgents.IsChecked.Value;
             }
         }
 
         private void SetShowNeighbourhoods()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsNeighbourhoodsEnabled = chbNeighbourhoods.IsChecked.Value;
+                _visual.GetCanvas.IsNeighbourhoodsEnabled = chbNeighbourhoods.IsChecked.Value;
             }
         }
 
         private void CreateGoals()
         {
             Goal g1 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _canvas.Scale), _colorAgentGuide, true);
+            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _visual.GetCanvas.Scale), _colorAgentGuide, true);
             Goal g2 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _canvas.Scale), _colorAgentIntruder, true);
+            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _visual.GetCanvas.Scale), _colorAgentIntruder, true);
             _goals.Add(g1);
             _goals.Add(g2);
             _mas.Elements.Add(_goals);
@@ -420,7 +426,7 @@ namespace Muragatte.GUI
             for (int i = 0; i < obstacles; i++)
             {
                 Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, 30));
-                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _canvas.Scale), _colorObstacle);
+                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _visual.GetCanvas.Scale), _colorObstacle);
                 _obstacles.Add(o);
             }
             _mas.Elements.Add(_obstacles);
@@ -428,24 +434,25 @@ namespace Muragatte.GUI
         
         private void CreateSpecies()
         {
+            int scale = (int)_visual.GetCanvas.Scale;
             SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
             Species boids = new Species("Boids");
-            boids.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentDefault);
+            boids.Item = ParticleFactory.AgentB(scale, _colorAgentDefault);
             species.Add(boids.ID, boids);
             Species guides = boids.CreateSubSpecies("Guides");
-            guides.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentGuide);
+            guides.Item = ParticleFactory.AgentB(scale, _colorAgentGuide);
             species.Add(guides.ID, guides);
             Species intruders = boids.CreateSubSpecies("Intruders");
-            intruders.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorAgentIntruder);
+            intruders.Item = ParticleFactory.AgentB(scale, _colorAgentIntruder);
             species.Add(intruders.ID, intruders);
             Species centroids = new Species("Centroids");
-            centroids.Item = ParticleFactory.AgentB((int)_canvas.Scale, _colorCentroid);
+            centroids.Item = ParticleFactory.AgentB(scale, _colorCentroid);
             species.Add(centroids.ID, centroids);
             Species wanderers = new Species("Wanderers");
-            wanderers.Item = ParticleFactory.AgentA((int)_canvas.Scale, _colorAgentDefault);
+            wanderers.Item = ParticleFactory.AgentA(scale, _colorAgentDefault);
             species.Add(wanderers.ID, wanderers);
             Species versatiles = new Species("Versatiles");
-            versatiles.Item = ParticleFactory.AgentA((int)_canvas.Scale, _colorAgentGuide);
+            versatiles.Item = ParticleFactory.AgentA(scale, _colorAgentGuide);
             species.Add(versatiles.ID, versatiles);
             _mas.Species = species;
         }
@@ -531,33 +538,33 @@ namespace Muragatte.GUI
 
         private void SetShowEnvironment()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsEnvironmentEnabled = chbEnvironment.IsChecked.Value;
+                _visual.GetCanvas.IsEnvironmentEnabled = chbEnvironment.IsChecked.Value;
             }
         }
 
         private void SetShowTracks()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsTracksEnabled = chbTracks.IsChecked.Value;
+                _visual.GetCanvas.IsTracksEnabled = chbTracks.IsChecked.Value;
             }
         }
 
         private void SetShowTrails()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsTrailsEnabled = chbTrails.IsChecked.Value;
+                _visual.GetCanvas.IsTrailsEnabled = chbTrails.IsChecked.Value;
             }
         }
 
         private void SetShowCentroids()
         {
-            if (_canvas != null)
+            if (_visual != null)
             {
-                _canvas.IsCentroidsEnabled = chbCentroids.IsChecked.Value;
+                _visual.GetCanvas.IsCentroidsEnabled = chbCentroids.IsChecked.Value;
             }
         }
 
@@ -565,8 +572,8 @@ namespace Muragatte.GUI
         {
             if (chbVisualize.IsChecked.Value)
             {
-                //_canvas.Redraw();
-                _canvas.Redraw(_mas.History);
+                //_visual.GetCanvas.Redraw();
+                _visual.GetCanvas.Redraw(_mas.History);
             }
         }
 

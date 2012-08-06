@@ -30,16 +30,29 @@ namespace Muragatte.GUI
     /// </summary>
     public partial class VisualCanvasWindow : Window
     {
-        public VisualCanvasWindow()
-        {
-            InitializeComponent();
-        }
+        #region Fields
 
-        public VisualCanvasWindow(Visual.Canvas canvas)
+        private Visualization _visualization;
+
+        #endregion
+
+        #region Constructors
+
+        //public VisualCanvasWindow()
+        //{
+        //    InitializeComponent();
+        //}
+
+        public VisualCanvasWindow(Visualization visualization, Visual.Canvas canvas)
         {
             InitializeComponent();
+            _visualization = visualization;
             SetCanvas(canvas);
         }
+
+        #endregion
+
+        #region Methods
 
         public void SetCanvas(Visual.Canvas canvas)
         {
@@ -47,5 +60,8 @@ namespace Muragatte.GUI
             imgCanvas.Height = canvas.PixelHeight;
             imgCanvas.Source = canvas.Image;
         }
+
+        #endregion
+
     }
 }

@@ -61,11 +61,15 @@
     <Compile Include="src\GUI\VisualOptionsWindow.xaml.cs">
       <DependentUpon>VisualOptionsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\GUI\VisualPlaybackWindow.xaml.cs">
+      <DependentUpon>VisualPlaybackWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Visual\Canvas.cs" />
     <Compile Include="src\Visual\ComplexParticle.cs" />
     <Compile Include="src\Visual\ElementaryParticle.cs" />
     <Compile Include="src\Visual\Particle.cs" />
     <Compile Include="src\Visual\ParticleFactory.cs" />
+    <Compile Include="src\Visual\Visualization.cs" />
     <Page Include="src\GUI\VisualCanvasWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +79,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="src\GUI\VisualOptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\GUI\VisualPlaybackWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
