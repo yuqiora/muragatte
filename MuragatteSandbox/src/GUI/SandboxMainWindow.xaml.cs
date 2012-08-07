@@ -38,7 +38,7 @@ namespace Muragatte.GUI
     /// <summary>
     /// Interaction logic for SandboxMainWindow.xaml
     /// </summary>
-    public partial class SandboxMainWindow : Window, INotifyPropertyChanged
+    public partial class SandboxMainWindow : Window
     {
         #region Constants
 
@@ -51,12 +51,9 @@ namespace Muragatte.GUI
 
         private MultiAgentSystem _mas = null;
         private Visualization _visual = null;
-        //private Visual.Canvas _canvas = null;
-        //private VisualCanvasWindow _view = null;
         private bool _bPlaying = false;
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
-        private Duration replayDuration = new Duration();
 
         private Color _colorNeighbourhood = Colors.LightYellow;
         private Color _colorObstacle = Colors.Gray;
@@ -71,19 +68,7 @@ namespace Muragatte.GUI
 
         #endregion
 
-        #region Properties
-
-        public Duration ReplayDuration
-        {
-            get { return replayDuration; }
-            set
-            {
-                replayDuration = value;
-                this.OnPropertyChanged("ReplayDuration");
-            }
-        }
-
-        #endregion
+        #region Constructors
 
         public SandboxMainWindow()
         {
@@ -93,40 +78,10 @@ namespace Muragatte.GUI
             _worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
             _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
             InitializeComponent();
-            this.DataContext = this;
         }
 
-        void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            prbUpdate.Visibility = System.Windows.Visibility.Hidden;
-            UpdateReplayDuration();
-            Redraw();
-        }
+        #endregion
 
-        void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            prbUpdate.Value = e.ProgressPercentage;
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
-            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
-        }
-
-        void _worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            int stepsToUpdate = 500;
-            for (int i = 0; i < stepsToUpdate; i++)
-            {
-                _mas.Update();
-                _worker.ReportProgress(100 * i / stepsToUpdate);
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string strPropertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(strPropertyName));
-        }
-        
         #region Button Events
         
         private void btnEnvironment_Click(object sender, RoutedEventArgs e)
@@ -181,7 +136,6 @@ namespace Muragatte.GUI
             _obstacles.Clear();
             _visual.GetCanvas.Clear();
             txtSteps.Text = "0";
-            sldSteps.Value = 0;
         }
 
         private void btnInitialize_Click(object sender, RoutedEventArgs e)
@@ -189,23 +143,17 @@ namespace Muragatte.GUI
             _goals.Clear();
             _obstacles.Clear();
             txtSteps.Text = "0";
-            sldSteps.Value = 0;
             int width = int.Parse(txtWidth.Text);
             int height = int.Parse(txtHeight.Text);
             _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
                 width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
+            if (_visual != null)
+            {
+                _visual.Close();
+            }
             _visual = new Visualization(_mas, width, height, scale);
             _visual.Initialize();
-            //_canvas = new Visual.Canvas(width, height, scale);
-            //_canvas.Initialize(_mas);
-            //if (_view != null)
-            //{
-            //    _view.Close();
-            //}
-            //_view = new VisualCanvasWindow(_canvas);
-            //_view.Show();
-            UpdateReplayDuration();
         }
 
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
@@ -215,7 +163,6 @@ namespace Muragatte.GUI
                 _bPlaying = false;
                 btnPlayPause.Content = "Play";
                 CompositionTarget.Rendering -= CompositionTarget_Rendering;
-                UpdateReplayDuration();
             }
             else
             {
@@ -233,17 +180,6 @@ namespace Muragatte.GUI
         private void btnGroup_Click(object sender, RoutedEventArgs e)
         {
             FormGroup();
-        }
-
-        private void btnReplay_Click(object sender, RoutedEventArgs e)
-        {
-            //if (_mas.NumberOfSteps > 0 && !_bPlaying && !_worker.IsBusy)
-            //{
-            //    prbReplay.Value = 0;
-            //    prbReplay.Visibility = System.Windows.Visibility.Visible;
-            //    _worker.RunWorkerAsync(_mas.NumberOfSteps);
-            //    //_canvas.Redraw(_mas.History);
-            //}
         }
 
         #endregion
@@ -334,38 +270,37 @@ namespace Muragatte.GUI
 
         #region Other Events
 
+        void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            prbUpdate.Visibility = System.Windows.Visibility.Hidden;
+            Redraw();
+        }
+
+        void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            prbUpdate.Value = e.ProgressPercentage;
+            txtSteps.Text = _mas.NumberOfSteps.ToString();
+            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
+        }
+
+        void _worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int stepsToUpdate = 500;
+            for (int i = 0; i < stepsToUpdate; i++)
+            {
+                _mas.Update();
+                _worker.ReportProgress(100 * i / stepsToUpdate);
+            }
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _visual.Close();
-            //if (_view != null)
-            //{
-            //    _view.Close();
-            //}
         }
 
         void CompositionTarget_Rendering(object sender, EventArgs e)
         {
             UpdateAndRedraw();
-        }
-
-        private void sldSteps_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            int step = (int)sldSteps.Value;
-            if (_mas.NumberOfSteps > 0 && !_bPlaying)
-            {
-                //int fullStep = (int)Math.Ceiling(1 / _mas.TIME_PER_STEP);
-                //if ((int)sldSteps.Value % fullStep == 0)
-                //{
-                //    _canvas.Redraw(_mas.History, (int)sldSteps.Value);
-                //}
-                //replayAnimation.Storyboard.Seek(TimeSpan.FromMilliseconds(step * int.Parse(txtDelay.Text)), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
-                _visual.GetCanvas.Redraw(_mas.History, step);
-            }
-        }
-
-        private void txtDelay_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateReplayDuration();
         }
 
         #endregion
@@ -378,19 +313,6 @@ namespace Muragatte.GUI
             txtSteps.Text = _mas.NumberOfSteps.ToString();
             _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
             Redraw();
-        }
-
-        private void UpdateReplayDuration()
-        {
-            if (_mas != null)
-            {
-                int ms;
-                if (!int.TryParse(txtDelay.Text, out ms))
-                {
-                    ms = DEFAULT_DELAY;
-                }
-                ReplayDuration = new Duration(TimeSpan.FromMilliseconds(ms * _mas.NumberOfSteps));
-            }
         }
 
         private void SetShowAgents()

@@ -36,7 +36,7 @@ namespace Muragatte.Visual
             _canvas = new Canvas(width, height, scale, this);
             _wndCanvas = new GUI.VisualCanvasWindow(this, _canvas);
             _wndPlayback = new GUI.VisualPlaybackWindow(this);
-            //_wndOptions = new GUI.VisualOptionsWindow(this);
+            _wndOptions = new GUI.VisualOptionsWindow(this);
         }
 
         #endregion
@@ -77,7 +77,12 @@ namespace Muragatte.Visual
             _canvas.Clear();
             _wndCanvas.Show();
             _wndPlayback.Show();
-            //_wndOptions.Show();
+            _wndOptions.Show();
+        }
+
+        public void Redraw(int frame)
+        {
+            _canvas.Redraw(_model.History, frame);
         }
 
         //public void Rescale(double scale)

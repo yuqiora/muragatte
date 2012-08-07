@@ -123,6 +123,7 @@ namespace Muragatte.Core
                 record.Add(e.ReportStatus());
             }
             _history.Add(record);
+            //_history.Archive(_species.Values);
         }
 
         public virtual void Scatter()

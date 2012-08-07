@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Muragatte.Visual;
 
 namespace Muragatte.GUI
@@ -39,9 +40,8 @@ namespace Muragatte.GUI
         #region Fields
 
         private Visualization _visual;
-        private Storyboard _playbackStoryboard;
-        private DoubleAnimation _playbackAnimation;
-        private bool _bPaused = false;
+        private DispatcherTimer _visTimer;
+        private bool _bPlaying = false;
 
         #endregion
 
@@ -50,15 +50,10 @@ namespace Muragatte.GUI
         public VisualPlaybackWindow(Visualization visualization)
         {
             InitializeComponent();
-            NameScope.SetNameScope(this, new NameScope());
-            //this.DataContext = this;
-            this.RegisterName(sldFrame.Name, sldFrame);
             _visual = visualization;
-            _playbackAnimation = new DoubleAnimation();
-            _playbackStoryboard = new Storyboard();
-            _playbackStoryboard.Children.Add(_playbackAnimation);
-            Storyboard.SetTargetName(_playbackAnimation, sldFrame.Name);
-            Storyboard.SetTargetProperty(_playbackAnimation, new PropertyPath(Slider.ValueProperty));
+            _visTimer = new DispatcherTimer();
+            _visTimer.Tick += new EventHandler(_visTimer_Tick);
+            _visTimer.Interval = TimeSpan.FromMilliseconds(DEFAULT_DELAY);
             txtDelay.Text = DEFAULT_DELAY.ToString();
         }
 
@@ -66,95 +61,79 @@ namespace Muragatte.GUI
 
         #region Events
 
+        void _visTimer_Tick(object sender, EventArgs e)
+        {
+            NextFrame();
+        }
+
         private void chbAutoDelay_Checked(object sender, RoutedEventArgs e)
         {
             txtDelay.IsEnabled = false;
+            if (_bPlaying)
+            {
+                _visTimer.Stop();
+                AutoDelayOn();
+            }
         }
 
         private void chbAutoDelay_Unchecked(object sender, RoutedEventArgs e)
         {
             txtDelay.IsEnabled = true;
+            if (_bPlaying)
+            {
+                AutoDelayOff();
+                _visTimer.Start();
+            }
         }
 
         private void sldFrame_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _visual.GetCanvas.Redraw(_visual.GetModel.History, (int)sldFrame.Value);
+            _visual.Redraw((int)sldFrame.Value);
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            if (chbAutoDelay.IsChecked.Value)
-            {
-                CompositionTarget.Rendering += CompositionTarget_Rendering;
-            }
-            else
-            {
-                if (_bPaused)
-                {
-                    _playbackStoryboard.Resume(this);
-                    _bPaused = false;
-                }
-                else
-                {
-                    _playbackAnimation.To = (int)sldFrame.Maximum;
-                    int ms;
-                    if (!int.TryParse(txtDelay.Text, out ms))
-                    {
-                        ms = DEFAULT_DELAY;
-                    }
-                    _playbackAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(ms * sldFrame.Maximum));
-                    _playbackStoryboard.Begin(this, true);
-                }
-            }
+            Play();
         }
 
-        private void btnStop_Click(object sender, RoutedEventArgs e)
+        private void btnPause_Click(object sender, RoutedEventArgs e)
         {
-            if (chbAutoDelay.IsChecked.Value)
-            {
-                CompositionTarget.Rendering -= CompositionTarget_Rendering;
-            }
-            else
-            {
-                _bPaused = true;
-                _playbackStoryboard.Pause(this);
-            }
+            Pause();
         }
 
-        private void btnToStart_Click(object sender, RoutedEventArgs e)
+        private void btnFirst_Click(object sender, RoutedEventArgs e)
         {
-            if (chbAutoDelay.IsChecked.Value)
-            {
-                sldFrame.Value = sldFrame.Minimum;
-            }
-            else
-            {
-                _playbackStoryboard.Stop(this);
-            }
+            sldFrame.Value = sldFrame.Minimum;
         }
 
-        private void btnToEnd_Click(object sender, RoutedEventArgs e)
+        private void btnLast_Click(object sender, RoutedEventArgs e)
         {
-            if (chbAutoDelay.IsChecked.Value)
-            {
-                sldFrame.Value = sldFrame.Maximum;
-            }
-            else
-            {
-                _playbackStoryboard.SkipToFill(this);
-            }
+            sldFrame.Value = sldFrame.Maximum;
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
         {
-            if (sldFrame.Value < sldFrame.Maximum)
+            NextFrame();
+        }
+
+        private void txtDelay_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            double ms;
+            if (!double.TryParse(txtDelay.Text, out ms))
             {
-                sldFrame.Value++;
+                ms = DEFAULT_DELAY;
             }
-            else
+            _visTimer.Interval = TimeSpan.FromMilliseconds(ms);
+        }
+
+        private void txtFrame_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int frame;
+            if (!int.TryParse(txtFrame.Text, out frame) || frame < sldFrame.Minimum || frame > sldFrame.Maximum)
             {
-                CompositionTarget.Rendering -= CompositionTarget_Rendering;
+                frame = 0;
             }
+            sldFrame.Value = frame;
         }
 
         #endregion
@@ -165,6 +144,60 @@ namespace Muragatte.GUI
         {
             lblNumOfFrames.Content = count.ToString();
             sldFrame.Maximum = count;
+        }
+
+        private void Play()
+        {
+            if (chbAutoDelay.IsChecked.Value)
+            {
+                AutoDelayOn();
+            }
+            else
+            {
+                _visTimer.Start();
+            }
+            Playing(true);
+        }
+
+        private void Pause()
+        {
+            if (chbAutoDelay.IsChecked.Value)
+            {
+                AutoDelayOff();
+            }
+            else
+            {
+                _visTimer.Stop();
+            }
+            Playing(false);
+        }
+
+        private void NextFrame()
+        {
+            if (sldFrame.Value < sldFrame.Maximum)
+            {
+                sldFrame.Value++;
+            }
+            else
+            {
+                Pause();
+            }
+        }
+
+        private void AutoDelayOn()
+        {
+            CompositionTarget.Rendering += CompositionTarget_Rendering;
+        }
+
+        private void AutoDelayOff()
+        {
+            CompositionTarget.Rendering -= CompositionTarget_Rendering;
+        }
+
+        private void Playing(bool value)
+        {
+            _bPlaying = value;
+            txtFrame.IsReadOnly = value;
         }
 
         #endregion
