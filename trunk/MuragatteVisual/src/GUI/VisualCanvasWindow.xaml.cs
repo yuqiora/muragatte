@@ -47,14 +47,14 @@ namespace Muragatte.GUI
         {
             InitializeComponent();
             _visualization = visualization;
-            SetCanvas(canvas);
+            Initialize(canvas);
         }
 
         #endregion
 
         #region Methods
 
-        public void SetCanvas(Visual.Canvas canvas)
+        public void Initialize(Visual.Canvas canvas)
         {
             imgCanvas.Width = canvas.PixelWidth;
             imgCanvas.Height = canvas.PixelHeight;

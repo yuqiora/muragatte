@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
@@ -21,7 +22,7 @@ using Muragatte.Core.Storage;
 
 namespace Muragatte.Visual
 {
-    public class Canvas
+    public class Canvas : INotifyPropertyChanged
     {
         #region Fields
 
@@ -93,37 +94,61 @@ namespace Muragatte.Visual
         public bool IsEnvironmentEnabled
         {
             get { return _bEnvironment; }
-            set { _bEnvironment = value; }
+            set
+            {
+                _bEnvironment = value;
+                NotifyPropertyChanged("IsEnvironmentEnabled");
+            }
         }
 
         public bool IsNeighbourhoodsEnabled
         {
             get { return _bNeighbourhoods; }
-            set { _bNeighbourhoods = value; }
+            set
+            {
+                _bNeighbourhoods = value;
+                NotifyPropertyChanged("IsNeighbourhoodsEnabled");
+            }
         }
 
         public bool IsTracksEnabled
         {
             get { return _bTracks; }
-            set { _bTracks = value; }
+            set
+            {
+                _bTracks = value;
+                NotifyPropertyChanged("IsTracksEnabled");
+            }
         }
 
         public bool IsTrailsEnabled
         {
             get { return _bTrails; }
-            set { _bTrails = value; }
+            set
+            {
+                _bTrails = value;
+                NotifyPropertyChanged("IsTrailsEnabled");
+            }
         }
 
         public bool IsAgentsEnabled
         {
             get { return _bAgents; }
-            set { _bAgents = value; }
+            set
+            {
+                _bAgents = value;
+                NotifyPropertyChanged("IsAgentsEnabled");
+            }
         }
 
         public bool IsCentroidsEnabled
         {
             get { return _bCentroids; }
-            set { _bCentroids = value; }
+            set
+            {
+                _bCentroids = value;
+                NotifyPropertyChanged("IsCentroidsEnabled");
+            }
         }
 
         public int TrailLength
@@ -150,7 +175,7 @@ namespace Muragatte.Visual
 
         public void Clear()
         {
-            _wb.Clear();
+            _wb.Clear(_visual.GetOptions.ccBackgroundColor.SelectedColor);
         }
         
         //public void Initialize()
@@ -169,7 +194,7 @@ namespace Muragatte.Visual
 
         public void Redraw()
         {
-            _wb.Clear();
+            Clear();
             IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
             IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
             DrawNeighbourhoods(agents);
@@ -344,7 +369,7 @@ namespace Muragatte.Visual
             {
                 return;
             }
-            _wb.Clear();
+            Clear();
             IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
             IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
             IEnumerable<Centroid> centroids = _visual.GetModel.Elements.Centroids;
@@ -408,6 +433,20 @@ namespace Muragatte.Visual
         }
 
         #endregion
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

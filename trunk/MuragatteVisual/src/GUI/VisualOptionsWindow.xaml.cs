@@ -21,6 +21,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Muragatte.Visual;
+using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace Muragatte.GUI
 {
@@ -33,6 +35,8 @@ namespace Muragatte.GUI
 
         private Visualization _visualization;
 
+        private readonly Color _defaultBackgroundColor = Colors.White;
+
         #endregion
 
         #region Constructors
@@ -41,6 +45,46 @@ namespace Muragatte.GUI
         {
             InitializeComponent();
             _visualization = visualization;
+            Binding bindVisPlay = new Binding("IsPlaying");
+            bindVisPlay.Source = _visualization.GetPlayback;
+            bindVisPlay.Converter = new InverseBoolConverter();
+            titGroups.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
+            titSnapshot.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
+            ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
+            BindVisualizationSelection();
+        }
+
+        #endregion
+
+        #region Events
+
+        private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
+        {
+            ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void BindVisualizationSelection()
+        {
+            BindVisualizationSelection(chbGeneralEnvironment, "IsEnvironmentEnabled");
+            BindVisualizationSelection(chbGeneralNeighbourhoods, "IsNeighbourhoodsEnabled");
+            BindVisualizationSelection(chbGeneralTracks, "IsTracksEnabled");
+            BindVisualizationSelection(chbGeneralTrails, "IsTrailsEnabled");
+            BindVisualizationSelection(chbGeneralAgents, "IsAgentsEnabled");
+            BindVisualizationSelection(chbGeneralCentroids, "IsCentroidsEnabled");
+            chbGeneralEnvironment.IsChecked = true;
+            chbGeneralAgents.IsChecked = true;
+        }
+
+        private void BindVisualizationSelection(CheckBox target, string propertyName)
+        {
+            Binding bind = new Binding(propertyName);
+            bind.Mode = BindingMode.OneWayToSource;
+            bind.Source = _visualization.GetCanvas;
+            BindingOperations.SetBinding(target, CheckBox.IsCheckedProperty, bind);
         }
 
         #endregion

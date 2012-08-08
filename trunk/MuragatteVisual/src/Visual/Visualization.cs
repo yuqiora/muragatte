@@ -90,6 +90,7 @@ namespace Muragatte.Visual
         //    if (_canvas != null)
         //    {
         //        _canvas.Rescale(scale);
+        //        _wndCanvas.Initialize(_canvas);
         //    }
         //}
 

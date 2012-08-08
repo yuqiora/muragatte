@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -23,13 +24,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Muragatte.Visual;
+using Xceed.Wpf.Toolkit;
 
 namespace Muragatte.GUI
 {
     /// <summary>
     /// Interaction logic for VisualPlaybackWindow.xaml
     /// </summary>
-    public partial class VisualPlaybackWindow : Window
+    public partial class VisualPlaybackWindow : Window, INotifyPropertyChanged
     {
         #region Constants
 
@@ -42,6 +44,7 @@ namespace Muragatte.GUI
         private Visualization _visual;
         private DispatcherTimer _visTimer;
         private bool _bPlaying = false;
+        private int _iFrameIncrement = 1;
 
         #endregion
 
@@ -54,12 +57,42 @@ namespace Muragatte.GUI
             _visTimer = new DispatcherTimer();
             _visTimer.Tick += new EventHandler(_visTimer_Tick);
             _visTimer.Interval = TimeSpan.FromMilliseconds(DEFAULT_DELAY);
-            txtDelay.Text = DEFAULT_DELAY.ToString();
+            iudDelay.Value = DEFAULT_DELAY;
+            Binding bindStepCount = new Binding("StepCount");
+            bindStepCount.Source = _visual.GetModel;
+            sldFrame.SetBinding(Slider.MaximumProperty, bindStepCount);
+            dudFrame.SetBinding(DoubleUpDown.MaximumProperty, bindStepCount);
+            lblFrameCount.SetBinding(Label.ContentProperty, bindStepCount);
+            int substeps = _visual.GetModel.Substeps;
+            if (substeps == 1)
+            {
+                chbSkipSubsteps.IsEnabled = false;
+            }
+            else
+            {
+                chbSkipSubsteps.Content += string.Format(" ({0})", substeps - 1);
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public bool IsPlaying
+        {
+            get { return _bPlaying; }
+            private set
+            {
+                _bPlaying = value;
+                NotifyPropertyChanged("IsPlaying");
+            }
         }
 
         #endregion
 
         #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         void _visTimer_Tick(object sender, EventArgs e)
         {
@@ -68,7 +101,7 @@ namespace Muragatte.GUI
 
         private void chbAutoDelay_Checked(object sender, RoutedEventArgs e)
         {
-            txtDelay.IsEnabled = false;
+            iudDelay.IsEnabled = false;
             if (_bPlaying)
             {
                 _visTimer.Stop();
@@ -78,7 +111,7 @@ namespace Muragatte.GUI
 
         private void chbAutoDelay_Unchecked(object sender, RoutedEventArgs e)
         {
-            txtDelay.IsEnabled = true;
+            iudDelay.IsEnabled = true;
             if (_bPlaying)
             {
                 AutoDelayOff();
@@ -116,34 +149,29 @@ namespace Muragatte.GUI
             NextFrame();
         }
 
-        private void txtDelay_TextChanged(object sender, TextChangedEventArgs e)
+        private void iudDelay_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            double ms;
-            if (!double.TryParse(txtDelay.Text, out ms))
-            {
-                ms = DEFAULT_DELAY;
-            }
-            _visTimer.Interval = TimeSpan.FromMilliseconds(ms);
+            _visTimer.Interval = TimeSpan.FromMilliseconds(iudDelay.Value.GetValueOrDefault(DEFAULT_DELAY));
         }
 
-        private void txtFrame_TextChanged(object sender, TextChangedEventArgs e)
+        private void chbSkipSubsteps_Checked(object sender, RoutedEventArgs e)
         {
-            int frame;
-            if (!int.TryParse(txtFrame.Text, out frame) || frame < sldFrame.Minimum || frame > sldFrame.Maximum)
-            {
-                frame = 0;
-            }
-            sldFrame.Value = frame;
+            _iFrameIncrement = _visual.GetModel.Substeps;
+        }
+
+        private void chbSkipSubsteps_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _iFrameIncrement = 1;
         }
 
         #endregion
 
         #region Methods
 
-        public void UpdateFrameCount(int count)
+        public void Clear()
         {
-            lblNumOfFrames.Content = count.ToString();
-            sldFrame.Maximum = count;
+            sldFrame.Value = sldFrame.Minimum;
+            Pause();
         }
 
         private void Play()
@@ -156,7 +184,7 @@ namespace Muragatte.GUI
             {
                 _visTimer.Start();
             }
-            Playing(true);
+            IsPlaying = true;
         }
 
         private void Pause()
@@ -169,14 +197,14 @@ namespace Muragatte.GUI
             {
                 _visTimer.Stop();
             }
-            Playing(false);
+            IsPlaying = false;
         }
 
         private void NextFrame()
         {
             if (sldFrame.Value < sldFrame.Maximum)
             {
-                sldFrame.Value++;
+                sldFrame.Value += _iFrameIncrement;
             }
             else
             {
@@ -194,10 +222,17 @@ namespace Muragatte.GUI
             CompositionTarget.Rendering -= CompositionTarget_Rendering;
         }
 
-        private void Playing(bool value)
+        //private void Playing(bool value)
+        //{
+        //    _bPlaying = value;
+        //}
+
+        private void NotifyPropertyChanged(String propertyName)
         {
-            _bPlaying = value;
-            txtFrame.IsReadOnly = value;
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion
