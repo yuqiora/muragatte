@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -18,7 +19,7 @@ using Muragatte.Core.Environment;
 
 namespace Muragatte.Core
 {
-    public class MultiAgentSystem
+    public class MultiAgentSystem : INotifyPropertyChanged
     {
         #region Fields
 
@@ -53,9 +54,14 @@ namespace Muragatte.Core
             set { _iCurrentStep = value >= _iSteps ? _iSteps - 1 : value; }
         }
 
-        public int NumberOfSteps
+        public int StepCount
         {
             get { return _iSteps; }
+            protected set
+            {
+                _iSteps = value;
+                NotifyPropertyChanged("StepCount");
+            }
         }
 
         public double TimePerStep
@@ -97,7 +103,7 @@ namespace Muragatte.Core
         public virtual void Clear()
         {
             _iCurrentStep = 0;
-            _iSteps = 0;
+            StepCount = 0;
             _species.Clear();
             Environment.Species.ResetIDCounter();
             _storage.Clear();
@@ -173,7 +179,7 @@ namespace Muragatte.Core
             UpdateGroupsAndCentroids(record);
             _history.Add(record);
             _iCurrentStep = _iSteps;
-            _iSteps++;
+            StepCount++;
         }
 
         public virtual void UpdateGroupsAndCentroids(HistoryRecord record)
@@ -210,7 +216,21 @@ namespace Muragatte.Core
                 }
             }
         }
-        
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
     }
 }

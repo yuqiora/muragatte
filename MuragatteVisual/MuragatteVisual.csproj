@@ -52,6 +52,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\lib\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
     <Reference Include="WriteableBitmapEx.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\WriteableBitmapEx.Wpf.dll</HintPath>

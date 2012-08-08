@@ -1,4 +1,14 @@
-﻿<Application x:Class="Muragatte.Sandbox.App"
+﻿<!-- **********************************************************************
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Sandbox Application
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+*********************************************************************** -->
+
+<Application x:Class="Muragatte.Sandbox.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="src/GUI/SandboxMainWindow.xaml">

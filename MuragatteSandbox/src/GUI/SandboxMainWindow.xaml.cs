@@ -186,26 +186,6 @@ namespace Muragatte.GUI
 
         #region Checkbox Events
 
-        private void chbAgents_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowAgents();
-        }
-
-        private void chbAgents_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowAgents();
-        }
-
-        private void chbNeighbourhoods_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowNeighbourhoods();
-        }
-
-        private void chbNeighbourhoods_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowNeighbourhoods();
-        }
-
         private void chbHorizontal_Checked(object sender, RoutedEventArgs e)
         {
             HorizontalBorders();
@@ -226,46 +206,6 @@ namespace Muragatte.GUI
             VerticalBorders();
         }
 
-        private void chbEnvironment_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowEnvironment();
-        }
-
-        private void chbEnvironment_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowEnvironment();
-        }
-
-        private void chbTracks_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowTracks();
-        }
-
-        private void chbTracks_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowTracks();
-        }
-
-        private void chbTrails_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowTrails();
-        }
-
-        private void chbTrails_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowTrails();
-        }
-
-        private void chbCentroids_Checked(object sender, RoutedEventArgs e)
-        {
-            SetShowCentroids();
-        }
-
-        private void chbCentroids_Unchecked(object sender, RoutedEventArgs e)
-        {
-            SetShowCentroids();
-        }
-
         #endregion
 
         #region Other Events
@@ -279,8 +219,7 @@ namespace Muragatte.GUI
         void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             prbUpdate.Value = e.ProgressPercentage;
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
-            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
+            txtSteps.Text = _mas.StepCount.ToString();
         }
 
         void _worker_DoWork(object sender, DoWorkEventArgs e)
@@ -295,7 +234,10 @@ namespace Muragatte.GUI
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _visual.Close();
+            if (_visual != null)
+            {
+                _visual.Close();
+            }
         }
 
         void CompositionTarget_Rendering(object sender, EventArgs e)
@@ -310,25 +252,8 @@ namespace Muragatte.GUI
         private void UpdateAndRedraw()
         {
             _mas.Update();
-            txtSteps.Text = _mas.NumberOfSteps.ToString();
-            _visual.GetPlayback.UpdateFrameCount(_mas.NumberOfSteps);
+            txtSteps.Text = _mas.StepCount.ToString();
             Redraw();
-        }
-
-        private void SetShowAgents()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsAgentsEnabled = chbAgents.IsChecked.Value;
-            }
-        }
-
-        private void SetShowNeighbourhoods()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsNeighbourhoodsEnabled = chbNeighbourhoods.IsChecked.Value;
-            }
         }
 
         private void CreateGoals()
@@ -455,38 +380,6 @@ namespace Muragatte.GUI
             if (_mas != null)
             {
                 _mas.Region.IsBorderedVertically = chbVertical.IsChecked.Value;
-            }
-        }
-
-        private void SetShowEnvironment()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsEnvironmentEnabled = chbEnvironment.IsChecked.Value;
-            }
-        }
-
-        private void SetShowTracks()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsTracksEnabled = chbTracks.IsChecked.Value;
-            }
-        }
-
-        private void SetShowTrails()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsTrailsEnabled = chbTrails.IsChecked.Value;
-            }
-        }
-
-        private void SetShowCentroids()
-        {
-            if (_visual != null)
-            {
-                _visual.GetCanvas.IsCentroidsEnabled = chbCentroids.IsChecked.Value;
             }
         }
 
