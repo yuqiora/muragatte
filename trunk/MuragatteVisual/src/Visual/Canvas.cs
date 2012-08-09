@@ -36,7 +36,6 @@ namespace Muragatte.Visual
         private bool _bAgents = true;
         private bool _bCentroids = false;
         private int _iTrailLength = 10;
-        //private MultiAgentSystem _model = null;
         private Visualization _visual = null;
 
         #endregion
@@ -157,12 +156,6 @@ namespace Muragatte.Visual
             set { _iTrailLength = value; }
         }
 
-        //public MultiAgentSystem Model
-        //{
-        //    get { return _model; }
-        //    set { _model = value; }
-        //}
-
         #endregion
 
         #region Methods
@@ -178,20 +171,6 @@ namespace Muragatte.Visual
             _wb.Clear(_visual.GetOptions.ccBackgroundColor.SelectedColor);
         }
         
-        //public void Initialize()
-        //{
-        //    if (_model != null)
-        //    {
-        //        Redraw();
-        //    }
-        //}
-
-        //public void Initialize(MultiAgentSystem model)
-        //{
-        //    _model = model;
-        //    Redraw();
-        //}
-
         public void Redraw()
         {
             Clear();

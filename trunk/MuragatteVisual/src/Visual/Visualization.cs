@@ -30,13 +30,16 @@ namespace Muragatte.Visual
 
         #region Constructors
 
-        public Visualization(MultiAgentSystem model, int width, int height, double scale)
+        public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner)
         {
             _model = model;
             _canvas = new Canvas(width, height, scale, this);
             _wndCanvas = new GUI.VisualCanvasWindow(this, _canvas);
+            _wndCanvas.Owner = owner;
             _wndPlayback = new GUI.VisualPlaybackWindow(this);
+            _wndPlayback.Owner = owner;
             _wndOptions = new GUI.VisualOptionsWindow(this);
+            _wndOptions.Owner = owner;
         }
 
         #endregion
