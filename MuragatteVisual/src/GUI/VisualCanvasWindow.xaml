@@ -11,7 +11,7 @@
 <Window x:Class="Muragatte.GUI.VisualCanvasWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Muragatte Visualization Window" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
+        Title="Muragatte Visualization Window" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid>
         <Image Height="300" Name="imgCanvas" Stretch="Fill" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300" />
     </Grid>

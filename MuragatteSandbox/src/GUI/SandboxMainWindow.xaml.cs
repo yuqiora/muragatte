@@ -152,7 +152,7 @@ namespace Muragatte.GUI
             {
                 _visual.Close();
             }
-            _visual = new Visualization(_mas, width, height, scale);
+            _visual = new Visualization(_mas, width, height, scale, this);
             _visual.Initialize();
         }
 
@@ -229,14 +229,6 @@ namespace Muragatte.GUI
             {
                 _mas.Update();
                 _worker.ReportProgress(100 * i / stepsToUpdate);
-            }
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (_visual != null)
-            {
-                _visual.Close();
             }
         }
 

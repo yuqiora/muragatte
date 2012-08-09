@@ -121,7 +121,7 @@ namespace Muragatte.GUI
 
         private void sldFrame_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _visual.Redraw((int)sldFrame.Value);
+            Redraw();
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -142,6 +142,11 @@ namespace Muragatte.GUI
         private void btnLast_Click(object sender, RoutedEventArgs e)
         {
             sldFrame.Value = sldFrame.Maximum;
+        }
+
+        private void btnRedraw_Click(object sender, RoutedEventArgs e)
+        {
+            Redraw();
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
@@ -172,6 +177,11 @@ namespace Muragatte.GUI
         {
             sldFrame.Value = sldFrame.Minimum;
             Pause();
+        }
+
+        private void Redraw()
+        {
+            _visual.Redraw((int)sldFrame.Value);
         }
 
         private void Play()

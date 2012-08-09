@@ -12,12 +12,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Visualization Options" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight">
+        Title="Visualization Options" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid>
-        <TabControl Height="500" HorizontalAlignment="Left" Margin="10" Name="tabOptions" VerticalAlignment="Top" Width="500">
+        <TabControl HorizontalAlignment="Left" Margin="10" Name="tabOptions" VerticalAlignment="Top" Width="500" SelectionChanged="tabOptions_SelectionChanged">
             <TabItem Header="General" Name="titGeneral">
                 <DockPanel>
-                    <GroupBox Header="Visualization" HorizontalAlignment="Left" Margin="10,10,0,0" Name="grbVisualization" VerticalAlignment="Top" DockPanel.Dock="Left">
+                    <GroupBox Header="Background Color" Margin="0,10,10,10" Name="grbBackgroundColor" DockPanel.Dock="Right">
+                        <StackPanel Margin="5">
+                            <xtk:ColorCanvas Name="ccBackgroundColor" />
+                            <Button Content="Default" Height="23" Name="btnDefaultBackgroundColor" Width="75" Margin="0,10,0,0" Click="btnDefaultBackgroundColor_Click" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Visualization" Margin="10,10,10,0" Name="grbVisualization" DockPanel.Dock="Top">
                         <Border Padding="5">
                             <StackPanel>
                                 <CheckBox Content="Enabled" Height="16" Name="chbVisualizationEnabled" IsChecked="True" />
@@ -30,15 +36,25 @@
                             </StackPanel>
                         </Border>
                     </GroupBox>
-                    <GroupBox Header="Size and Scale" Height="100" HorizontalAlignment="Left" Margin="10,10,0,0" Name="grbSizeScale" VerticalAlignment="Top" Width="200" DockPanel.Dock="Top">
-                        <Grid>
-                        </Grid>
-                    </GroupBox>
-                    <GroupBox Header="Background Color" HorizontalAlignment="Left" Margin="10,10,0,0" Name="grbBackgroundColor" VerticalAlignment="Top">
-                        <StackPanel Margin="5">
-                            <xtk:ColorCanvas Name="ccBackgroundColor" />
-                            <Button Content="Default" Height="23" Name="btnDefaultBackgroundColor" Width="75" Margin="0,10,0,0" Click="btnDefaultBackgroundColor_Click" />
-                        </StackPanel>
+                    <GroupBox Header="Size and Scale" Margin="10" Name="grbSizeScale">
+                        <Border Padding="5">
+                            <DockPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+                                    <Button Content="Rescale" Height="23" Name="btnRescaleApply" Width="75" Margin="5" Click="btnRescaleApply_Click" />
+                                    <Button Content="Cancel" Height="23" Name="btnRescaleCancel" Width="75" Margin="5" Click="btnRescaleCancel_Click" />
+                                </StackPanel>
+                                <StackPanel DockPanel.Dock="Left">
+                                    <Label Content="Unit Size (W x H):" Height="28" Name="label1" />
+                                    <Label Content="Scale:" Height="28" Name="label2" />
+                                    <Label Content="Pixel Size (W x H):" Height="28" Name="label3" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label Content="x" Height="28" Name="lblUnitSize" />
+                                    <xtk:DoubleUpDown Name="dudScale" Width="60" Height="23" HorizontalAlignment="Left" Minimum="1" Increment="0.5" Maximum="50" Margin="0,2" ValueChanged="dudScale_ValueChanged" />
+                                    <Label Content="x" Height="28" Name="lblPixelSize" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
                     </GroupBox>
                 </DockPanel>
             </TabItem>
@@ -73,6 +89,19 @@
             <TabItem Header="Snapshot" Name="titSnapshot">
                 <Grid>
                 </Grid>
+            </TabItem>
+            <TabItem Header="Test" Name="titTest">
+                <DockPanel>
+                    <Image Height="200" Name="imgShapePreview" Stretch="Fill" Width="200" DockPanel.Dock="Right" />
+                    <StackPanel>
+                        <ComboBox Height="23" Name="cobShape" Width="120" SelectionChanged="cobShape_SelectionChanged" />
+                        <Slider Height="23" Name="sldAngle" Width="180" Maximum="360" SmallChange="1" ValueChanged="sldAngle_ValueChanged" />
+                        <xtk:ColorPicker Name="cpiPrimaryColor" Width="120" Height="23" SelectedColorChanged="cpiPrimaryColor_SelectedColorChanged" />
+                        <xtk:ColorPicker Name="cpiSecondaryColor" Width="120" Height="23" SelectedColorChanged="cpiSecondaryColor_SelectedColorChanged" />
+                        <xtk:IntegerUpDown Name="iudShapeWidth" Width="60" Height="23" Minimum="1" Maximum="50" Value="10" ValueChanged="iudShapeWidth_ValueChanged" />
+                        <xtk:IntegerUpDown Name="iudShapeHeight" Width="60" Height="23" Minimum="1" Maximum="50" Value="10" ValueChanged="iudShapeHeight_ValueChanged" />
+                    </StackPanel>
+                </DockPanel>
             </TabItem>
         </TabControl>
     </Grid>

@@ -33,9 +33,11 @@ namespace Muragatte.GUI
     {
         #region Fields
 
-        private Visualization _visualization;
+        private Visualization _visual;
 
         private readonly Color _defaultBackgroundColor = Colors.White;
+        private readonly int _iUnitWidth;
+        private readonly int _iUnitHeight;
 
         #endregion
 
@@ -44,14 +46,21 @@ namespace Muragatte.GUI
         public VisualOptionsWindow(Visualization visualization)
         {
             InitializeComponent();
-            _visualization = visualization;
+            _visual = visualization;
             Binding bindVisPlay = new Binding("IsPlaying");
-            bindVisPlay.Source = _visualization.GetPlayback;
+            bindVisPlay.Source = _visual.GetPlayback;
             bindVisPlay.Converter = new InverseBoolConverter();
             titGroups.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
             titSnapshot.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
             ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
             BindVisualizationSelection();
+            _iUnitWidth = _visual.GetCanvas.UnitWidth;
+            _iUnitHeight = _visual.GetCanvas.UnitHeight;
+            FillWidthHeight(lblUnitSize, _iUnitWidth, _iUnitHeight);
+            dudScale.Value = _visual.GetCanvas.Scale;
+            dudScale.Tag = _visual.GetCanvas.Scale;
+
+            TestingShapes();
         }
 
         #endregion
@@ -61,6 +70,27 @@ namespace Muragatte.GUI
         private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
             ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
+        }
+
+        private void dudScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            FillWidthHeight(lblPixelSize, (int)(dudScale.Value * _iUnitWidth), (int)(dudScale.Value * _iUnitHeight));
+        }
+
+        private void btnRescaleApply_Click(object sender, RoutedEventArgs e)
+        {
+            //rescaling & redraw
+            dudScale.Tag = dudScale.Value;
+        }
+
+        private void btnRescaleCancel_Click(object sender, RoutedEventArgs e)
+        {
+            RevertScale();
+        }
+
+        private void tabOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RevertScale();
         }
 
         #endregion
@@ -83,8 +113,83 @@ namespace Muragatte.GUI
         {
             Binding bind = new Binding(propertyName);
             bind.Mode = BindingMode.OneWayToSource;
-            bind.Source = _visualization.GetCanvas;
-            BindingOperations.SetBinding(target, CheckBox.IsCheckedProperty, bind);
+            bind.Source = _visual.GetCanvas;
+            target.SetBinding(CheckBox.IsCheckedProperty, bind);
+        }
+
+        private void FillWidthHeight(Label label, int width, int height)
+        {
+            label.Content = string.Format("{0} x {1}", width, height);
+        }
+
+        private void RevertScale()
+        {
+            dudScale.Value = (double)dudScale.Tag;
+        }
+
+        #endregion
+
+        #region TEST - SHAPES
+
+        private WriteableBitmap _wb;
+
+        private void TestingShapes()
+        {
+            CreateShapeList();
+            _wb = BitmapFactory.New(200, 200);
+            imgShapePreview.Source = _wb;
+        }
+
+        private void CreateShapeList()
+        {
+            cobShape.Items.Add(PixelShape.Instance());
+            cobShape.Items.Add(QuadPixelShape.Instance());
+            cobShape.Items.Add(EllipseShape.Instance());
+            cobShape.Items.Add(RectangleShape.Instance());
+            cobShape.Items.Add(TriangleShape.Instance());
+            cobShape.Items.Add(PointingCircleShape.Instance());
+        }
+
+        private void PreviewShape()
+        {
+            if (cobShape.HasItems && cobShape.SelectedItem != null)
+            {
+                _wb.Clear();
+                ((Visual.Shape)cobShape.SelectedItem).Draw(
+                    _wb, new Common.Vector2(100, 100), new Common.Angle(sldAngle.Value),
+                    cpiPrimaryColor.SelectedColor, cpiSecondaryColor.SelectedColor,
+                    iudShapeWidth.Value.Value, iudShapeHeight.Value.Value);
+            }
+        }
+
+        private void cobShape_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PreviewShape();
+        }
+
+        private void sldAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            PreviewShape();
+        }
+
+        private void cpiPrimaryColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            PreviewShape();
+        }
+
+        private void cpiSecondaryColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            PreviewShape();
+        }
+
+        private void iudShapeWidth_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            PreviewShape();
+        }
+
+        private void iudShapeHeight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            PreviewShape();
         }
 
         #endregion
