@@ -210,6 +210,7 @@ namespace Muragatte.Core.Environment
 
         public virtual bool IntersectsWith(Vector2 p1, Vector2 p2, out Vector2 ip)
         {
+            //inspiration from http://paulbourke.net/geometry/sphereline/
             Vector2 p2mp1 = p2 - p1;
             double u = ((_position - p1) * p2mp1) / (p2mp1 * p2mp1);
             ip = p1 + u * p2mp1;

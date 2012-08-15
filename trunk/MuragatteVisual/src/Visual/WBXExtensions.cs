@@ -106,5 +106,12 @@ namespace Muragatte.Visual
         {
             return color.A > 0;
         }
+
+        public static Color WithA(this Color color, byte a)
+        {
+            Color c = color;
+            c.A = a;
+            return c;
+        }
     }
 }

@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Muragatte.Common;
 using Muragatte.Visual.Shapes;
 
@@ -92,6 +93,11 @@ namespace Muragatte.Visual.Styles
         #endregion
 
         #region Methods
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
+        {
+            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _iRadius, _iRadius, _angle);
+        }
 
         public void Rescale(double value)
         {

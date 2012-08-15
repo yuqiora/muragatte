@@ -34,11 +34,6 @@ namespace Muragatte.Visual.Shapes
 
         public abstract List<Coordinates> CreateCoordinates(int width, int height, object other = null);
 
-        //protected Vector2 Rotate(Vector2 point, Vector2 origin, Angle angle)
-        //{
-        //    return angle.IsZero ? point : point - origin - angle + origin;
-        //}
-
         protected List<Coordinates> ListOfOne(Coordinates item)
         {
             List<Coordinates> list = new List<Coordinates>();

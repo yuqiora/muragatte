@@ -88,7 +88,8 @@ namespace Muragatte.GUI
         {
             CreateObstacles();
             CreateGoals();
-            _visual.GetCanvas.Redraw();
+            //_visual.GetCanvas.Redraw();
+            Redraw();
         }
 
         private void btnAgents_Click(object sender, RoutedEventArgs e)
@@ -265,8 +266,9 @@ namespace Muragatte.GUI
             int obstacles = int.Parse(txtObstacles.Text);
             for (int i = 0; i < obstacles; i++)
             {
-                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, 30));
-                o.Item = ParticleFactory.Ellipse((int)(o.Radius * _visual.GetCanvas.Scale), _colorObstacle);
+                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), 20);// RNGs.Uniform(10, 30));
+                //o.Item = ParticleFactory.Ellipse((int)(o.Radius * _visual.GetCanvas.Scale), _colorObstacle);
+                o.Item = ParticleFactory.Ellipse((int)(o.Width* _visual.GetCanvas.Scale), _colorObstacle);
                 _obstacles.Add(o);
             }
             _mas.Elements.Add(_obstacles);
