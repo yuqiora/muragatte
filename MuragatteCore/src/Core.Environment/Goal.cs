@@ -47,6 +47,11 @@ namespace Muragatte.Core.Environment
             get { return ElementNature.Goal; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("G"); }
+        }
+
         #endregion
 
         #region Methods

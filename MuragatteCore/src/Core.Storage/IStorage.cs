@@ -16,7 +16,7 @@ using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
-    public interface IStorage : ICollection<Element>
+    public interface IStorage : ICollection<Element>, System.Collections.Specialized.INotifyCollectionChanged
     {
         #region Properties
 

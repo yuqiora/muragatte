@@ -95,7 +95,7 @@ namespace Muragatte.GUI
         {
             double fovRange = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             int agentCount = int.Parse(txtAgentCount.Text);
-            CreateSpecies();
+            //CreateSpecies();
             Color fovC = _colorNeighbourhood;
             fovC.A = 64;
             //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, _boidFOVAngle);
@@ -112,7 +112,7 @@ namespace Muragatte.GUI
             int guideCount = int.Parse(txtGuideCount.Text);
             int intruderCount = int.Parse(txtIntruderCount.Text);
             int naiveCount = agentCount - guideCount - intruderCount;
-            CreateSpecies();
+            //CreateSpecies();
             Color fovC = _colorNeighbourhood;
             fovC.A = 64;
             Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _visual.GetCanvas.Scale), fovC);
@@ -154,6 +154,7 @@ namespace Muragatte.GUI
             }
             _visual = new Visualization(_mas, width, height, scale, this);
             _visual.Initialize();
+            CreateSpecies();
         }
 
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
@@ -273,27 +274,28 @@ namespace Muragatte.GUI
         
         private void CreateSpecies()
         {
-            int scale = (int)_visual.GetCanvas.Scale;
-            SortedDictionary<int, Species> species = new SortedDictionary<int, Species>();
+            _mas.Species.Clear();
+            Species.ResetIDCounter();
+            //int scale = (int)_visual.GetCanvas.Scale;
+            int scale = int.Parse(txtScale.Text);
             Species boids = new Species("Boids");
             boids.Item = ParticleFactory.AgentB(scale, _colorAgentDefault);
-            species.Add(boids.ID, boids);
+            _mas.Species.Add(boids.ID, boids);
             Species guides = boids.CreateSubSpecies("Guides");
             guides.Item = ParticleFactory.AgentB(scale, _colorAgentGuide);
-            species.Add(guides.ID, guides);
+            _mas.Species.Add(guides.ID, guides);
             Species intruders = boids.CreateSubSpecies("Intruders");
             intruders.Item = ParticleFactory.AgentB(scale, _colorAgentIntruder);
-            species.Add(intruders.ID, intruders);
+            _mas.Species.Add(intruders.ID, intruders);
             Species centroids = new Species("Centroids");
             centroids.Item = ParticleFactory.AgentB(scale, _colorCentroid);
-            species.Add(centroids.ID, centroids);
+            _mas.Species.Add(centroids.ID, centroids);
             Species wanderers = new Species("Wanderers");
             wanderers.Item = ParticleFactory.AgentA(scale, _colorAgentDefault);
-            species.Add(wanderers.ID, wanderers);
+            _mas.Species.Add(wanderers.ID, wanderers);
             Species versatiles = new Species("Versatiles");
             versatiles.Item = ParticleFactory.AgentA(scale, _colorAgentGuide);
-            species.Add(versatiles.ID, versatiles);
-            _mas.Species = species;
+            _mas.Species.Add(versatiles.ID, versatiles);
         }
 
         private void CreateBoids(int count, double fovRange, Particle fovImg)

@@ -84,6 +84,20 @@ namespace Muragatte.Common
 
         #endregion
 
+        #region Static Properties
+
+        public static Angle Zero
+        {
+            get { return new Angle(0); }
+        }
+
+        public static Angle Deg180
+        {
+            get { return new Angle(180); }
+        }
+
+        #endregion
+
         #region Methods
 
         public void Negate()
@@ -178,11 +192,6 @@ namespace Muragatte.Common
         public static bool Equals(Angle a, Angle b)
         {
             return a == b;
-        }
-
-        public static Angle Deg180()
-        {
-            return new Angle(180);
         }
 
         //will be modified accordingly when Muragatte.Random is done

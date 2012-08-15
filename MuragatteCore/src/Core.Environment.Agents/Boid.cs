@@ -175,7 +175,7 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = Vector2.Zero();
+            Vector2 dirDelta = Vector2.Zero;
             IEnumerable<Element> companions = locals.Where(e => RelationshipWith(e) == ElementNature.Companion);
             IEnumerable<Element> obstacles = locals.Where(e => RelationshipWith(e) == ElementNature.Obstacle);
             IEnumerable<Element> tooClose = _personalArea.Within(companions);

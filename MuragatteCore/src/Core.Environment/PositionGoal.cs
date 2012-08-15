@@ -45,6 +45,11 @@ namespace Muragatte.Core.Environment
             get { return DEFAULT_RADIUS; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("Gp"); }
+        }
+
         #endregion
     }
 }

@@ -60,7 +60,8 @@ namespace Muragatte.Visual
             Color c = _color;
             c.ScA *= alpha;
             Angle angle = new Angle(direction);
-            SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
+            //SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
+            SysWin.Point point = new SysWin.Point(position.X - XC, position.Y - YC);
             if (angle.IsZero)
             {
                 wb.Blit(point, _wb, _sourceRect, c, WriteableBitmapExtensions.BlendMode.Alpha);

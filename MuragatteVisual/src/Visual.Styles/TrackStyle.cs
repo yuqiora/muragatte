@@ -10,26 +10,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Muragatte.Common;
-using SysWin = System.Windows;
 
-namespace Muragatte.Visual
+namespace Muragatte.Visual.Styles
 {
-    public abstract class Particle
+    public class TrackStyle : INotifyPropertyChanged
     {
         #region Fields
 
-        protected Color _color = Colors.Black;
+        private Color _color = Colors.Black;
 
         #endregion
 
         #region Constructors
 
-        public Particle(Color color)
+        public TrackStyle(Color color)
         {
             _color = color;
         }
@@ -41,22 +39,30 @@ namespace Muragatte.Visual
         public Color Color
         {
             get { return _color; }
-            set { _color = value; }
+            set
+            {
+                _color = value;
+                NotifyPropertyChanged("Color");
+            }
         }
 
         #endregion
 
-        #region Abstract Properties
+        #region Methods
 
-        public abstract int XC { get; }
-
-        public abstract int YC { get; }
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         #endregion
 
-        #region Abstract Methods
+        #region Events
 
-        public abstract void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction, float alpha = 1);
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }
