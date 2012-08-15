@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -102,16 +103,28 @@ namespace Muragatte.Core.Storage
         public void Add(Element item)
         {
             _items.Add(item);
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
         }
 
         public void Add(IEnumerable<Element> items)
         {
-            _items.AddRange(items);
+            foreach (Element e in items)
+            {
+                Add(e);
+            }
         }
 
         public bool Remove(Element item)
         {
-            return _items.Remove(item);
+            if (_items.Remove(item))
+            {
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, item);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Remove(IEnumerable<Element> items)
@@ -124,7 +137,7 @@ namespace Muragatte.Core.Storage
             {
                 foreach (Element e in items)
                 {
-                    _items.Remove(e);
+                    Remove(e);
                 }
             }
         }
@@ -138,7 +151,9 @@ namespace Muragatte.Core.Storage
             }
             else
             {
+                Element e = _items[index];
                 _items.RemoveAt(index);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, e);
                 return true;
             }
         }
@@ -146,6 +161,7 @@ namespace Muragatte.Core.Storage
         public void Clear()
         {
             _items.Clear();
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
         }
 
         public bool Contains(Element item)
@@ -241,7 +257,21 @@ namespace Muragatte.Core.Storage
             }
             return items;
         }
-        
+
+        protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem)
+        {
+            if (CollectionChanged != null)
+            {
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         #endregion
     }
 }

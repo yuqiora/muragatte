@@ -41,6 +41,11 @@ namespace Muragatte.Core.Environment
             get { return ElementNature.Ignored; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("E"); }
+        }
+
         #endregion
 
         #region Methods
@@ -86,7 +91,7 @@ namespace Muragatte.Core.Environment
 
         public override Vector2 Direction
         {
-            get { return Vector2.Zero(); }
+            get { return Vector2.Zero; }
             set { }
         }
 
@@ -114,6 +119,11 @@ namespace Muragatte.Core.Environment
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Companion; }
+        }
+
+        public override string Name
+        {
+            get { return CreateName("Ea"); }
         }
 
         #endregion
@@ -144,6 +154,11 @@ namespace Muragatte.Core.Environment
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Threat; }
+        }
+
+        public override string Name
+        {
+            get { return CreateName("Er"); }
         }
 
         #endregion
@@ -179,6 +194,11 @@ namespace Muragatte.Core.Environment
         {
             get { return _direction; }
             set { _direction = value; }
+        }
+
+        public override string Name
+        {
+            get { return CreateName("Eg"); }
         }
 
         #endregion

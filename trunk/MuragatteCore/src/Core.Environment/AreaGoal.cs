@@ -60,6 +60,11 @@ namespace Muragatte.Core.Environment
             get { return Math.Max(_dWidth, _dHeight) / 2.0; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("Ga"); }
+        }
+
         #endregion
 
         #region Methods

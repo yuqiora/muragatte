@@ -10,53 +10,48 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Muragatte.Common;
-using SysWin = System.Windows;
 
-namespace Muragatte.Visual
+namespace Muragatte.Visual.Styles
 {
-    public abstract class Particle
+    public class TrailStyle : TrackStyle
     {
+        #region Constants
+
+        public const int DEFAULT_TRAIL_LENGTH = 10;
+
+        #endregion
+
         #region Fields
 
-        protected Color _color = Colors.Black;
+        private int _iLength = 1;
 
         #endregion
 
         #region Constructors
 
-        public Particle(Color color)
+        public TrailStyle(Color color, int length)
+            : base(color)
         {
-            _color = color;
+            _iLength = length;
         }
 
         #endregion
 
         #region Properties
 
-        public Color Color
+        public int Length
         {
-            get { return _color; }
-            set { _color = value; }
+            get { return _iLength; }
+            set
+            {
+                _iLength = value;
+                NotifyPropertyChanged("Length");
+            }
         }
-
-        #endregion
-
-        #region Abstract Properties
-
-        public abstract int XC { get; }
-
-        public abstract int YC { get; }
-
-        #endregion
-
-        #region Abstract Methods
-
-        public abstract void DrawInto(WriteableBitmap wb, Vector2 position, Vector2 direction, float alpha = 1);
 
         #endregion
     }

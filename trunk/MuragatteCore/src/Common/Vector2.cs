@@ -84,6 +84,25 @@ namespace Muragatte.Common
 
         #endregion
 
+        #region Static Properties
+
+        public static Vector2 Zero
+        {
+            get { return new Vector2(0, 0); }
+        }
+
+        public static Vector2 X0Y1
+        {
+            get { return new Vector2(0, 1); }
+        }
+
+        public static Vector2 X1Y0
+        {
+            get { return new Vector2(1, 0); }
+        }
+
+        #endregion
+
         #region Methods
 
         public void Negate()
@@ -218,21 +237,6 @@ namespace Muragatte.Common
         public static Vector2 Perpendicular(Vector2 vector)
         {
             return new Vector2(vector._dY, -vector._dX);
-        }
-
-        public static Vector2 Zero()
-        {
-            return new Vector2(0, 0);
-        }
-
-        public static Vector2 X0Y1()
-        {
-            return new Vector2(0, 1);
-        }
-
-        public static Vector2 X1Y0()
-        {
-            return new Vector2(1, 0);
         }
 
         //will be modified accordingly when Muragatte.Random is done

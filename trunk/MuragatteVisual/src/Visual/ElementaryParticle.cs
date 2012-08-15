@@ -47,7 +47,8 @@ namespace Muragatte.Visual
         {
             Color c = _color;
             c.ScA *= alpha;
-            wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, c);
+            //wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, cp);
+            wb.SetPixel(position, c);
         }
 
         #endregion

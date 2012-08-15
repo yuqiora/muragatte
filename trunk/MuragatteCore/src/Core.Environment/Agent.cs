@@ -26,7 +26,7 @@ namespace Muragatte.Core.Environment
         protected Vector2 _altPosition = new Vector2(0, 0);
         protected Vector2 _altDirection = new Vector2(0, 1);
         protected Neighbourhood _fieldOfView = null;
-        protected Angle _dTurningAngle = Angle.Deg180();
+        protected Angle _dTurningAngle = Angle.Deg180;
         protected Centroid _representative = null;
         
         #endregion
@@ -109,6 +109,11 @@ namespace Muragatte.Core.Environment
         public Group Group
         {
             get { return _representative == null ? null : _representative.Group; }
+        }
+
+        public override string Name
+        {
+            get { return CreateName("A"); }
         }
 
         #endregion
@@ -258,7 +263,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringSeek(Element element, double weight = 1)
         {
-            return element == null ? Vector2.Zero() : weight * Vector2.Normalized(element.GetPosition() - _position);
+            return element == null ? Vector2.Zero : weight * Vector2.Normalized(element.GetPosition() - _position);
         }
 
         protected virtual Vector2 SteeringSeek(IEnumerable<Element> elements, double weight = 1)
@@ -285,7 +290,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringPursuit(Element element, double weight = 1)
         {
-            return element == null ? Vector2.Zero() : SteeringSeek(element.PredictPositionAfter(), weight);
+            return element == null ? Vector2.Zero : SteeringSeek(element.PredictPositionAfter(), weight);
         }
 
         protected virtual Vector2 SteeringPursuit(IEnumerable<Element> elements, double weight = 1)
@@ -327,7 +332,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringFlee(IEnumerable<Element> elements, double weight = 1)
         {
-            Vector2 v = Vector2.Zero();
+            Vector2 v = Vector2.Zero;
             int count = elements.Count();
             if (count == 0)
             {
@@ -353,7 +358,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringEvasion(IEnumerable<Element> elements, double weight = 1)
         {
-            Vector2 v = Vector2.Zero();
+            Vector2 v = Vector2.Zero;
             int count = elements.Count();
             if (count == 0)
             {
@@ -423,7 +428,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringCohesion(IEnumerable<Element> elements, double weight = 1)
         {
-            Vector2 x = Vector2.Zero();
+            Vector2 x = Vector2.Zero;
             foreach (Element e in elements)
             {
                 x += Vector2.Normalized(e.GetPosition() - _position);
@@ -433,7 +438,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual Vector2 SteeringAlignment(IEnumerable<Element> elements, double weight = 1)
         {
-            Vector2 x = Vector2.Zero();
+            Vector2 x = Vector2.Zero;
             foreach (Element e in elements)
             {
                 x += e.GetDirection();

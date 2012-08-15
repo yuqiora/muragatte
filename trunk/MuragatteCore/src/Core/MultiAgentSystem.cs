@@ -28,7 +28,7 @@ namespace Muragatte.Core
         protected double _dTimePerStep = 1;
         protected IStorage _storage = null;
         protected Region _region = null;
-        protected SortedDictionary<int, Species> _species = null;
+        protected SpeciesCollection _species = null;
         protected History _history = new History();
         protected List<Group> _groups = new List<Group>();
 
@@ -41,7 +41,7 @@ namespace Muragatte.Core
             _storage = storage;
             _region = region;
             _dTimePerStep = timePerStep;
-            _species = new SortedDictionary<int, Species>();
+            _species = new SpeciesCollection();
         }
 
         #endregion
@@ -85,10 +85,10 @@ namespace Muragatte.Core
             get { return _region; }
         }
 
-        public SortedDictionary<int, Species> Species
+        public SpeciesCollection Species
         {
             get { return _species; }
-            set { _species = value; }
+            //set { _species = value; }
         }
 
         public History History

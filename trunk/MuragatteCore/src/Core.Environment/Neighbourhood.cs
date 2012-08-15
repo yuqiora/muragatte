@@ -66,6 +66,12 @@ namespace Muragatte.Core.Environment
 
         #endregion
 
+        #region Abstract Properties
+
+        public abstract Angle Angle { get; set; }
+
+        #endregion
+
         #region Methods
 
         public T GetItemAs<T>() where T : class

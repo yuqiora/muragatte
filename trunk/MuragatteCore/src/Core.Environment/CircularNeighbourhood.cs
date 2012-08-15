@@ -21,7 +21,7 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected Angle _angle = Angle.Deg180();
+        protected Angle _angle = Angle.Deg180;
 
         #endregion
 
@@ -49,7 +49,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
         
-        public Angle Angle
+        public override Angle Angle
         {
             get { return _angle; }
             set { _angle = value; }

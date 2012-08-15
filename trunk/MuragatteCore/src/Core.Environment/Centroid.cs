@@ -85,6 +85,11 @@ namespace Muragatte.Core.Environment
             set { _bInGroup = value; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("C"); }
+        }
+
         #endregion
 
         #region Methods

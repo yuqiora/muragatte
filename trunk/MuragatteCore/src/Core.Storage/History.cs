@@ -123,7 +123,7 @@ namespace Muragatte.Core.Storage
         //{
         //    foreach (Species s in species)
         //    {
-        //        _speciesTable.Add(s.ID, s.Name);
+        //        _speciesTable.Add(s.ID, s.CreateName);
         //    }
         //}
 

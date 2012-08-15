@@ -14,7 +14,7 @@
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="Visualization Options" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Margin="10" Name="tabOptions" VerticalAlignment="Top" Width="500" SelectionChanged="tabOptions_SelectionChanged">
+        <TabControl Margin="10" Name="tabOptions" SelectionChanged="tabOptions_SelectionChanged" TabStripPlacement="Left">
             <TabItem Header="General" Name="titGeneral">
                 <DockPanel>
                     <GroupBox Header="Background Color" Margin="0,10,10,10" Name="grbBackgroundColor" DockPanel.Dock="Right">
@@ -60,26 +60,40 @@
             </TabItem>
             <TabItem Header="Environment" Name="titEnvironment">
                 <Grid>
+                    <xtk:CheckListBox Name="clbEnvironmentEnabled" Width="80" Height="250" DisplayMemberPath="Name" SelectedMemberPath="IsEnabled" />
                 </Grid>
             </TabItem>
             <TabItem Header="Agents" Name="titAgents">
-                <Grid>
-                </Grid>
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Left">
+                        <xtk:CheckListBox Name="clbAgentsEnabled" Width="80" Height="250" DisplayMemberPath="Name" SelectedMemberPath="IsEnabled" />
+                        <CheckBox Content="All" Height="16" Name="chbAgentsEnabledAll" Checked="chbAgentsEnabledAll_Checked" Unchecked="chbAgentsEnabledAll_Unchecked" />
+                    </StackPanel>
+                    <ListBox Height="250" Name="lboAgentsStyle" VerticalAlignment="Top" Width="120" DockPanel.Dock="Left" SelectionChanged="lboAgentsStyle_SelectionChanged" />
+                    <StackPanel>
+                        <ComboBox Height="23" Name="cobAgentsActiveStyle" Width="120" />
+                        <ComboBox Height="23" Name="cobAgentsShape" Width="120" />
+                        <xtk:ColorPicker Name="cpiAgentsPrimaryColor" Height="23" Width="120" />
+                        <xtk:ColorPicker Name="cpiAgentsSecondaryColor" Height="23" Width="120" />
+                        <Button Content="Apply" Height="23" Name="btnAgentsEditApply" Width="75" />
+                        <Button Content="Cancel" Height="23" Name="btnAgentsEditCancel" Width="75" />
+                    </StackPanel>
+                </DockPanel>
             </TabItem>
             <TabItem Header="Neighbourhoods" Name="titNeighbourhoods">
                 <Grid>
+                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Width="80" Height="250" DisplayMemberPath="Name" SelectedMemberPath="IsNeighbourhoodEnabled" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Tracks" Name="titTracks">
-                <Grid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Trails" Name="titTrails">
-                <Grid>
-                </Grid>
+            <TabItem Header="Tracks &amp; Trails" Name="titTracksTrails">
+                <StackPanel Orientation="Horizontal">
+                    <xtk:CheckListBox Name="clbTracksEnabled" Width="80" Height="250" DisplayMemberPath="Name" SelectedMemberPath="IsTrackEnabled" />
+                    <xtk:CheckListBox Name="clbTrailsEnabled" Width="80" Height="250" DisplayMemberPath="Name" SelectedMemberPath="IsTrailEnabled" />
+                </StackPanel>
             </TabItem>
             <TabItem Header="Species" Name="titSpecies">
                 <Grid>
+                    <xtk:CheckListBox Name="clbSpeciesList" Width="150" Height="200" />
                 </Grid>
             </TabItem>
             <TabItem Header="Groups" Name="titGroups">
@@ -89,6 +103,17 @@
             <TabItem Header="Snapshot" Name="titSnapshot">
                 <Grid>
                 </Grid>
+            </TabItem>
+            <TabItem Header="Style Editor" Name="titStyleEditor">
+                <Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Highlighting" Name="titHighlighting">
+                <DockPanel>
+                    <xtk:CheckListBox Name="clbHighlightEnabled" Width="100" Height="300" DockPanel.Dock="Left" />
+                    <xtk:ColorCanvas Name="ccHighlightColor" DockPanel.Dock="top" Margin="10,0,0,0" />
+                    <Button Content="Default" Height="23" Name="btnHighlightColorDefault" Width="75" />
+                </DockPanel>
             </TabItem>
             <TabItem Header="Test" Name="titTest">
                 <DockPanel>
@@ -100,6 +125,7 @@
                         <xtk:ColorPicker Name="cpiSecondaryColor" Width="120" Height="23" SelectedColorChanged="cpiSecondaryColor_SelectedColorChanged" />
                         <xtk:IntegerUpDown Name="iudShapeWidth" Width="60" Height="23" Minimum="1" Maximum="50" Value="10" ValueChanged="iudShapeWidth_ValueChanged" />
                         <xtk:IntegerUpDown Name="iudShapeHeight" Width="60" Height="23" Minimum="1" Maximum="50" Value="10" ValueChanged="iudShapeHeight_ValueChanged" />
+                        <Slider Height="23" Name="sldArc" Width="180" Maximum="180" SmallChange="1" Value="135" ValueChanged="sldArc_ValueChanged" Minimum="1" />
                     </StackPanel>
                 </DockPanel>
             </TabItem>

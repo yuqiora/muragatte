@@ -196,7 +196,7 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = Vector2.Zero();
+            Vector2 dirDelta = Vector2.Zero;
             List<Element> companions = new List<Element>();
             List<Element> goals = new List<Element>();
             List<Element> obstacles = new List<Element>();

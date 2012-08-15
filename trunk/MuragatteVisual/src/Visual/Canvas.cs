@@ -27,6 +27,8 @@ namespace Muragatte.Visual
         #region Fields
 
         private WriteableBitmap _wb = null;
+        private int _iUnitWidth = 1;
+        private int _iUnitHeight = 1;
         private double _dScale = 1;
         //private System.Windows.Rect _canvasArea;    //probably not needed
         private bool _bEnvironment = true;
@@ -45,6 +47,8 @@ namespace Muragatte.Visual
         public Canvas(int width, int height, Visualization visualization)
         {
             //_canvasArea = new System.Windows.Rect(0, 0, width, height);
+            _iUnitWidth = width;
+            _iUnitHeight = height;
             _wb = BitmapFactory.New(width, height);
             _visual = visualization;
         }
@@ -53,6 +57,8 @@ namespace Muragatte.Visual
             : this((int)(width * scale), (int)(height * scale), visualization)
         {
             _dScale = scale;
+            _iUnitWidth = width;
+            _iUnitHeight = height;
         }
 
         #endregion
@@ -66,7 +72,7 @@ namespace Muragatte.Visual
 
         public int UnitWidth
         {
-            get { return (int)(_wb.PixelWidth / _dScale); }
+            get { return _iUnitWidth; }
         }
 
         public int PixelWidth
@@ -76,7 +82,7 @@ namespace Muragatte.Visual
 
         public int UnitHeight
         {
-            get { return (int)(_wb.PixelHeight / _dScale); }
+            get { return _iUnitHeight; ; }
         }
 
         public int PixelHeight
@@ -160,11 +166,15 @@ namespace Muragatte.Visual
 
         #region Methods
 
-        //public void Rescale(double newScale)
-        //{
-        //    _wb = BitmapFactory.New((int)(_wb.PixelWidth * newScale), (int)(_wb.PixelHeight * newScale));
-        //    _dScale = newScale;
-        //}
+        public void Rescale(double value)
+        {
+            if (value != _dScale)
+            {
+                _wb = BitmapFactory.New((int)(_iUnitWidth * value), (int)(_iUnitHeight * value));
+                _visual.GetWindow.Initialize(this);
+                _dScale = value;
+            }
+        }
 
         public void Clear()
         {
@@ -204,7 +214,7 @@ namespace Muragatte.Visual
         {
             if (_bNeighbourhoods)
             {
-                Vector2 up = Vector2.X0Y1();
+                Vector2 up = Vector2.X0Y1;
                 foreach (Agent a in items)
                 {
                     DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, up);
@@ -254,7 +264,7 @@ namespace Muragatte.Visual
         {
             if (_bNeighbourhoods)
             {
-                Vector2 up = Vector2.X0Y1();
+                Vector2 up = Vector2.X0Y1;
                 foreach (Agent a in items)
                 {
                     ElementStatus es = record[a.ID];
@@ -367,6 +377,7 @@ namespace Muragatte.Visual
             }
             DrawAgents(agents, history[step]);
             DrawCentroids(centroids, history[step]);
+            _wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
         }
 
         public void Redraw(History history)
@@ -382,7 +393,8 @@ namespace Muragatte.Visual
             {
                 List<int> part = new List<int>();
                 part.Add(Scaled(positions[0].X));
-                part.Add(_wb.PixelHeight - Scaled(positions[0].Y) - 1);
+                //part.Add(_wb.PixelHeight - Scaled(positions[0].Y) - 1);
+                part.Add(Scaled(positions[0].Y));
                 for (int i = 1; i < positions.Count; i++)
                 {
                     if (IsOutside(positions[i - 1], positions[i], limit))
@@ -391,7 +403,8 @@ namespace Muragatte.Visual
                         part.Clear();
                     }
                     part.Add(Scaled(positions[i].X));
-                    part.Add(_wb.PixelHeight - Scaled(positions[i].Y) - 1);
+                    //part.Add(_wb.PixelHeight - Scaled(positions[i].Y) - 1);
+                    part.Add(Scaled(positions[i].Y));
                 }
                 points.Add(part.ToArray());
             }

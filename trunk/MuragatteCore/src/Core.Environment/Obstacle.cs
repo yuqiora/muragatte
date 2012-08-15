@@ -72,6 +72,11 @@ namespace Muragatte.Core.Environment
             get { return ElementNature.Obstacle; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("O"); }
+        }
+
         #endregion
 
         #region Methods
@@ -118,6 +123,11 @@ namespace Muragatte.Core.Environment
             get { return Math.Max(_dWidth, _dHeight) / 2.0; }
         }
 
+        public override string Name
+        {
+            get { return CreateName("Oe"); }
+        }
+
         #endregion
     }
 
@@ -144,6 +154,11 @@ namespace Muragatte.Core.Environment
         public override double Radius
         {
             get { return Math.Sqrt(_dWidth * _dWidth + _dHeight * _dHeight) / 2.0; }
+        }
+
+        public override string Name
+        {
+            get { return CreateName("Or"); }
         }
 
         #endregion

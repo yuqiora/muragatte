@@ -124,6 +124,8 @@ namespace Muragatte.Core.Environment
 
         public abstract ElementNature DefaultNature { get; }
 
+        public abstract string Name { get; }
+
         #endregion
 
         #region Methods
@@ -145,13 +147,28 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
+            return ShortDescription();
+        }
+
+        protected string ShortDescription()
+        {
+            return string.Format("{0}{1}", _iElementID, _bStationary ? "s" : "");
+        }
+
+        protected string LongDescription()
+        {
             return string.Format("{0}{1}{2} @({3})",
                 _iElementID, _bStationary ? "s" : "", _bEnabled ? "" : "d", _position);
         }
 
         protected string ToString(string prefix)
         {
-            return string.Format("{0}-{1}", prefix, ToString());
+            return string.Format("{0}-{1}", prefix, LongDescription());
+        }
+
+        protected string CreateName(string prefix)
+        {
+            return string.Format("{0}-{1}", prefix, ShortDescription());
         }
 
         public T GetItemAs<T>() where T : class
