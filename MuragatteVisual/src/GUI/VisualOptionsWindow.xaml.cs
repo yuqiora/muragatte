@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -42,8 +43,9 @@ namespace Muragatte.GUI
         private Visualization _visual;
         private ObservableCollection<Appearance> _appearances = new ObservableCollection<Appearance>();
         private ObservableCollection<Visual.Styles.Style> _styles = new ObservableCollection<Visual.Styles.Style>();
-        private CollectionView _appearancesEnvironmentView = null;
-        private CollectionView _appearancesAgentsView = null;
+        private CollectionViewSource _environmentView = new CollectionViewSource();
+        private CollectionViewSource _agentsView = new CollectionViewSource();
+        private CollectionViewSource _centroidsView = new CollectionViewSource();
 
         #region Default Values
 
@@ -90,18 +92,31 @@ namespace Muragatte.GUI
 
             TestingShapes();
 
+            _defaultNeighbourhoodColor.A = 64;
+
             CreateDefaultStyles();
             _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
 
-            _appearancesEnvironmentView = new CollectionView(_appearances);
-            _appearancesEnvironmentView.Filter += new Predicate<object>(FilterIsStationary);
-            clbEnvironmentEnabled.ItemsSource = _appearancesEnvironmentView;
-            _appearancesAgentsView = new CollectionView(_appearances);
-            _appearancesAgentsView.Filter += new Predicate<object>(FilterIsAgent);
-            clbAgentsEnabled.ItemsSource = _appearancesAgentsView;
-            clbNeighbourhoodsEnabled.ItemsSource = _appearancesAgentsView;
-            clbTracksEnabled.ItemsSource = _appearancesAgentsView;
-            clbTrailsEnabled.ItemsSource = _appearancesAgentsView;
+            SetViews();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public ICollectionView EnvironmentView
+        {
+            get { return _environmentView.View; }
+        }
+
+        public ICollectionView AgentsView
+        {
+            get { return _agentsView.View; }
+        }
+
+        public ICollectionView CentroidsView
+        {
+            get { return _centroidsView.View; }
         }
 
         #endregion
@@ -125,6 +140,10 @@ namespace Muragatte.GUI
                 foreach (Visual.Styles.Style s in _styles)
                 {
                     s.Rescale(dudScale.Value.Value);
+                }
+                foreach (Appearance a in _appearances)
+                {
+                    a.Rescale(dudScale.Value.Value);
                 }
                 _visual.GetCanvas.Rescale(dudScale.Value.Value);
                 dudScale.Tag = dudScale.Value.Value;
@@ -184,6 +203,21 @@ namespace Muragatte.GUI
         private void RevertScale()
         {
             dudScale.Value = (double)dudScale.Tag;
+        }
+
+        private void SetViews()
+        {
+            _environmentView.Source = _appearances;
+            EnvironmentView.Filter += new Predicate<object>(FilterIsStationary);
+            clbEnvironmentEnabled.ItemsSource = EnvironmentView;
+            _agentsView.Source = _appearances;
+            AgentsView.Filter += new Predicate<object>(FilterIsAgent);
+            clbAgentsEnabled.ItemsSource = AgentsView;
+            clbNeighbourhoodsEnabled.ItemsSource = AgentsView;
+            clbTracksEnabled.ItemsSource = AgentsView;
+            clbTrailsEnabled.ItemsSource = AgentsView;
+            _centroidsView.Source = _appearances;
+            CentroidsView.Filter += new Predicate<object>(FilterIsType<Centroid>);
         }
 
         #endregion
@@ -281,14 +315,14 @@ namespace Muragatte.GUI
 
         private void CreateDefaultStyles()
         {
-            _styles.Add(new Visual.Styles.Style(PointingCircleShape.Instance(), "Agents", 1, 1, _visual.GetCanvas.Scale, Colors.Transparent, Colors.Black,
-                new NeighbourhoodStyle(ArcShape.Instance(), _defaultNeighbourhoodColor, Colors.Transparent, 5, new Angle(135), _visual.GetCanvas.Scale),
-                new TrackStyle(Colors.Black), new TrailStyle(Colors.Black, _iDefaultTrailLength)));
+            _styles.Add(new Visual.Styles.Style(PointingCircleShape.Instance(), "Agents", 1, 1, _visual.GetCanvas.Scale, Colors.Transparent, _defaultAgentColor,
+                new NeighbourhoodStyle(ArcShape.Instance(), Colors.Transparent, _defaultNeighbourhoodColor, 5, new Angle(135), _visual.GetCanvas.Scale),
+                new TrackStyle(_defaultAgentColor), new TrailStyle(_defaultAgentColor, _iDefaultTrailLength)));
             _styles.Add(new Visual.Styles.Style(EllipseShape.Instance(), "Obstacles", 1, 1, _visual.GetCanvas.Scale, _defaultObstacleColor, Colors.Transparent,
                 null, null, null));
             _styles.Add(new Visual.Styles.Style(RectangleShape.Instance(), "Goals", 1, 1, _visual.GetCanvas.Scale, _defaultGoalColor, Colors.Transparent,
                 null, null, null));
-            _styles.Add(new Visual.Styles.Style(TriangleShape.Instance(), "Centroids", 1, 1, _visual.GetCanvas.Scale, Colors.Transparent, _defaultCentroidColor,
+            _styles.Add(new Visual.Styles.Style(TriangleShape.Instance(), "Centroids", 1, 1, _visual.GetCanvas.Scale, _defaultCentroidColor, Colors.Transparent,
                 null, null, null));
         }
 
@@ -312,6 +346,12 @@ namespace Muragatte.GUI
         {
             Appearance a = o as Appearance;
             return a.IsAgent;
+        }
+
+        private bool FilterIsType<T>(object o) where T : Element
+        {
+            Appearance a = o as Appearance;
+            return a.IsType<T>();
         }
     }
 }

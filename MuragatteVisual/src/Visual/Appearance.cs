@@ -28,7 +28,7 @@ namespace Muragatte.Visual
         private Element _element = null;
         private Style _style = null;
         private bool _bEnabled = true;
-        private bool _bNeighbourhoodEnabled = false;
+        private bool _bNeighbourhoodEnabled = true;
         private bool _bTrackEnabled = false;
         private bool _bTrailEnabled = false;
         private Color? _primaryColor = null;
@@ -73,7 +73,7 @@ namespace Muragatte.Visual
 
         public bool IsAgent
         {
-            get { bool isa = _element is Agent; return isa; }
+            get { return _element is Agent; }
         }
 
         public double UnitWidth
@@ -98,12 +98,14 @@ namespace Muragatte.Visual
 
         public int Width
         {
-            get { return _bOverrideStyleSize ? _iWidth : _style.Width; }
+            get { return _iWidth != _style.Width ? _iWidth : _style.Width; }
+            //get { return _bOverrideStyleSize ? _iWidth : _style.Width; }
         }
 
         public int Height
         {
-            get { return _bOverrideStyleSize ? _iHeight : _style.Height; }
+            get { return _iHeight != _style.Height ? _iHeight : _style.Height; }
+            //get { return _bOverrideStyleSize ? _iHeight : _style.Height; }
         }
 
         public Style Style
@@ -219,6 +221,17 @@ namespace Muragatte.Visual
         #endregion
 
         #region Methods
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
+        {
+            _style.Shape.Draw(target, position, direction.Angle, PrimaryColor, SecondaryColor, Width, Height);
+            //_style.Draw(target, position, direction);
+        }
+
+        public bool IsType<T>() where T : Element
+        {
+            return _element is T;
+        }
 
         public void Rescale(double value)
         {

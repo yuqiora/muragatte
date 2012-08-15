@@ -387,7 +387,7 @@ namespace Muragatte.Core.Environment
             Vector2 l2 = l1 + lineOfSight;
             foreach (Element e in elements)
             {
-                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + _dSpeed)
+                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + VisibleRange) //_dSpeed)
                 {
                     continue;
                 }

@@ -88,15 +88,6 @@ namespace Muragatte.Visual
             _canvas.Redraw(_model.History, frame);
         }
 
-        //public void Rescale(double scale)
-        //{
-        //    if (_canvas != null)
-        //    {
-        //        _canvas.Rescale(scale);
-        //        _wndCanvas.Initialize(_canvas);
-        //    }
-        //}
-
         public void Close()
         {
             CloseWindow(_wndCanvas);
