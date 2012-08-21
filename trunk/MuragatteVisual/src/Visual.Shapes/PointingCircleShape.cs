@@ -32,6 +32,15 @@ namespace Muragatte.Visual.Shapes
 
         #endregion
 
+        #region Properties
+
+        public override string Symbol
+        {
+            get { return "o-"; }
+        }
+
+        #endregion
+
         #region Methods
 
         public static PointingCircleShape Instance()

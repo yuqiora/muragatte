@@ -21,16 +21,20 @@ namespace Muragatte.Visual.Styles
     {
         #region Fields
 
-        private Color _color = Colors.Black;
+        protected Color _color = Colors.Black;
 
         #endregion
 
         #region Constructors
 
+        public TrackStyle() { }
+
         public TrackStyle(Color color)
         {
             _color = color;
         }
+
+        public TrackStyle(TrackStyle other) : this(other._color) { }
 
         #endregion
 
@@ -49,6 +53,11 @@ namespace Muragatte.Visual.Styles
         #endregion
 
         #region Methods
+
+        public void Update(Color color)
+        {
+            if (color != _color) Color = color;
+        }
 
         protected void NotifyPropertyChanged(String propertyName)
         {

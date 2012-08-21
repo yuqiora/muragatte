@@ -19,25 +19,23 @@ namespace Muragatte.Visual.Styles
 {
     public class TrailStyle : TrackStyle
     {
-        #region Constants
-
-        public const int DEFAULT_TRAIL_LENGTH = 10;
-
-        #endregion
-
         #region Fields
 
-        private int _iLength = 1;
+        private int _iLength = DefaultValues.TRAIL_LENGTH;
 
         #endregion
 
         #region Constructors
+
+        public TrailStyle() : base() { }
 
         public TrailStyle(Color color, int length)
             : base(color)
         {
             _iLength = length;
         }
+
+        public TrailStyle(TrailStyle other) : this(other._color, other._iLength) { }
 
         #endregion
 
@@ -51,6 +49,16 @@ namespace Muragatte.Visual.Styles
                 _iLength = value;
                 NotifyPropertyChanged("Length");
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void Update(Color color, int length)
+        {
+            if (color != _color) Color = color;
+            if (length != _iLength) Length = length;
         }
 
         #endregion

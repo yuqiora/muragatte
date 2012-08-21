@@ -387,14 +387,15 @@ namespace Muragatte.Core.Environment
             Vector2 l2 = l1 + lineOfSight;
             foreach (Element e in elements)
             {
-                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + VisibleRange) //_dSpeed)
+                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + range)
                 {
                     continue;
                 }
                 Vector2 ip;
                 if (e.IntersectsWith(r1, r2, out ip))
                 {
-                    double dist = Vector2.Distance(_position, ip);
+                    double dist = Vector2.Distance(r1, ip);
+                    //double dist = Vector2.Distance(_position, ip);
                     if (dist < nearest)
                     {
                         nearest = dist;
@@ -404,7 +405,8 @@ namespace Muragatte.Core.Environment
                 }
                 if (e.IntersectsWith(l1, l2, out ip))
                 {
-                    double dist = Vector2.Distance(_position, ip);
+                    double dist = Vector2.Distance(l1, ip);
+                    //double dist = Vector2.Distance(_position, ip);
                     if (dist < nearest)
                     {
                         nearest = dist;

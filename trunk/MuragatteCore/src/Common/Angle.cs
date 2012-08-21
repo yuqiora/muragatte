@@ -150,12 +150,17 @@ namespace Muragatte.Common
 
         public override string ToString()
         {
-            return _dDegrees.ToString();
+            return string.Format("{0}°", _dDegrees.ToString());
         }
 
         #endregion
 
         #region Static Methods
+
+        public static Angle FromRadians(double radians)
+        {
+            return new Angle(radians * 180 / Math.PI);
+        }
 
         public static Angle Parse(string s)
         {
