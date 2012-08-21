@@ -46,25 +46,11 @@ namespace Muragatte.GUI
         private CollectionViewSource _environmentView = new CollectionViewSource();
         private CollectionViewSource _agentsView = new CollectionViewSource();
         private CollectionViewSource _centroidsView = new CollectionViewSource();
+        private CollectionViewSource _enabledElementsView = new CollectionViewSource();
 
-        #region Default Values
+        private WriteableBitmap _stylePreview = null;
 
-        private readonly Color _defaultBackgroundColor = Colors.White;
-        private readonly Color _defaultAgentColor = Colors.Black;
-        private readonly Color _defaultObstacleColor = Colors.Gray;
-        private readonly Color _defaultGoalColor = Colors.Red;
-        private readonly Color _defaultNeighbourhoodColor = Colors.LightGreen;
-        private readonly Color _defaultCentroidColor = Colors.Silver;
-        private readonly Color _defaultHighlightColor = Colors.LightYellow;
-        
-        private readonly int _iDefaultTrailLength = 10;
-        private readonly Visual.Shapes.Shape _defaultShape = EllipseShape.Instance();
-        private readonly Visual.Shapes.Shape _defaultAgentShape = PointingCircleShape.Instance();
-
-        #endregion
-
-        private readonly int _iUnitWidth;
-        private readonly int _iUnitHeight;
+        private readonly List<Visual.Shapes.Shape> _shapes = null;
 
         #endregion
 
@@ -73,31 +59,35 @@ namespace Muragatte.GUI
         public VisualOptionsWindow(Visualization visualization)
         {
             InitializeComponent();
+            DataContext = this;
             _visual = visualization;
+            
             Binding bindVisPlay = new Binding("IsPlaying");
             bindVisPlay.Source = _visual.GetPlayback;
             bindVisPlay.Converter = new InverseBoolConverter();
             titGroups.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
             titSnapshot.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
-            ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
             BindVisualizationSelection();
-            _iUnitWidth = _visual.GetCanvas.UnitWidth;
-            _iUnitHeight = _visual.GetCanvas.UnitHeight;
-            FillWidthHeight(lblUnitSize, _iUnitWidth, _iUnitHeight);
+            FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
             dudScale.Value = _visual.GetCanvas.Scale;
             dudScale.Tag = _visual.GetCanvas.Scale;
-            clbSpeciesList.ItemsSource = _visual.GetModel.Species;
+            Binding bindBackgroundColor = new Binding("BackgroundColor");
+            bindBackgroundColor.Source = _visual.GetCanvas;
+            ccBackgroundColor.SetBinding(ColorCanvas.SelectedColorProperty, bindBackgroundColor);
 
-            CreateShapeList(cobAgentsShape);
+            //clbSpeciesList.ItemsSource = _visual.GetModel.Species;
 
-            TestingShapes();
+            _shapes = CreateShapeList();
 
-            _defaultNeighbourhoodColor.A = 64;
+            //_defaultNeighbourhoodColor.A = 64;
 
             CreateDefaultStyles();
             _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
 
             SetViews();
+
+            _stylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
+            imgStylesPreview.Source = _stylePreview;
         }
 
         #endregion
@@ -119,18 +109,33 @@ namespace Muragatte.GUI
             get { return _centroidsView.View; }
         }
 
+        public ICollectionView EnabledElementsView
+        {
+            get { return _enabledElementsView.View; }
+        }
+
+        public List<Visual.Shapes.Shape> GetShapes
+        {
+            get { return _shapes; }
+        }
+
+        public ObservableCollection<Visual.Styles.Style> GetStyles
+        {
+            get { return _styles; }
+        }
+
         #endregion
 
         #region Events
 
         private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
-            ccBackgroundColor.SelectedColor = _defaultBackgroundColor;
+            ccBackgroundColor.SelectedColor = DefaultValues.BACKGROUND_COLOR;
         }
 
         private void dudScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            FillWidthHeight(lblPixelSize, (int)(dudScale.Value * _iUnitWidth), (int)(dudScale.Value * _iUnitHeight));
+            FillWidthHeight(lblPixelSize, (int)(dudScale.Value * _visual.GetCanvas.UnitWidth), (int)(dudScale.Value * _visual.GetCanvas.UnitHeight));
         }
 
         private void btnRescaleApply_Click(object sender, RoutedEventArgs e)
@@ -171,6 +176,65 @@ namespace Muragatte.GUI
             //clbAgentsEnabled.SelectedItems.Clear();
         }
 
+        private void ModelElementStorageUpdated(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                _appearances.Clear();
+            }
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (object item in e.NewItems)
+                {
+                    _appearances.Add(ElementToAppearance(item as Element));
+                }
+            }
+        }
+
+        private void btnStylesDelete_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedStyle();
+        }
+
+        private void btnStylesNew_Click(object sender, RoutedEventArgs e)
+        {
+            _styles.Add(new Visual.Styles.Style());
+            lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
+        }
+
+        private void btnStylesCopy_Click(object sender, RoutedEventArgs e)
+        {
+            _styles.Add(new Visual.Styles.Style(lboStyleEditorList.SelectedItem as Visual.Styles.Style));
+            lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
+        }
+
+        private void btnStylesApply_Click(object sender, RoutedEventArgs e)
+        {
+            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).Update(
+                txtStylesMainName.Text,
+                cmbStylesMainShape.SelectedItem as Visual.Shapes.Shape,
+                dudStylesMainWidth.Value.GetValueOrDefault(1),
+                dudStylesMainHeight.Value.GetValueOrDefault(1),
+                _visual.GetCanvas.Scale,
+                cpiStylesMainPrimaryColor.SelectedColor,
+                cpiStylesMainSecondaryColor.SelectedColor);
+            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateNeighbourhood(
+                chbStylesNeighbourhoodEnabled.IsChecked.Value,
+                cmbStylesNeighbourhoodShape.SelectedItem as Visual.Shapes.Shape,
+                cpiStylesNeighbourhoodPrimaryColor.SelectedColor,
+                cpiStylesNeighbourhoodSecondaryColor.SelectedColor,
+                dudStylesNeighbourhoodRadius.Value.GetValueOrDefault(1),
+                _visual.GetCanvas.Scale,
+                new Angle(iudStylesNeighbourhoodAngle.Value.GetValueOrDefault(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES)));
+            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateTrack(
+                chbStylesTrackEnabled.IsChecked.Value,
+                cpiStylesTrackColor.SelectedColor);
+            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateTrail(
+                chbStylesTrailEnabled.IsChecked.Value,
+                cpiStylesTrailColor.SelectedColor,
+                iudStylesTrailLength.Value.GetValueOrDefault(DefaultValues.TRAIL_LENGTH));
+        }
+
         #endregion
 
         #region Methods
@@ -209,120 +273,40 @@ namespace Muragatte.GUI
         {
             _environmentView.Source = _appearances;
             EnvironmentView.Filter += new Predicate<object>(FilterIsStationary);
-            clbEnvironmentEnabled.ItemsSource = EnvironmentView;
             _agentsView.Source = _appearances;
             AgentsView.Filter += new Predicate<object>(FilterIsAgent);
-            clbAgentsEnabled.ItemsSource = AgentsView;
-            clbNeighbourhoodsEnabled.ItemsSource = AgentsView;
-            clbTracksEnabled.ItemsSource = AgentsView;
-            clbTrailsEnabled.ItemsSource = AgentsView;
             _centroidsView.Source = _appearances;
             CentroidsView.Filter += new Predicate<object>(FilterIsType<Centroid>);
-        }
-
-        #endregion
-
-        #region TEST - SHAPES
-
-        private WriteableBitmap _wb;
-
-        private void TestingShapes()
-        {
-            CreateShapeList(cobShape);
-            _wb = BitmapFactory.New(200, 200);
-            imgShapePreview.Source = _wb;
-        }
-
-        private void CreateShapeList(ComboBox comboBox)
-        {
-            comboBox.Items.Add(PixelShape.Instance());
-            comboBox.Items.Add(QuadPixelShape.Instance());
-            comboBox.Items.Add(EllipseShape.Instance());
-            comboBox.Items.Add(RectangleShape.Instance());
-            comboBox.Items.Add(TriangleShape.Instance());
-            comboBox.Items.Add(PointingCircleShape.Instance());
-            comboBox.Items.Add(ArcShape.Instance());
-        }
-
-        private void PreviewShape()
-        {
-            if (cobShape.HasItems && cobShape.SelectedItem != null)
-            {
-                _wb.Clear(ccBackgroundColor.SelectedColor);
-                ((Visual.Shapes.Shape)cobShape.SelectedItem).Draw(
-                    _wb, new Common.Vector2(100, 100), new Common.Angle(sldAngle.Value),
-                    cpiPrimaryColor.SelectedColor, cpiSecondaryColor.SelectedColor,
-                    iudShapeWidth.Value.Value, iudShapeHeight.Value.Value, new Common.Angle(sldArc.Value));
-            }
-        }
-
-        private void cobShape_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            PreviewShape();
-        }
-
-        private void sldAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            PreviewShape();
-        }
-
-        private void cpiPrimaryColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
-        {
-            PreviewShape();
-        }
-
-        private void cpiSecondaryColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
-        {
-            PreviewShape();
-        }
-
-        private void iudShapeWidth_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            PreviewShape();
-        }
-
-        private void iudShapeHeight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            PreviewShape();
-        }
-
-        private void sldArc_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            PreviewShape();
-        }
-
-        #endregion
-
-        private void lboAgentsStyle_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void ModelElementStorageUpdated(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                _appearances.Clear();
-            }
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (object item in e.NewItems)
-                {
-                    _appearances.Add(ElementToAppearance(item as Element));
-                }
-            }
+            _enabledElementsView.Source = _appearances;
+            EnabledElementsView.Filter += new Predicate<object>(FilterIsEnabled);
         }
 
         private void CreateDefaultStyles()
         {
-            _styles.Add(new Visual.Styles.Style(PointingCircleShape.Instance(), "Agents", 1, 1, _visual.GetCanvas.Scale, Colors.Transparent, _defaultAgentColor,
-                new NeighbourhoodStyle(ArcShape.Instance(), Colors.Transparent, _defaultNeighbourhoodColor, 5, new Angle(135), _visual.GetCanvas.Scale),
-                new TrackStyle(_defaultAgentColor), new TrailStyle(_defaultAgentColor, _iDefaultTrailLength)));
-            _styles.Add(new Visual.Styles.Style(EllipseShape.Instance(), "Obstacles", 1, 1, _visual.GetCanvas.Scale, _defaultObstacleColor, Colors.Transparent,
+            _styles.Add(new Visual.Styles.Style(
+                PointingCircleShape.Instance(), "Agent",
+                1, 1, _visual.GetCanvas.Scale,
+                Colors.Transparent, DefaultValues.AGENT_COLOR,
+                new NeighbourhoodStyle(
+                    ArcShape.Instance(),
+                    Colors.Transparent, DefaultValues.NEIGHBOURHOOD_COLOR,
+                    5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), _visual.GetCanvas.Scale),
+                new TrackStyle(DefaultValues.AGENT_COLOR),
+                new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
+            _styles.Add(new Visual.Styles.Style(
+                EllipseShape.Instance(), "Obstacle",
+                1, 1, _visual.GetCanvas.Scale,
+                DefaultValues.OBSTACLE_COLOR, Colors.Transparent,
                 null, null, null));
-            _styles.Add(new Visual.Styles.Style(RectangleShape.Instance(), "Goals", 1, 1, _visual.GetCanvas.Scale, _defaultGoalColor, Colors.Transparent,
+            _styles.Add(new Visual.Styles.Style(
+                RectangleShape.Instance(), "Goal",
+                1, 1, _visual.GetCanvas.Scale,
+                DefaultValues.GOAL_COLOR, Colors.Transparent,
                 null, null, null));
-            _styles.Add(new Visual.Styles.Style(TriangleShape.Instance(), "Centroids", 1, 1, _visual.GetCanvas.Scale, _defaultCentroidColor, Colors.Transparent,
+            _styles.Add(new Visual.Styles.Style(
+                TriangleShape.Instance(), "Centroid",
+                1, 1, _visual.GetCanvas.Scale,
+                DefaultValues.CENTROID_COLOR, Colors.Transparent,
                 null, null, null));
         }
 
@@ -352,6 +336,41 @@ namespace Muragatte.GUI
         {
             Appearance a = o as Appearance;
             return a.IsType<T>();
+        }
+
+        private bool FilterIsEnabled(object o)
+        {
+            Appearance a = o as Appearance;
+            return a.IsEnabled;
+        }
+
+        private List<Visual.Shapes.Shape> CreateShapeList()
+        {
+            List<Visual.Shapes.Shape> items = new List<Visual.Shapes.Shape>();
+            items.Add(PixelShape.Instance());
+            items.Add(QuadPixelShape.Instance());
+            items.Add(EllipseShape.Instance());
+            items.Add(RectangleShape.Instance());
+            items.Add(TriangleShape.Instance());
+            items.Add(PointingCircleShape.Instance());
+            items.Add(ArcShape.Instance());
+            return items;
+        }
+
+        private void DeleteSelectedStyle()
+        {
+            int index = lboStyleEditorList.SelectedIndex;
+            if (index >= 0)
+            {
+                _styles.RemoveAt(index);
+            }
+        }
+
+        #endregion
+
+        private void RedrawStylePreview()
+        {
+
         }
     }
 }

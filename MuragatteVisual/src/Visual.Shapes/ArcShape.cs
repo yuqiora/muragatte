@@ -23,7 +23,6 @@ namespace Muragatte.Visual.Shapes
     {
         #region Constants
 
-        private const int DEFAULT_ARC_DEGREES = 135;
         private const double EPSILON = 0.00001;
 
         #endregion
@@ -39,6 +38,15 @@ namespace Muragatte.Visual.Shapes
         #region Constructors
 
         private ArcShape() { }
+
+        #endregion
+
+        #region Properties
+
+        public override string Symbol
+        {
+            get { return "(<"; }
+        }
 
         #endregion
 
@@ -117,7 +125,7 @@ namespace Muragatte.Visual.Shapes
 
         public override List<Coordinates> CreateCoordinates(int width, int height, object other = null)
         {
-            Angle arc = new Angle(DEFAULT_ARC_DEGREES);
+            Angle arc = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
             if (other != null && other is Angle)
             {
                 arc = (Angle)other;

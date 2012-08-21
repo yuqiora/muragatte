@@ -32,6 +32,15 @@ namespace Muragatte.Visual.Shapes
 
         #endregion
 
+        #region Properties
+
+        public override string Symbol
+        {
+            get { return "."; }
+        }
+
+        #endregion
+
         #region Methods
 
         public static PixelShape Instance()

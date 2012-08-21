@@ -26,6 +26,12 @@ namespace Muragatte.Visual.Shapes
 
         #endregion
 
+        #region Properties
+
+        public abstract string Symbol { get; }
+
+        #endregion
+
         #region Methods
 
         public abstract void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null);

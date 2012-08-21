@@ -29,7 +29,7 @@ namespace Muragatte.Visual.Styles
         private Color _secondaryColor = Colors.Transparent;
         private double _dUnitRadius = 1;
         private int _iRadius = 1;
-        private Angle _angle = new Angle(0);
+        private Angle _angle = new Angle(135);
 
         #endregion
 
@@ -43,6 +43,12 @@ namespace Muragatte.Visual.Styles
             _dUnitRadius = radius;
             _iRadius = (int)(radius * scale);
             _angle = angle;
+        }
+
+        public NeighbourhoodStyle(NeighbourhoodStyle other)
+            : this(other._shape, other._primaryColor, other._secondaryColor, other._dUnitRadius, other._angle, 1)
+        {
+            _iRadius = other._iRadius;
         }
 
         #endregion
@@ -79,6 +85,16 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        public double UnitRadius
+        {
+            get { return _dUnitRadius; }
+            set
+            {
+                _dUnitRadius = value;
+                NotifyPropertyChanged("UnitRadius");
+            }
+        }
+
         public int Radius
         {
             get { return _iRadius; }
@@ -87,7 +103,11 @@ namespace Muragatte.Visual.Styles
         public Angle Angle
         {
             get { return _angle; }
-            set { _angle = value; }
+            set
+            {
+                _angle = value;
+                NotifyPropertyChanged("Angle");
+            }
         }
 
         #endregion
@@ -102,6 +122,19 @@ namespace Muragatte.Visual.Styles
         public void Rescale(double value)
         {
             _iRadius = (int)(_dUnitRadius * value);
+        }
+
+        public void Update(Shape shape, Color primaryColor, Color secondaryColor, double radius, double scale, Angle angle)
+        {
+            if (shape != _shape) Shape = shape;
+            if (primaryColor != _primaryColor) PrimaryColor = primaryColor;
+            if (secondaryColor != _secondaryColor) SecondaryColor = secondaryColor;
+            if (radius != _dUnitRadius)
+            {
+                UnitRadius = radius;
+                Rescale(scale);
+            }
+            if (angle != _angle) Angle = angle;
         }
 
         private void NotifyPropertyChanged(String propertyName)

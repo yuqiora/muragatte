@@ -41,6 +41,8 @@ namespace Muragatte.Visual.Styles
 
         #region Constructors
 
+        public Style() { }
+
         private Style(Shape shape, Color primaryColor, Color secondaryColor,
             NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
         {
@@ -74,6 +76,18 @@ namespace Muragatte.Visual.Styles
             _iHeight = (int)(height * scale);
         }
 
+        public Style(Style other)
+            : this(other._shape, other._primaryColor, other._secondaryColor,
+            other._neighbourhood == null ? null : new NeighbourhoodStyle(other._neighbourhood),
+            other._track == null ? null : new TrackStyle(other._track),
+            other._trail == null ? null : new TrailStyle(other._trail))
+        {
+            _dUnitWidth = other._dUnitWidth;
+            _dUnitHeight = other._dUnitHeight;
+            _iWidth = other._iWidth;
+            _iHeight = other._iHeight;
+        }
+
         #endregion
 
         #region Properties
@@ -81,6 +95,11 @@ namespace Muragatte.Visual.Styles
         public string Name
         {
             get { return _sName; }
+            set
+            {
+                _sName = value;
+                NotifyPropertyChanged("Name");
+            }
         }
 
         public Shape Shape
@@ -101,6 +120,26 @@ namespace Muragatte.Visual.Styles
         public int Height
         {
             get { return _iHeight; }
+        }
+
+        public double UnitWidth
+        {
+            get { return _dUnitWidth; }
+            set
+            {
+                _dUnitWidth = value;
+                NotifyPropertyChanged("UnitWidth");
+            }
+        }
+
+        public double UnitHeight
+        {
+            get { return _dUnitHeight; }
+            set
+            {
+                _dUnitHeight = value;
+                NotifyPropertyChanged("UnitHeight");
+            }
         }
 
         public Color PrimaryColor
@@ -157,6 +196,77 @@ namespace Muragatte.Visual.Styles
             if (_neighbourhood != null)
             {
                 _neighbourhood.Rescale(value);
+            }
+        }
+
+        public void Update(string name, Shape shape, double width, double height, double scale, Color primaryColor, Color secondaryColor)
+        {
+            if (name != _sName) Name = name;
+            if (shape != _shape) Shape = shape;
+            if (width != _dUnitWidth || height != _dUnitHeight)
+            {
+                UnitWidth = width;
+                UnitHeight = height;
+                Rescale(scale);
+            }
+            if (primaryColor != _primaryColor) PrimaryColor = primaryColor;
+            if (secondaryColor != _secondaryColor) SecondaryColor = secondaryColor;
+        }
+
+        public void UpdateNeighbourhood(bool isDefined, Shape shape, Color primaryColor, Color secondaryColor, double radius, double scale, Angle angle)
+        {
+            if (isDefined)
+            {
+                if (_neighbourhood == null)
+                {
+                    Neighbourhood = new NeighbourhoodStyle(shape, primaryColor, secondaryColor, radius, angle, scale);
+                }
+                else
+                {
+                    _neighbourhood.Update(shape, primaryColor, secondaryColor, radius, scale, angle);
+                }
+            }
+            else
+            {
+                Neighbourhood = null;
+            }
+        }
+
+        public void UpdateTrack(bool isDefined, Color color)
+        {
+            if (isDefined)
+            {
+                if (_track == null)
+                {
+                    Track = new TrackStyle(color);
+                }
+                else
+                {
+                    _track.Update(color);
+                }
+            }
+            else
+            {
+                Track = null;
+            }
+        }
+
+        public void UpdateTrail(bool isDefined, Color color, int length)
+        {
+            if (isDefined)
+            {
+                if (_trail == null)
+                {
+                    Trail = new TrailStyle(color, length);
+                }
+                else
+                {
+                    _trail.Update(color, length);
+                }
+            }
+            else
+            {
+                Trail = null;
             }
         }
 

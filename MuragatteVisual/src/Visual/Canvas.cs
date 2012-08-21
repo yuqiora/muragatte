@@ -39,6 +39,7 @@ namespace Muragatte.Visual
         private bool _bCentroids = false;
         private int _iTrailLength = 10;
         private Visualization _visual = null;
+        private Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
 
         #endregion
 
@@ -161,6 +162,16 @@ namespace Muragatte.Visual
             set { _iTrailLength = value; }
         }
 
+        public Color BackgroundColor
+        {
+            get { return _backgroundColor; }
+            set
+            {
+                _backgroundColor = value;
+                NotifyPropertyChanged("BackgroundColor");
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -177,7 +188,7 @@ namespace Muragatte.Visual
 
         public void Clear()
         {
-            _wb.Clear(_visual.GetOptions.ccBackgroundColor.SelectedColor);
+            _wb.Clear(_backgroundColor);
         }
 
         //public void Redraw()
