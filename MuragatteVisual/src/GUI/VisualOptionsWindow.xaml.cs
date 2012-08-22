@@ -142,6 +142,7 @@ namespace Muragatte.GUI
         {
             if ((double)dudScale.Tag != dudScale.Value.Value)
             {
+                DefaultValues.Scale = dudScale.Value.Value;
                 foreach (Visual.Styles.Style s in _styles)
                 {
                     s.Rescale(dudScale.Value.Value);
@@ -208,33 +209,6 @@ namespace Muragatte.GUI
             lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
         }
 
-        private void btnStylesApply_Click(object sender, RoutedEventArgs e)
-        {
-            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).Update(
-                txtStylesMainName.Text,
-                cmbStylesMainShape.SelectedItem as Visual.Shapes.Shape,
-                dudStylesMainWidth.Value.GetValueOrDefault(1),
-                dudStylesMainHeight.Value.GetValueOrDefault(1),
-                _visual.GetCanvas.Scale,
-                cpiStylesMainPrimaryColor.SelectedColor,
-                cpiStylesMainSecondaryColor.SelectedColor);
-            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateNeighbourhood(
-                chbStylesNeighbourhoodEnabled.IsChecked.Value,
-                cmbStylesNeighbourhoodShape.SelectedItem as Visual.Shapes.Shape,
-                cpiStylesNeighbourhoodPrimaryColor.SelectedColor,
-                cpiStylesNeighbourhoodSecondaryColor.SelectedColor,
-                dudStylesNeighbourhoodRadius.Value.GetValueOrDefault(1),
-                _visual.GetCanvas.Scale,
-                new Angle(iudStylesNeighbourhoodAngle.Value.GetValueOrDefault(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES)));
-            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateTrack(
-                chbStylesTrackEnabled.IsChecked.Value,
-                cpiStylesTrackColor.SelectedColor);
-            ((Visual.Styles.Style)lboStyleEditorList.SelectedItem).UpdateTrail(
-                chbStylesTrailEnabled.IsChecked.Value,
-                cpiStylesTrailColor.SelectedColor,
-                iudStylesTrailLength.Value.GetValueOrDefault(DefaultValues.TRAIL_LENGTH));
-        }
-
         #endregion
 
         #region Methods
@@ -284,8 +258,7 @@ namespace Muragatte.GUI
         private void CreateDefaultStyles()
         {
             _styles.Add(new Visual.Styles.Style(
-                PointingCircleShape.Instance(), "Agent",
-                1, 1, _visual.GetCanvas.Scale,
+                PointingCircleShape.Instance(), "Agent", 1, 1,
                 Colors.Transparent, DefaultValues.AGENT_COLOR,
                 new NeighbourhoodStyle(
                     ArcShape.Instance(),
@@ -294,20 +267,18 @@ namespace Muragatte.GUI
                 new TrackStyle(DefaultValues.AGENT_COLOR),
                 new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
             _styles.Add(new Visual.Styles.Style(
-                EllipseShape.Instance(), "Obstacle",
-                1, 1, _visual.GetCanvas.Scale,
+                EllipseShape.Instance(), "Obstacle", 1, 1,
                 DefaultValues.OBSTACLE_COLOR, Colors.Transparent,
                 null, null, null));
             _styles.Add(new Visual.Styles.Style(
-                RectangleShape.Instance(), "Goal",
-                1, 1, _visual.GetCanvas.Scale,
+                RectangleShape.Instance(), "Goal", 1, 1,
                 DefaultValues.GOAL_COLOR, Colors.Transparent,
                 null, null, null));
             _styles.Add(new Visual.Styles.Style(
-                TriangleShape.Instance(), "Centroid",
-                1, 1, _visual.GetCanvas.Scale,
+                TriangleShape.Instance(), "Centroid", 1, 1,
                 DefaultValues.CENTROID_COLOR, Colors.Transparent,
-                null, null, null));
+                null, new TrackStyle(DefaultValues.CENTROID_COLOR),
+                new TrailStyle(DefaultValues.CENTROID_COLOR, DefaultValues.TRAIL_LENGTH)));
         }
 
         private Appearance ElementToAppearance(Element e)

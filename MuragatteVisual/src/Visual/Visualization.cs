@@ -32,6 +32,7 @@ namespace Muragatte.Visual
 
         public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner)
         {
+            DefaultValues.Scale = scale;
             _model = model;
             _canvas = new Canvas(width, height, scale, this);
             _wndCanvas = new GUI.VisualCanvasWindow(this, _canvas);

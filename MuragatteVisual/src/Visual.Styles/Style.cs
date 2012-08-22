@@ -26,66 +26,107 @@ namespace Muragatte.Visual.Styles
         #region Fields
 
         private string _sName = null;
-        private Shape _shape = null;
+        private Shape _shape = EllipseShape.Instance();
         private double _dUnitWidth = 1;
         private double _dUnitHeight = 1;
         private int _iWidth = 1;
         private int _iHeight = 1;
-        private Color _primaryColor = Colors.Black;
-        private Color _secondaryColor = Colors.Black;
+        private Color _primaryColor = DefaultValues.AGENT_COLOR;
+        private Color _secondaryColor = DefaultValues.AGENT_COLOR;
         private NeighbourhoodStyle _neighbourhood = null;
         private TrackStyle _track = null;
         private TrailStyle _trail = null;
+        private bool _bNeighbourhood = false;
+        private bool _bTrack = false;
+        private bool _bTrail = false;
 
         #endregion
 
         #region Constructors
 
-        public Style() { }
-
-        private Style(Shape shape, Color primaryColor, Color secondaryColor,
-            NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
+        public Style()
         {
-            _shape = shape;
-            _primaryColor = primaryColor;
-            _secondaryColor = secondaryColor;
-            _neighbourhood = neighbourhood;
-            _track = track;
-            _trail = trail;
+            _sName = "New Style";
+            _neighbourhood = new NeighbourhoodStyle();
+            _track = new TrackStyle();
+            _trail = new TrailStyle();
         }
 
-        public Style(Shape shape, Element element, double scale, Color primaryColor, Color secondaryColor,
-            NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
-            : this(shape, primaryColor, secondaryColor, neighbourhood, track, trail)
+        //private Style(Shape shape, Color primaryColor, Color secondaryColor,
+        //    NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
+        //{
+        //    _shape = shape;
+        //    _primaryColor = primaryColor;
+        //    _secondaryColor = secondaryColor;
+        //    _neighbourhood = neighbourhood ?? new NeighbourhoodStyle();
+        //    Color c = primaryColor.NotTransparent() ? primaryColor : secondaryColor;
+        //    _track = track ?? new TrackStyle(c);
+        //    _trail = trail ?? new TrailStyle(c, DefaultValues.TRAIL_LENGTH);
+        //}
+
+        public Style(Shape shape, Element element, Color primaryColor, Color secondaryColor, NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
+            : this(shape, element.Name, element.Width, element.Height, primaryColor, secondaryColor, neighbourhood, track, trail)
         {
-            _sName = element.Name;
-            _dUnitWidth = element.Width;
-            _dUnitHeight = element.Height;
-            _iWidth = (int)(element.Width * scale);
-            _iHeight = (int)(element.Height * scale);
+            //_sName = element.Name;
+            //_dUnitWidth = element.Width;
+            //_dUnitHeight = element.Height;
+            //_iWidth = (int)(element.Width * scale);
+            //_iHeight = (int)(element.Height * scale);
         }
 
-        public Style(Shape shape, string name, double width, double height, double scale, Color primaryColor, Color secondaryColor,
+        public Style(Shape shape, string name, double width, double height, Color primaryColor, Color secondaryColor,
             NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
-            : this(shape, primaryColor, secondaryColor, neighbourhood, track, trail)
+            //: this(shape, primaryColor, secondaryColor, neighbourhood, track, trail)
         {
             _sName = name;
             _dUnitWidth = width;
             _dUnitHeight = height;
-            _iWidth = (int)(width * scale);
-            _iHeight = (int)(height * scale);
+            _shape = shape;
+            _primaryColor = primaryColor;
+            _secondaryColor = secondaryColor;
+            if (neighbourhood == null)
+            {
+                _neighbourhood = new NeighbourhoodStyle();
+            }
+            else
+            {
+                _neighbourhood = neighbourhood;
+                _bNeighbourhood = true;
+            }
+            Color c = primaryColor.NotTransparent() ? primaryColor : secondaryColor;
+            if (track == null)
+            {
+                _track = new TrackStyle(c);
+            }
+            else
+            {
+                _track = track;
+                _bTrack = true;
+            }
+            if (trail == null)
+            {
+                _trail = new TrailStyle(c, DefaultValues.TRAIL_LENGTH);
+            }
+            else
+            {
+                _trail = trail;
+                _bTrail = true;
+            }
+            //_iWidth = (int)(width * scale);
+            //_iHeight = (int)(height * scale);
         }
 
         public Style(Style other)
-            : this(other._shape, other._primaryColor, other._secondaryColor,
-            other._neighbourhood == null ? null : new NeighbourhoodStyle(other._neighbourhood),
-            other._track == null ? null : new TrackStyle(other._track),
-            other._trail == null ? null : new TrailStyle(other._trail))
+            : this(other._shape, "Copy of " + other.Name, other.UnitWidth, other.UnitHeight, other._primaryColor, other._secondaryColor,
+            new NeighbourhoodStyle(other._neighbourhood), new TrackStyle(other._track), new TrailStyle(other._trail))
         {
-            _dUnitWidth = other._dUnitWidth;
-            _dUnitHeight = other._dUnitHeight;
-            _iWidth = other._iWidth;
-            _iHeight = other._iHeight;
+            _bNeighbourhood = other._bNeighbourhood;
+            _bTrack = other._bTrack;
+            _bTrail = other._bTrail;
+            //_dUnitWidth = other._dUnitWidth;
+            //_dUnitHeight = other._dUnitHeight;
+            //_iWidth = other._iWidth;
+            //_iHeight = other._iHeight;
         }
 
         #endregion
@@ -129,6 +170,7 @@ namespace Muragatte.Visual.Styles
             {
                 _dUnitWidth = value;
                 NotifyPropertyChanged("UnitWidth");
+                _iWidth = (int)(_dUnitWidth * DefaultValues.Scale);
             }
         }
 
@@ -139,6 +181,7 @@ namespace Muragatte.Visual.Styles
             {
                 _dUnitHeight = value;
                 NotifyPropertyChanged("UnitHeight");
+                _iHeight = (int)(_dUnitHeight * DefaultValues.Scale);
             }
         }
 
@@ -180,6 +223,36 @@ namespace Muragatte.Visual.Styles
             set { _trail = value; }
         }
 
+        public bool HasNeighbourhood
+        {
+            get { return _bNeighbourhood; }
+            set
+            {
+                _bNeighbourhood = value;
+                NotifyPropertyChanged("HasNeighbourhood");
+            }
+        }
+
+        public bool HasTrack
+        {
+            get { return _bTrack; }
+            set
+            {
+                _bTrack = value;
+                NotifyPropertyChanged("HasTrack");
+            }
+        }
+
+        public bool HasTrail
+        {
+            get { return _bTrail; }
+            set
+            {
+                _bTrail = value;
+                NotifyPropertyChanged("HasTrail");
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -196,77 +269,6 @@ namespace Muragatte.Visual.Styles
             if (_neighbourhood != null)
             {
                 _neighbourhood.Rescale(value);
-            }
-        }
-
-        public void Update(string name, Shape shape, double width, double height, double scale, Color primaryColor, Color secondaryColor)
-        {
-            if (name != _sName) Name = name;
-            if (shape != _shape) Shape = shape;
-            if (width != _dUnitWidth || height != _dUnitHeight)
-            {
-                UnitWidth = width;
-                UnitHeight = height;
-                Rescale(scale);
-            }
-            if (primaryColor != _primaryColor) PrimaryColor = primaryColor;
-            if (secondaryColor != _secondaryColor) SecondaryColor = secondaryColor;
-        }
-
-        public void UpdateNeighbourhood(bool isDefined, Shape shape, Color primaryColor, Color secondaryColor, double radius, double scale, Angle angle)
-        {
-            if (isDefined)
-            {
-                if (_neighbourhood == null)
-                {
-                    Neighbourhood = new NeighbourhoodStyle(shape, primaryColor, secondaryColor, radius, angle, scale);
-                }
-                else
-                {
-                    _neighbourhood.Update(shape, primaryColor, secondaryColor, radius, scale, angle);
-                }
-            }
-            else
-            {
-                Neighbourhood = null;
-            }
-        }
-
-        public void UpdateTrack(bool isDefined, Color color)
-        {
-            if (isDefined)
-            {
-                if (_track == null)
-                {
-                    Track = new TrackStyle(color);
-                }
-                else
-                {
-                    _track.Update(color);
-                }
-            }
-            else
-            {
-                Track = null;
-            }
-        }
-
-        public void UpdateTrail(bool isDefined, Color color, int length)
-        {
-            if (isDefined)
-            {
-                if (_trail == null)
-                {
-                    Trail = new TrailStyle(color, length);
-                }
-                else
-                {
-                    _trail.Update(color, length);
-                }
-            }
-            else
-            {
-                Trail = null;
             }
         }
 

@@ -52,15 +52,5 @@ namespace Muragatte.Visual.Styles
         }
 
         #endregion
-
-        #region Methods
-
-        public void Update(Color color, int length)
-        {
-            if (color != _color) Color = color;
-            if (length != _iLength) Length = length;
-        }
-
-        #endregion
     }
 }

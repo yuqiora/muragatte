@@ -35,7 +35,7 @@
                 <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
                 <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0:N}x{1:N}">
+                        <MultiBinding StringFormat="{}{0}x{1}">
                             <Binding Path="UnitWidth" />
                             <Binding Path="UnitHeight" />
                         </MultiBinding>
@@ -76,7 +76,7 @@
                 <TextBlock Text="{Binding Path=Shape}" Margin="5,0" Grid.Column="1" ToolTip="Shape" />
                 <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0:N}x{1:N}">
+                        <MultiBinding StringFormat="{}{0}x{1}">
                             <Binding Path="UnitWidth" />
                             <Binding Path="UnitHeight" />
                         </MultiBinding>
@@ -164,7 +164,7 @@
                                     <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=Style.Neighbourhood.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Neighbourhood Secondary Color" />
                                     <TextBlock Margin="5,0" Grid.Column="5" ToolTip="Radius~Angle">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0:N}~{1}">
+                                            <MultiBinding StringFormat="{}{0}~{1}">
                                                 <Binding Path="UnitRadius" />
                                                 <Binding Path="NeighbourhoodAngle" />
                                             </MultiBinding>
@@ -235,7 +235,7 @@
                                     <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
                                     <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0:N}x{1:N}">
+                                            <MultiBinding StringFormat="{}{0}x{1}">
                                                 <Binding Path="UnitWidth" />
                                                 <Binding Path="UnitHeight" />
                                             </MultiBinding>
@@ -274,53 +274,49 @@
                         <Button Content="Delete" Height="23" Name="btnStylesDelete" Width="75" Click="btnStylesDelete_Click" />
                     </StackPanel>
                     <ListBox Name="lboStyleEditorList" Margin="10,0,10,10" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetStyles}" ItemTemplate="{StaticResource StyleSummaryTemplate}" IsSynchronizedWithCurrentItem="True" Grid.IsSharedSizeScope="True" />
-                    <StackPanel HorizontalAlignment="Center" Margin="0,10"  Orientation="Horizontal" DockPanel.Dock="Bottom">
-                        <Button Content="Apply" Height="23" Name="btnStylesApply" Width="75" Click="btnStylesApply_Click" />
-                        <Button Content="Cancel" Height="23" Name="btnStylesCancel" Width="75" />
-                    </StackPanel>
                     <StackPanel DockPanel.Dock="Left">
                         <GroupBox Header="Main" Name="grbStylesMain" Margin="2">
                             <StackPanel>
-                                <xtk:WatermarkTextBox Height="23" Name="txtStylesMainName" Width="120" Watermark="Name" Text="{Binding Path=SelectedItem.Name, ElementName=lboStyleEditorList, Mode=OneWay}" />
-                                <ComboBox Height="23" Name="cmbStylesMainShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Shape, ElementName=lboStyleEditorList, Mode=OneWay}" />
+                                <xtk:WatermarkTextBox Height="23" Name="txtStylesMainName" Width="120" Watermark="Name" Text="{Binding Path=SelectedItem.Name, ElementName=lboStyleEditorList}" />
+                                <ComboBox Height="23" Name="cmbStylesMainShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Shape, ElementName=lboStyleEditorList}" />
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <xtk:DoubleUpDown Name="dudStylesMainWidth" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Width" Value="{Binding Path=SelectedItem.UnitWidth, ElementName=lboStyleEditorList, Mode=OneWay}" />
+                                    <xtk:DoubleUpDown Name="dudStylesMainWidth" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Width" Value="{Binding Path=SelectedItem.UnitWidth, ElementName=lboStyleEditorList}" />
                                     <TextBlock Height="23" Text=" x " />
-                                    <xtk:DoubleUpDown Name="dudStylesMainHeight" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Height" Value="{Binding Path=SelectedItem.UnitHeight, ElementName=lboStyleEditorList, Mode=OneWay}" />
+                                    <xtk:DoubleUpDown Name="dudStylesMainHeight" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Height" Value="{Binding Path=SelectedItem.UnitHeight, ElementName=lboStyleEditorList}" />
                                 </StackPanel>
-                                <xtk:ColorPicker Name="cpiStylesMainPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.PrimaryColor, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
-                                <xtk:ColorPicker Name="cpiStylesMainSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.SecondaryColor, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
+                                <xtk:ColorPicker Name="cpiStylesMainPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                                <xtk:ColorPicker Name="cpiStylesMainSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Name="grbStylesNeighbourhood" Margin="2">
                             <GroupBox.Header>
-                                <CheckBox Content="Neighbourhood" Height="16" Name="chbStylesNeighbourhoodEnabled" IsChecked="{Binding Path=SelectedItem.Neighbourhood, ElementName=lboStyleEditorList, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}" />
+                                <CheckBox Content="Neighbourhood" Height="16" Name="chbStylesNeighbourhoodEnabled" IsChecked="{Binding Path=SelectedItem.HasNeighbourhood, ElementName=lboStyleEditorList}" />
                             </GroupBox.Header>
                             <StackPanel IsEnabled="{Binding ElementName=chbStylesNeighbourhoodEnabled, Path=IsChecked}">
-                                <ComboBox Height="23" Name="cmbStylesNeighbourhoodShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Neighbourhood.Shape, ElementName=lboStyleEditorList, Mode=OneWay}" />
-                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.PrimaryColor, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
-                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.SecondaryColor, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
-                                <xtk:DoubleUpDown Name="dudStylesNeighbourhoodRadius" Height="23" Width="120" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Radius" Value="{Binding Path=SelectedItem.Neighbourhood.UnitRadius, ElementName=lboStyleEditorList, Mode=OneWay}" />
-                                <xtk:IntegerUpDown Name="iudStylesNeighbourhoodAngle" Height="23" Width="120" Minimum="1" Maximum="180" Watermark="Angle" Value="{Binding Path=SelectedItem.Neighbourhood.Angle, ElementName=lboStyleEditorList, Converter={StaticResource AngleToIntConverter}, Mode=OneWay}" />
+                                <ComboBox Height="23" Name="cmbStylesNeighbourhoodShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Neighbourhood.Shape, ElementName=lboStyleEditorList}" />
+                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                                <xtk:DoubleUpDown Name="dudStylesNeighbourhoodRadius" Height="23" Width="120" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Radius" Value="{Binding Path=SelectedItem.Neighbourhood.UnitRadius, ElementName=lboStyleEditorList}" />
+                                <xtk:IntegerUpDown Name="iudStylesNeighbourhoodAngle" Height="23" Width="120" Minimum="1" Maximum="180" Watermark="Angle" Value="{Binding Path=SelectedItem.Neighbourhood.Angle, ElementName=lboStyleEditorList, Converter={StaticResource AngleToIntConverter}}" />
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
                     <StackPanel Margin="0,0,10,0">
                         <GroupBox Name="grbStylesTrack" Margin="2">
                             <GroupBox.Header>
-                                <CheckBox Content="Track" Height="16" Name="chbStylesTrackEnabled" IsChecked="{Binding Path=SelectedItem.Track, ElementName=lboStyleEditorList, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}" />
+                                <CheckBox Content="Track" Height="16" Name="chbStylesTrackEnabled" IsChecked="{Binding Path=SelectedItem.HasTrack, ElementName=lboStyleEditorList}" />
                             </GroupBox.Header>
                             <StackPanel IsEnabled="{Binding ElementName=chbStylesTrackEnabled, Path=IsChecked}">
-                                <xtk:ColorPicker Name="cpiStylesTrackColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Track.Color, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
+                                <xtk:ColorPicker Name="cpiStylesTrackColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Track.Color, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Name="grbStylesTrail" Margin="2">
                             <GroupBox.Header>
-                                <CheckBox Content="Trail" Height="16" Name="chbStylesTrailEnabled" IsChecked="{Binding Path=SelectedItem.Trail, ElementName=lboStyleEditorList, Converter={StaticResource ObjectToBoolConverter}, Mode=OneWay}" />
+                                <CheckBox Content="Trail" Height="16" Name="chbStylesTrailEnabled" IsChecked="{Binding Path=SelectedItem.HasTrail, ElementName=lboStyleEditorList}" />
                             </GroupBox.Header>
                             <StackPanel IsEnabled="{Binding ElementName=chbStylesTrailEnabled, Path=IsChecked}">
-                                <xtk:ColorPicker Name="cpiStylesTrailColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Trail.Color, ElementName=lboStyleEditorList, Mode=OneWay}" DisplayColorAndName="True" />
-                                <xtk:IntegerUpDown Name="iudStylesTrailLength" Height="23" Width="120" Minimum="0" Maximum="{x:Static mv:DefaultValues.MAXIMUM_TRAIL_LENGTH}" Watermark="Length" Value="{Binding Path=SelectedItem.Trail.Length, ElementName=lboStyleEditorList, Mode=OneWay}" />
+                                <xtk:ColorPicker Name="cpiStylesTrailColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Trail.Color, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                                <xtk:IntegerUpDown Name="iudStylesTrailLength" Height="23" Width="120" Minimum="0" Maximum="{x:Static mv:DefaultValues.MAXIMUM_TRAIL_LENGTH}" Watermark="Length" Value="{Binding Path=SelectedItem.Trail.Length, ElementName=lboStyleEditorList}" />
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Preview" Name="grbStylesPreview" Margin="2">

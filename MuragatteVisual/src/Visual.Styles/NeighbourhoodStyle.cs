@@ -24,16 +24,18 @@ namespace Muragatte.Visual.Styles
     {
         #region Fields
 
-        private Shape _shape = null;
-        private Color _primaryColor = Colors.LightGreen;
-        private Color _secondaryColor = Colors.Transparent;
+        private Shape _shape = ArcShape.Instance();
+        private Color _primaryColor = Colors.Transparent;
+        private Color _secondaryColor = DefaultValues.NEIGHBOURHOOD_COLOR;
         private double _dUnitRadius = 1;
         private int _iRadius = 1;
-        private Angle _angle = new Angle(135);
+        private Angle _angle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
 
         #endregion
 
         #region Constructors
+
+        public NeighbourhoodStyle() { }
 
         public NeighbourhoodStyle(Shape shape, Color primaryColor, Color secondaryColor, double radius, Angle angle, double scale)
         {
@@ -92,6 +94,7 @@ namespace Muragatte.Visual.Styles
             {
                 _dUnitRadius = value;
                 NotifyPropertyChanged("UnitRadius");
+                _iRadius = (int)(_dUnitRadius * DefaultValues.Scale);
             }
         }
 
@@ -122,19 +125,6 @@ namespace Muragatte.Visual.Styles
         public void Rescale(double value)
         {
             _iRadius = (int)(_dUnitRadius * value);
-        }
-
-        public void Update(Shape shape, Color primaryColor, Color secondaryColor, double radius, double scale, Angle angle)
-        {
-            if (shape != _shape) Shape = shape;
-            if (primaryColor != _primaryColor) PrimaryColor = primaryColor;
-            if (secondaryColor != _secondaryColor) SecondaryColor = secondaryColor;
-            if (radius != _dUnitRadius)
-            {
-                UnitRadius = radius;
-                Rescale(scale);
-            }
-            if (angle != _angle) Angle = angle;
         }
 
         private void NotifyPropertyChanged(String propertyName)
