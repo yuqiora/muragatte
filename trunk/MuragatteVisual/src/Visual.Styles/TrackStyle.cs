@@ -21,7 +21,7 @@ namespace Muragatte.Visual.Styles
     {
         #region Fields
 
-        protected Color _color = Colors.Black;
+        protected Color _color = DefaultValues.AGENT_COLOR;
 
         #endregion
 
@@ -53,11 +53,6 @@ namespace Muragatte.Visual.Styles
         #endregion
 
         #region Methods
-
-        public void Update(Color color)
-        {
-            if (color != _color) Color = color;
-        }
 
         protected void NotifyPropertyChanged(String propertyName)
         {

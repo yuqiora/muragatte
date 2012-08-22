@@ -266,7 +266,7 @@ namespace Muragatte.GUI
             int obstacles = int.Parse(txtObstacles.Text);
             for (int i = 0; i < obstacles; i++)
             {
-                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), RNGs.Uniform(10, 30));
+                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), Math.Round(RNGs.Uniform(10, 30), 2));
                 //o.Item = ParticleFactory.Ellipse((int)(o.Radius * _visual.GetCanvas.Scale), _colorObstacle);
                 o.Item = ParticleFactory.Ellipse((int)(o.Width* _visual.GetCanvas.Scale), _colorObstacle);
                 _obstacles.Add(o);

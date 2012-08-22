@@ -38,11 +38,28 @@ namespace Muragatte.Visual
         public static readonly Color CENTROID_COLOR = Colors.Silver;
         public static readonly Color HIGHLIGHT_COLOR = Colors.LightYellow;
 
+        private static double _dScale = 1;
+
         #endregion
 
         #region Constructors
 
         private DefaultValues() { }
+
+        #endregion
+
+        #region Properties
+
+        public static double Scale
+        {
+            get { return _dScale; }
+            set
+            {
+                _dScale = value;
+                if (_dScale < 1) _dScale = 1;
+                if (_dScale > MAXIMUM_SCALE) _dScale = MAXIMUM_SCALE;
+            }
+        }
 
         #endregion
     }
