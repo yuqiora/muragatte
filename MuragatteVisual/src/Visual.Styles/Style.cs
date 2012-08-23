@@ -26,7 +26,7 @@ namespace Muragatte.Visual.Styles
         #region Fields
 
         private string _sName = null;
-        private Shape _shape = EllipseShape.Instance();
+        private Shape _shape = EllipseShape.Instance;
         private double _dUnitWidth = 1;
         private double _dUnitHeight = 1;
         private int _iWidth = 1;
@@ -39,6 +39,7 @@ namespace Muragatte.Visual.Styles
         private bool _bNeighbourhood = false;
         private bool _bTrack = false;
         private bool _bTrail = false;
+        private List<Coordinates> _coordinates = null;
 
         #endregion
 
@@ -50,6 +51,7 @@ namespace Muragatte.Visual.Styles
             _neighbourhood = new NeighbourhoodStyle();
             _track = new TrackStyle();
             _trail = new TrailStyle();
+            Rescale(DefaultValues.Scale);
         }
 
         //private Style(Shape shape, Color primaryColor, Color secondaryColor,
@@ -114,6 +116,7 @@ namespace Muragatte.Visual.Styles
             }
             //_iWidth = (int)(width * scale);
             //_iHeight = (int)(height * scale);
+            Rescale(DefaultValues.Scale);
         }
 
         public Style(Style other)
@@ -123,6 +126,7 @@ namespace Muragatte.Visual.Styles
             _bNeighbourhood = other._bNeighbourhood;
             _bTrack = other._bTrack;
             _bTrail = other._bTrail;
+            _coordinates = new List<Coordinates>(other._coordinates);
             //_dUnitWidth = other._dUnitWidth;
             //_dUnitHeight = other._dUnitHeight;
             //_iWidth = other._iWidth;
@@ -259,13 +263,21 @@ namespace Muragatte.Visual.Styles
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
         {
-            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _iWidth, _iHeight);
+            //if (_coordinates == null) _coordinates = _shape.CreateCoordinates(_iWidth, _iHeight);
+            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _coordinates);
+        }
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, List<Coordinates> coordinates)
+        {
+            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor,
+                coordinates == null || coordinates.Count == 0 ? _coordinates : coordinates);
         }
 
         public void Rescale(double value)
         {
             _iWidth = (int)(_dUnitWidth * value);
             _iHeight = (int)(_dUnitHeight * value);
+            _coordinates = _shape.CreateCoordinates(_iWidth, _iHeight);
             if (_neighbourhood != null)
             {
                 _neighbourhood.Rescale(value);

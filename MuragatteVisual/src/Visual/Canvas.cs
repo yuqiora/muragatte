@@ -433,6 +433,12 @@ namespace Muragatte.Visual
                     ElementStatus es = record[a.ID];
                     if (es.IsEnabled && a.IsEnabled)
                     {
+                        if (a.IsHighlighted)
+                        {
+                            Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
+                                _visual.GetOptions.ccHighlightColor.SelectedColor, Colors.Transparent,
+                                (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+                        }
                         a.Draw(_wb, es.Position * _dScale, es.Direction);
                     }
                 }
@@ -443,7 +449,7 @@ namespace Muragatte.Visual
         {
             if (_bNeighbourhoods)
             {
-                foreach (Appearance a in _visual.GetOptions.AgentsView)
+                foreach (Appearance a in _visual.GetOptions.NeighbourhoodsView)
                 {
                     ElementStatus es = record[a.ID];
                     if (es.IsEnabled && a.IsNeighbourhoodEnabled)
@@ -464,7 +470,7 @@ namespace Muragatte.Visual
             if (_bTracks)
             {
                 int time = Math.Min(step, history.Count);
-                foreach (Appearance a in _visual.GetOptions.AgentsView)
+                foreach (Appearance a in _visual.GetOptions.TracksView)
                 {
                     if (history[step][a.ID].IsEnabled && a.IsEnabled && a.IsTrackEnabled)
                     {
@@ -492,7 +498,7 @@ namespace Muragatte.Visual
             if (_bTrails)
             {
                 int substep = _visual.GetModel.Substeps;
-                foreach (Appearance a in _visual.GetOptions.AgentsView)
+                foreach (Appearance a in _visual.GetOptions.TrailsView)
                 {
                     if (history[step][a.ID].IsEnabled && a.IsEnabled && a.IsTrailEnabled)
                     {

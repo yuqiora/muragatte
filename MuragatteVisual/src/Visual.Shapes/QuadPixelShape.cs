@@ -39,14 +39,14 @@ namespace Muragatte.Visual.Shapes
             get { return "::"; }
         }
 
+        public static QuadPixelShape Instance
+        {
+            get { return _shape; }
+        }
+
         #endregion
 
         #region Methods
-
-        public static QuadPixelShape Instance()
-        {
-            return _shape;
-        }
 
         public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
         {

@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="src\Visual.Converters\AngleToIntConverter.cs" />
     <Compile Include="src\Visual.Converters\ObjectToBoolConverter.cs" />
+    <Compile Include="src\Visual.Converters\ShapeToSymbolConverter.cs" />
     <Compile Include="src\Visual.Shapes\Coordinates.cs" />
     <Compile Include="src\Visual.Shapes\ArcShape.cs" />
     <Compile Include="src\Visual.Shapes\EllipseShape.cs" />

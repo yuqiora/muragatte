@@ -39,20 +39,20 @@ namespace Muragatte.Visual.Shapes
             get { return "()"; }
         }
 
+        public static EllipseShape Instance
+        {
+            get { return _shape; }
+        }
+
         #endregion
 
         #region Methods
-
-        public static EllipseShape Instance()
-        {
-            return _shape;
-        }
 
         public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
         {
             if (width == 1 && height == 1)
             {
-                PixelShape.Instance().Draw(target, position, angle, primaryColor, secondaryColor, width, height, other);
+                PixelShape.Instance.Draw(target, position, angle, primaryColor, secondaryColor, width, height, other);
             }
             else
             {

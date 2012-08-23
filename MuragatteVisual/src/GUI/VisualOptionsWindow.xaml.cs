@@ -45,6 +45,9 @@ namespace Muragatte.GUI
         private ObservableCollection<Visual.Styles.Style> _styles = new ObservableCollection<Visual.Styles.Style>();
         private CollectionViewSource _environmentView = new CollectionViewSource();
         private CollectionViewSource _agentsView = new CollectionViewSource();
+        private CollectionViewSource _neighbourhoodsView = new CollectionViewSource();
+        private CollectionViewSource _tracksView = new CollectionViewSource();
+        private CollectionViewSource _trailsView = new CollectionViewSource();
         private CollectionViewSource _centroidsView = new CollectionViewSource();
         private CollectionViewSource _enabledElementsView = new CollectionViewSource();
 
@@ -67,7 +70,6 @@ namespace Muragatte.GUI
             bindVisPlay.Converter = new InverseBoolConverter();
             titGroups.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
             titSnapshot.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
-            BindVisualizationSelection();
             FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
             dudScale.Value = _visual.GetCanvas.Scale;
             dudScale.Tag = _visual.GetCanvas.Scale;
@@ -104,6 +106,21 @@ namespace Muragatte.GUI
             get { return _agentsView.View; }
         }
 
+        public ICollectionView NeighbourhoodsView
+        {
+            get { return _neighbourhoodsView.View; }
+        }
+
+        public ICollectionView TracksView
+        {
+            get { return _tracksView.View; }
+        }
+
+        public ICollectionView TrailsView
+        {
+            get { return _trailsView.View; }
+        }
+
         public ICollectionView CentroidsView
         {
             get { return _centroidsView.View; }
@@ -122,6 +139,11 @@ namespace Muragatte.GUI
         public ObservableCollection<Visual.Styles.Style> GetStyles
         {
             get { return _styles; }
+        }
+
+        public Visual.Canvas GetCanvas
+        {
+            get { return _visual.GetCanvas; }
         }
 
         #endregion
@@ -213,26 +235,6 @@ namespace Muragatte.GUI
 
         #region Methods
 
-        private void BindVisualizationSelection()
-        {
-            BindVisualizationSelection(chbGeneralEnvironment, "IsEnvironmentEnabled");
-            BindVisualizationSelection(chbGeneralNeighbourhoods, "IsNeighbourhoodsEnabled");
-            BindVisualizationSelection(chbGeneralTracks, "IsTracksEnabled");
-            BindVisualizationSelection(chbGeneralTrails, "IsTrailsEnabled");
-            BindVisualizationSelection(chbGeneralAgents, "IsAgentsEnabled");
-            BindVisualizationSelection(chbGeneralCentroids, "IsCentroidsEnabled");
-            chbGeneralEnvironment.IsChecked = true;
-            chbGeneralAgents.IsChecked = true;
-        }
-
-        private void BindVisualizationSelection(CheckBox target, string propertyName)
-        {
-            Binding bind = new Binding(propertyName);
-            bind.Mode = BindingMode.OneWayToSource;
-            bind.Source = _visual.GetCanvas;
-            target.SetBinding(CheckBox.IsCheckedProperty, bind);
-        }
-
         private void FillWidthHeight(Label label, int width, int height)
         {
             label.Content = string.Format("{0} x {1}", width, height);
@@ -249,6 +251,12 @@ namespace Muragatte.GUI
             EnvironmentView.Filter += new Predicate<object>(FilterIsStationary);
             _agentsView.Source = _appearances;
             AgentsView.Filter += new Predicate<object>(FilterIsAgent);
+            _neighbourhoodsView.Source = _appearances;
+            NeighbourhoodsView.Filter += new Predicate<object>(FilterHasNeighbourhood);
+            _tracksView.Source = _appearances;
+            TracksView.Filter += new Predicate<object>(FilterHasTrack);
+            _trailsView.Source = _appearances;
+            TrailsView.Filter += new Predicate<object>(FilterHasTrail);
             _centroidsView.Source = _appearances;
             CentroidsView.Filter += new Predicate<object>(FilterIsType<Centroid>);
             _enabledElementsView.Source = _appearances;
@@ -258,24 +266,24 @@ namespace Muragatte.GUI
         private void CreateDefaultStyles()
         {
             _styles.Add(new Visual.Styles.Style(
-                PointingCircleShape.Instance(), "Agent", 1, 1,
+                PointingCircleShape.Instance, "Agent", 1, 1,
                 Colors.Transparent, DefaultValues.AGENT_COLOR,
                 new NeighbourhoodStyle(
-                    ArcShape.Instance(),
+                    ArcShape.Instance,
                     Colors.Transparent, DefaultValues.NEIGHBOURHOOD_COLOR,
                     5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), _visual.GetCanvas.Scale),
                 new TrackStyle(DefaultValues.AGENT_COLOR),
                 new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
             _styles.Add(new Visual.Styles.Style(
-                EllipseShape.Instance(), "Obstacle", 1, 1,
+                EllipseShape.Instance, "Obstacle", 1, 1,
                 DefaultValues.OBSTACLE_COLOR, Colors.Transparent,
                 null, null, null));
             _styles.Add(new Visual.Styles.Style(
-                RectangleShape.Instance(), "Goal", 1, 1,
+                RectangleShape.Instance, "Goal", 1, 1,
                 DefaultValues.GOAL_COLOR, Colors.Transparent,
                 null, null, null));
             _styles.Add(new Visual.Styles.Style(
-                TriangleShape.Instance(), "Centroid", 1, 1,
+                TriangleShape.Instance, "Centroid", 1, 1,
                 DefaultValues.CENTROID_COLOR, Colors.Transparent,
                 null, new TrackStyle(DefaultValues.CENTROID_COLOR),
                 new TrailStyle(DefaultValues.CENTROID_COLOR, DefaultValues.TRAIL_LENGTH)));
@@ -315,16 +323,34 @@ namespace Muragatte.GUI
             return a.IsEnabled;
         }
 
+        private bool FilterHasNeighbourhood(object o)
+        {
+            Appearance a = o as Appearance;
+            return a.Style.HasNeighbourhood;
+        }
+
+        private bool FilterHasTrack(object o)
+        {
+            Appearance a = o as Appearance;
+            return a.Style.HasTrack;
+        }
+
+        private bool FilterHasTrail(object o)
+        {
+            Appearance a = o as Appearance;
+            return a.Style.HasTrail;
+        }
+
         private List<Visual.Shapes.Shape> CreateShapeList()
         {
             List<Visual.Shapes.Shape> items = new List<Visual.Shapes.Shape>();
-            items.Add(PixelShape.Instance());
-            items.Add(QuadPixelShape.Instance());
-            items.Add(EllipseShape.Instance());
-            items.Add(RectangleShape.Instance());
-            items.Add(TriangleShape.Instance());
-            items.Add(PointingCircleShape.Instance());
-            items.Add(ArcShape.Instance());
+            items.Add(PixelShape.Instance);
+            items.Add(QuadPixelShape.Instance);
+            items.Add(EllipseShape.Instance);
+            items.Add(RectangleShape.Instance);
+            items.Add(TriangleShape.Instance);
+            items.Add(PointingCircleShape.Instance);
+            items.Add(ArcShape.Instance);
             return items;
         }
 
