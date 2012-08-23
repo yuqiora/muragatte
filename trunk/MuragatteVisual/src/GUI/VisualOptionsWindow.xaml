@@ -18,9 +18,11 @@
         xmlns:mvc="clr-namespace:Muragatte.Visual.Converters"
         Title="Visualization Options" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <xtkc:ColorToSolidColorBrushConverter x:Key="ColorToBrushConverter" />
         <mvc:AngleToIntConverter x:Key="AngleToIntConverter" />
         <mvc:ObjectToBoolConverter x:Key="ObjectToBoolConverter" />
+        <mvc:ShapeToSymbolConverter x:Key="ShapeToSymbolConverter" />
         <DataTemplate x:Key="ElementAppearanceTemplate">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -41,9 +43,9 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Primary Color" />
-                <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Secondary Color" />
-                <ComboBox ItemsSource="{Binding Path=GetStyles, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mg:VisualOptionsWindow}}}" Grid.Column="5" SelectedItem="{Binding Path=Style}" Grid.IsSharedSizeScope="True" Margin="5,0" ToolTip="Style">
+                <Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=Style.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Primary Color" />
+                <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=Style.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Secondary Color" />
+                <ComboBox ItemsSource="{Binding Path=GetStyles, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mg:VisualOptionsWindow}}}" Grid.Column="5" SelectedItem="{Binding Path=Style}" Grid.IsSharedSizeScope="True" Margin="5,0" ToolTip="Style" HorizontalContentAlignment="Stretch">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -71,9 +73,16 @@
                     <ColumnDefinition SharedSizeGroup="SizeColumn" />
                     <ColumnDefinition SharedSizeGroup="PrimaryColorColumn" />
                     <ColumnDefinition SharedSizeGroup="SecondaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodShapeColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodPrimaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodSecondaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodSizeColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrackColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrailColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrailLengthColumn" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Path=Name}" Margin="5,0" Grid.Column="0" ToolTip="Name" />
-                <TextBlock Text="{Binding Path=Shape}" Margin="5,0" Grid.Column="1" ToolTip="Shape" />
+                <TextBlock Text="{Binding Path=Shape, Converter={StaticResource ShapeToSymbolConverter}}" Margin="5,0" Grid.Column="1" ToolTip="Shape" FontFamily="Lucida Console" />
                 <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0}x{1}">
@@ -84,6 +93,20 @@
                 </TextBlock>
                 <Ellipse Width="15" Height="15" Stroke="Black" Fill="{Binding Path=PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="3" ToolTip="Primary Color" />
                 <Ellipse Width="15" Height="15" Stroke="Black" Fill="{Binding Path=SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="4" ToolTip="Secondary Color" />
+                <TextBlock Text="{Binding Path=Neighbourhood.Shape, Converter={StaticResource ShapeToSymbolConverter}}" Margin="5,0" Grid.Column="5" ToolTip="Neighbourhood Shape" FontFamily="Lucida Console" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="12" Height="15" Stroke="Black" Fill="{Binding Path=Neighbourhood.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="6" ToolTip="Neighbourhood Primary Color" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="12" Height="15" Stroke="Black" Fill="{Binding Path=Neighbourhood.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="7" ToolTip="Neighbourhood Secondary Color" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Margin="5,0" Grid.Column="8" ToolTip="Naighbourhood Radius~Angle" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}~{1}">
+                            <Binding Path="Neighbourhood.UnitRadius" />
+                            <Binding Path="Neighbourhood.Angle" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Ellipse Width="10" Height="15" Stroke="Black" Fill="{Binding Path=Track.Color, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="9" ToolTip="Track Color" Visibility="{Binding Path=HasTrack, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="10" Height="15" Stroke="Black" Fill="{Binding Path=Trail.Color, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="10" ToolTip="Trail Color" Visibility="{Binding Path=HasTrail, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{Binding Path=Trail.Length}" Margin="5,0" Grid.Column="11" ToolTip="Trail Length" Visibility="{Binding Path=HasTrail, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -101,12 +124,12 @@
                         <Border Padding="5">
                             <StackPanel>
                                 <CheckBox Content="Enabled" Height="16" Name="chbVisualizationEnabled" IsChecked="True" />
-                                <CheckBox Content="Environment" Height="16" Margin="0,10,0,0" Name="chbGeneralEnvironment" IsChecked="True" />
-                                <CheckBox Content="Neighbourhoods" Height="16" Margin="0,10,0,0" Name="chbGeneralNeighbourhoods" />
-                                <CheckBox Content="Tracks" Height="16" Margin="0,10,0,0" Name="chbGeneralTracks" />
-                                <CheckBox Content="Trails" Height="16" Margin="0,10,0,0" Name="chbGeneralTrails" />
-                                <CheckBox Content="Agents" Height="16" Margin="0,10,0,0" Name="chbGeneralAgents" IsChecked="True" />
-                                <CheckBox Content="Centroids" Height="16" Margin="0,10,0,0" Name="chbGeneralCentroids" />
+                                <CheckBox Content="Environment" Height="16" Margin="0,10,0,0" Name="chbGeneralEnvironment" IsChecked="{Binding Path=GetCanvas.IsEnvironmentEnabled}" />
+                                <CheckBox Content="Neighbourhoods" Height="16" Margin="0,10,0,0" Name="chbGeneralNeighbourhoods" IsChecked="{Binding Path=GetCanvas.IsNeighbourhoodsEnabled}" />
+                                <CheckBox Content="Tracks" Height="16" Margin="0,10,0,0" Name="chbGeneralTracks" IsChecked="{Binding Path=GetCanvas.IsTracksEnabled}" />
+                                <CheckBox Content="Trails" Height="16" Margin="0,10,0,0" Name="chbGeneralTrails" IsChecked="{Binding Path=GetCanvas.IsTrailsEnabled}" />
+                                <CheckBox Content="Agents" Height="16" Margin="0,10,0,0" Name="chbGeneralAgents" IsChecked="{Binding Path=GetCanvas.IsAgentsEnabled}" />
+                                <CheckBox Content="Centroids" Height="16" Margin="0,10,0,0" Name="chbGeneralCentroids" IsChecked="{Binding Path=GetCanvas.IsCentroidsEnabled}" />
                             </StackPanel>
                         </Border>
                     </GroupBox>
@@ -145,7 +168,7 @@
             </TabItem>
             <TabItem Header="Neighbourhoods" Name="titNeighbourhoods" IsEnabled="{Binding ElementName=clbNeighbourhoodsEnabled, Path=HasItems}">
                 <StackPanel>
-                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="10" Height="300" ItemsSource="{Binding Path=AgentsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True">
+                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="10" Height="300" ItemsSource="{Binding Path=NeighbourhoodsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -178,7 +201,7 @@
             </TabItem>
             <TabItem Header="Tracks" Name="titTracks" IsEnabled="{Binding ElementName=clbTracksEnabled, Path=HasItems}">
                 <StackPanel Orientation="Horizontal">
-                    <xtk:CheckListBox Name="clbTracksEnabled" Margin="10" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=AgentsView}" Grid.IsSharedSizeScope="True">
+                    <xtk:CheckListBox Name="clbTracksEnabled" Margin="10" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=TracksView}" Grid.IsSharedSizeScope="True">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -198,7 +221,7 @@
             </TabItem>
             <TabItem Header="Trails" Name="titTrails" IsEnabled="{Binding ElementName=clbTrailsEnabled, Path=HasItems}">
                 <StackPanel Orientation="Horizontal">
-                    <xtk:CheckListBox Name="clbTrailsEnabled" Margin="10" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=AgentsView}" Grid.IsSharedSizeScope="True">
+                    <xtk:CheckListBox Name="clbTrailsEnabled" Margin="10" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=TrailsView}" Grid.IsSharedSizeScope="True">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

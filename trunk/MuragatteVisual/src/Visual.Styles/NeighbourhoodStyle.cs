@@ -24,18 +24,22 @@ namespace Muragatte.Visual.Styles
     {
         #region Fields
 
-        private Shape _shape = ArcShape.Instance();
+        private Shape _shape = ArcShape.Instance;
         private Color _primaryColor = Colors.Transparent;
         private Color _secondaryColor = DefaultValues.NEIGHBOURHOOD_COLOR;
         private double _dUnitRadius = 1;
         private int _iRadius = 1;
         private Angle _angle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
+        private List<Coordinates> _coordinates = null;
 
         #endregion
 
         #region Constructors
 
-        public NeighbourhoodStyle() { }
+        public NeighbourhoodStyle()
+        {
+            _coordinates = _shape.CreateCoordinates(_iRadius, _iRadius, _angle);
+        }
 
         public NeighbourhoodStyle(Shape shape, Color primaryColor, Color secondaryColor, double radius, Angle angle, double scale)
         {
@@ -43,7 +47,8 @@ namespace Muragatte.Visual.Styles
             _primaryColor = primaryColor;
             _secondaryColor = secondaryColor;
             _dUnitRadius = radius;
-            _iRadius = (int)(radius * scale);
+            //_iRadius = (int)(radius * scale);
+            Rescale(DefaultValues.Scale);
             _angle = angle;
         }
 
@@ -51,6 +56,7 @@ namespace Muragatte.Visual.Styles
             : this(other._shape, other._primaryColor, other._secondaryColor, other._dUnitRadius, other._angle, 1)
         {
             _iRadius = other._iRadius;
+            _coordinates = new List<Coordinates>(other._coordinates);
         }
 
         #endregion
@@ -94,7 +100,7 @@ namespace Muragatte.Visual.Styles
             {
                 _dUnitRadius = value;
                 NotifyPropertyChanged("UnitRadius");
-                _iRadius = (int)(_dUnitRadius * DefaultValues.Scale);
+                Rescale(DefaultValues.Scale);
             }
         }
 
@@ -119,12 +125,21 @@ namespace Muragatte.Visual.Styles
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
         {
-            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _iRadius, _iRadius, _angle);
+            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _coordinates);
+            //_shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _iRadius, _iRadius, _angle);
+        }
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, List<Coordinates> coordinates)
+        {
+            _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor,
+                coordinates == null || coordinates.Count == 0 ? _coordinates : coordinates);
         }
 
         public void Rescale(double value)
         {
             _iRadius = (int)(_dUnitRadius * value);
+            _coordinates = _shape.CreateCoordinates(_iRadius, _iRadius, _angle);
+
         }
 
         private void NotifyPropertyChanged(String propertyName)
