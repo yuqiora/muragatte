@@ -38,7 +38,7 @@ namespace Muragatte.Visual.Styles
 
         public NeighbourhoodStyle()
         {
-            _coordinates = _shape.CreateCoordinates(_iRadius, _iRadius, _angle);
+            RecreateCoordinates();
         }
 
         public NeighbourhoodStyle(Shape shape, Color primaryColor, Color secondaryColor, double radius, Angle angle, double scale)
@@ -47,9 +47,8 @@ namespace Muragatte.Visual.Styles
             _primaryColor = primaryColor;
             _secondaryColor = secondaryColor;
             _dUnitRadius = radius;
-            //_iRadius = (int)(radius * scale);
-            Rescale(DefaultValues.Scale);
             _angle = angle;
+            Rescale(DefaultValues.Scale);
         }
 
         public NeighbourhoodStyle(NeighbourhoodStyle other)
@@ -69,6 +68,7 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _shape = value;
+                RecreateCoordinates();
                 NotifyPropertyChanged("Shape");
             }
         }
@@ -99,8 +99,8 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _dUnitRadius = value;
-                NotifyPropertyChanged("UnitRadius");
                 Rescale(DefaultValues.Scale);
+                NotifyPropertyChanged("UnitRadius");
             }
         }
 
@@ -115,6 +115,7 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _angle = value;
+                RecreateCoordinates();
                 NotifyPropertyChanged("Angle");
             }
         }
@@ -126,7 +127,6 @@ namespace Muragatte.Visual.Styles
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
         {
             _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _coordinates);
-            //_shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _iRadius, _iRadius, _angle);
         }
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, List<Coordinates> coordinates)
@@ -138,8 +138,12 @@ namespace Muragatte.Visual.Styles
         public void Rescale(double value)
         {
             _iRadius = (int)(_dUnitRadius * value);
-            _coordinates = _shape.CreateCoordinates(_iRadius, _iRadius, _angle);
+            RecreateCoordinates();
+        }
 
+        public void RecreateCoordinates()
+        {
+            _coordinates = _shape.CreateCoordinates(_iRadius * 2, _iRadius * 2, _angle);
         }
 
         private void NotifyPropertyChanged(String propertyName)

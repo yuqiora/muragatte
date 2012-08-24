@@ -66,34 +66,6 @@ namespace Muragatte.Visual.Shapes
             else
             {
                 Draw(target, position, angle, primaryColor, secondaryColor, CreateCoordinates(width, height, other));
-                //Angle arc = new Angle(DEFAULT_ARC_DEGREES);
-                //if (other != null && other is Angle)
-                //{
-                //    arc = (Angle)other;
-                //}
-                //List<Coordinates> points = CreateArc(width, -arc.Radians, arc.Radians);
-                //foreach (Coordinates c in points)
-                //{
-                //    c.Move(position);
-                //    c.Rotate(position, angle - _deg90);
-                //}
-                //if (primaryColor.NotTransparent())
-                //{
-                //    foreach (Coordinates ap in points)
-                //    {
-                //        target.FillBeziers(ap.FillBeziersCoordinates(position), primaryColor);
-                //        //target.FillTriangle(cp.P1, cp.P4, position, primaryColor);
-                //    }
-                //}
-                //if (primaryColor != secondaryColor && secondaryColor.NotTransparent())
-                //{
-                //    foreach (Coordinates ap in points)
-                //    {
-                //        target.DrawBezier(ap.P1, ap.P2, ap.P3, ap.P4, secondaryColor);
-                //    }
-                //    target.DrawLine(points[0].P1, position, secondaryColor);
-                //    target.DrawLine(points[points.Count - 1].P4, position, secondaryColor);
-                //}
             }
         }
 
@@ -130,7 +102,7 @@ namespace Muragatte.Visual.Shapes
             {
                 arc = (Angle)other;
             }
-            return CreateArc((width + height) / 2, -arc.Radians, arc.Radians);
+            return CreateArc((width + height) / 4, -arc.Radians, arc.Radians);
         }
 
         private List<Coordinates> CreateArc(int radius, double startAngle, double endAngle)

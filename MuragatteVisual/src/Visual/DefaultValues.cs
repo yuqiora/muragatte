@@ -36,7 +36,7 @@ namespace Muragatte.Visual
         public static readonly Color GOAL_COLOR = Colors.Red;
         public static readonly Color NEIGHBOURHOOD_COLOR = Colors.LightGreen;
         public static readonly Color CENTROID_COLOR = Colors.Silver;
-        public static readonly Color HIGHLIGHT_COLOR = Colors.LightYellow;
+        public static readonly Color HIGHLIGHT_COLOR = Colors.Purple.WithA(128);
 
         private static double _dScale = 1;
 

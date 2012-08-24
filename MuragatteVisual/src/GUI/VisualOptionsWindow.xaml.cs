@@ -51,7 +51,8 @@ namespace Muragatte.GUI
         private CollectionViewSource _centroidsView = new CollectionViewSource();
         private CollectionViewSource _enabledElementsView = new CollectionViewSource();
 
-        private WriteableBitmap _stylePreview = null;
+        private WriteableBitmap _wbStylePreview = null;
+        private Vector2 _stylePreviewCenter = Vector2.Zero;
 
         private readonly List<Visual.Shapes.Shape> _shapes = null;
 
@@ -88,8 +89,9 @@ namespace Muragatte.GUI
 
             SetViews();
 
-            _stylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
-            imgStylesPreview.Source = _stylePreview;
+            _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
+            imgStylesPreview.Source = _wbStylePreview;
+            _stylePreviewCenter = new Vector2(_wbStylePreview.PixelWidth / 2, _wbStylePreview.PixelHeight / 2);
         }
 
         #endregion
@@ -231,6 +233,26 @@ namespace Muragatte.GUI
             lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
         }
 
+        private void StyleEditor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RedrawStylePreview();
+        }
+
+        private void StyleEditor_NumericValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            RedrawStylePreview();
+        }
+
+        private void StyleEditor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            RedrawStylePreview();
+        }
+
+        private void StyleEditor_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            RedrawStylePreview();
+        }
+
         #endregion
 
         #region Methods
@@ -291,11 +313,14 @@ namespace Muragatte.GUI
 
         private Appearance ElementToAppearance(Element e)
         {
-            Visual.Styles.Style style = null;
-            if (e is Agent) style = _styles[0];
-            if (e is Obstacle) style = _styles[1];
-            if (e is Goal) style = _styles[2];
-            if (e is Centroid) style = _styles[3];
+            Visual.Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
+            if (style == null)
+            {
+                if (e is Agent) style = _styles[0];
+                if (e is Obstacle) style = _styles[1];
+                if (e is Goal) style = _styles[2];
+                if (e is Centroid) style = _styles[3];
+            }
             return new Appearance(e, style, _visual.GetCanvas.Scale);
         }
 
@@ -363,11 +388,15 @@ namespace Muragatte.GUI
             }
         }
 
-        #endregion
-
         private void RedrawStylePreview()
         {
-
+            _wbStylePreview.Clear(GetCanvas.BackgroundColor);
+            Visual.Styles.Style selectedStyle = (Visual.Styles.Style)lboStyleEditorList.SelectedItem;
+            if (selectedStyle.HasNeighbourhood)
+                selectedStyle.Neighbourhood.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
+            selectedStyle.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
         }
+
+        #endregion
     }
 }

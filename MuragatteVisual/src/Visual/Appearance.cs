@@ -39,8 +39,6 @@ namespace Muragatte.Visual
         //private Color? _neighbourhoodSecondaryColor = null;
         //private Color? _trackColor = null;
         //private Color? _trailColor = null;
-        //private bool _bOverrideStyleSize = false;
-        //private bool _bOverrideStyleNeighbourhood = false;
         private int _iWidth = 1;
         private int _iHeight = 1;
         private int _iRadius = 1;
@@ -114,20 +112,17 @@ namespace Muragatte.Visual
                 {
                     return Angle.Zero;
                 }
-                //return _element is Agent ? ((Agent)_element).FieldOfView.Angle : Angle.Zero;
             }
         }
 
         public int Width
         {
             get { return _iWidth != _style.Width ? _iWidth : _style.Width; }
-            //get { return _bOverrideStyleSize ? _iWidth : _style.Width; }
         }
 
         public int Height
         {
             get { return _iHeight != _style.Height ? _iHeight : _style.Height; }
-            //get { return _bOverrideStyleSize ? _iHeight : _style.Height; }
         }
 
         public int Radius
@@ -141,9 +136,8 @@ namespace Muragatte.Visual
             set
             {
                 _style = value;
-                RecreateCoordinates();
+                RecreateCoordinates(true);
                 NotifyPropertyChanged("Style");
-                //NotifyStyleChanged();
             }
         }
 
@@ -265,33 +259,12 @@ namespace Muragatte.Visual
         //    }
         //}
 
-        //public bool IsStyleSizeOverridden
-        //{
-        //    get { return _bOverrideStyleSize; }
-        //    set
-        //    {
-        //        _bOverrideStyleSize = value;
-        //        NotifyPropertyChanged("IsStyleSizeOverridden");
-        //    }
-        //}
-
-        //public bool IsStyleNeighbourhoodOverridden
-        //{
-        //    get { return _bOverrideStyleNeighbourhood; }
-        //    set
-        //    {
-        //        _bOverrideStyleNeighbourhood = value;
-        //        NotifyPropertyChanged("IsStyleNeighbourhoodOverridden");
-        //    }
-        //}
-
         #endregion
 
         #region Methods
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
         {
-            //_style.Shape.Draw(target, position, direction.Angle, PrimaryColor, SecondaryColor, Width, Height);
             _style.Draw(target, position, direction, _elementCoordinates);
         }
 
@@ -300,6 +273,14 @@ namespace Muragatte.Visual
             if (_style.HasNeighbourhood)
             {
                 _style.Neighbourhood.Draw(target, position, direction, _neighbourhoodCoordinates);
+            }
+        }
+
+        public void DrawTrail(WriteableBitmap target, Vector2 position, Vector2 direction, byte alpha = byte.MaxValue)
+        {
+            if (_style.HasTrail)
+            {
+                _style.Draw(target, position, direction, Style.Trail.Color.WithA(alpha), _elementCoordinates);
             }
         }
 
@@ -313,16 +294,16 @@ namespace Muragatte.Visual
             _iWidth = (int)(_element.Width * value);
             _iHeight = (int)(_element.Height * value);
             if (UnitRadius >= 0) _iRadius = (int)(UnitRadius * value);
-            RecreateCoordinates();
+            RecreateCoordinates(false);
         }
 
-        public void RecreateCoordinates()
+        public void RecreateCoordinates(bool forced)
         {
-            if (_element.Width != _style.UnitWidth || _element.Height != _style.UnitHeight)
+            if ((forced && _elementCoordinates != null) || _element.Width != _style.UnitWidth || _element.Height != _style.UnitHeight)
                 _elementCoordinates = _style.Shape.CreateCoordinates(_iWidth, _iHeight);
             else _elementCoordinates = null;
-            if (IsAgent && _style.HasNeighbourhood && (((Agent)_element).FieldOfView.Range != _style.Neighbourhood.UnitRadius || ((Agent)_element).FieldOfView.Angle != _style.Neighbourhood.Angle))
-                _neighbourhoodCoordinates = _style.Neighbourhood.Shape.CreateCoordinates(_iRadius, _iRadius, NeighbourhoodAngle);
+            if (IsAgent && _style.HasNeighbourhood && ((forced && _neighbourhoodCoordinates != null) || ((Agent)_element).FieldOfView.Range != _style.Neighbourhood.UnitRadius || ((Agent)_element).FieldOfView.Angle != _style.Neighbourhood.Angle))
+                _neighbourhoodCoordinates = _style.Neighbourhood.Shape.CreateCoordinates(_iRadius * 2, _iRadius * 2, NeighbourhoodAngle);
             else _neighbourhoodCoordinates = null;
         }
 
@@ -333,13 +314,6 @@ namespace Muragatte.Visual
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        //private void NotifyStyleChanged()
-        //{
-        //    NotifyPropertyChanged("Style");
-        //    NotifyPropertyChanged("PrimaryColor");
-        //    NotifyPropertyChanged("SecondaryColor");
-        //}
 
         #endregion
 
