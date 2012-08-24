@@ -54,31 +54,11 @@ namespace Muragatte.Visual.Styles
             Rescale(DefaultValues.Scale);
         }
 
-        //private Style(Shape shape, Color primaryColor, Color secondaryColor,
-        //    NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
-        //{
-        //    _shape = shape;
-        //    _primaryColor = primaryColor;
-        //    _secondaryColor = secondaryColor;
-        //    _neighbourhood = neighbourhood ?? new NeighbourhoodStyle();
-        //    Color c = primaryColor.NotTransparent() ? primaryColor : secondaryColor;
-        //    _track = track ?? new TrackStyle(c);
-        //    _trail = trail ?? new TrailStyle(c, DefaultValues.TRAIL_LENGTH);
-        //}
-
         public Style(Shape shape, Element element, Color primaryColor, Color secondaryColor, NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
-            : this(shape, element.Name, element.Width, element.Height, primaryColor, secondaryColor, neighbourhood, track, trail)
-        {
-            //_sName = element.Name;
-            //_dUnitWidth = element.Width;
-            //_dUnitHeight = element.Height;
-            //_iWidth = (int)(element.Width * scale);
-            //_iHeight = (int)(element.Height * scale);
-        }
+            : this(shape, element.Name, element.Width, element.Height, primaryColor, secondaryColor, neighbourhood, track, trail) { }
 
         public Style(Shape shape, string name, double width, double height, Color primaryColor, Color secondaryColor,
             NeighbourhoodStyle neighbourhood, TrackStyle track, TrailStyle trail)
-            //: this(shape, primaryColor, secondaryColor, neighbourhood, track, trail)
         {
             _sName = name;
             _dUnitWidth = width;
@@ -114,8 +94,6 @@ namespace Muragatte.Visual.Styles
                 _trail = trail;
                 _bTrail = true;
             }
-            //_iWidth = (int)(width * scale);
-            //_iHeight = (int)(height * scale);
             Rescale(DefaultValues.Scale);
         }
 
@@ -127,10 +105,6 @@ namespace Muragatte.Visual.Styles
             _bTrack = other._bTrack;
             _bTrail = other._bTrail;
             _coordinates = new List<Coordinates>(other._coordinates);
-            //_dUnitWidth = other._dUnitWidth;
-            //_dUnitHeight = other._dUnitHeight;
-            //_iWidth = other._iWidth;
-            //_iHeight = other._iHeight;
         }
 
         #endregion
@@ -153,6 +127,7 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _shape = value;
+                RecreateCoordinates();
                 NotifyPropertyChanged("Shape");
             }
         }
@@ -173,8 +148,9 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _dUnitWidth = value;
-                NotifyPropertyChanged("UnitWidth");
                 _iWidth = (int)(_dUnitWidth * DefaultValues.Scale);
+                RecreateCoordinates();
+                NotifyPropertyChanged("UnitWidth");
             }
         }
 
@@ -184,8 +160,9 @@ namespace Muragatte.Visual.Styles
             set
             {
                 _dUnitHeight = value;
-                NotifyPropertyChanged("UnitHeight");
                 _iHeight = (int)(_dUnitHeight * DefaultValues.Scale);
+                RecreateCoordinates();
+                NotifyPropertyChanged("UnitHeight");
             }
         }
 
@@ -263,8 +240,18 @@ namespace Muragatte.Visual.Styles
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction)
         {
-            //if (_coordinates == null) _coordinates = _shape.CreateCoordinates(_iWidth, _iHeight);
             _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _coordinates);
+        }
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color color)
+        {
+            _shape.Draw(target, position, new Angle(direction), color, color, _coordinates);
+        }
+
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color color, List<Coordinates> coordinates)
+        {
+            _shape.Draw(target, position, new Angle(direction), color, color,
+                coordinates == null || coordinates.Count == 0 ? _coordinates : coordinates);
         }
 
         public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, List<Coordinates> coordinates)
@@ -277,11 +264,16 @@ namespace Muragatte.Visual.Styles
         {
             _iWidth = (int)(_dUnitWidth * value);
             _iHeight = (int)(_dUnitHeight * value);
-            _coordinates = _shape.CreateCoordinates(_iWidth, _iHeight);
+            RecreateCoordinates();
             if (_neighbourhood != null)
             {
                 _neighbourhood.Rescale(value);
             }
+        }
+
+        public void RecreateCoordinates()
+        {
+            _coordinates = _shape.CreateCoordinates(_iWidth, _iHeight);
         }
 
         public override string ToString()

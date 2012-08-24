@@ -8,6 +8,8 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 // ------------------------------------------------------------------------
 
+/*  O B S O L E T E  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +49,6 @@ namespace Muragatte.Visual
         {
             Color c = _color;
             c.ScA *= alpha;
-            //wb.SetPixel(position.Xi, wb.PixelHeight - 1 - position.Yi, cp);
             wb.SetPixel(position, c);
         }
 

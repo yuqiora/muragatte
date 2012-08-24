@@ -55,14 +55,7 @@ namespace Muragatte.GUI
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
 
-        private Color _colorNeighbourhood = Colors.LightYellow;
-        private Color _colorObstacle = Colors.Gray;
-        private Color _colorAgentDefault = Colors.Black;
-        private Color _colorAgentGuide = Colors.Blue;
-        private Color _colorAgentIntruder = Colors.Red;
-        private Color _colorCentroid = Colors.LightGreen;
-
-        private Angle _boidFOVAngle = new Angle(150);
+        private Angle _boidFOVAngle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
 
         private BackgroundWorker _worker = new BackgroundWorker();
 
@@ -96,12 +89,7 @@ namespace Muragatte.GUI
         {
             double fovRange = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             int agentCount = int.Parse(txtAgentCount.Text);
-            //CreateSpecies();
-            Color fovC = _colorNeighbourhood;
-            fovC.A = 64;
-            //Particle fovImg = ParticleFactory.Neighbourhood((int)(fovRange * 2 * _canvas.Scale), (int)(fovRange * 2 * _canvas.Scale), fovC, _boidFOVAngle);
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _visual.GetCanvas.Scale), fovC);
-            CreateBoids(agentCount, fovRange, fovImg);
+            CreateBoids(agentCount, fovRange);
             Initialize();
         }
 
@@ -113,11 +101,7 @@ namespace Muragatte.GUI
             int guideCount = int.Parse(txtGuideCount.Text);
             int intruderCount = int.Parse(txtIntruderCount.Text);
             int naiveCount = agentCount - guideCount - intruderCount;
-            //CreateSpecies();
-            Color fovC = _colorNeighbourhood;
-            fovC.A = 64;
-            Particle fovImg = ParticleFactory.Ellipse((int)(fovRange * 2 * _visual.GetCanvas.Scale), fovC);
-            CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, fovImg, paRange);
+            CreateAdvancedBoids(naiveCount, guideCount, intruderCount, fovRange, paRange);
             Initialize();
         }
 
@@ -252,12 +236,8 @@ namespace Muragatte.GUI
 
         private void CreateGoals()
         {
-            Goal g1 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g1.Item = ParticleFactory.Ellipse((int)(g1.Width * _visual.GetCanvas.Scale), _colorAgentGuide, true);
-            Goal g2 = new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height));
-            g2.Item = ParticleFactory.Ellipse((int)(g2.Width * _visual.GetCanvas.Scale), _colorAgentIntruder, true);
-            _goals.Add(g1);
-            _goals.Add(g2);
+            _goals.Add(new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height)));
+            _goals.Add(new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height)));
             _mas.Elements.Add(_goals);
         }
 
@@ -266,10 +246,7 @@ namespace Muragatte.GUI
             int obstacles = int.Parse(txtObstacles.Text);
             for (int i = 0; i < obstacles; i++)
             {
-                Obstacle o = new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), Math.Round(RNGs.Uniform(10, 30), 2));
-                //o.Item = ParticleFactory.Ellipse((int)(o.Radius * _visual.GetCanvas.Scale), _colorObstacle);
-                o.Item = ParticleFactory.Ellipse((int)(o.Width* _visual.GetCanvas.Scale), _colorObstacle);
-                _obstacles.Add(o);
+                _obstacles.Add(new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), Math.Round(RNGs.Uniform(10, 30), 2)));
             }
             _mas.Elements.Add(_obstacles);
         }
@@ -278,34 +255,26 @@ namespace Muragatte.GUI
         {
             _mas.Species.Clear();
             Species.ResetIDCounter();
-            //int scale = (int)_visual.GetCanvas.Scale;
             int scale = int.Parse(txtScale.Text);
             Species boids = new Species("Boids");
-            boids.Item = ParticleFactory.AgentB(scale, _colorAgentDefault);
             _mas.Species.Add(boids.ID, boids);
             Species guides = boids.CreateSubSpecies("Guides");
-            guides.Item = ParticleFactory.AgentB(scale, _colorAgentGuide);
             _mas.Species.Add(guides.ID, guides);
             Species intruders = boids.CreateSubSpecies("Intruders");
-            intruders.Item = ParticleFactory.AgentB(scale, _colorAgentIntruder);
             _mas.Species.Add(intruders.ID, intruders);
             Species centroids = new Species("Centroids");
-            centroids.Item = ParticleFactory.AgentB(scale, _colorCentroid);
             _mas.Species.Add(centroids.ID, centroids);
             Species wanderers = new Species("Wanderers");
-            wanderers.Item = ParticleFactory.AgentA(scale, _colorAgentDefault);
             _mas.Species.Add(wanderers.ID, wanderers);
             Species versatiles = new Species("Versatiles");
-            versatiles.Item = ParticleFactory.AgentA(scale, _colorAgentGuide);
             _mas.Species.Add(versatiles.ID, versatiles);
         }
 
-        private void CreateBoids(int count, double fovRange, Particle fovImg)
+        private void CreateBoids(int count, double fovRange)
         {
             for (int i = 0; i < count; i++)
             {
                 Neighbourhood n = new CircularNeighbourhood(fovRange, _boidFOVAngle);
-                n.Item = fovImg;
                 Agent a = new Boid(_mas, n, new Angle(60));
                 a.Speed = 1;
                 a.Species = _mas.Species[0];
@@ -313,14 +282,13 @@ namespace Muragatte.GUI
             }
         }
 
-        private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, Particle fovImg, double paRange)
+        private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, double paRange)
         {
             Angle turn = new Angle(60);
             Angle fovAng = new Angle(150);
             for (int i = 0; i < naive; i++)
             {
                 Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, null, 0, n2);
                 a.Speed = 1.05;
@@ -330,7 +298,6 @@ namespace Muragatte.GUI
             for (int i = 0; i < guides; i++)
             {
                 Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, _goals[0], 0.75, n2);
                 a.Speed = 1;
@@ -340,7 +307,6 @@ namespace Muragatte.GUI
             for (int i = 0; i < intruders; i++)
             {
                 Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                n.Item = fovImg;
                 Neighbourhood n2 = new CircularNeighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, _goals[1], 1, n2);
                 a.Speed = 0.95;

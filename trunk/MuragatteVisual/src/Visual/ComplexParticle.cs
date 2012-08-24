@@ -8,6 +8,8 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 // ------------------------------------------------------------------------
 
+/*  O B S O L E T E  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +62,6 @@ namespace Muragatte.Visual
             Color c = _color;
             c.ScA *= alpha;
             Angle angle = new Angle(direction);
-            //SysWin.Point point = new SysWin.Point(position.X - XC, wb.PixelHeight - 1 - position.Y - YC);
             SysWin.Point point = new SysWin.Point(position.X - XC, position.Y - YC);
             if (angle.IsZero)
             {

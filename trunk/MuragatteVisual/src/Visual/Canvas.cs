@@ -30,14 +30,12 @@ namespace Muragatte.Visual
         private int _iUnitWidth = 1;
         private int _iUnitHeight = 1;
         private double _dScale = 1;
-        //private System.Windows.Rect _canvasArea;    //probably not needed
         private bool _bEnvironment = true;
         private bool _bNeighbourhoods = false;
         private bool _bTracks = false;
         private bool _bTrails = false;
         private bool _bAgents = true;
         private bool _bCentroids = false;
-        private int _iTrailLength = 10;
         private Visualization _visual = null;
         private Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
 
@@ -47,7 +45,6 @@ namespace Muragatte.Visual
 
         public Canvas(int width, int height, Visualization visualization)
         {
-            //_canvasArea = new System.Windows.Rect(0, 0, width, height);
             _iUnitWidth = width;
             _iUnitHeight = height;
             _wb = BitmapFactory.New(width, height);
@@ -156,12 +153,6 @@ namespace Muragatte.Visual
             }
         }
 
-        public int TrailLength
-        {
-            get { return _iTrailLength; }
-            set { _iTrailLength = value; }
-        }
-
         public Color BackgroundColor
         {
             get { return _backgroundColor; }
@@ -191,203 +182,6 @@ namespace Muragatte.Visual
             _wb.Clear(_backgroundColor);
         }
 
-        //public void Redraw()
-        //{
-        //    Clear();
-        //    IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
-        //    IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
-        //    DrawNeighbourhoods(agents);
-        //    DrawEnvironment(stationary);
-        //    DrawAgents(agents);
-        //}
-
-        //public void DrawEnvironment(IEnumerable<Element> items)
-        //{
-        //    if (_bEnvironment)
-        //    {
-        //        DrawItems(items);
-        //    }
-        //}
-        
-        //public void DrawCentroids(IEnumerable<Centroid> items)
-        //{ }
-
-        //public void DrawAgents(IEnumerable<Agent> items)
-        //{
-        //    if (_bAgents)
-        //    {
-        //        DrawItems(items);
-        //    }
-        //}
-
-        //public void DrawNeighbourhoods(IEnumerable<Agent> items)
-        //{
-        //    if (_bNeighbourhoods)
-        //    {
-        //        Vector2 up = Vector2.X0Y1;
-        //        foreach (Agent a in items)
-        //        {
-        //            DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, up);
-        //            //DrawParticle(a.FieldOfView.GetItemAs<Particle>(), a.Position, a.Direction);
-        //        }
-        //    }
-        //}
-
-        //public void DrawTracks(IEnumerable<Agent> items)
-        //{ }
-
-        //public void DrawTrails(IEnumerable<Agent> items)
-        //{ }
-
-        //private void DrawItems<T>(IEnumerable<T> items) where T : Element
-        //{
-        //    foreach (T e in items)
-        //    {
-        //        DrawParticle(e.GetItemAs<Particle>(), e.Position, e.Direction);
-        //    }
-        //}
-
-        //private void DrawParticle(Particle particle, Vector2 position, Vector2 direction, float alpha = 1)
-        //{
-        //    particle.DrawInto(_wb, position * _dScale, direction, alpha);
-        //}
-
-        //public void DrawEnvironment(IEnumerable<Element> items, HistoryRecord record)
-        //{
-        //    if (_bEnvironment)
-        //    {
-        //        DrawItems(items, record);
-        //    }
-        //}
-
-        //public void DrawAgents(IEnumerable<Agent> items, HistoryRecord record, float alpha = 1)
-        //{
-        //    if (_bAgents)
-        //    {
-        //        DrawItems(items, record, alpha);
-        //    }
-        //}
-
-        //public void DrawNeighbourhoods(IEnumerable<Agent> items, HistoryRecord record)
-        //{
-        //    if (_bNeighbourhoods)
-        //    {
-        //        Vector2 up = Vector2.X0Y1;
-        //        foreach (Agent a in items)
-        //        {
-        //            ElementStatus es = record[a.ID];
-        //            if (es.IsEnabled)
-        //            {
-        //                DrawParticle(a.FieldOfView.GetItemAs<Particle>(), es.Position, up);
-        //                //DrawParticle(a.FieldOfView.GetItemAs<Particle>(), es.Position, es.Direction);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void DrawTracks(IEnumerable<Element> items, History history, int step)
-        //{
-        //    if (_bTracks)
-        //    {
-        //        int time = Math.Min(step, history.Count);
-        //        foreach (Element a in items)
-        //        {
-        //            List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, time));
-        //            foreach (int[] segment in segments)
-        //            {
-        //                _wb.DrawPolyline(segment, a.GetItemAs<Particle>().Color);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void DrawTrails(IEnumerable<Element> items, History history, int step)
-        //{
-        //    if (_bTrails)
-        //    {
-        //        int substep = _visual.GetModel.Substeps;
-        //        float alphaInc = 1.0f / (_iTrailLength + 1);
-        //        float alpha = alphaInc;
-        //        for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
-        //        {
-        //            DrawItems(items, history[i], alpha);
-        //            alpha += alphaInc;
-        //        }
-        //    }
-        //}
-
-        //public void DrawTrails2(IEnumerable<Element> items, History history, int step)
-        //{
-        //    if (_bTrails)
-        //    {
-        //        int substep = _visual.GetModel.Substeps;
-        //        //float alphaInc = 1.0f / (_iTrailLength + 1);
-        //        //float alpha = alphaInc;
-        //        //for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
-        //        //{
-        //        //    DrawItems(items, history[i], alpha);
-        //        //    alpha += alphaInc;
-        //        //}
-        //        int time = Math.Min(substep * _iTrailLength, history.Count);
-        //        foreach (Element a in items)
-        //        {
-        //            List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, Math.Max(0, step - substep * _iTrailLength), time));
-        //            foreach (int[] segment in segments)
-        //            {
-        //                _wb.DrawPolyline(segment, a.GetItemAs<Particle>().Color);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void DrawCentroids(IEnumerable<Centroid> items, HistoryRecord record, float alpha = 1)
-        //{
-        //    if (_bCentroids)
-        //    {
-        //        DrawItems(items, record, alpha);
-        //    }
-        //}
-
-        //private void DrawItems<T>(IEnumerable<T> items, HistoryRecord record, float alpha = 1) where T : Element
-        //{
-        //    foreach (T e in items)
-        //    {
-        //        ElementStatus es = record[e.ID];
-        //        if (es.IsEnabled)
-        //        {
-        //            DrawParticle(e.GetItemAs<Particle>(), es.Position, es.Direction, alpha);
-        //        }
-        //    }
-        //}
-
-        //public void Redraw(History history, int step)
-        //{
-        //    if (step >= history.Count)
-        //    {
-        //        return;
-        //    }
-        //    Clear();
-        //    IEnumerable<Element> stationary = _visual.GetModel.Elements.Stationary;
-        //    IEnumerable<Agent> agents = _visual.GetModel.Elements.Agents;
-        //    IEnumerable<Centroid> centroids = _visual.GetModel.Elements.Centroids;
-        //    DrawNeighbourhoods(agents, history[step]);
-        //    DrawEnvironment(stationary, history[step]);
-        //    if (_bAgents)
-        //    {
-        //        DrawTracks(agents, history, step);
-        //        //DrawTracks(agents, history, history.Count);
-        //        DrawTrails(agents, history, step);
-        //    }
-        //    if (_bCentroids)
-        //    {
-        //        DrawTracks(centroids, history, step);
-        //        DrawTrails(centroids, history, step);
-        //    }
-        //    DrawAgents(agents, history[step]);
-        //    DrawCentroids(centroids, history[step]);
-        //    _wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
-        //}
-
         public void Redraw()
         {
             HistoryRecord record = CurrentSituation();
@@ -395,7 +189,7 @@ namespace Muragatte.Visual
             DrawNeighbourhoods(record);
             DrawEnvironment(record);
             DrawAgents(record);
-            _wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
+            //_wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
         }
 
         public void Redraw(History history)
@@ -421,7 +215,7 @@ namespace Muragatte.Visual
             DrawTrails(history, step);
             DrawAgents(history[step]);
             DrawCentroids(history[step]);
-            _wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
+            //_wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
         }
 
         private void DrawElements(HistoryRecord record, bool enabled, ICollectionView items)
@@ -435,9 +229,7 @@ namespace Muragatte.Visual
                     {
                         if (a.IsHighlighted)
                         {
-                            Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
-                                _visual.GetOptions.ccHighlightColor.SelectedColor, Colors.Transparent,
-                                (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+                            DrawHighlight(a, es);
                         }
                         a.Draw(_wb, es.Position * _dScale, es.Direction);
                     }
@@ -454,7 +246,7 @@ namespace Muragatte.Visual
                     ElementStatus es = record[a.ID];
                     if (es.IsEnabled && a.IsNeighbourhoodEnabled)
                     {
-                        a.Style.Neighbourhood.Draw(_wb, es.Position * _dScale, es.Direction);
+                        a.DrawNeighbourhood(_wb, es.Position * _dScale, es.Direction);
                     }
                 }
             }
@@ -472,7 +264,7 @@ namespace Muragatte.Visual
                 int time = Math.Min(step, history.Count);
                 foreach (Appearance a in _visual.GetOptions.TracksView)
                 {
-                    if (history[step][a.ID].IsEnabled && a.IsEnabled && a.IsTrackEnabled)
+                    if (a.IsTrackEnabled)
                     {
                         List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, time));
                         foreach (int[] segment in segments)
@@ -486,24 +278,21 @@ namespace Muragatte.Visual
 
         private void DrawTrails(History history, int step)
         {
-            //        int substep = _visual.GetModel.Substeps;
-            //        float alphaInc = 1.0f / (_iTrailLength + 1);
-            //        float alpha = alphaInc;
-            //        for (int i = Math.Max(0, step - substep * _iTrailLength); i < step; i += substep)
-            //        {
-            //            DrawItems(items, history[i], alpha);
-            //            alpha += alphaInc;
-            //        }
-
             if (_bTrails)
             {
                 int substep = _visual.GetModel.Substeps;
                 foreach (Appearance a in _visual.GetOptions.TrailsView)
                 {
-                    if (history[step][a.ID].IsEnabled && a.IsEnabled && a.IsTrailEnabled)
+                    if (a.IsTrailEnabled)
                     {
-                        //byte alphaInc = a.Style.Trail.Color.A / (a.Style.Trail.Length + 1);
-                        //trail compute
+                        byte alphaInc = (byte)(byte.MaxValue / (a.Style.Trail.Length + 1));
+                        byte alpha = alphaInc;
+                        for (int i = Math.Max(0, step - substep * a.Style.Trail.Length); i < step; i += substep)
+                        {
+                            ElementStatus es = history[i][a.ID];
+                            a.DrawTrail(_wb, es.Position * _dScale, es.Direction, alpha);
+                            alpha += alphaInc;
+                        }
                     }
                 }
             }
@@ -519,6 +308,13 @@ namespace Muragatte.Visual
             DrawElements(record, _bCentroids, _visual.GetOptions.CentroidsView);
         }
 
+        private void DrawHighlight(Appearance a, ElementStatus es)
+        {
+            Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
+                _visual.GetOptions.ccHighlightColor.SelectedColor, Colors.Transparent,
+                (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+        }
+
         private List<int[]> TrackLinePoints(List<Vector2> positions)
         {
             int limit = Math.Min(UnitWidth, UnitHeight) / 3;
@@ -527,7 +323,6 @@ namespace Muragatte.Visual
             {
                 List<int> part = new List<int>();
                 part.Add(Scaled(positions[0].X));
-                //part.Add(_wb.PixelHeight - Scaled(positions[0].Y) - 1);
                 part.Add(Scaled(positions[0].Y));
                 for (int i = 1; i < positions.Count; i++)
                 {
@@ -537,7 +332,6 @@ namespace Muragatte.Visual
                         part.Clear();
                     }
                     part.Add(Scaled(positions[i].X));
-                    //part.Add(_wb.PixelHeight - Scaled(positions[i].Y) - 1);
                     part.Add(Scaled(positions[i].Y));
                 }
                 points.Add(part.ToArray());
