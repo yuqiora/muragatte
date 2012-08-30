@@ -27,7 +27,7 @@ namespace Muragatte.Core.Storage
         private double _dSpeed;
         private bool _bEnabled;
         private int _iSpeciesID;
-        //group?
+        private int _iGroupID;
         private double[] _dModifiers = null;
 
         #endregion
@@ -35,7 +35,7 @@ namespace Muragatte.Core.Storage
         #region Constructors
 
         public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, int speciesID)
+            double speed, bool enabled, int speciesID, int groupID)
         {
             _iElementID = elementID;
             _position = position;
@@ -43,11 +43,12 @@ namespace Muragatte.Core.Storage
             _dSpeed = speed;
             _bEnabled = enabled;
             _iSpeciesID = speciesID;
+            _iGroupID = groupID;
         }
 
         public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, int speciesID, params double[] modifiers)
-            : this(elementID, position, direction, speed, enabled, speciesID)
+            double speed, bool enabled, int speciesID, int groupID, params double[] modifiers)
+            : this(elementID, position, direction, speed, enabled, speciesID, groupID)
         {
             _dModifiers = modifiers;
         }
@@ -86,6 +87,11 @@ namespace Muragatte.Core.Storage
             get { return _iSpeciesID; }
         }
 
+        public int GroupID
+        {
+            get { return _iGroupID; }
+        }
+
         public double[] Modifiers
         {
             get { return _dModifiers; }
@@ -111,8 +117,8 @@ namespace Muragatte.Core.Storage
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2} {3} {4} {5}{6}",
-                _iElementID, _position, _direction, _dSpeed, _bEnabled, _iSpeciesID, ModifiersToString());
+            return string.Format("{0} {1} {2} {3} {4} {5} {6}{7}",
+                _iElementID, _position, _direction, _dSpeed, _bEnabled, _iSpeciesID, _iGroupID, ModifiersToString());
         }
 
         #endregion

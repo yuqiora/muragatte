@@ -88,6 +88,7 @@
     <Compile Include="src\Visual\ComplexParticle.cs" />
     <Compile Include="src\Visual\DefaultValues.cs" />
     <Compile Include="src\Visual\ElementaryParticle.cs" />
+    <Compile Include="src\Visual\HistoryViewer.cs" />
     <Compile Include="src\Visual\Particle.cs" />
     <Compile Include="src\Visual\ParticleFactory.cs" />
     <Compile Include="src\Visual\Visualization.cs" />

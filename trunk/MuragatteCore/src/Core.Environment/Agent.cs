@@ -106,9 +106,10 @@ namespace Muragatte.Core.Environment
             get { return _representative; }
         }
 
-        public Group Group
+        public override Group Group
         {
             get { return _representative == null ? null : _representative.Group; }
+            set { }
         }
 
         public override string Name

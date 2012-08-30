@@ -88,6 +88,11 @@ namespace Muragatte.Core.Environment
             return (System.Collections.IEnumerator)GetEnumerator();
         }
 
+        public override string ToString()
+        {
+            return _iGroupID.ToString();
+        }
+
         #endregion
     }
 }

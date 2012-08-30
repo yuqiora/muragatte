@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -73,7 +74,7 @@ namespace Muragatte.Core.Environment
             get { return DEFAULT_RADIUS; }
         }
 
-        public Group Group
+        public override Group Group
         {
             get { return _group; }
             set { _group = value; }
@@ -88,6 +89,11 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("C"); }
+        }
+
+        public bool IsGroupRepresentative
+        {
+            get { return _group != null && this == _group.FirstMember.Representative; }
         }
 
         #endregion

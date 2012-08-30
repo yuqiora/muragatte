@@ -39,6 +39,8 @@ namespace Muragatte.Visual
         private Visualization _visual = null;
         private Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
@@ -369,12 +371,6 @@ namespace Muragatte.Visual
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

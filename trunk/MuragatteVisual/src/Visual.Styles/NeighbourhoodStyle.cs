@@ -32,6 +32,8 @@ namespace Muragatte.Visual.Styles
         private Angle _angle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
         private List<Coordinates> _coordinates = null;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
@@ -153,12 +155,6 @@ namespace Muragatte.Visual.Styles
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }
