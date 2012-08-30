@@ -23,6 +23,8 @@ namespace Muragatte.Visual.Styles
 
         protected Color _color = DefaultValues.AGENT_COLOR;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
@@ -61,12 +63,6 @@ namespace Muragatte.Visual.Styles
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

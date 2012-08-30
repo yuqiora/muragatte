@@ -87,7 +87,7 @@ namespace Muragatte.Core.Environment
         public bool IsStationary
         {
             get { return _bStationary; }
-            set { _bStationary = value; }
+            //set { _bStationary = value; }
         }
 
         public bool IsEnabled
@@ -106,6 +106,12 @@ namespace Muragatte.Core.Environment
         {
             get { return _item; }
             set { _item = value; }
+        }
+
+        public virtual Group Group
+        {
+            get { return null; }
+            set { }
         }
 
         #endregion
@@ -196,7 +202,7 @@ namespace Muragatte.Core.Environment
         protected ElementStatus ReportStatus(params double[] modifiers)
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
-                _species == null ? -1 : _species.ID, modifiers);
+                _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID, modifiers);
         }
 
         #endregion
@@ -259,7 +265,8 @@ namespace Muragatte.Core.Environment
 
         public virtual ElementStatus ReportStatus()
         {
-            return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled, _species == null ? -1 : _species.ID);
+            return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
+                _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID);
         }
 
         #endregion

@@ -29,7 +29,7 @@ using Muragatte.Visual;
 using Muragatte.Visual.Shapes;
 using Muragatte.Visual.Styles;
 using Xceed.Wpf.Toolkit;
-using Xceed.Wpf.Toolkit.Core.Converters;
+using Xceed.Wpf.Toolkit.Primitives;
 
 namespace Muragatte.GUI
 {
@@ -51,8 +51,12 @@ namespace Muragatte.GUI
         private CollectionViewSource _centroidsView = new CollectionViewSource();
         private CollectionViewSource _enabledElementsView = new CollectionViewSource();
 
+        private List<ICollectionView> _views = new List<ICollectionView>();
+
         private WriteableBitmap _wbStylePreview = null;
         private Vector2 _stylePreviewCenter = Vector2.Zero;
+
+        private HistoryViewer _historyViewer = null;
 
         private readonly List<Visual.Shapes.Shape> _shapes = null;
 
@@ -65,28 +69,16 @@ namespace Muragatte.GUI
             InitializeComponent();
             DataContext = this;
             _visual = visualization;
+            _historyViewer = new HistoryViewer(_visual.GetModel.History, _visual.GetPlayback);
             
-            Binding bindVisPlay = new Binding("IsPlaying");
-            bindVisPlay.Source = _visual.GetPlayback;
-            bindVisPlay.Converter = new InverseBoolConverter();
-            titGroups.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
-            titSnapshot.SetBinding(TabItem.IsEnabledProperty, bindVisPlay);
             FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
             dudScale.Value = _visual.GetCanvas.Scale;
             dudScale.Tag = _visual.GetCanvas.Scale;
-            Binding bindBackgroundColor = new Binding("BackgroundColor");
-            bindBackgroundColor.Source = _visual.GetCanvas;
-            ccBackgroundColor.SetBinding(ColorCanvas.SelectedColorProperty, bindBackgroundColor);
-
-            //clbSpeciesList.ItemsSource = _visual.GetModel.Species;
 
             _shapes = CreateShapeList();
 
-            //_defaultNeighbourhoodColor.A = 64;
-
             CreateDefaultStyles();
             _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
-
             SetViews();
 
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
@@ -143,9 +135,9 @@ namespace Muragatte.GUI
             get { return _styles; }
         }
 
-        public Visual.Canvas GetCanvas
+        public Visualization GetVisual
         {
-            get { return _visual.GetCanvas; }
+            get { return _visual; }
         }
 
         #endregion
@@ -155,6 +147,11 @@ namespace Muragatte.GUI
         private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
             ccBackgroundColor.SelectedColor = DefaultValues.BACKGROUND_COLOR;
+        }
+
+        private void btnHighlightColorDefault_Click(object sender, RoutedEventArgs e)
+        {
+            ccHighlightColor.SelectedColor = DefaultValues.HIGHLIGHT_COLOR;
         }
 
         private void dudScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -187,7 +184,14 @@ namespace Muragatte.GUI
 
         private void tabOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RevertScale();
+            if (tabOptions == e.OriginalSource)
+            {
+                if (e.RemovedItems.Contains(tabOptions.Items[0])) RevertScale();
+                if (tabOptions.SelectedIndex > 0 && tabOptions.SelectedIndex < _views.Count)
+                {
+                    _views[tabOptions.SelectedIndex].Refresh();
+                }
+            }
         }
 
         private void chbAgentsEnabledAll_Checked(object sender, RoutedEventArgs e)
@@ -253,6 +257,16 @@ namespace Muragatte.GUI
             RedrawStylePreview();
         }
 
+        private void VisualItemList_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        {
+            RedrawCurrentIfStopped();
+        }
+
+        private void VisualItemsEnabled_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            RedrawCurrentIfStopped();
+        }
+
         #endregion
 
         #region Methods
@@ -283,6 +297,7 @@ namespace Muragatte.GUI
             CentroidsView.Filter += new Predicate<object>(FilterIsType<Centroid>);
             _enabledElementsView.Source = _appearances;
             EnabledElementsView.Filter += new Predicate<object>(FilterIsEnabled);
+            FillViews();
         }
 
         private void CreateDefaultStyles()
@@ -321,7 +336,7 @@ namespace Muragatte.GUI
                 if (e is Goal) style = _styles[2];
                 if (e is Centroid) style = _styles[3];
             }
-            return new Appearance(e, style, _visual.GetCanvas.Scale);
+            return new Appearance(e, style, _visual.GetCanvas.Scale, _historyViewer);
         }
 
         private bool FilterIsStationary(object o)
@@ -345,7 +360,7 @@ namespace Muragatte.GUI
         private bool FilterIsEnabled(object o)
         {
             Appearance a = o as Appearance;
-            return a.IsEnabled;
+            return (a.IsEnabled && !a.IsType<Centroid>()) || a.IsRepresentativeCentroid;
         }
 
         private bool FilterHasNeighbourhood(object o)
@@ -390,11 +405,34 @@ namespace Muragatte.GUI
 
         private void RedrawStylePreview()
         {
-            _wbStylePreview.Clear(GetCanvas.BackgroundColor);
+            _wbStylePreview.Clear(_visual.GetCanvas.BackgroundColor);
             Visual.Styles.Style selectedStyle = (Visual.Styles.Style)lboStyleEditorList.SelectedItem;
-            if (selectedStyle.HasNeighbourhood)
-                selectedStyle.Neighbourhood.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
-            selectedStyle.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
+            if (selectedStyle != null)
+            {
+                if (selectedStyle.HasNeighbourhood)
+                    selectedStyle.Neighbourhood.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
+                selectedStyle.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
+            }
+        }
+
+        private void RedrawCurrentIfStopped()
+        {
+            if (!_visual.GetPlayback.IsPlaying)
+            {
+                _visual.Redraw();
+            }
+        }
+
+        private void FillViews()
+        {
+            _views.Add(null);
+            _views.Add(EnvironmentView);
+            _views.Add(AgentsView);
+            _views.Add(NeighbourhoodsView);
+            _views.Add(TracksView);
+            _views.Add(TrailsView);
+            _views.Add(CentroidsView);
+            _views.Add(EnabledElementsView);
         }
 
         #endregion

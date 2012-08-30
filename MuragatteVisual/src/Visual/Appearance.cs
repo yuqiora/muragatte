@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 using Muragatte.Visual.Shapes;
 using Muragatte.Visual.Styles;
 
@@ -45,15 +46,22 @@ namespace Muragatte.Visual
         private List<Coordinates> _elementCoordinates = null;
         private List<Coordinates> _neighbourhoodCoordinates = null;
 
+        private HistoryViewer _historyViewer = null;
+        private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, -1, -1);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
 
-        public Appearance(Element element, Style style, double scale)
+        public Appearance(Element element, Style style, double scale, HistoryViewer historyViewer)
         {
             _element = element;
             _style = style;
             Rescale(scale);
+            _historyViewer = historyViewer;
+            _historyViewer.PropertyChanged += HistoryViewer_TimeChanged;
         }
 
         #endregion
@@ -82,7 +90,7 @@ namespace Muragatte.Visual
 
         public string Species
         {
-            get { return _element.Species == null ? string.Empty : _element.Species.Name; }
+            get { return FromHistory.SpeciesID < 0 ? string.Empty : _element.Model.Species[FromHistory.SpeciesID].Name; }
         }
 
         public double UnitWidth
@@ -113,6 +121,16 @@ namespace Muragatte.Visual
                     return Angle.Zero;
                 }
             }
+        }
+
+        public int? Group
+        {
+            get { return FromHistory.GroupID < 0 ? (int?)null : FromHistory.GroupID; }
+        }
+
+        public bool IsRepresentativeCentroid
+        {
+            get { return _element is Centroid && FromHistory.GroupID >= 0 && FromHistory.IsEnabled; }
         }
 
         public int Width
@@ -259,6 +277,11 @@ namespace Muragatte.Visual
         //    }
         //}
 
+        private ElementStatus FromHistory
+        {
+            get { return _historyViewer.IsEmpty ? _dummyStatus : _historyViewer.Current[_element.ID]; }
+        }
+
         #endregion
 
         #region Methods
@@ -307,6 +330,15 @@ namespace Muragatte.Visual
             else _neighbourhoodCoordinates = null;
         }
 
+        private void HistoryViewer_TimeChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Time")
+            {
+                NotifyPropertyChanged("Species");
+                NotifyPropertyChanged("Group");
+            }
+        }
+
         private void NotifyPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
@@ -314,12 +346,6 @@ namespace Muragatte.Visual
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

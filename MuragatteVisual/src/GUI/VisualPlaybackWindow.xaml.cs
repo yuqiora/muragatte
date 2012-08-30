@@ -46,6 +46,8 @@ namespace Muragatte.GUI
         private bool _bPlaying = false;
         private int _iFrameIncrement = 1;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
@@ -91,8 +93,6 @@ namespace Muragatte.GUI
         #endregion
 
         #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         void _visTimer_Tick(object sender, EventArgs e)
         {

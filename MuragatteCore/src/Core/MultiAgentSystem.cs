@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,9 @@ namespace Muragatte.Core
         protected Region _region = null;
         protected SpeciesCollection _species = null;
         protected History _history = new History();
-        protected List<Group> _groups = new List<Group>();
+        protected ObservableCollection<Group> _groups = new ObservableCollection<Group>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -94,6 +97,11 @@ namespace Muragatte.Core
         public History History
         {
             get { return _history; }
+        }
+
+        public ObservableCollection<Group> Groups
+        {
+            get { return _groups; }
         }
         
         #endregion
@@ -173,10 +181,15 @@ namespace Muragatte.Core
                 if (!(e is Centroid))
                 {
                     e.ConfirmUpdate();
-                    record.Add(e.ReportStatus());
+                    //record.Add(e.ReportStatus());
                 }
             }
-            UpdateGroupsAndCentroids(record);
+            //UpdateGroupsAndCentroids(record);
+            UpdateGroupsAndCentroids(null);
+            foreach (Element e in _storage)
+            {
+                record.Add(e.ReportStatus());
+            }
             _history.Add(record);
             _iCurrentStep = _iSteps;
             StepCount++;
@@ -224,12 +237,6 @@ namespace Muragatte.Core
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

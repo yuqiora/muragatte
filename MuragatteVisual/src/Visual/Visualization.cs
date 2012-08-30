@@ -84,6 +84,11 @@ namespace Muragatte.Visual
             _wndOptions.Show();
         }
 
+        public void Redraw()
+        {
+            _canvas.Redraw(_model.History, (int)_wndPlayback.sldFrame.Value);
+        }
+
         public void Redraw(int frame)
         {
             _canvas.Redraw(_model.History, frame);

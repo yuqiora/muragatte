@@ -41,6 +41,8 @@ namespace Muragatte.Visual.Styles
         private bool _bTrail = false;
         private List<Coordinates> _coordinates = null;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Constructors
@@ -288,12 +290,6 @@ namespace Muragatte.Visual.Styles
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }
