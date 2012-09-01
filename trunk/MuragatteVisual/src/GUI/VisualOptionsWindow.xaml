@@ -166,7 +166,6 @@
             <TabItem Header="Agents" Name="titAgents" IsEnabled="{Binding ElementName=clbAgentsList, Path=HasItems}">
                 <StackPanel>
                     <xtk:CheckListBox Name="clbAgentsList" Margin="10" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=AgentsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
-                    <CheckBox Content="All" Height="16" Name="chbAgentsEnabledAll" Checked="chbAgentsEnabledAll_Checked" Unchecked="chbAgentsEnabledAll_Unchecked" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="Neighbourhoods" Name="titNeighbourhoods" IsEnabled="{Binding ElementName=clbNeighbourhoodsEnabled, Path=HasItems}">

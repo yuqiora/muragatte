@@ -16,7 +16,6 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Storage
 {
-    //additional changes expected
     public class ElementStatus
     {
         #region Fields
