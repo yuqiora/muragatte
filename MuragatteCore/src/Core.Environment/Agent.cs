@@ -396,23 +396,21 @@ namespace Muragatte.Core.Environment
                 if (e.IntersectsWith(r1, r2, out ip))
                 {
                     double dist = Vector2.Distance(r1, ip);
-                    //double dist = Vector2.Distance(_position, ip);
-                    if (dist < nearest)
-                    {
-                        nearest = dist;
-                        nearestPos = e.GetPosition();
-                        ytox = -1;
-                    }
-                }
-                if (e.IntersectsWith(l1, l2, out ip))
-                {
-                    double dist = Vector2.Distance(l1, ip);
-                    //double dist = Vector2.Distance(_position, ip);
                     if (dist < nearest)
                     {
                         nearest = dist;
                         nearestPos = e.GetPosition();
                         ytox = 1;
+                    }
+                }
+                if (e.IntersectsWith(l1, l2, out ip))
+                {
+                    double dist = Vector2.Distance(l1, ip);
+                    if (dist < nearest)
+                    {
+                        nearest = dist;
+                        nearestPos = e.GetPosition();
+                        ytox = -1;
                     }
                 }
             }

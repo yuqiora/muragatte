@@ -15,8 +15,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
-using Muragatte.Core.Storage;
 using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 
 namespace Muragatte.Core
 {
@@ -24,14 +24,13 @@ namespace Muragatte.Core
     {
         #region Fields
 
-        protected int _iCurrentStep = 0;
-        protected int _iSteps = 0;
-        protected double _dTimePerStep = 1;
-        protected IStorage _storage = null;
-        protected Region _region = null;
-        protected SpeciesCollection _species = null;
-        protected History _history = new History();
-        protected ObservableCollection<Group> _groups = new ObservableCollection<Group>();
+        private int _iSteps = 0;
+        private double _dTimePerStep = 1;
+        private IStorage _storage = null;
+        private Region _region = null;
+        private SpeciesCollection _species = new SpeciesCollection();
+        private History _history = new History();
+        private List<Group> _groups = new List<Group>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -44,19 +43,12 @@ namespace Muragatte.Core
             _storage = storage;
             _region = region;
             _dTimePerStep = timePerStep;
-            _species = new SpeciesCollection();
         }
 
         #endregion
 
         #region Properties
         
-        public int CurrentStep
-        {
-            get { return _iCurrentStep; }
-            set { _iCurrentStep = value >= _iSteps ? _iSteps - 1 : value; }
-        }
-
         public int StepCount
         {
             get { return _iSteps; }
@@ -99,18 +91,17 @@ namespace Muragatte.Core
             get { return _history; }
         }
 
-        public ObservableCollection<Group> Groups
+        public List<Group> Groups
         {
             get { return _groups; }
         }
         
         #endregion
 
-        #region Virtual Methods
+        #region Methods
         
-        public virtual void Clear()
+        public void Clear()
         {
-            _iCurrentStep = 0;
             StepCount = 0;
             _species.Clear();
             Environment.Species.ResetIDCounter();
@@ -119,18 +110,14 @@ namespace Muragatte.Core
             _history.Clear();
         }
 
-        public virtual void NextStep() { }
-
-        public virtual void GoToStep(int i) { }
-
-        public virtual void Initialize()
+        public void Initialize()
         {
             foreach (Agent a in _storage.Agents)
             {
                 a.CreateRepresentative();
                 _storage.Add(a.Representative);
             }
-            UpdateGroupsAndCentroids(null);
+            UpdateGroupsAndCentroids();
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
@@ -140,7 +127,7 @@ namespace Muragatte.Core
             //_history.Archive(_species.Values);
         }
 
-        public virtual void Scatter()
+        public void Scatter()
         {
             IEnumerable<Agent> agents = _storage.Agents;
             foreach (Agent a in agents)
@@ -151,7 +138,7 @@ namespace Muragatte.Core
             }
         }
 
-        public virtual void GroupStart(double size)
+        public void GroupStart(double size)
         {
             Vector2 centre = Vector2.RandomUniform(_region.Width, _region.Height);
             IEnumerable<Agent> agents = _storage.Agents;
@@ -169,7 +156,7 @@ namespace Muragatte.Core
             }
         }
 
-        public virtual void Update()
+        public void Update()
         {
             foreach (Element e in _storage)
             {
@@ -181,21 +168,18 @@ namespace Muragatte.Core
                 if (!(e is Centroid))
                 {
                     e.ConfirmUpdate();
-                    //record.Add(e.ReportStatus());
                 }
             }
-            //UpdateGroupsAndCentroids(record);
-            UpdateGroupsAndCentroids(null);
+            UpdateGroupsAndCentroids();
             foreach (Element e in _storage)
             {
                 record.Add(e.ReportStatus());
             }
             _history.Add(record);
-            _iCurrentStep = _iSteps;
             StepCount++;
         }
 
-        public virtual void UpdateGroupsAndCentroids(HistoryRecord record)
+        public void UpdateGroupsAndCentroids()
         {
             foreach (Group g in _groups)
             {
@@ -213,20 +197,9 @@ namespace Muragatte.Core
                     }
                 }
             }
-            if (record == null)
+            foreach (Centroid c in _storage.Centroids)
             {
-                foreach (Centroid c in _storage.Centroids)
-                {
-                    c.ConfirmUpdate();
-                }
-            }
-            else
-            {
-                foreach (Centroid c in _storage.Centroids)
-                {
-                    c.ConfirmUpdate();
-                    record.Add(c.ReportStatus());
-                }
+                c.ConfirmUpdate();
             }
         }
 

@@ -220,8 +220,7 @@ namespace Muragatte.Core.Environment
             Vector2 p2mp1 = p2 - p1;
             double u = ((_position - p1) * p2mp1) / (p2mp1 * p2mp1);
             ip = p1 + u * p2mp1;
-            bool notIntersecting = ((_position - p1 - u * p2mp1) * p2mp1) != 0;
-            if (notIntersecting || u < 0 || u > 1)// || Vector2.Distance(_position, ip) > Radius)
+            if (u < 0 || Vector2.Distance(_position, ip) > Radius)
             {
                 return false;
             }
@@ -242,9 +241,7 @@ namespace Muragatte.Core.Environment
             }
             double u1 = (-b + Math.Sqrt(bb4ac)) / (2 * a);
             double u2 = (-b - Math.Sqrt(bb4ac)) / (2 * a);
-            double uMin = Math.Min(u1, u2);
-            double uMax = Math.Max(u1, u2);
-            ip = p1 + (uMin < 0 ? uMax : uMin) * p2mp1;
+            ip = p1 + Math.Min(u1, u2) * p2mp1;
             return true;
         }
 

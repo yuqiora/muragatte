@@ -194,17 +194,6 @@ namespace Muragatte.GUI
             }
         }
 
-        private void chbAgentsEnabledAll_Checked(object sender, RoutedEventArgs e)
-        {
-            //clbAgentsEnabled.SelectedItems = clbAgentsEnabled.Items;
-        }
-
-        private void chbAgentsEnabledAll_Unchecked(object sender, RoutedEventArgs e)
-        {
-            //foreach
-            //clbAgentsEnabled.SelectedItems.Clear();
-        }
-
         private void ModelElementStorageUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Reset)
