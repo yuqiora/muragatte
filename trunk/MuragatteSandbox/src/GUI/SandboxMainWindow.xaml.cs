@@ -130,7 +130,7 @@ namespace Muragatte.GUI
             txtSteps.Text = "0";
             int width = int.Parse(txtWidth.Text);
             int height = int.Parse(txtHeight.Text);
-            _mas = new MultiAgentSystem(new SimpleBruteForce(), new Region(
+            _mas = new MultiAgentSystem(/*new OrthantNeighbourhoodGraphStorage()*/ new SimpleBruteForceStorage(), new Region(
                 width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
             if (_visual != null)

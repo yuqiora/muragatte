@@ -132,20 +132,20 @@ namespace Muragatte.Core.Environment
 
         public void SetMovementInfo(Vector2 position, Vector2 direction)
         {
-            _position = position;
+            Position = position;
             _direction = direction;
         }
 
         public void SetMovementInfo(Vector2 position, Vector2 direction, double speed)
         {
-            _position = position;
+            Position = position;
             _direction = direction;
             _dSpeed = speed;
         }
 
         public void SetMovementInfo(Vector2 position, Vector2 direction, double speed, Angle turningAngle)
         {
-            _position = position;
+            Position = position;
             _direction = direction;
             _dSpeed = speed;
             TurningAngle = turningAngle;

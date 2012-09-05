@@ -18,22 +18,24 @@ using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
-    public class SimpleBruteForce : IStorage
+    public class SimpleBruteForceStorage : IStorage
     {
         #region Fields
 
         private List<Element> _items = null;
 
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         #endregion
 
         #region Constructors
 
-        public SimpleBruteForce()
+        public SimpleBruteForceStorage()
         {
             _items = new List<Element>();
         }
 
-        public SimpleBruteForce(IEnumerable<Element> items)
+        public SimpleBruteForceStorage(IEnumerable<Element> items)
         {
             _items = new List<Element>(items);
         }
@@ -245,6 +247,8 @@ namespace Muragatte.Core.Storage
             return (System.Collections.IEnumerator)GetEnumerator();
         }
 
+        public void Initialize() { }
+
         private IEnumerable<T> ItemsOfType<T>() where T : Element
         {
             List<T> items = new List<T>();
@@ -265,12 +269,6 @@ namespace Muragatte.Core.Storage
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         #endregion
     }

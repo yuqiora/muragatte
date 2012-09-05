@@ -17,7 +17,7 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public class Centroid : Extras
+    public class Centroid : Element
     {
         #region Fields
 
@@ -31,11 +31,15 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public Centroid(MultiAgentSystem model)
-            : base(model, false) { }
+            : base(model)
+        {
+            _bStationary = false;
+        }
 
         public Centroid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed)
-            : base(model, position, false)
+            : base(model, position)
         {
+            _bStationary = false;
             _direction = direction;
             _dSpeed = speed;
         }
@@ -86,6 +90,11 @@ namespace Muragatte.Core.Environment
             set { _bInGroup = value; }
         }
 
+        public override ElementNature DefaultNature
+        {
+            get { return ElementNature.Ignored; }
+        }
+
         public override string Name
         {
             get { return CreateName("C"); }
@@ -99,6 +108,11 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Methods
+
+        public override ElementNature RelationshipWith(Element e)
+        {
+            return ElementNature.Ignored;
+        }
 
         public override void Update()
         {
