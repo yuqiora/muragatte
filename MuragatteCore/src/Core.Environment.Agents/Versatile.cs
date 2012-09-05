@@ -275,7 +275,7 @@ namespace Muragatte.Core.Environment.Agents
 
         public override void ConfirmUpdate()
         {
-            _position = _model.Region.Outside(_altPosition);
+            Position = _model.Region.Outside(_altPosition);
             _direction = _altDirection;
             _dSpeed = _dAltSpeed;
         }

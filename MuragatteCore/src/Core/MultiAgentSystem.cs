@@ -112,6 +112,7 @@ namespace Muragatte.Core
 
         public void Initialize()
         {
+            _storage.Initialize();
             foreach (Agent a in _storage.Agents)
             {
                 a.CreateRepresentative();

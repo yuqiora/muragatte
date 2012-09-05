@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -17,7 +18,7 @@ using Muragatte.Core.Storage;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class Element : Storage.ISpareItem
+    public abstract class Element : ISpareItem, INotifyPropertyChanged
     {
         #region Statics
 
@@ -40,12 +41,13 @@ namespace Muragatte.Core.Environment
 
         protected int _iElementID = -1;
         protected MultiAgentSystem _model = null;
-        //list containing history instead of one vector?
         protected Vector2 _position = new Vector2(0, 0);
         protected bool _bStationary = true;
         protected bool _bEnabled = true;
         protected Species _species = null;
         protected object _item = null;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -81,7 +83,11 @@ namespace Muragatte.Core.Environment
         public Vector2 Position
         {
             get { return _position; }
-            set { _position = value; }
+            set
+            {
+                _position = value;
+                NotifyPropertyChanged("Position");
+            }
         }
 
         public bool IsStationary
@@ -203,6 +209,14 @@ namespace Muragatte.Core.Environment
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
                 _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID, modifiers);
+        }
+
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

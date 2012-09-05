@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Common\Angle.cs" />
+    <Compile Include="src\Common\Metric.cs" />
     <Compile Include="src\Common\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Core.Environment.Agents\LoneWanderer.cs" />
@@ -65,12 +66,18 @@
     <Compile Include="src\Core.Environment\Obstacle.cs" />
     <Compile Include="src\Core.Environment\Region.cs" />
     <Compile Include="src\Core.Environment\Species.cs" />
+    <Compile Include="src\Core.Storage.ONG\SearchRegion.cs" />
+    <Compile Include="src\Core.Storage.ONG\OrthantNeighbourhoodGraph.cs" />
+    <Compile Include="src\Core.Storage.ONG\Vertex.cs" />
+    <Compile Include="src\Core.Storage.ONG\Quadrant.cs" />
     <Compile Include="src\Core.Storage\ElementStatus.cs" />
     <Compile Include="src\Core.Storage\History.cs" />
     <Compile Include="src\Core.Storage\HistoryRecord.cs" />
     <Compile Include="src\Core.Storage\ISpareItem.cs" />
     <Compile Include="src\Core.Storage\IStorage.cs" />
+    <Compile Include="src\Core.Storage\OrthantNeighbourhoodGraphStorage.cs" />
     <Compile Include="src\Core.Storage\SimpleBruteForce.cs" />
+    <Compile Include="src\Core.Storage\SpeciesCollection.cs" />
     <Compile Include="src\Core\MultiAgentSystem.cs" />
   </ItemGroup>
   <ItemGroup>
