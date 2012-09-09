@@ -54,11 +54,15 @@ namespace Muragatte.Core.Storage
 
         IEnumerable<T> RangeSearch<T>(Element e, double range) where T : Element;
 
-        IEnumerable<Element> RangeSearch(Element e, double range, Predicate<Element> match);
+        IEnumerable<Element> RangeSearch(Element e, double range, Func<Element, bool> match);
 
-        IEnumerable<T> RangeSearch<T>(Element e, double range, Predicate<Element> match) where T : Element;
+        IEnumerable<T> RangeSearch<T>(Element e, double range, Func<T, bool> match) where T : Element;
 
         void Initialize();
+
+        void Update();
+
+        void Rebuild();
         
         #endregion
     }

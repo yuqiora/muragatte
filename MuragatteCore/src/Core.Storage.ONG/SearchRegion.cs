@@ -54,9 +54,12 @@ namespace Muragatte.Core.Storage.ONG
 
         #region Methods
 
-        public bool Covers(Vertex v)
+        public bool Covers(Vertex v, bool allowPartial = false)
         {
-            return v.Position.X >= _dLeft && v.Position.X <= _dRight && v.Position.Y <= _dTop && v.Position.Y >= _dBottom;
+            return allowPartial ?
+                v.Position.X >= _dLeft - v.Value.Radius && v.Position.X <= _dRight + v.Value.Radius &&
+                v.Position.Y <= _dTop + v.Value.Radius && v.Position.Y >= _dBottom - v.Value.Radius :
+                v.Position.X >= _dLeft && v.Position.X <= _dRight && v.Position.Y <= _dTop && v.Position.Y >= _dBottom;
         }
 
         public bool Cuts(Vertex vertex, Quadrant q)

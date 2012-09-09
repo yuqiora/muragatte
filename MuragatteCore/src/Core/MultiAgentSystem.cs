@@ -113,11 +113,13 @@ namespace Muragatte.Core
         public void Initialize()
         {
             _storage.Initialize();
+            List<Centroid> centroids = new List<Centroid>();
             foreach (Agent a in _storage.Agents)
             {
                 a.CreateRepresentative();
-                _storage.Add(a.Representative);
+                centroids.Add(a.Representative);
             }
+            _storage.Add(centroids);
             UpdateGroupsAndCentroids();
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
@@ -171,6 +173,7 @@ namespace Muragatte.Core
                     e.ConfirmUpdate();
                 }
             }
+            _storage.Update();
             UpdateGroupsAndCentroids();
             foreach (Element e in _storage)
             {
