@@ -44,6 +44,11 @@ namespace Muragatte.Core.Storage.ONG
 
         #region Properties
 
+        public IEnumerable<Vertex> Vertices
+        {
+            get { return _items.Values; }
+        }
+
         public Vertex this[int id]
         {
             get
@@ -186,16 +191,27 @@ namespace Muragatte.Core.Storage.ONG
 
         private void Move(Vertex p)
         {
-            Vertex s = p.GetNeighbour();
-            Delete(p);
-            p.Move();
-            Insert(s, p, false);
+            if (p.Moved)
+            {
+                Vertex s = p.NearestNeighbour(Metric.Manhattan);
+                Delete(p);
+                p.Move();
+                Insert(s, p, false);
+            }
         }
 
         public void Move(int id)
         {
             Vertex v;
             if (_items.TryGetValue(id, out v))
+            {
+                Move(v);
+            }
+        }
+
+        public void Move()
+        {
+            foreach (Vertex v in _items.Values)
             {
                 Move(v);
             }
@@ -303,22 +319,22 @@ namespace Muragatte.Core.Storage.ONG
             }
         }
 
-        public List<Vertex> RangeSearch(Vertex p, double r)
+        public List<Vertex> RangeSearch(Vertex p, double r, bool allowPartial = false)
         {
-            return RangeSearch(p, r, Metric.Manhattan, true);
+            return RangeSearch(p, r, Metric.Manhattan, true, allowPartial);
         }
 
-        public List<Vertex> RangeSearch(Vertex p, double r, Metric sndMetric)
+        public List<Vertex> RangeSearch(Vertex p, double r, Metric sndMetric, bool allowPartial = false)
         {
-            return RangeSearch(p, r, sndMetric, true);
+            return RangeSearch(p, r, sndMetric, true, allowPartial);
         }
 
-        public List<Vertex> RangeSearch(Vertex p, double r, bool withP)
+        public List<Vertex> RangeSearch(Vertex p, double r, bool withP, bool allowPartial = false)
         {
-            return RangeSearch(p, r, Metric.Manhattan, withP);
+            return RangeSearch(p, r, Metric.Manhattan, withP, allowPartial);
         }
 
-        public List<Vertex> RangeSearch(Vertex p, double r, Metric sndMetric, bool withP)
+        public List<Vertex> RangeSearch(Vertex p, double r, Metric sndMetric, bool withP, bool allowPartial = false)
         {
             List<Vertex> result = new List<Vertex>();
             Queue<Vertex> Q = new Queue<Vertex>();
@@ -327,7 +343,8 @@ namespace Muragatte.Core.Storage.ONG
             SetFlag(p);
             while (p != null)
             {
-                if (R.Covers(p) && (withP || p != origin) && (sndMetric == Metric.Manhattan || sndMetric.Distance(origin.Position, p.Position) <= r))
+                if (R.Covers(p, allowPartial) && (withP || p != origin) &&
+                    (sndMetric == Metric.Manhattan || sndMetric.Distance(origin.Position, p.Position, p.Value.Radius) <= r))
                 {
                     result.Add(p);
                 }

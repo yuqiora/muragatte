@@ -19,6 +19,7 @@ using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.Core.Storage.ONG;
 
 namespace Muragatte.Visual
 {
@@ -191,7 +192,7 @@ namespace Muragatte.Visual
             DrawNeighbourhoods(record);
             DrawEnvironment(record);
             DrawAgents(record);
-            //_wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
+            //DrawONG();
         }
 
         public void Redraw(History history)
@@ -217,7 +218,7 @@ namespace Muragatte.Visual
             DrawTrails(history, step);
             DrawAgents(history[step]);
             DrawCentroids(history[step]);
-            //_wb.Flip(WriteableBitmapExtensions.FlipMode.Horizontal);
+            //DrawONG();
         }
 
         private void DrawElements(HistoryRecord record, bool enabled, ICollectionView items)
@@ -369,6 +370,21 @@ namespace Muragatte.Visual
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void DrawONG()
+        {
+            if (_visual.GetModel.Elements is OrthantNeighbourhoodGraphStorage)
+            {
+                List<Quadrant> quadrants = new List<Quadrant>() { Quadrant.NorthEast, Quadrant.SouthEast, Quadrant.SouthWest, Quadrant.NorthWest };
+                foreach (Vertex v in ((OrthantNeighbourhoodGraphStorage)_visual.GetModel.Elements).Vertices)
+                {
+                    foreach (Quadrant q in quadrants)
+                    {
+                        if (v[q] != null) _wb.DrawLine(v.Position * _dScale, v[q].Position * _dScale, v == v[q][q.Opposite()] ? Colors.DarkGoldenrod : Colors.PaleGoldenrod);
+                    }
+                }
             }
         }
 

@@ -114,6 +114,11 @@ namespace Muragatte.Core.Storage
             get { return _centroids.Values; }
         }
 
+        public IEnumerable<Vertex> Vertices
+        {
+            get { return _ong.Vertices; }
+        }
+
         #endregion
 
         #region Methods
@@ -132,7 +137,7 @@ namespace Muragatte.Core.Storage
                 if (_bInitialized)
                 {
                     _ong.Add(item);
-                    if (!item.IsStationary) item.PropertyChanged += ElementPositionChanged;
+                    //if (!item.IsStationary) item.PropertyChanged += ElementPositionChanged;
                 }
             }
             NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
@@ -168,7 +173,7 @@ namespace Muragatte.Core.Storage
             }
             _items.Remove(id);
             RemoveFromCategories(id);
-            e.PropertyChanged -= ElementPositionChanged;
+            //e.PropertyChanged -= ElementPositionChanged;
             _ong.Remove(id);
             NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, e);
             return true;
@@ -186,10 +191,10 @@ namespace Muragatte.Core.Storage
 
         public void Clear()
         {
-            foreach (Element e in _items.Values)
-            {
-                e.PropertyChanged -= ElementPositionChanged;
-            }
+            //foreach (Element e in _items.Values)
+            //{
+            //    e.PropertyChanged -= ElementPositionChanged;
+            //}
             _ong.Clear();
             _items.Clear();
             _agents.Clear();
@@ -234,7 +239,7 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Element> RangeSearch(Element e, double range)
         {
-            List<Vertex> vertices = _ong.RangeSearch(_ong[e.ID], range, Metric.Euclidean, false);
+            List<Vertex> vertices = _ong.RangeSearch(_ong[e.ID], range, false, true);
             List<Element> result = new List<Element>();
             foreach (Vertex v in vertices)
             {
@@ -248,23 +253,24 @@ namespace Muragatte.Core.Storage
             return RangeSearch(e, range).OfType<T>();
         }
 
-        public IEnumerable<Element> RangeSearch(Element e, double range, Predicate<Element> match)
+        public IEnumerable<Element> RangeSearch(Element e, double range, Func<Element, bool> match)
         {
-            List<Vertex> vertices = _ong.RangeSearch(_ong[e.ID], range, Metric.Euclidean, false);
-            List<Element> result = new List<Element>();
-            foreach (Vertex v in vertices)
-            {
-                if (match(v.Value))
-                {
-                    result.Add(v.Value);
-                }
-            }
-            return result;
+            return RangeSearch(e, range).Where(match);
+            //List<Vertex> vertices = _ong.RangeSearch(_ong[e.ID], range, Metric.Euclidean, false);
+            //List<Element> result = new List<Element>();
+            //foreach (Vertex v in vertices)
+            //{
+            //    if (match(v.Value))
+            //    {
+            //        result.Add(v.Value);
+            //    }
+            //}
+            //return result;
         }
 
-        public IEnumerable<T> RangeSearch<T>(Element e, double range, Predicate<Element> match) where T : Element
+        public IEnumerable<T> RangeSearch<T>(Element e, double range, Func<T, bool> match) where T : Element
         {
-            return RangeSearch(e, range, match).OfType<T>();
+            return RangeSearch<T>(e, range).Where(match);
         }
 
         public IEnumerator<Element> GetEnumerator()
@@ -301,10 +307,20 @@ namespace Muragatte.Core.Storage
                 if (!(e is Centroid))
                 {
                     _ong.Add(e);
-                    if (!e.IsStationary) e.PropertyChanged += ElementPositionChanged;
+                    //if (!e.IsStationary) e.PropertyChanged += ElementPositionChanged;
                 }
 
             }
+        }
+
+        public void Update()
+        {
+            _ong.Move();
+        }
+
+        public void Rebuild()
+        {
+            _ong.Rebuild();
         }
 
         #endregion

@@ -70,22 +70,22 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Agent> Agents
         {
-            get { return ItemsOfType<Agent>(); }
+            get { return _items.OfType<Agent>(); /*ItemsOfType<Agent>();*/ }
         }
 
         public IEnumerable<Obstacle> Obstacles
         {
-            get { return ItemsOfType<Obstacle>(); }
+            get { return _items.OfType<Obstacle>(); /*ItemsOfType<Obstacle>();*/ }
         }
 
         public IEnumerable<Goal> Goals
         {
-            get { return ItemsOfType<Goal>(); }
+            get { return _items.OfType<Goal>(); /*ItemsOfType<Goal>();*/ }
         }
 
         public IEnumerable<Extras> Extras
         {
-            get { return ItemsOfType<Extras>(); }
+            get { return _items.OfType<Extras>(); /*ItemsOfType<Extras>();*/ }
         }
 
         public IEnumerable<Element> Stationary
@@ -95,7 +95,7 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Centroid> Centroids
         {
-            get { return ItemsOfType<Centroid>(); }
+            get { return _items.OfType<Centroid>(); /*ItemsOfType<Centroid>();*/ }
         }
 
         #endregion
@@ -201,40 +201,53 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Element> RangeSearch(Element e, double range)
         {
-            return RangeSearch<Element>(e, range);
+            List<Element> result = new List<Element>();
+            foreach (Element n in _items)
+            {
+                if (e != n && n.IsEnabled &&
+                    Vector2.Distance(e.Position, n.Position) - n.Radius < range)
+                {
+                    result.Add(n);
+                }
+            }
+            return result;
+            //return RangeSearch<Element>(e, range);
         }
 
         public IEnumerable<T> RangeSearch<T>(Element e, double range) where T : Element
         {
-            List<T> inRange = new List<T>();
-            foreach (Element n in _items)
-            {
-                if (e != n && n.IsEnabled && n is T &&
-                    Vector2.Distance(e.Position, n.Position) - n.Radius < range)
-                {
-                    inRange.Add((T)n);
-                }
-            }
-            return inRange;
+            //List<T> inRange = new List<T>();
+            //foreach (Element n in _items)
+            //{
+            //    if (e != n && n.IsEnabled && n is T &&
+            //        Vector2.Distance(e.Position, n.Position) - n.Radius < range)
+            //    {
+            //        inRange.Add((T)n);
+            //    }
+            //}
+            //return inRange;
+            return RangeSearch(e, range).OfType<T>();
         }
 
-        public IEnumerable<Element> RangeSearch(Element e, double range, Predicate<Element> match)
+        public IEnumerable<Element> RangeSearch(Element e, double range, Func<Element, bool> match)
         {
-            return RangeSearch<Element>(e, range, match);
+            //return RangeSearch<Element>(e, range, match);
+            return RangeSearch(e, range).Where(match);
         }
 
-        public IEnumerable<T> RangeSearch<T>(Element e, double range, Predicate<Element> match) where T : Element
+        public IEnumerable<T> RangeSearch<T>(Element e, double range, Func<T, bool> match) where T : Element
         {
-            List<T> inRange = new List<T>();
-            foreach (Element n in _items)
-            {
-                if (e != n && n.IsEnabled && n is T &&
-                    Vector2.Distance(e.Position, n.Position) - n.Radius < range && match(n))
-                {
-                    inRange.Add((T)n);
-                }
-            }
-            return inRange;
+            //List<T> inRange = new List<T>();
+            //foreach (Element n in _items)
+            //{
+            //    if (e != n && n.IsEnabled && n is T &&
+            //        Vector2.Distance(e.Position, n.Position) - n.Radius < range && match((T)n))
+            //    {
+            //        inRange.Add((T)n);
+            //    }
+            //}
+            //return inRange;
+            return RangeSearch<T>(e, range).Where(match);
         }
 
         public IEnumerator<Element> GetEnumerator()
@@ -249,18 +262,22 @@ namespace Muragatte.Core.Storage
 
         public void Initialize() { }
 
-        private IEnumerable<T> ItemsOfType<T>() where T : Element
-        {
-            List<T> items = new List<T>();
-            foreach (Element e in _items)
-            {
-                if (e is T)
-                {
-                    items.Add((T)e);
-                }
-            }
-            return items;
-        }
+        public void Update() { }
+
+        public void Rebuild() { }
+
+        //private IEnumerable<T> ItemsOfType<T>() where T : Element
+        //{
+        //    List<T> items = new List<T>();
+        //    foreach (Element e in _items)
+        //    {
+        //        if (e is T)
+        //        {
+        //            items.Add((T)e);
+        //        }
+        //    }
+        //    return items;
+        //}
 
         protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem)
         {

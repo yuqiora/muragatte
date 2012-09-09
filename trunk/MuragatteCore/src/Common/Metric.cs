@@ -26,14 +26,19 @@ namespace Muragatte.Common
     {
         public static double Distance(this Metric m, Vector2 a, Vector2 b)
         {
+            return Distance(m, a, b, 0);
+        }
+
+        public static double Distance(this Metric m, Vector2 a, Vector2 b, double tolerance)
+        {
             switch (m)
             {
                 case Metric.Euclidean:
-                    return Vector2.Distance(a, b);
+                    return Vector2.Distance(a, b) - tolerance;
                 case Metric.Manhattan:
-                    return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+                    return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) - tolerance;
                 case Metric.Maximum:
-                    return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
+                    return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y)) - tolerance;
                 default:
                     return double.NaN;
             }
@@ -41,7 +46,12 @@ namespace Muragatte.Common
 
         public static double Distance(this Metric m, double x1, double y1, double x2, double y2)
         {
-            return Distance(m, new Vector2(x1, y1), new Vector2(x2, y2));
+            return Distance(m, new Vector2(x1, y1), new Vector2(x2, y2), 0);
+        }
+
+        public static double Distance(this Metric m, double x1, double y1, double x2, double y2, double tolerance)
+        {
+            return Distance(m, new Vector2(x1, y1), new Vector2(x2, y2), tolerance);
         }
     }
 }

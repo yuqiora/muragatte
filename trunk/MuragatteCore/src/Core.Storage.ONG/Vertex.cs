@@ -63,6 +63,11 @@ namespace Muragatte.Core.Storage.ONG
             get { return _position; }
         }
 
+        public bool Moved
+        {
+            get { return _position != _item.Position; }
+        }
+
         #endregion
 
         #region Methods
@@ -112,14 +117,14 @@ namespace Muragatte.Core.Storage.ONG
             }
         }
 
-        public Vertex GetNeighbour()
-        {
-            foreach (Vertex v in _neighbours.Values)
-            {
-                if (v != null) return v;
-            }
-            return null;
-        }
+        //public Vertex GetNeighbour()
+        //{
+        //    foreach (Vertex v in _neighbours.Values)
+        //    {
+        //        if (v != null) return v;
+        //    }
+        //    return null;
+        //}
 
         public void Move()
         {
@@ -134,8 +139,7 @@ namespace Muragatte.Core.Storage.ONG
             {
                 if (v != null)
                 {
-                    //double dist = metric == Metric.Euclidean ? DistanceE(v) : DistanceM(v);
-                    double dist = metric.Distance(_position, v.Position);
+                    double dist = metric.Distance(_position, v.Position, v.Value.Radius);
                     if (dist < d)
                     {
                         d = dist;
