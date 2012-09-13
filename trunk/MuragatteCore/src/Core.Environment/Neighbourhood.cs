@@ -16,27 +16,40 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class Neighbourhood : Storage.ISpareItem
+    public class Neighbourhood
     {
         #region Fields
 
         protected Agent _source = null;
         protected double _dRange = 0;
-        protected object _item = null;
+        protected Angle _angle = Angle.Deg180;
+        protected Metric _metric = Metric.Euclidean;
 
         #endregion
 
         #region Constructors
 
-        public Neighbourhood(double range)
+        public Neighbourhood(double range, Metric metric = Metric.Euclidean)
         {
             _dRange = range;
         }
 
-        public Neighbourhood(Agent source, double range)
+        public Neighbourhood(double range, Angle angle, Metric metric = Metric.Euclidean)
+            : this(range, metric)
+        {
+            _angle = angle;
+        }
+
+        public Neighbourhood(Agent source, double range, Metric metric = Metric.Euclidean)
+            : this(range, metric)
         {
             _source = source;
-            _dRange = range;
+        }
+
+        public Neighbourhood(Agent source, double range, Angle angle, Metric metric = Metric.Euclidean)
+            : this(range, angle, metric)
+        {
+            _source = source;
         }
 
         #endregion
@@ -49,47 +62,78 @@ namespace Muragatte.Core.Environment
             set { _source = value; }
         }
 
-        public object Item
-        {
-            get { return _item; }
-            set { _item = value; }
-        }
-
-        #endregion
-
-        #region Virtual Properties
-
-        public virtual double Range
+        public double Range
         {
             get { return _dRange; }
         }
 
-        #endregion
-
-        #region Abstract Properties
-
-        public abstract Angle Angle { get; set; }
+        public Angle Angle
+        {
+            get { return _angle; }
+            set { _angle = value; }
+        }
 
         #endregion
 
         #region Methods
 
-        public T GetItemAs<T>() where T : class
+        protected IEnumerable<T> WithinFull<T>(IEnumerable<T> elements) where T : Element
         {
-            return _item is T ? (T)_item : null;
+            List<T> result = new List<T>();
+            foreach (T e in elements)
+            {
+                if (InRange(e))
+                {
+                    result.Add(e);
+                }
+            }
+            return result;
         }
 
-        #endregion
+        protected IEnumerable<T> WithinPartial<T>(IEnumerable<T> elements, Angle angle) where T : Element
+        {
+            List<T> result = new List<T>();
+            foreach (T e in elements)
+            {
+                if (Covers(e, angle))
+                {
+                    result.Add(e);
+                }
+            }
+            return result;
+        }
 
-        #region Abstract Methods
+        protected bool InRange(Element e)
+        {
+            return _metric.Distance(_source.Position, e.Position, e.Radius) < _dRange;
+        }
 
-        public abstract IEnumerable<T> Within<T>(IEnumerable<T> elements) where T : Environment.Element;
+        public IEnumerable<T> Within<T>(IEnumerable<T> elements) where T : Element
+        {
+            return Within(elements, _angle);
+        }
 
-        public abstract IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle) where T : Environment.Element;
+        public IEnumerable<T> Within<T>(IEnumerable<T> elements, Angle angle) where T : Element
+        {
+            if (angle.Degrees == Angle.MaxDegree)
+            {
+                return WithinFull(elements);
+            }
+            else
+            {
+                return WithinPartial(elements, angle);
+            }
+        }
 
-        public abstract bool Covers(Element e);
+        public bool Covers(Element e)
+        {
+            return Covers(e, _angle);
+        }
 
-        public abstract bool Covers(Element e, Angle angle);
+        public bool Covers(Element e, Angle angle)
+        {
+            return InRange(e) && Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= angle;
+        }
 
         #endregion
 
