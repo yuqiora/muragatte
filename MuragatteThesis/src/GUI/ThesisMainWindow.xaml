@@ -1,8 +1,43 @@
-﻿<Window x:Class="Muragatte.GUI.ThesisMainWindow"
+﻿<!-- **********************************************************************
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Thesis Application
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+*********************************************************************** -->
+
+<Window x:Class="Muragatte.GUI.ThesisMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ThesisMainWindow" Height="350" Width="525">
+        xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="Muragatte Thesis" Height="100" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight">
     <Grid>
-        
+        <xtk:BusyIndicator Name="binProgress">
+            <xtk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel Width="200">
+                        <TextBlock Text="Experiment in progress..." FontWeight="Bold" HorizontalAlignment="Center" />
+                        <TextBlock Text="1/100" HorizontalAlignment="Center" /><!-- multi-binding -->
+                        <ProgressBar Name="prbInstance" Height="15" />
+                        <TextBlock Text="1/100" HorizontalAlignment="Center" /><!-- multi-binding -->
+                        <ProgressBar Name="prbExperiment" Height="15" />
+                        <Button Name="btnCancel" Content="Cancel" Width="75" Height="23" />
+                    </StackPanel>
+                </DataTemplate>
+            </xtk:BusyIndicator.BusyContentTemplate>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Open" Height="23" Name="btnOpen" Width="75" />
+                <Button Content="Load" Height="23" Name="btnLoad" Width="75" />
+                <Button Content="New" Height="23" Name="btnNew" Width="75" />
+                <Button Content="Summary" Height="23" Name="btnSummary" Width="75" />
+                <Button Content="Modify" Height="23" Name="btnModify" Width="75" />
+                <Button Content="Run" Height="23" Name="btnRun" Width="75" />
+                <Button Content="Results" Height="23" Name="btnResults" Width="75" />
+                <Button Content="Visualization" Height="23" Name="btnVisualization" Width="75" />
+                <Button Content="About" Height="23" Name="btnAbout" Width="75" />
+            </StackPanel>
+        </xtk:BusyIndicator>
     </Grid>
 </Window>

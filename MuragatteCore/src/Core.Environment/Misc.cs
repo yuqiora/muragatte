@@ -78,4 +78,113 @@ namespace Muragatte.Core.Environment
             return _ran2.Gauss(mean, deviation);
         }
     }
+
+    public abstract class SpawnSpot
+    {
+        protected Vector2 _position;
+
+        public SpawnSpot(Vector2 position)
+        {
+            _position = position;
+        }
+
+        public Vector2 Position
+        {
+            get { return _position; }
+        }
+
+        public abstract double Width { get; set; }
+
+        public abstract double Heigth { get; set; }
+
+        public abstract Vector2 Respawn();
+    }
+
+    public class SpawnPoint : SpawnSpot
+    {
+        public SpawnPoint(Vector2 position) : base(position) { }
+
+        public override double Width
+        {
+            get { return 1; }
+            set { }
+        }
+
+        public override double Heigth
+        {
+            get { return 1; }
+            set { }
+        }
+
+        public override Vector2 Respawn()
+        {
+            return _position;
+        }
+    }
+
+    public class SpawnCircle : SpawnSpot
+    {
+        protected double _dRadius;
+
+        public SpawnCircle(Vector2 position, double radius)
+            : base(position)
+        {
+            _dRadius = radius;
+        }
+
+        public override double Width
+        {
+            get { return _dRadius * 2; }
+            set { _dRadius = value / 2; }
+        }
+
+        public override double Heigth
+        {
+            get { return _dRadius * 2; }
+            set { _dRadius = value / 2; }
+        }
+
+        public override Vector2 Respawn()
+        {
+            //temporary, to be completed after random
+            double x, y, ss;
+            RNGs.Ran2.Disk(out x, out y, out ss);
+            return new Vector2(x, y) + _position;
+        }
+    }
+
+    public class SpawnRectangle : SpawnSpot
+    {
+        protected double _dWidth;
+        protected double _dHeight;
+
+        public SpawnRectangle(Vector2 position, double width, double height)
+            : base(position)
+        {
+            _dWidth = width;
+            _dHeight = height;
+        }
+
+        public SpawnRectangle(Vector2 position, double size) : this(position, size, size) { }
+
+        public override double Width
+        {
+            get { return _dWidth; }
+            set { _dWidth = value; }
+        }
+
+        public override double Heigth
+        {
+            get { return _dHeight; }
+            set { _dHeight = value; }
+        }
+
+        public override Vector2 Respawn()
+        {
+            //temporary, to be completed after random
+            double w = _dWidth / 2;
+            double h = _dHeight / 2;
+            return Vector2.RandomUniform(_position.X - w, _position.X + w, _position.Y - h, _position.Y + h);
+        }
+    }
 }

@@ -274,7 +274,7 @@ namespace Muragatte.GUI
         {
             for (int i = 0; i < count; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, _boidFOVAngle);
+                Neighbourhood n = new Neighbourhood(fovRange, _boidFOVAngle);
                 Agent a = new Boid(_mas, n, new Angle(60));
                 a.Speed = 1;
                 a.Species = _mas.Species[0];
@@ -288,8 +288,8 @@ namespace Muragatte.GUI
             Angle fovAng = new Angle(150);
             for (int i = 0; i < naive; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
+                Neighbourhood n2 = new Neighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, null, 0, n2);
                 a.Speed = 1.05;
                 a.Species = _mas.Species[0];
@@ -297,8 +297,8 @@ namespace Muragatte.GUI
             }
             for (int i = 0; i < guides; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
+                Neighbourhood n2 = new Neighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, _goals[0], 0.75, n2);
                 a.Speed = 1;
                 a.Species = _mas.Species[1];
@@ -306,8 +306,8 @@ namespace Muragatte.GUI
             }
             for (int i = 0; i < intruders; i++)
             {
-                Neighbourhood n = new CircularNeighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new CircularNeighbourhood(paRange);
+                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
+                Neighbourhood n2 = new Neighbourhood(paRange);
                 Agent a = new AdvancedBoid(_mas, n, turn, _goals[1], 1, n2);
                 a.Speed = 0.95;
                 a.Species = _mas.Species[2];
