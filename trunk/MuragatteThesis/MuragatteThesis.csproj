@@ -59,7 +59,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\GUI\ThesisAboutWindow.xaml.cs">
+      <DependentUpon>ThesisAboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Thesis\Experiment.cs" />
+    <Page Include="src\GUI\ThesisAboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\GUI\ThesisMainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
