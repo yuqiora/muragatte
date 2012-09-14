@@ -35,8 +35,7 @@
                 <Button Content="Modify" Height="23" Name="btnModify" Width="75" />
                 <Button Content="Run" Height="23" Name="btnRun" Width="75" />
                 <Button Content="Results" Height="23" Name="btnResults" Width="75" />
-                <Button Content="Visualization" Height="23" Name="btnVisualization" Width="75" />
-                <Button Content="About" Height="23" Name="btnAbout" Width="75" />
+                <Button Content="About" Height="23" Name="btnAbout" Width="75" Click="btnAbout_Click" />
             </StackPanel>
         </xtk:BusyIndicator>
     </Grid>
