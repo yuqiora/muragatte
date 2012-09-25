@@ -187,4 +187,33 @@ namespace Muragatte.Core.Environment
             return Vector2.RandomUniform(_position.X - w, _position.X + w, _position.Y - h, _position.Y + h);
         }
     }
+
+    //incomplete, will be part of Random
+    public class NoisedDouble
+    {
+        private double _dBaseValue = 0;
+        //rng noise / instance = null
+
+        public NoisedDouble(double baseValue)
+        {
+            _dBaseValue = baseValue;
+        }
+
+        //noise only (choose distribution)
+
+        //baseValue + noise
+
+        public double BaseValue
+        {
+            get { return _dBaseValue; }
+            set { _dBaseValue = value; }
+        }
+
+        //noise edit
+
+        public double GetValue()
+        {
+            return _dBaseValue; // + noise
+        }
+    }
 }

@@ -31,15 +31,11 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public Centroid(MultiAgentSystem model)
-            : base(model)
-        {
-            _bStationary = false;
-        }
+            : base(model) { }
 
         public Centroid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed)
             : base(model, position)
         {
-            _bStationary = false;
             _direction = direction;
             _dSpeed = speed;
         }
@@ -76,6 +72,11 @@ namespace Muragatte.Core.Environment
         public override double Radius
         {
             get { return DEFAULT_RADIUS; }
+        }
+
+        public override bool IsStationary
+        {
+            get { return false; }
         }
 
         public override Group Group

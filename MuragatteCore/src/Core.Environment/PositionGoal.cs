@@ -26,6 +26,12 @@ namespace Muragatte.Core.Environment
         public PositionGoal(MultiAgentSystem model, Vector2 position)
             : base(model, position) { }
 
+        public PositionGoal(int id, MultiAgentSystem model)
+            : base(id, model) { }
+
+        public PositionGoal(int id, MultiAgentSystem model, Vector2 position)
+            : base(id, model, position) { }
+
         #endregion
 
         #region Properties

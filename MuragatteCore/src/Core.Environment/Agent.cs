@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
-using Muragatte.Core.Environment;
+using Muragatte.Core.Environment.SteeringUtils;
 
 namespace Muragatte.Core.Environment
 {
@@ -21,38 +21,34 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected Vector2 _direction = new Vector2(0, 1);
+        protected Vector2 _direction = Vector2.X0Y1;
         protected double _dSpeed = 1;
-        protected Vector2 _altPosition = new Vector2(0, 0);
-        protected Vector2 _altDirection = new Vector2(0, 1);
+        protected Vector2 _altPosition = Vector2.Zero;
+        protected Vector2 _altDirection = Vector2.X0Y1;
         protected Neighbourhood _fieldOfView = null;
         protected Angle _dTurningAngle = Angle.Deg180;
         protected Centroid _representative = null;
+        protected Dictionary<string, Steering> _steering = new Dictionary<string, Steering>();
+        protected AgentArgs _args = null;
         
         #endregion
 
         #region Constructors
 
         public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle)
+            double speed, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
             : base(model, position)
         {
             _direction = direction;
             _dSpeed = speed;
-            _bStationary = false;
-            _fieldOfView = fieldOfView;
-            _fieldOfView.Source = this;
+            FieldOfView = fieldOfView;
             _dTurningAngle = turningAngle;
+            _args = args;
+            EnableSteering();
         }
 
-        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle)
-            : base(model)
-        {
-            _bStationary = false;
-            _fieldOfView = fieldOfView;
-            _fieldOfView.Source = this;
-            _dTurningAngle = turningAngle;
-        }
+        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
+            : this(model, Vector2.Zero, Vector2.X0Y1, 1, fieldOfView, turningAngle, args) { }
         
         #endregion
 
@@ -88,6 +84,11 @@ namespace Muragatte.Core.Environment
         public Neighbourhood FieldOfView
         {
             get { return _fieldOfView; }
+            protected set
+            {
+                _fieldOfView = value;
+                if (_fieldOfView != null) _fieldOfView.Source = this;
+            }
         }
 
         public Angle TurningAngle
@@ -99,6 +100,11 @@ namespace Muragatte.Core.Environment
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Companion; }
+        }
+
+        public override bool IsStationary
+        {
+            get { return false; }
         }
 
         public Centroid Representative
@@ -117,10 +123,6 @@ namespace Muragatte.Core.Environment
             get { return CreateName("A"); }
         }
 
-        #endregion
-
-        #region Virtual Properties
-
         public virtual double VisibleRange
         {
             get { return _fieldOfView == null ? 0 : _fieldOfView.Range; }
@@ -138,16 +140,13 @@ namespace Muragatte.Core.Environment
 
         public void SetMovementInfo(Vector2 position, Vector2 direction, double speed)
         {
-            Position = position;
-            _direction = direction;
+            SetMovementInfo(position, direction);
             _dSpeed = speed;
         }
 
         public void SetMovementInfo(Vector2 position, Vector2 direction, double speed, Angle turningAngle)
         {
-            Position = position;
-            _direction = direction;
-            _dSpeed = speed;
+            SetMovementInfo(position, direction, speed);
             TurningAngle = turningAngle;
         }
 
@@ -199,9 +198,10 @@ namespace Muragatte.Core.Environment
             return members;
         }
 
-        #endregion
-
-        #region Protected Methods
+        public override Storage.ElementStatus ReportStatus()
+        {
+            return ReportStatus(_args.Modifiers.Values);
+        }
 
         protected void ProperDirection()
         {
@@ -223,259 +223,14 @@ namespace Muragatte.Core.Environment
             }
         }
 
-        protected void ChangeModifier(ref double modifier, double value)
+        protected void AddSteering(Steering steering)
         {
-            if (!double.IsNaN(value) && !double.IsInfinity(value))
-            {
-                modifier = value;
-            }
+            _steering.Add(steering.Name, steering);
         }
-
-        #endregion
-
-        #region Steering Virtual Methods
-
-        protected virtual Vector2 SteeringSeekOrPursuit(Element element, double weight = 1)
-        {
-            return element.IsStationary ? SteeringSeek(element, weight) : SteeringPursuit(element, weight);
-        }
-
-        protected virtual Vector2 SteeringSeekOrPursuit(IEnumerable<Element> elements, double weight = 1)
-        {
-            Element target = null;
-            double distance = double.MaxValue;
-            foreach (Element e in elements)
-            {
-                Vector2 v = e.IsStationary ? e.GetPosition() : e.PredictPositionAfter();
-                double x = Vector2.Distance(_position, v);
-                if (x < distance)
-                {
-                    distance = x;
-                    target = e;
-                }
-            }
-            return target.IsStationary ? SteeringSeek(target, weight) : SteeringPursuit(target, weight);
-        }
-
-        protected virtual Vector2 SteeringSeek(Vector2 position, double weight = 1)
-        {
-            return weight * Vector2.Normalized(position - _position);
-        }
-
-        protected virtual Vector2 SteeringSeek(Element element, double weight = 1)
-        {
-            return element == null ? Vector2.Zero : weight * Vector2.Normalized(element.GetPosition() - _position);
-        }
-
-        protected virtual Vector2 SteeringSeek(IEnumerable<Element> elements, double weight = 1)
-        {
-            Element target = null;
-            double distance = double.MaxValue;
-            foreach (Element e in elements)
-            {
-                double x = Vector2.Distance(_position, e.GetPosition());
-                if (x < distance)
-                {
-                    distance = x;
-                    target = e;
-                }
-            }
-            return SteeringSeek(target, weight);
-        }
-
-        //same as SteeringSeek
-        protected virtual Vector2 SteeringPursuit(Vector2 position, double weight = 1)
-        {
-            return SteeringSeek(position, weight);
-        }
-
-        protected virtual Vector2 SteeringPursuit(Element element, double weight = 1)
-        {
-            return element == null ? Vector2.Zero : SteeringSeek(element.PredictPositionAfter(), weight);
-        }
-
-        protected virtual Vector2 SteeringPursuit(IEnumerable<Element> elements, double weight = 1)
-        {
-            Element target = null;
-            double distance = double.MaxValue;
-            foreach (Element e in elements)
-            {
-                double x = Vector2.Distance(_position, e.PredictPositionAfter());
-                if (x < distance)
-                {
-                    distance = x;
-                    target = e;
-                }
-            }
-            return SteeringPursuit(target, weight);
-        }
-
-        protected virtual Vector2 SteeringFleeOrEvasion(Element element, double weight = 1)
-        {
-            return element.IsStationary ? SteeringFlee(element, weight) : SteeringEvasion(element, weight);
-        }
-
-        protected virtual Vector2 SteeringFleeOrEvasion(IEnumerable<Element> elements, double weight = 1)
-        {
-            //temporary until evasion is done
-            return SteeringFlee(elements, weight);
-        }
-
-        protected virtual Vector2 SteeringFlee(Vector2 position, double weight = 1)
-        {
-            return SteeringSeek(position, -weight);
-        }
-
-        protected virtual Vector2 SteeringFlee(Element element, double weight = 1)
-        {
-            return SteeringSeek(element, -weight);
-        }
-
-        protected virtual Vector2 SteeringFlee(IEnumerable<Element> elements, double weight = 1)
-        {
-            Vector2 v = Vector2.Zero;
-            int count = elements.Count();
-            if (count == 0)
-            {
-                return v;
-            }
-            foreach (Element e in elements)
-            {
-                v += e.GetPosition();
-            }
-            return SteeringFlee(SteerAverage(v, count), weight);
-        }
-
-        //same as SteeringFlee
-        protected virtual Vector2 SteeringEvasion(Vector2 position, double weight = 1)
-        {
-            return SteeringSeek(position, -weight);
-        }
-
-        protected virtual Vector2 SteeringEvasion(Element element, double weight = 1)
-        {
-            return SteeringPursuit(element, -weight);
-        }
-
-        protected virtual Vector2 SteeringEvasion(IEnumerable<Element> elements, double weight = 1)
-        {
-            Vector2 v = Vector2.Zero;
-            int count = elements.Count();
-            if (count == 0)
-            {
-                return v;
-            }
-            foreach (Element e in elements)
-            {
-                v += e.IsStationary ? e.GetPosition() : e.PredictPositionAfter();
-            }
-            return SteeringFlee(SteerAverage(v, count), weight);
-        }
-
-        protected virtual Vector2 SteeringAvoid(IEnumerable<Element> elements, double range, double weight = 1)
-        {
-            if (elements.Count() == 0)
-            {
-                return new Vector2(0, 0);
-            }
-            int ytox = 0;
-            Vector2 lineOfSight = range * _direction;
-            double nearest = lineOfSight.Length;
-            Vector2 nearestPos = new Vector2(0, 0);
-            Vector2 r1 = _position + Vector2.Perpendicular(_direction * Radius);
-            Vector2 r2 = r1 + lineOfSight;
-            Vector2 l1 = _position - Vector2.Perpendicular(_direction * Radius);
-            Vector2 l2 = l1 + lineOfSight;
-            foreach (Element e in elements)
-            {
-                if (Vector2.Distance(_position, e.GetPosition()) > e.Radius + range)
-                {
-                    continue;
-                }
-                Vector2 ip;
-                if (e.IntersectsWith(r1, r2, out ip))
-                {
-                    double dist = Vector2.Distance(r1, ip);
-                    if (dist < nearest)
-                    {
-                        nearest = dist;
-                        nearestPos = e.GetPosition();
-                        ytox = 1;
-                    }
-                }
-                if (e.IntersectsWith(l1, l2, out ip))
-                {
-                    double dist = Vector2.Distance(l1, ip);
-                    if (dist < nearest)
-                    {
-                        nearest = dist;
-                        nearestPos = e.GetPosition();
-                        ytox = -1;
-                    }
-                }
-            }
-            return nearest < lineOfSight.Length ? weight * ytox * Vector2.Perpendicular(_position - nearestPos) : new Vector2(0, 0);
-        }
-
-        protected virtual Vector2 SteeringWander(double weight = 10)
-        {
-            return _direction + Angle.Random(weight);
-        }
-
-        protected virtual Vector2 SteeringSeparation(IEnumerable<Element> elements, double weight = 1)
-        {
-            return SteeringCohesion(elements, -weight);
-        }
-
-        protected virtual Vector2 SteeringCohesion(IEnumerable<Element> elements, double weight = 1)
-        {
-            Vector2 x = Vector2.Zero;
-            foreach (Element e in elements)
-            {
-                x += Vector2.Normalized(e.GetPosition() - _position);
-            }
-            return weight * SteerAverage(x, elements.Count());
-        }
-
-        protected virtual Vector2 SteeringAlignment(IEnumerable<Element> elements, double weight = 1)
-        {
-            Vector2 x = Vector2.Zero;
-            foreach (Element e in elements)
-            {
-                x += e.GetDirection();
-            }
-            return weight * SteerAverage(x, elements.Count());
-        }
-
-        protected virtual double SteeringAdjustSpeed(IEnumerable<Element> elements, double weight = 1)
-        {
-            int count = elements.Count();
-            if (count == 0)
-            {
-                return _dSpeed;
-            }
-            double x = 0;
-            foreach (Element e in elements)
-            {
-                x += e.GetSpeed();
-            }
-            return weight * x / count;
-        }
-
-        protected virtual Vector2 SteerAverage(Vector2 vector, int count)
-        {
-            //return vector;
-            //return Vector2.Normalized(vector);
-            return count > 0 ? vector / count : vector;
-        }
-        
-        #endregion
-
-        #region Abstract Methods
-
-        public abstract void SetModifiers(params double[] values);
 
         protected abstract void ApplyRules(IEnumerable<Element> locals);
+
+        protected abstract void EnableSteering();
 
         #endregion
     }

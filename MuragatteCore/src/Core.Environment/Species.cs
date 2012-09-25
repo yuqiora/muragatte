@@ -15,7 +15,7 @@ using System.Text;
 
 namespace Muragatte.Core.Environment
 {
-    public class Species : Storage.ISpareItem
+    public class Species
     {
         #region Statics
 
@@ -35,7 +35,6 @@ namespace Muragatte.Core.Environment
         private string _sFullName = null;
         private Species _ancestor = null;
         private Dictionary<Species, ElementNature> _relationships = new Dictionary<Species, ElementNature>();
-        protected object _item = null;
 
         #endregion
 
@@ -78,12 +77,6 @@ namespace Muragatte.Core.Environment
         public Species Ancestor
         {
             get { return _ancestor; }
-        }
-
-        public object Item
-        {
-            get { return _item; }
-            set { _item = value; }
         }
 
         #endregion
@@ -137,18 +130,6 @@ namespace Muragatte.Core.Environment
         public Species CreateSubSpecies(string name)
         {
             return new Species(name, this);
-        }
-
-        public T GetItemAs<T>() where T : class
-        {
-            if (_ancestor != null && _item == null)
-            {
-                return _ancestor.GetItemAs<T>();
-            }
-            else
-            {
-                return _item is T ? (T)_item : null;
-            }
         }
 
         public bool Equals(Species s)

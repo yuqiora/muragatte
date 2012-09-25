@@ -8,6 +8,9 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 // ------------------------------------------------------------------------
 
+/*  O B S O L E T E  */
+
+/*
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,3 +25,4 @@ namespace Muragatte.Core.Storage
         T GetItemAs<T>() where T : class;
     }
 }
+*/

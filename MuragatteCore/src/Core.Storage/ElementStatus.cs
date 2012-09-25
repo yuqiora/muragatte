@@ -27,14 +27,13 @@ namespace Muragatte.Core.Storage
         private bool _bEnabled;
         private int _iSpeciesID;
         private int _iGroupID;
-        private double[] _dModifiers = null;
+        private List<double> _modifiers = null;
 
         #endregion
 
         #region Constructors
 
-        public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, int speciesID, int groupID)
+        public ElementStatus(int elementID, Vector2 position, Vector2 direction, double speed, bool enabled, int speciesID, int groupID)
         {
             _iElementID = elementID;
             _position = position;
@@ -46,10 +45,10 @@ namespace Muragatte.Core.Storage
         }
 
         public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, int speciesID, int groupID, params double[] modifiers)
+            double speed, bool enabled, int speciesID, int groupID, IEnumerable<double> modifiers)
             : this(elementID, position, direction, speed, enabled, speciesID, groupID)
         {
-            _dModifiers = modifiers;
+            _modifiers = modifiers == null ? null : new List<double>(modifiers);
         }
 
         #endregion
@@ -91,9 +90,9 @@ namespace Muragatte.Core.Storage
             get { return _iGroupID; }
         }
 
-        public double[] Modifiers
+        public List<double> Modifiers
         {
-            get { return _dModifiers; }
+            get { return _modifiers; }
         }
 
         #endregion
@@ -102,12 +101,12 @@ namespace Muragatte.Core.Storage
 
         private string ModifiersToString()
         {
-            if (_dModifiers == null)
+            if (_modifiers == null)
             {
                 return "";
             }
             StringBuilder sb = new StringBuilder();
-            foreach (double mod in _dModifiers)
+            foreach (double mod in _modifiers)
             {
                 sb.AppendFormat(" {0}", mod);
             }

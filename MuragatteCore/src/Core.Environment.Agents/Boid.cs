@@ -13,67 +13,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
+using Muragatte.Core.Environment.SteeringUtils;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class Boid : Agent
+    public class BoidAgent : Agent
     {
-        #region Fields
-
-        protected double _dWeightSeparation = 1;
-        protected double _dWeightCohesion = 1;
-        protected double _dWeightAlignment = 1;
-
-        #endregion
-
         #region Constructors
 
-        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle)
-            : base(model, fieldOfView, turningAngle) { }
+        public BoidAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(model, fieldOfView, turningAngle, args) { }
 
-        public Boid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
-            double wSeparation, double wCohesion, double wAlignment)
-            : base(model, fieldOfView, turningAngle)
-        {
-            _dWeightSeparation = wSeparation;
-            _dWeightCohesion = wCohesion;
-            _dWeightAlignment = wAlignment;
-        }
-
-        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle)
-            : base(model, position, direction, speed, fieldOfView, turningAngle) { }
-
-        public Boid(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle,
-            double wSeparation, double wCohesion, double wAlignment)
-            : base(model, position, direction, speed, fieldOfView, turningAngle)
-        {
-            _dWeightSeparation = wSeparation;
-            _dWeightCohesion = wCohesion;
-            _dWeightAlignment = wAlignment;
-        }
+        public BoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction,
+            double speed, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(model, position, direction, speed, fieldOfView, turningAngle, args) { }
 
         #endregion
 
         #region Properties
 
-        public double WeightSeparation
+        public double SeparationWeight
         {
-            get { return _dWeightSeparation; }
-            set { _dWeightSeparation = value; }
+            get { return Separation.Weight; }
+            set
+            {
+                Separation.Weight = value;
+                _args.Modifiers[SeparationSteering.LABEL] = value;
+            }
         }
 
-        public double WeightCohesion
+        public double CohesionWeight
         {
-            get { return _dWeightCohesion; }
-            set { _dWeightCohesion = value; }
+            get { return Cohesion.Weight; }
+            set
+            {
+                Cohesion.Weight = value;
+                _args.Modifiers[CohesionSteering.LABEL] = value;
+            }
         }
 
-        public double WeightAlignment
+        public double AlignmentWeight
         {
-            get { return _dWeightAlignment; }
-            set { _dWeightAlignment = value; }
+            get { return Alignment.Weight; }
+            set
+            {
+                Alignment.Weight = value;
+                _args.Modifiers[AlignmentSteering.LABEL] = value;
+            }
+        }
+
+        protected Steering Separation
+        {
+            get { return _steering[SeparationSteering.LABEL]; }
+        }
+
+        protected Steering Cohesion
+        {
+            get { return _steering[CohesionSteering.LABEL]; }
+        }
+
+        protected Steering Alignment
+        {
+            get { return _steering[AlignmentSteering.LABEL]; }
         }
 
         #endregion
@@ -95,28 +96,18 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = SteeringSeparation(locals, _dWeightSeparation) +
-                SteeringCohesion(locals, _dWeightCohesion) +
-                SteeringAlignment(locals, _dWeightAlignment);
+            Vector2 dirDelta = Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
             //noise temporary, might need further work
             _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(2));
             ProperDirection();
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
-        public override void SetModifiers(params double[] values)
+        protected override void EnableSteering()
         {
-            if (values.Length >= 3)
-            {
-                ChangeModifier(ref _dWeightSeparation, values[0]);
-                ChangeModifier(ref _dWeightCohesion, values[1]);
-                ChangeModifier(ref _dWeightAlignment, values[2]);
-            }
-        }
-
-        public override Storage.ElementStatus ReportStatus()
-        {
-            return ReportStatus(_dWeightSeparation, _dWeightCohesion, _dWeightAlignment);
+            AddSteering(new SeparationSteering(this, _args.Modifiers[SeparationSteering.LABEL]));
+            AddSteering(new CohesionSteering(this, _args.Modifiers[CohesionSteering.LABEL]));
+            AddSteering(new AlignmentSteering(this, _args.Modifiers[AlignmentSteering.LABEL]));
         }
 
         #endregion
@@ -124,47 +115,86 @@ namespace Muragatte.Core.Environment.Agents
 
     //temporary
     //base for the one used in thesis experiments
-    public class AdvancedBoid : Boid
+    public class AdvancedBoidAgent : BoidAgent
     {
-        private Goal _goal = null;
-        private double _dAssertivity = 0.5;
-        private Neighbourhood _personalArea = null;
-
         #region Constructors
 
-        public AdvancedBoid(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
-            Goal goal, double assertivity, Neighbourhood personalArea)
-            : base(model, fieldOfView, turningAngle)
+        public AdvancedBoidAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(model, fieldOfView, turningAngle, args)
         {
-            _goal = goal;
-            _dAssertivity = assertivity;
-            _personalArea = personalArea;
-            _personalArea.Source = this;
+            _args.SetNeighbourhoodOwner(this);
         }
 
-        public AdvancedBoid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, Goal goal, double assertivity, Neighbourhood personalArea)
-            : base(model, position, direction, speed, fieldOfView, turningAngle)
+        public AdvancedBoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(model, position, direction, speed, fieldOfView, turningAngle, args)
         {
-            _goal = goal;
-            _dAssertivity = assertivity;
-            _personalArea = personalArea;
-            _personalArea.Source = this;
+            _args.SetNeighbourhoodOwner(this);
         }
 
         #endregion
 
+        #region Properties
+
         public Goal Goal
         {
-            get { return _goal; }
-            set { _goal = value; }
+            get { return _args.Goal; }
+            set { _args.Goal = value; }
+        }
+
+        public Neighbourhood PersonalArea
+        {
+            get { return _args.Neighbourhoods[AdvancedBoidAgentArgs.NEIGH_PERSONAL_AREA]; }
         }
 
         public double Assertivity
         {
-            get { return _dAssertivity; }
-            set { _dAssertivity = value; }
+            get { return _args.Modifiers[AdvancedBoidAgentArgs.MOD_ASSERTIVITY]; }
+            set
+            {
+                Seek.Weight = value;
+                _args.Modifiers[AdvancedBoidAgentArgs.MOD_ASSERTIVITY] = value;
+            }
         }
+
+        public double AvoidWeight
+        {
+            get { return Avoid.Weight; }
+            set
+            {
+                Avoid.Weight = value;
+                _args.Modifiers[ObstacleAvoidanceSteering.LABEL] = value;
+            }
+        }
+
+        public double WanderWeight
+        {
+            get { return Wander.Weight; }
+            set
+            {
+                Wander.Weight = value;
+                _args.Modifiers[WanderSteering.LABEL] = value;
+            }
+        }
+
+        protected Steering Avoid
+        {
+            get { return _steering[ObstacleAvoidanceSteering.LABEL]; }
+        }
+
+        protected Steering Seek
+        {
+            get { return _steering[SeekSteering.LABEL]; }
+        }
+
+        protected Steering Wander
+        {
+            get { return _steering[WanderSteering.LABEL]; }
+        }
+
+        #endregion
+
+        #region Methods
 
         public override void Update()
         {
@@ -178,8 +208,8 @@ namespace Muragatte.Core.Environment.Agents
             Vector2 dirDelta = Vector2.Zero;
             IEnumerable<Element> companions = locals.Where(e => RelationshipWith(e) == ElementNature.Companion);
             IEnumerable<Element> obstacles = locals.Where(e => RelationshipWith(e) == ElementNature.Obstacle);
-            IEnumerable<Element> tooClose = _personalArea.Within(companions);
-            Vector2 avoid = SteeringAvoid(obstacles, VisibleRange);
+            IEnumerable<Element> tooClose = PersonalArea.Within(companions);
+            Vector2 avoid = Avoid.Steer(obstacles);
             if (!avoid.IsZero)
             {
                 dirDelta = avoid;
@@ -188,22 +218,21 @@ namespace Muragatte.Core.Environment.Agents
             {
                 if (tooClose.Count() > 0)
                 {
-                    dirDelta = SteeringSeparation(tooClose);    
+                    dirDelta = Separation.Steer(tooClose);
                 }
                 else
                 {
                     if (companions.Count() > 0)
                     {
-                        dirDelta = SteeringCohesion(companions) + SteeringAlignment(companions);
-                        //dirDelta = SteeringSeparation(companions, 0.5) + SteeringCohesion(companions) + SteeringAlignment(companions);
-                        if (_goal != null)
+                        dirDelta = Cohesion.Steer(companions) + Alignment.Steer(companions);
+                        if (Goal != null)
                         {
-                            dirDelta += SteeringSeek(_goal, _dAssertivity);
+                            dirDelta += Seek.Steer(Goal);
                         }
                     }
                     else
                     {
-                        dirDelta = _goal == null ? SteeringWander() : SteeringSeek(_goal, _dAssertivity);
+                        dirDelta = Goal == null ? Wander.Steer() : Seek.Steer(Goal);
                     }
                 }
             }
@@ -214,5 +243,14 @@ namespace Muragatte.Core.Environment.Agents
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
+        protected override void EnableSteering()
+        {
+            base.EnableSteering();
+            AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
+            AddSteering(new SeekSteering(this, _args.Modifiers[AdvancedBoidAgentArgs.MOD_ASSERTIVITY]));
+            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL]));
+        }
+
+        #endregion
     }
 }

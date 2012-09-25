@@ -28,14 +28,20 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public AreaGoal(MultiAgentSystem model, double width, double height)
-            : base(model)
+            : this(IdCounter.Next(), model, width, height) { }
+
+        public AreaGoal(MultiAgentSystem model, Vector2 position, double width, double height)
+            : this(IdCounter.Next(), model, position, width, height) { }
+
+        public AreaGoal(int id, MultiAgentSystem model, double width, double height)
+            : base(id, model)
         {
             _dWidth = width;
             _dHeight = height;
         }
 
-        public AreaGoal(MultiAgentSystem model, Vector2 position, double width, double height)
-            : base(model, position)
+        public AreaGoal(int id, MultiAgentSystem model, Vector2 position, double width, double height)
+            : base(id, model, position)
         {
             _dWidth = width;
             _dHeight = height;
