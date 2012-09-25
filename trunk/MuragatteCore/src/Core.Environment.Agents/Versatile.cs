@@ -13,156 +13,187 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
+using Muragatte.Core.Environment.SteeringUtils;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class Versatile : Agent
+    public class VersatileAgent : Agent
     {
-        #region Fields
-
-        protected double _dAltSpeed = 1;
-        protected Goal _goal = null;
-        protected Neighbourhood _personalArea = null;
-        protected bool _bAdjustSpeed = true;
-        protected double _dAssertivity = 0.5;
-        protected double _dCredibility = 1;
-        protected double _dWeightSeparation = 1;
-        protected double _dWeightCohesion = 1;
-        protected double _dWeightAlignment = 1;
-        protected double _dWeightAvoid = 1;
-        protected double _dWeightSeekPursuit = 1;
-        protected double _dWeightFleeEvasion = 1;
-        protected double _dWeightAdjustSpeed = 1;
-        protected double _dWanderRate = 10;
-
-        #endregion
-
         #region Constructors
 
-        public Versatile(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
-            Goal goal, Neighbourhood personalArea, bool adjustSpeed, double assertivity, double credibility)
-            : base(model, fieldOfView, turningAngle)
+        public VersatileAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
+            : base(model, fieldOfView, turningAngle, args)
         {
-            _goal = goal;
-            _personalArea = personalArea;
-            _personalArea.Source = this;
-            _bAdjustSpeed = adjustSpeed;
-            _dAssertivity = assertivity;
-            _dCredibility = credibility;
+            args.SetNeighbourhoodOwner(this);
         }
 
-        public Versatile(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, Goal goal, Neighbourhood personalArea,
-            bool adjustSpeed, double assertivity, double credibility)
-            : this(model, fieldOfView, turningAngle, goal, personalArea, adjustSpeed, assertivity, credibility)
+        public VersatileAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
+            : base(model, position, direction, speed, fieldOfView, turningAngle, args)
         {
-            _position = position;
-            _direction = direction;
-            _dSpeed = speed;
+            args.SetNeighbourhoodOwner(this);
         }
 
-        public Versatile(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
-            Goal goal, Neighbourhood personalArea, bool adjustSpeed, double assertivity, double credibility,
-            double wSeparation, double wCohesion, double wAlignment, double wAvoid, double wSeekPursuit,
-            double wFleeEvasion, double wAdjustSpeed, double wanderRate)
-            : this(model, fieldOfView, turningAngle, goal, personalArea, adjustSpeed, assertivity, credibility)
-        {
-            _dWeightSeparation = wSeparation;
-            _dWeightCohesion = wCohesion;
-            _dWeightAlignment = wAlignment;
-            _dWeightAvoid = wAvoid;
-            _dWeightSeekPursuit = wSeekPursuit;
-            _dWeightFleeEvasion = wFleeEvasion;
-            _dWeightAdjustSpeed = wAdjustSpeed;
-            _dWanderRate = wanderRate;
-        }
-
-        public Versatile(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, Goal goal, Neighbourhood personalArea, bool adjustSpeed,
-            double assertivity, double credibility, double wSeparation, double wCohesion, double wAlignment,
-            double wAvoid, double wSeekPursuit, double wFleeEvasion, double wAdjustSpeed, double wanderRate)
-            : this(model, fieldOfView, turningAngle, goal, personalArea, adjustSpeed, assertivity, credibility,
-            wSeparation, wCohesion, wAlignment, wAvoid, wSeekPursuit, wFleeEvasion, wAdjustSpeed, wanderRate)
-        {
-            _position = position;
-            _direction = direction;
-            _dSpeed = speed;
-        }
-        
         #endregion
 
         #region Properties
 
         public Goal Goal
         {
-            get { return _goal; }
-            set { _goal = value; }
+            get { return _args.Goal; }
+            set { _args.Goal = value; }
+        }
+
+        public Neighbourhood PersonalArea
+        {
+            get { return _args.Neighbourhoods[VersatileAgentArgs.NEIGH_PERSONAL_AREA]; }
         }
 
         public double Assertivity
         {
-            get { return _dAssertivity; }
-            set { _dAssertivity = value; }
+            get { return _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVITY]; }
+            set { _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVITY] = value; }
         }
 
         public double Credibility
         {
-            get { return _dCredibility; }
-            set { _dCredibility = value; }
+            get { return _args.Modifiers[VersatileAgentArgs.MOD_CREDIBILITY]; }
+            set { _args.Modifiers[VersatileAgentArgs.MOD_CREDIBILITY] = value; }
         }
 
-        public double WeightSeparation
+        public double SeparationWeight
         {
-            get { return _dWeightSeparation; }
-            set { _dWeightSeparation = value; }
+            get { return Separation.Weight; }
+            set
+            {
+                Separation.Weight = value;
+                _args.Modifiers[SeparationSteering.LABEL] = value;
+            }
         }
 
-        public double WeightCohesion
+        public double CohesionWeight
         {
-            get { return _dWeightCohesion; }
-            set { _dWeightCohesion = value; }
+            get { return Cohesion.Weight; }
+            set
+            {
+                Cohesion.Weight = value;
+                _args.Modifiers[CohesionSteering.LABEL] = value;
+            }
         }
 
-        public double WeightAlignment
+        public double AlignmentWeight
         {
-            get { return _dWeightAlignment; }
-            set { _dWeightAlignment = value; }
+            get { return Alignment.Weight; }
+            set
+            {
+                Alignment.Weight = value;
+                _args.Modifiers[AlignmentSteering.LABEL] = value;
+            }
         }
 
-        public double WeightAvoid
+        public double ObstacleAvoidanceWeight
         {
-            get { return _dWeightAvoid; }
-            set { _dWeightAvoid = value; }
+            get { return Avoid.Weight; }
+            set
+            {
+                Avoid.Weight = value;
+                _args.Modifiers[ObstacleAvoidanceSteering.LABEL] = value;
+            }
         }
 
-        public double WeightSeekPursuit
+        public double SeekWeight
         {
-            get { return _dWeightSeekPursuit; }
-            set { _dWeightSeekPursuit = value; }
+            get { return Seek.Weight; }
+            set
+            {
+                Seek.Weight = value;
+                _args.Modifiers[SeekSteering.LABEL] = value;
+            }
         }
 
-        public double WeightFleeEvasion
+        public double FleeWeight
         {
-            get { return _dWeightFleeEvasion; }
-            set { _dWeightFleeEvasion = value; }
+            get { return Flee.Weight; }
+            set
+            {
+                Flee.Weight = value;
+                _args.Modifiers[FleeSteering.LABEL] = value;
+            }
         }
 
-        public double WeightAdjustSpeed
+        public double PursuitWeight
         {
-            get { return _dWeightAdjustSpeed; }
-            set { _dWeightAdjustSpeed = value; }
+            get { return Pursuit.Weight; }
+            set
+            {
+                Pursuit.Weight = value;
+                _args.Modifiers[PursuitSteering.LABEL] = value;
+            }
         }
 
-        public double WanderRate
+        public double EvasionWeight
         {
-            get { return _dWanderRate; }
-            set { _dWanderRate = value; }
+            get { return Evasion.Weight; }
+            set
+            {
+                Evasion.Weight = value;
+                _args.Modifiers[EvasionSteering.LABEL] = value;
+            }
         }
 
-        public bool IsSpeedAdjustable
+        public double WanderWeight
         {
-            get { return _bAdjustSpeed; }
-            set { _bAdjustSpeed = value; }
+            get { return Wander.Weight; }
+            set
+            {
+                Wander.Weight = value;
+                _args.Modifiers[WanderSteering.LABEL] = value;
+            }
+        }
+
+        protected Steering Separation
+        {
+            get { return _steering[SeparationSteering.LABEL]; }
+        }
+
+        protected Steering Cohesion
+        {
+            get { return _steering[CohesionSteering.LABEL]; }
+        }
+
+        protected Steering Alignment
+        {
+            get { return _steering[AlignmentSteering.LABEL]; }
+        }
+
+        protected Steering Avoid
+        {
+            get { return _steering[ObstacleAvoidanceSteering.LABEL]; }
+        }
+
+        protected Steering Seek
+        {
+            get { return _steering[SeekSteering.LABEL]; }
+        }
+
+        protected Steering Flee
+        {
+            get { return _steering[FleeSteering.LABEL]; }
+        }
+
+        protected Steering Pursuit
+        {
+            get { return _steering[PursuitSteering.LABEL]; }
+        }
+
+        protected Steering Evasion
+        {
+            get { return _steering[EvasionSteering.LABEL]; }
+        }
+
+        protected Steering Wander
+        {
+            get { return _steering[WanderSteering.LABEL]; }
         }
 
         #endregion
@@ -171,27 +202,7 @@ namespace Muragatte.Core.Environment.Agents
 
         public override Vector2 GetDirection()
         {
-            return _dCredibility * _direction;
-        }
-
-        public override void SetModifiers(params double[] values)
-        {
-            if (values.Length >= 11)
-            {
-                ChangeModifier(ref _dAssertivity, values[0]);
-                ChangeModifier(ref _dCredibility, values[1]);
-                ChangeModifier(ref _dWeightSeparation, values[2]);
-                ChangeModifier(ref _dWeightCohesion, values[3]);
-                ChangeModifier(ref _dWeightAlignment, values[4]);
-                ChangeModifier(ref _dWeightAvoid, values[5]);
-                ChangeModifier(ref _dWeightSeekPursuit, values[6]);
-                ChangeModifier(ref _dWeightFleeEvasion, values[7]);
-                ChangeModifier(ref _dWeightAdjustSpeed, values[8]);
-                ChangeModifier(ref _dWanderRate, values[9]);
-                double tmp = _bAdjustSpeed ? 1 : 0;
-                ChangeModifier(ref tmp, values[10]);
-                _bAdjustSpeed = tmp != 0;
-            }
+            return Credibility * _direction;
         }
 
         protected override void ApplyRules(IEnumerable<Element> locals)
@@ -221,14 +232,14 @@ namespace Muragatte.Core.Environment.Agents
                         continue;
                 }
             }
-            IEnumerable<Element> tooClose = _personalArea.Within(companions);
+            IEnumerable<Element> tooClose = PersonalArea.Within(companions);
             if (threats.Count > 0)
             {
-                dirDelta = SteeringFleeOrEvasion(threats, _dWeightFleeEvasion);
+                dirDelta = Evasion.Steer(threats);
             }
             else
             {
-                Vector2 avoid = SteeringAvoid(obstacles, VisibleRange, _dWeightAvoid);
+                Vector2 avoid = Avoid.Steer(obstacles);
                 if (!avoid.IsZero)
                 {
                     dirDelta = avoid;
@@ -237,24 +248,21 @@ namespace Muragatte.Core.Environment.Agents
                 {
                     if (tooClose.Count() > 0)
                     {
-                        dirDelta = SteeringSeparation(tooClose, _dWeightSeparation);
+                        dirDelta = Separation.Steer(tooClose);
                     }
                     else
                     {
                         if (companions.Count + goals.Count > 0)
                         {
-                            dirDelta = //SteeringSeparation(companions, _dWeightSeparation / 2) +
-                                SteeringCohesion(companions, _dWeightCohesion) +
-                                SteeringAlignment(companions, _dWeightAlignment) +
-                                SteeringSeekOrPursuit(goals, _dWeightSeekPursuit);
-                            if (_goal != null)
+                            dirDelta = Cohesion.Steer(companions) + Alignment.Steer(companions) + Pursuit.Steer(goals);
+                            if (Goal != null)
                             {
-                                dirDelta += SteeringSeek(_goal, _dAssertivity);
+                                dirDelta += Seek.Steer(Goal, Assertivity);
                             }
                         }
                         else
                         {
-                            dirDelta = _goal == null ? SteeringWander(_dWanderRate) : SteeringSeek(_goal, _dAssertivity);
+                            dirDelta = Goal == null ? Wander.Steer() : Seek.Steer(Goal, Assertivity);
                         }
                     }
                 }
@@ -262,8 +270,7 @@ namespace Muragatte.Core.Environment.Agents
             dirDelta.Normalize();
             _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(1));
             ProperDirection();
-            _dAltSpeed = _bAdjustSpeed ? SteeringAdjustSpeed(companions, _dWeightAdjustSpeed) : _dSpeed;
-            _altPosition = _position + _dAltSpeed * _model.TimePerStep * _altDirection;
+            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 
         public override void Update()
@@ -277,14 +284,19 @@ namespace Muragatte.Core.Environment.Agents
         {
             Position = _model.Region.Outside(_altPosition);
             _direction = _altDirection;
-            _dSpeed = _dAltSpeed;
         }
 
-        public override Storage.ElementStatus ReportStatus()
+        protected override void EnableSteering()
         {
-            return ReportStatus(_bAdjustSpeed ? 1 : 0, _dAssertivity, _dCredibility,
-                _dWeightSeparation, _dWeightCohesion, _dWeightAlignment, _dWeightAvoid,
-                _dWeightSeekPursuit, _dWeightFleeEvasion, _dWeightAdjustSpeed, _dWanderRate);
+            AddSteering(new SeparationSteering(this, _args.Modifiers[SeparationSteering.LABEL]));
+            AddSteering(new CohesionSteering(this, _args.Modifiers[CohesionSteering.LABEL]));
+            AddSteering(new AlignmentSteering(this, _args.Modifiers[AlignmentSteering.LABEL]));
+            AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
+            AddSteering(new SeekSteering(this, _args.Modifiers[SeekSteering.LABEL]));
+            AddSteering(new FleeSteering(this, _args.Modifiers[FleeSteering.LABEL]));
+            AddSteering(new PursuitSteering(this, _args.Modifiers[PursuitSteering.LABEL]));
+            AddSteering(new EvasionSteering(this, _args.Modifiers[EvasionSteering.LABEL]));
+            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL]));
         }
 
         #endregion

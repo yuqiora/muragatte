@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Core.Storage;
 using Muragatte.Visual.Styles;
 
 namespace Muragatte.Thesis
@@ -21,12 +22,14 @@ namespace Muragatte.Thesis
         #region Fields
 
         private string _sName = null;
-        private string _sDirectory = null;
+        private string _sPath = null;
         private int _iRepeatCount = 1;
         private int _iLength = 1;
-        //instance list / current instance
+        private List<Instance> _instances = new List<Instance>();
+        private SpeciesCollection _species = new SpeciesCollection();
         private List<Style> _styles = new List<Style>();
         private bool _bComplete = false;
+        private ExperimentResults _results = null;
 
         #endregion
 
@@ -68,6 +71,14 @@ namespace Muragatte.Thesis
             }
         }
 
+        //create new instance
+
         #endregion
     }
+
+    public class ExperimentResults { }
+
+    public class Instance { }
+
+    public class InstanceResults { }
 }

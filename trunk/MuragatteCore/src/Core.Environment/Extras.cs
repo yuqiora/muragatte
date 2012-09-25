@@ -20,17 +20,17 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public Extras(MultiAgentSystem model, bool stationary)
-           : base(model)
-        {
-            _bStationary = stationary;
-        }
+        public Extras(MultiAgentSystem model)
+            : base(model) { }
 
-        public Extras(MultiAgentSystem model, Vector2 position, bool stationary)
-            : base(model, position)
-        {
-            _bStationary = stationary;
-        }
+        public Extras(MultiAgentSystem model, Vector2 position)
+            : base(model, position) { }
+
+        public Extras(int id, MultiAgentSystem model)
+            : base(id, model) { }
+
+        public Extras(int id, MultiAgentSystem model, Vector2 position)
+            : base(id, model, position) { }
 
         #endregion
 
@@ -44,6 +44,11 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("E"); }
+        }
+
+        public override bool IsStationary
+        {
+            get { return true; }
         }
 
         #endregion
@@ -74,13 +79,13 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public AttractSpot(MultiAgentSystem model, double radius = DEFAULT_RADIUS)
-            : base(model, true)
+            : base(model)
         {
             _dRadius = radius;
         }
 
         public AttractSpot(MultiAgentSystem model, Vector2 position, double radius = DEFAULT_RADIUS)
-            : base(model, position, true)
+            : base(model, position)
         {
             _dRadius = radius;
         }

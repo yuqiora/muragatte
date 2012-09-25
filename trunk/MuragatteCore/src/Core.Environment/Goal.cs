@@ -26,6 +26,12 @@ namespace Muragatte.Core.Environment
         public Goal(MultiAgentSystem model, Vector2 position)
             : base(model, position) { }
 
+        public Goal(int id, MultiAgentSystem model)
+            : base(id, model) { }
+
+        public Goal(int id, MultiAgentSystem model, Vector2 position)
+            : base(id, model, position) { }
+
         #endregion
 
         #region Properties
@@ -50,6 +56,11 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("G"); }
+        }
+
+        public override bool IsStationary
+        {
+            get { return true; }
         }
 
         #endregion

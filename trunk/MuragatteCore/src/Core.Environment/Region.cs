@@ -53,11 +53,13 @@ namespace Muragatte.Core.Environment
         public int Width
         {
             get { return _iWidth; }
+            set { _iWidth = value; }
         }
 
         public int Height
         {
             get { return _iHeight; }
+            set { _iHeight = value; }
         }
 
         public bool IsBordered

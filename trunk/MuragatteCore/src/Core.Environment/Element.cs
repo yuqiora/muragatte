@@ -18,7 +18,7 @@ using Muragatte.Core.Storage;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class Element : ISpareItem, INotifyPropertyChanged
+    public abstract class Element : INotifyPropertyChanged
     {
         #region Statics
 
@@ -42,10 +42,8 @@ namespace Muragatte.Core.Environment
         protected int _iElementID = -1;
         protected MultiAgentSystem _model = null;
         protected Vector2 _position = new Vector2(0, 0);
-        protected bool _bStationary = true;
         protected bool _bEnabled = true;
         protected Species _species = null;
-        protected object _item = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -54,13 +52,19 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public Element(MultiAgentSystem model)
+            : this(IdCounter.Next(), model) { }
+
+        public Element(MultiAgentSystem model, Vector2 position)
+            : this(IdCounter.Next(), model, position) { }
+
+        public Element(int id, MultiAgentSystem model)
         {
-            _iElementID = IdCounter.Next();
+            _iElementID = id;
             _model = model;
         }
 
-        public Element(MultiAgentSystem model, Vector2 position)
-            : this(model)
+        public Element(int id, MultiAgentSystem model, Vector2 position)
+            : this(id, model)
         {
             _position = position;
         }
@@ -90,12 +94,6 @@ namespace Muragatte.Core.Environment
             }
         }
 
-        public bool IsStationary
-        {
-            get { return _bStationary; }
-            //set { _bStationary = value; }
-        }
-
         public bool IsEnabled
         {
             get { return _bEnabled; }
@@ -106,12 +104,6 @@ namespace Muragatte.Core.Environment
         {
             get { return _species; }
             set { _species = value; }
-        }
-
-        public object Item
-        {
-            get { return _item; }
-            set { _item = value; }
         }
 
         public virtual Group Group
@@ -137,6 +129,8 @@ namespace Muragatte.Core.Environment
         public abstract ElementNature DefaultNature { get; }
 
         public abstract string Name { get; }
+
+        public abstract bool IsStationary { get; }
 
         #endregion
 
@@ -164,13 +158,13 @@ namespace Muragatte.Core.Environment
 
         protected string ShortDescription()
         {
-            return string.Format("{0}{1}", _iElementID, _bStationary ? "s" : "");
+            return string.Format("{0}{1}", _iElementID, IsStationary ? "s" : "");
         }
 
         protected string LongDescription()
         {
             return string.Format("{0}{1}{2} @({3})",
-                _iElementID, _bStationary ? "s" : "", _bEnabled ? "" : "d", _position);
+                _iElementID, IsStationary ? "s" : "", _bEnabled ? "" : "d", _position);
         }
 
         protected string ToString(string prefix)
@@ -183,18 +177,6 @@ namespace Muragatte.Core.Environment
             return string.Format("{0}-{1}", prefix, ShortDescription());
         }
 
-        public T GetItemAs<T>() where T : class
-        {
-            if (_species != null && _item == null)
-            {
-                return _species.GetItemAs<T>();
-            }
-            else
-            {
-                return _item is T ? (T)_item : null;
-            }
-        }
-
         public Vector2 PredictPositionAfter()
         {
             return PredictPositionAfter((int)Math.Ceiling(1 / _model.TimePerStep));
@@ -202,10 +184,10 @@ namespace Muragatte.Core.Environment
 
         public Vector2 PredictPositionAfter(int steps)
         {
-            return _bStationary || steps == 0 ? GetPosition() : GetPosition() + Speed * _model.TimePerStep * steps * Direction;
+            return IsStationary || steps == 0 ? GetPosition() : GetPosition() + Speed * _model.TimePerStep * steps * Direction;
         }
 
-        protected ElementStatus ReportStatus(params double[] modifiers)
+        protected ElementStatus ReportStatus(IEnumerable<double> modifiers)
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
                 _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID, modifiers);

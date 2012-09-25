@@ -275,7 +275,8 @@ namespace Muragatte.GUI
             for (int i = 0; i < count; i++)
             {
                 Neighbourhood n = new Neighbourhood(fovRange, _boidFOVAngle);
-                Agent a = new Boid(_mas, n, new Angle(60));
+                //Agent a = new BoidAgent(_mas, n, new Angle(60));
+                Agent a = new BoidAgent(_mas, n, new Angle(60), new BoidAgentArgs(1, 1, 1));
                 a.Speed = 1;
                 a.Species = _mas.Species[0];
                 _mas.Elements.Add(a);
@@ -290,7 +291,8 @@ namespace Muragatte.GUI
             {
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, turn, null, 0, n2);
+                //Agent a = new AdvancedBoidAgent(_mas, n, turn, null, 0, n2);
+                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(null, n2, 0, 1, 1, 1, 1, 10));
                 a.Speed = 1.05;
                 a.Species = _mas.Species[0];
                 _mas.Elements.Add(a);
@@ -299,7 +301,8 @@ namespace Muragatte.GUI
             {
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, turn, _goals[0], 0.75, n2);
+                //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[0], 0.75, n2);
+                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(_goals[0], n2, 0.75, 1, 1, 1, 1, 10));
                 a.Speed = 1;
                 a.Species = _mas.Species[1];
                 _mas.Elements.Add(a);
@@ -308,14 +311,15 @@ namespace Muragatte.GUI
             {
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
-                Agent a = new AdvancedBoid(_mas, n, turn, _goals[1], 1, n2);
+                //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[1], 1, n2);
+                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(_goals[1], n2, 1, 1, 1, 1, 1, 10));
                 a.Speed = 0.95;
                 a.Species = _mas.Species[2];
                 _mas.Elements.Add(a);
             }
             //Neighbourhood lwn = new CircularNeighbourhood(fovRange, fovAng);
             //lwn.Item = fovImg;
-            //LoneWanderer lw = new LoneWanderer(_mas, lwn, turn, 10, 2);
+            //LoneWandererAgent lw = new LoneWandererAgent(_mas, lwn, turn, 10, 2);
             //lw.Speed = 1;
             //lw.Species = _mas.Species[4];
             //_mas.Elements.Add(lw);

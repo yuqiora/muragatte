@@ -13,50 +13,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
+using Muragatte.Core.Environment.SteeringUtils;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class LoneWanderer : Agent
+    public class LoneWandererAgent : Agent
     {
-        #region Fields
-
-        protected double _dWanderRate;
-        protected double _dAvoidWeight;
-
-        #endregion
-
         #region Constructors
 
-        public LoneWanderer(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle,
-            double wanderRate, double avoidWeight)
-            : base(model, fieldOfView, turningAngle)
-        {
-            _dWanderRate = wanderRate;
-            _dAvoidWeight = avoidWeight;
-        }
+        public LoneWandererAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(model, fieldOfView, turningAngle, args) { }
 
-        public LoneWanderer(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, double wanderRate, double avoidWeight)
-            : base(model, position, direction, speed, fieldOfView, turningAngle)
-        {
-            _dWanderRate = wanderRate;
-            _dAvoidWeight = avoidWeight;
-        }
+        public LoneWandererAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(model, position, direction, speed, fieldOfView, turningAngle, args) { }
 
         #endregion
 
         #region Properties
 
-        public double WanderRate
+        public double WanderWeight
         {
-            get { return _dWanderRate; }
-            set { _dWanderRate = value; }
+            get { return Wander.Weight; }
+            set
+            {
+                Wander.Weight = value;
+                _args.Modifiers[WanderSteering.LABEL] = value;
+            }
         }
 
-        public double AvoidWeight
+        public double ObstacleAvoidanceWeight
         {
-            get { return _dAvoidWeight; }
-            set { _dAvoidWeight = value; }
+            get { return Avoid.Weight; }
+            set
+            {
+                Avoid.Weight = value;
+                _args.Modifiers[ObstacleAvoidanceSteering.LABEL] = value;
+            }
+        }
+
+        protected Steering Wander
+        {
+            get { return _steering[WanderSteering.LABEL]; }
+        }
+
+        protected Steering Avoid
+        {
+            get { return _steering[ObstacleAvoidanceSteering.LABEL]; }
         }
 
         #endregion
@@ -65,10 +68,10 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = SteeringAvoid(locals, VisibleRange, _dAvoidWeight);
+            Vector2 dirDelta = Avoid.Steer(locals);
             if (dirDelta.IsZero)
             {
-                dirDelta = SteeringWander(_dWanderRate);
+                dirDelta = Wander.Steer();
             }
             _altDirection = Vector2.Normalized(_direction + dirDelta);
             ProperDirection();
@@ -88,23 +91,15 @@ namespace Muragatte.Core.Environment.Agents
             _direction = _altDirection;
         }
 
-        public override void SetModifiers(params double[] values)
-        {
-            if (values.Length >= 2)
-            {
-                ChangeModifier(ref _dWanderRate, values[0]);
-                ChangeModifier(ref _dAvoidWeight, values[1]);
-            }
-        }
-
-        public override Storage.ElementStatus ReportStatus()
-        {
-            return ReportStatus(_dWanderRate, _dAvoidWeight);
-        }
-
         protected bool NotIgnoredOrUnknown(ElementNature nature)
         {
             return nature != ElementNature.Ignored && nature != ElementNature.Unknown;
+        }
+
+        protected override void EnableSteering()
+        {
+            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL]));
+            AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
         }
 
         #endregion

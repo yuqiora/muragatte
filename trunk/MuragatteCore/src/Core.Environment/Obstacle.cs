@@ -77,6 +77,11 @@ namespace Muragatte.Core.Environment
             get { return CreateName("O"); }
         }
 
+        public override bool IsStationary
+        {
+            get { return true; }
+        }
+
         #endregion
 
         #region Methods
