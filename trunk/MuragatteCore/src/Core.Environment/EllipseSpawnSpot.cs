@@ -17,13 +17,21 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
 {
-    public enum ElementNature
+    public class EllipseSpawnSpot : SpawnSpot
     {
-        Unknown,
-        Companion,
-        Goal,
-        Obstacle,
-        Threat,
-        Ignored
+        #region Constructors
+
+        public EllipseSpawnSpot(Vector2 position, double width, double height) : base(position, width, height) { }
+
+        #endregion
+
+        #region Methods
+
+        public override Vector2 Respawn(RandomMT random)
+        {
+            return random.Disk(_position, _dWidth, _dHeight);
+        }
+
+        #endregion
     }
 }

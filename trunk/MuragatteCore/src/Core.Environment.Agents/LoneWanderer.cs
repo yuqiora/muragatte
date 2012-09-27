@@ -21,12 +21,19 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public LoneWandererAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
-            : base(model, fieldOfView, turningAngle, args) { }
+        public LoneWandererAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(model, species, fieldOfView, turningAngle, args) { }
 
         public LoneWandererAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
-            : base(model, position, direction, speed, fieldOfView, turningAngle, args) { }
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        public LoneWandererAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(id, model, species, fieldOfView, turningAngle, args) { }
+
+        public LoneWandererAgent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
+            : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
 
         #endregion
 
@@ -73,7 +80,7 @@ namespace Muragatte.Core.Environment.Agents
             {
                 dirDelta = Wander.Steer();
             }
-            _altDirection = Vector2.Normalized(_direction + dirDelta);
+            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
             ProperDirection();
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
@@ -85,12 +92,6 @@ namespace Muragatte.Core.Environment.Agents
             ApplyRules(fov.Where(e => NotIgnoredOrUnknown(RelationshipWith(e))));
         }
 
-        public override void ConfirmUpdate()
-        {
-            Position = _model.Region.Outside(_altPosition);
-            _direction = _altDirection;
-        }
-
         protected bool NotIgnoredOrUnknown(ElementNature nature)
         {
             return nature != ElementNature.Ignored && nature != ElementNature.Unknown;
@@ -98,7 +99,7 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override void EnableSteering()
         {
-            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL]));
+            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL], _model.Random));
             AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
         }
 

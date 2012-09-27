@@ -199,19 +199,6 @@ namespace Muragatte.Common
             return a == b;
         }
 
-        //will be modified accordingly when Muragatte.Random is done
-        //or more likely moved under Random
-
-        public static Angle Random()
-        {
-            return new Angle(Core.Environment.RNGs.Ran2.Gauss());
-        }
-
-        public static Angle Random(double deviation)
-        {
-            return new Angle(Core.Environment.RNGs.Ran2.Gauss(0, deviation));
-        }
-
         #endregion
 
         #region Operators

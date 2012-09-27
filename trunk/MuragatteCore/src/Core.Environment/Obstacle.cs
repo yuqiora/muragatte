@@ -27,18 +27,16 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Obstacle(MultiAgentSystem model, double width, double height)
+        public Obstacle(MultiAgentSystem model, Species species, double width, double height)
             : base(model)
         {
-            _dWidth = width;
-            _dHeight = height;
+            Construct(species, width, height);
         }
 
-        public Obstacle(MultiAgentSystem model, Vector2 position, double width, double height)
+        public Obstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
             : base(model, position)
         {
-            _dWidth = width;
-            _dHeight = height;
+            Construct(species, width, height);
         }
 
         #endregion
@@ -100,6 +98,13 @@ namespace Muragatte.Core.Environment
             return ToString("O");
         }
 
+        protected void Construct(Species species, double width, double height)
+        {
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
+            _dWidth = width;
+            _dHeight = height;
+        }
+
         #endregion
     }
 
@@ -107,17 +112,17 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public EllipseObstacle(MultiAgentSystem model, double size)
-            : base(model, size, size) { }
+        public EllipseObstacle(MultiAgentSystem model, Species species, double size)
+            : base(model, species, size, size) { }
 
-        public EllipseObstacle(MultiAgentSystem model, double width, double height)
-            : base(model, width, height) { }
+        public EllipseObstacle(MultiAgentSystem model, Species species, double width, double height)
+            : base(model, species, width, height) { }
 
-        public EllipseObstacle(MultiAgentSystem model, Vector2 position, double size)
-            : base(model, position, size, size) { }
+        public EllipseObstacle(MultiAgentSystem model, Vector2 position, Species species, double size)
+            : base(model, position, species, size, size) { }
 
-        public EllipseObstacle(MultiAgentSystem model, Vector2 position, double width, double height)
-            : base(model, position, width, height) { }
+        public EllipseObstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(model, position, species, width, height) { }
 
         #endregion
 
@@ -140,17 +145,17 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public RectangleObstacle(MultiAgentSystem model, double size)
-            : base(model, size, size) { }
+        public RectangleObstacle(MultiAgentSystem model, Species species, double size)
+            : base(model, species, size, size) { }
 
-        public RectangleObstacle(MultiAgentSystem model, double width, double height)
-            : base(model, width, height) { }
+        public RectangleObstacle(MultiAgentSystem model, Species species, double width, double height)
+            : base(model, species, width, height) { }
 
-        public RectangleObstacle(MultiAgentSystem model, Vector2 position, double size)
-            : base(model, position, size, size) { }
+        public RectangleObstacle(MultiAgentSystem model, Vector2 position, Species species, double size)
+            : base(model, position, species, size, size) { }
 
-        public RectangleObstacle(MultiAgentSystem model, Vector2 position, double width, double height)
-            : base(model, position, width, height) { }
+        public RectangleObstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(model, position, species, width, height) { }
 
         #endregion
 

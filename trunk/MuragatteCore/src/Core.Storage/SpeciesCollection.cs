@@ -19,7 +19,19 @@ namespace Muragatte.Core.Storage
 {
     public class SpeciesCollection : Dictionary<int, Species>, INotifyCollectionChanged
     {
+        #region Constants
+
+        public const string DEFAULT_AGENTS_LABEL = "Agents";
+        public const string DEFAULT_GOALS_LABEL = "Goals";
+        public const string DEFAULT_OBSTACLES_LABEL = "Obstacles";
+        public const string DEFAULT_CENTROIDS_LABEL = "Centroids";
+        public const string DEFAULT_EXTRAS_LABEL = "Extras";
+
+        #endregion
+
         #region Fields
+
+        private Dictionary<string, Species> _defaults = new Dictionary<string, Species>();
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -27,7 +39,10 @@ namespace Muragatte.Core.Storage
 
         #region Constructors
 
-        public SpeciesCollection() : base() { }
+        public SpeciesCollection(bool withDefaults = false) : base()
+        {
+            if (withDefaults) CreateDefaultSpecies();
+        }
 
         public SpeciesCollection(IDictionary<int, Species> dictionary) : base(dictionary) { }
 
@@ -48,6 +63,24 @@ namespace Muragatte.Core.Storage
         {
             get { return base[key]; }
             set { }
+        }
+
+        public Species this[string key]
+        {
+            get
+            {
+                Species s;
+                if (!_defaults.TryGetValue(key, out s))
+                {
+                    s = null;
+                }
+                return s;
+            }
+        }
+
+        public bool HasDefaults
+        {
+            get { return _defaults.Count > 0; }
         }
 
         #endregion
@@ -79,6 +112,7 @@ namespace Muragatte.Core.Storage
             if (TryGetValue(key, out s))
             {
                 base.Remove(key);
+                _defaults.Remove(s.Name);
                 NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, s);
                 return true;
             }
@@ -91,6 +125,7 @@ namespace Muragatte.Core.Storage
         public new void Clear()
         {
             base.Clear();
+            _defaults.Clear();
             NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
         }
 
@@ -100,6 +135,25 @@ namespace Muragatte.Core.Storage
             {
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
             }
+        }
+
+        public void CreateDefaultSpecies()
+        {
+            if (_defaults.Count == 0)
+            {
+                CreateDefaultSpecies(DEFAULT_AGENTS_LABEL);
+                CreateDefaultSpecies(DEFAULT_GOALS_LABEL);
+                CreateDefaultSpecies(DEFAULT_OBSTACLES_LABEL);
+                CreateDefaultSpecies(DEFAULT_CENTROIDS_LABEL);
+                CreateDefaultSpecies(DEFAULT_EXTRAS_LABEL);
+            }
+        }
+
+        private void CreateDefaultSpecies(string name)
+        {
+            Species s = new Species(name);
+            _defaults.Add(name, s);
+            Add(s);
         }
 
         #endregion

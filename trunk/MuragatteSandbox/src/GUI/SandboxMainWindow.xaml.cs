@@ -27,6 +27,7 @@ using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Environment.Agents;
 using Muragatte.Core.Storage;
+using Muragatte.Random;
 using Muragatte.Sandbox;
 using Muragatte.Visual;
 
@@ -54,8 +55,14 @@ namespace Muragatte.GUI
         private bool _bPlaying = false;
         private List<Goal> _goals = new List<Goal>();
         private List<Obstacle> _obstacles = new List<Obstacle>();
+        private RandomMT _random;
 
         private Angle _boidFOVAngle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
+        private Species _boids = null;
+        private Species _guides = null;
+        private Species _intruders = null;
+        private SpawnSpot _scatteredSpawn = null;
+        private SpawnSpot _groupedSpawn = null;
 
         private BackgroundWorker _worker = new BackgroundWorker();
 
@@ -70,6 +77,7 @@ namespace Muragatte.GUI
             _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
             _worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
             _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
+            _random = new RandomMT();
             InitializeComponent();
         }
 
@@ -130,8 +138,10 @@ namespace Muragatte.GUI
             txtSteps.Text = "0";
             int width = int.Parse(txtWidth.Text);
             int height = int.Parse(txtHeight.Text);
+            _scatteredSpawn = new RectangleSpawnSpot(new Vector2(width / 2.0, height / 2.0), width, height);
+            _groupedSpawn = new EllipseSpawnSpot(new Vector2(width / 2.0, height / 2.0), width / 5.0, height / 5.0);
             _mas = new MultiAgentSystem(/*new OrthantNeighbourhoodGraphStorage()/*/ new SimpleBruteForceStorage(), new Region(
-                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), TIME_PER_STEP);
+                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), _random, TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
             if (_visual != null)
             {
@@ -236,8 +246,8 @@ namespace Muragatte.GUI
 
         private void CreateGoals()
         {
-            _goals.Add(new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height)));
-            _goals.Add(new PositionGoal(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height)));
+            _goals.Add(new PositionGoal(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
+            _goals.Add(new PositionGoal(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
             _mas.Elements.Add(_goals);
         }
 
@@ -246,7 +256,7 @@ namespace Muragatte.GUI
             int obstacles = int.Parse(txtObstacles.Text);
             for (int i = 0; i < obstacles; i++)
             {
-                _obstacles.Add(new EllipseObstacle(_mas, Vector2.RandomUniform(_mas.Region.Width, _mas.Region.Height), Math.Round(RNGs.Uniform(10, 30), 2)));
+                _obstacles.Add(new EllipseObstacle(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null, Math.Round(_random.Uniform(10, 30), 2)));
             }
             _mas.Elements.Add(_obstacles);
         }
@@ -255,15 +265,16 @@ namespace Muragatte.GUI
         {
             _mas.Species.Clear();
             Species.ResetIDCounter();
+            _mas.Species.CreateDefaultSpecies();
             int scale = int.Parse(txtScale.Text);
-            Species boids = new Species("Boids");
-            _mas.Species.Add(boids.ID, boids);
-            Species guides = boids.CreateSubSpecies("Guides");
-            _mas.Species.Add(guides.ID, guides);
-            Species intruders = boids.CreateSubSpecies("Intruders");
-            _mas.Species.Add(intruders.ID, intruders);
-            Species centroids = new Species("Centroids");
-            _mas.Species.Add(centroids.ID, centroids);
+            _boids = new Species("Boids");
+            _mas.Species.Add(_boids.ID, _boids);
+            _guides = _boids.CreateSubSpecies("Guides");
+            _mas.Species.Add(_guides.ID, _guides);
+            _intruders = _boids.CreateSubSpecies("Intruders");
+            _mas.Species.Add(_intruders.ID, _intruders);
+            //Species centroids = new Species("Centroids");
+            //_mas.Species.Add(centroids.ID, centroids);
             Species wanderers = new Species("Wanderers");
             _mas.Species.Add(wanderers.ID, wanderers);
             Species versatiles = new Species("Versatiles");
@@ -272,15 +283,20 @@ namespace Muragatte.GUI
 
         private void CreateBoids(int count, double fovRange)
         {
-            for (int i = 0; i < count; i++)
-            {
-                Neighbourhood n = new Neighbourhood(fovRange, _boidFOVAngle);
-                //Agent a = new BoidAgent(_mas, n, new Angle(60));
-                Agent a = new BoidAgent(_mas, n, new Angle(60), new BoidAgentArgs(1, 1, 1));
-                a.Speed = 1;
-                a.Species = _mas.Species[0];
-                _mas.Elements.Add(a);
-            }
+            BoidAgentArchetype ba = new BoidAgentArchetype("Boids", count, StartingPosition(),
+                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(1), _boids, new Neighbourhood(fovRange, _boidFOVAngle), new Angle(60),
+                new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
+            _mas.Elements.Add(ba.CreateAgents(_mas.Elements.Count, _mas));
+            //for (int i = 0; i < count; i++)
+            //{
+            //    Neighbourhood n = new Neighbourhood(fovRange, _boidFOVAngle);
+            //    //Agent a = new BoidAgent(_mas, n, new Angle(60));
+            //    Agent a = new BoidAgent(_mas, _boids, n, new Angle(60), new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
+            //    a.Speed = 1;
+            //    //a.Species = _mas.Species[0];
+            //    _mas.Elements.Add(a);
+            //}
         }
 
         private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, double paRange)
@@ -292,9 +308,9 @@ namespace Muragatte.GUI
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
                 //Agent a = new AdvancedBoidAgent(_mas, n, turn, null, 0, n2);
-                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(null, n2, 0, 1, 1, 1, 1, 10));
+                Agent a = new AdvancedBoidAgent(_mas, _boids, n, turn, new AdvancedBoidAgentArgs(null, n2, 0, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
                 a.Speed = 1.05;
-                a.Species = _mas.Species[0];
+                //a.Species = _mas.Species[0];
                 _mas.Elements.Add(a);
             }
             for (int i = 0; i < guides; i++)
@@ -302,9 +318,9 @@ namespace Muragatte.GUI
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
                 //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[0], 0.75, n2);
-                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(_goals[0], n2, 0.75, 1, 1, 1, 1, 10));
+                Agent a = new AdvancedBoidAgent(_mas, _guides, n, turn, new AdvancedBoidAgentArgs(_goals[0], n2, 0.75, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
                 a.Speed = 1;
-                a.Species = _mas.Species[1];
+                //a.Species = _mas.Species[1];
                 _mas.Elements.Add(a);
             }
             for (int i = 0; i < intruders; i++)
@@ -312,9 +328,9 @@ namespace Muragatte.GUI
                 Neighbourhood n = new Neighbourhood(fovRange, fovAng);
                 Neighbourhood n2 = new Neighbourhood(paRange);
                 //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[1], 1, n2);
-                Agent a = new AdvancedBoidAgent(_mas, n, turn, new AdvancedBoidAgentArgs(_goals[1], n2, 1, 1, 1, 1, 1, 10));
+                Agent a = new AdvancedBoidAgent(_mas, _intruders, n, turn, new AdvancedBoidAgentArgs(_goals[1], n2, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
                 a.Speed = 0.95;
-                a.Species = _mas.Species[2];
+                //a.Species = _mas.Species[2];
                 _mas.Elements.Add(a);
             }
             //Neighbourhood lwn = new CircularNeighbourhood(fovRange, fovAng);
@@ -325,13 +341,13 @@ namespace Muragatte.GUI
             //_mas.Elements.Add(lw);
         }
 
-        private void SetCentroidSpecies(IEnumerable<Centroid> items, Species species)
-        {
-            foreach (Centroid c in items)
-            {
-                c.Species = species;
-            }
-        }
+        //private void SetCentroidSpecies(IEnumerable<Centroid> items, Species species)
+        //{
+        //    foreach (Centroid c in items)
+        //    {
+        //        c.Species = species;
+        //    }
+        //}
 
         private void HorizontalBorders()
         {
@@ -360,12 +376,12 @@ namespace Muragatte.GUI
 
         private void Initialize()
         {
-            if (cmbStartState.SelectedIndex == 0)
-            { _mas.Scatter(); }
-            else
-            { FormGroup(); }
+            //if (cmbStartState.SelectedIndex == 0)
+            //{ _mas.Scatter(); }
+            //else
+            //{ FormGroup(); }
             _mas.Initialize();
-            SetCentroidSpecies(_mas.Elements.Centroids, _mas.Species[3]);
+            //SetCentroidSpecies(_mas.Elements.Centroids, _mas.Species[3]);
             Redraw();
         }
 
@@ -376,6 +392,11 @@ namespace Muragatte.GUI
             double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa;
             _mas.GroupStart(size);
+        }
+
+        private SpawnSpot StartingPosition()
+        {
+            return cmbStartState.SelectedIndex == 0 ? _scatteredSpawn : _groupedSpawn;
         }
 
         #endregion
