@@ -17,13 +17,37 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
 {
-    public enum ElementNature
+    public class PointSpawnSpot : SpawnSpot
     {
-        Unknown,
-        Companion,
-        Goal,
-        Obstacle,
-        Threat,
-        Ignored
+        #region Constructors
+
+        public PointSpawnSpot(Vector2 position) : base(position, 1, 1) { }
+
+        #endregion
+
+        #region Properties
+
+        public override double Width
+        {
+            get { return 1; }
+            set { }
+        }
+
+        public override double Heigth
+        {
+            get { return 1; }
+            set { }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Vector2 Respawn(RandomMT random)
+        {
+            return Respawn();
+        }
+
+        #endregion
     }
 }

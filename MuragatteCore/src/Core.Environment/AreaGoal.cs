@@ -23,25 +23,26 @@ namespace Muragatte.Core.Environment
         private double _dWidth = 0;
         private double _dHeight = 0;
 
+
         #endregion
 
         #region Constructors
 
-        public AreaGoal(MultiAgentSystem model, double width, double height)
-            : this(IdCounter.Next(), model, width, height) { }
+        public AreaGoal(MultiAgentSystem model, Species species, double width, double height)
+            : this(IdCounter.Next(), model, species, width, height) { }
 
-        public AreaGoal(MultiAgentSystem model, Vector2 position, double width, double height)
-            : this(IdCounter.Next(), model, position, width, height) { }
+        public AreaGoal(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : this(IdCounter.Next(), model, position, species, width, height) { }
 
-        public AreaGoal(int id, MultiAgentSystem model, double width, double height)
-            : base(id, model)
+        public AreaGoal(int id, MultiAgentSystem model, Species species, double width, double height)
+            : base(id, model, species)
         {
             _dWidth = width;
             _dHeight = height;
         }
 
-        public AreaGoal(int id, MultiAgentSystem model, Vector2 position, double width, double height)
-            : base(id, model, position)
+        public AreaGoal(int id, MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(id, model, position, species)
         {
             _dWidth = width;
             _dHeight = height;
@@ -77,15 +78,7 @@ namespace Muragatte.Core.Environment
 
         public override Vector2 GetPosition()
         {
-            double x;
-            double y;
-            double ss;
-            //temporary
-            //proper rng when Muragatte.Random done
-            Muragatte.Core.Environment.RNGs.Ran2.Disk(out x, out y, out ss);
-            x = _position.X + x * _dWidth - (_dWidth / 2);
-            y = _position.Y + y * _dHeight - (_dHeight / 2);
-            return new Vector2(x, y);
+            return _model.Random.Disk(_position, _dWidth, _dHeight);
         }
 
         #endregion

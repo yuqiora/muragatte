@@ -36,6 +36,15 @@ namespace Muragatte.Common
             }
         }
 
+        public Vector2(Angle angle, bool normalize = false)
+        {
+            this = Vector2.X0Y1 + angle;
+            if (normalize)
+            {
+                Normalize();
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -237,50 +246,6 @@ namespace Muragatte.Common
         public static Vector2 Perpendicular(Vector2 vector)
         {
             return new Vector2(vector._dY, -vector._dX);
-        }
-
-        //will be modified accordingly when Muragatte.Random is done
-        //or more likely moved under Random
-
-        public static Vector2 RandomUniform()
-        {
-            double x = Core.Environment.RNGs.Ran2.Uniform();
-            double y = Core.Environment.RNGs.Ran2.Uniform();
-            return new Vector2(x, y);
-        }
-
-        public static Vector2 RandomUniform(double xHigh, double yHigh)
-        {
-            return RandomUniform(0, xHigh, 0, yHigh);
-        }
-
-        public static Vector2 RandomUniform(double xLow, double xHigh, double yLow, double yHigh)
-        {
-            double x = Core.Environment.RNGs.Ran2.Uniform(xLow, xHigh);
-            double y = Core.Environment.RNGs.Ran2.Uniform(yLow, yHigh);
-            return new Vector2(x, y);
-        }
-
-        public static Vector2 RandomGauss()
-        {
-            double x = Core.Environment.RNGs.Ran2.Gauss();
-            double y = Core.Environment.RNGs.Ran2.Gauss();
-            return new Vector2(x, y);
-        }
-
-        public static Vector2 RandomGauss(double xMean, double xDeviation, double yMean, double yDeviation)
-        {
-            double x = Core.Environment.RNGs.Ran2.Gauss(xMean, xDeviation);
-            double y = Core.Environment.RNGs.Ran2.Gauss(yMean, yDeviation);
-            return new Vector2(x, y);
-        }
-
-        public static Vector2 RandomNormalized()
-        {
-            double x;
-            double y;
-            Core.Environment.RNGs.Ran2.Circle(out x, out y);
-            return new Vector2(x, y, true);
         }
 
         #endregion

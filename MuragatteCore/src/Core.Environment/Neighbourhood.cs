@@ -135,6 +135,11 @@ namespace Muragatte.Core.Environment
             return InRange(e) && Vector2.AngleBetween(_source.Direction, e.Position - _source.Position) <= angle;
         }
 
+        public Neighbourhood Clone(bool withSource = false)
+        {
+            return new Neighbourhood(withSource ? _source : null, _dRange, _angle, _metric);
+        }
+
         #endregion
 
     }

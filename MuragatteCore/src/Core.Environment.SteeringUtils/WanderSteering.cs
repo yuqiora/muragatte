@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
+using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.SteeringUtils
 {
@@ -24,9 +25,19 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #endregion
 
+        #region Fields
+
+        private RandomMT _random;
+
+        #endregion
+
         #region Constructors
 
-        public WanderSteering(Element element, double weight) : base(element, weight) { }
+        public WanderSteering(Element element, double weight, RandomMT random)
+            : base(element, weight)
+        {
+            _random = random;
+        }
 
         #endregion
 
@@ -43,7 +54,9 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         public override Vector2 Steer(double weight)
         {
-            return _element.Direction + Angle.Random(weight);
+            double x = _element is Agent ? ((Agent)_element).TurningAngle.Degrees * _element.Model.TimePerStep : 0;
+            return _element.Direction + _random.UniformAngle(-x, x) + _random.GaussAngle(weight);
+            //return _element.Direction + _random.GaussAngle(weight);
         }
 
         public override Vector2 Steer(Element other, double weight)

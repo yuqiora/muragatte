@@ -41,7 +41,7 @@ namespace Muragatte.Core.Environment
 
         protected int _iElementID = -1;
         protected MultiAgentSystem _model = null;
-        protected Vector2 _position = new Vector2(0, 0);
+        protected Vector2 _position = Vector2.Zero;
         protected bool _bEnabled = true;
         protected Species _species = null;
 
@@ -201,6 +201,11 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        protected void SetSpecies(Species s, string name)
+        {
+            _species = s ?? _model.Species[name];
+        }
+
         #endregion
 
         #region Virtual Methods
@@ -260,6 +265,15 @@ namespace Muragatte.Core.Environment
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
                 _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID);
+        }
+
+        public virtual void LoadStatus(ElementStatus status)
+        {
+            Position = status.Position;
+            Direction = status.Direction;
+            Speed = status.Speed;
+            IsEnabled = status.IsEnabled;
+            Species = status.SpeciesID < 0 ? null : _model.Species[status.SpeciesID];
         }
 
         #endregion

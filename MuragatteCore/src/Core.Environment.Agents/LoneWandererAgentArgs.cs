@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Core.Environment.SteeringUtils;
+using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
@@ -23,6 +24,7 @@ namespace Muragatte.Core.Environment.Agents
         public LoneWandererAgentArgs() : this(10, 1) { }
 
         public LoneWandererAgentArgs(double wander, double obstacleAvoidance)
+            : base(Distribution.Unknown, 0, 0)
         {
             _modifiers.Add(WanderSteering.LABEL, wander);
             _modifiers.Add(ObstacleAvoidanceSteering.LABEL, obstacleAvoidance);

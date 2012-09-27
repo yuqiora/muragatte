@@ -17,9 +17,9 @@ namespace Muragatte.Common
 {
     public enum Metric
     {
-        Euclidean = 0,
-        Manhattan = 1,
-        Maximum = 2
+        Euclidean,
+        Manhattan,
+        Maximum
     }
 
     public static class MetricExtensions

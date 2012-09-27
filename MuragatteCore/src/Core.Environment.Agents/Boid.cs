@@ -21,12 +21,19 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public BoidAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
-            : base(model, fieldOfView, turningAngle, args) { }
+        public BoidAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(model, species, fieldOfView, turningAngle, args) { }
 
-        public BoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
-            : base(model, position, direction, speed, fieldOfView, turningAngle, args) { }
+        public BoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        public BoidAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(id, model, species, fieldOfView, turningAngle, args) { }
+
+        public BoidAgent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
+            : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
 
         #endregion
 
@@ -88,17 +95,10 @@ namespace Muragatte.Core.Environment.Agents
             ApplyRules(fov);
         }
 
-        public override void ConfirmUpdate()
-        {
-            Position = _model.Region.Outside(_altPosition);
-            _direction = _altDirection;
-        }
-
         protected override void ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
-            //noise temporary, might need further work
-            _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(2));
+            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
             ProperDirection();
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
@@ -119,15 +119,28 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public AdvancedBoidAgent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
-            : base(model, fieldOfView, turningAngle, args)
+        public AdvancedBoidAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(model, species, fieldOfView, turningAngle, args)
         {
             _args.SetNeighbourhoodOwner(this);
         }
 
         public AdvancedBoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
-            : base(model, position, direction, speed, fieldOfView, turningAngle, args)
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args)
+        {
+            _args.SetNeighbourhoodOwner(this);
+        }
+
+        public AdvancedBoidAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(id, model, species, fieldOfView, turningAngle, args)
+        {
+            _args.SetNeighbourhoodOwner(this);
+        }
+
+        public AdvancedBoidAgent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
+            : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args)
         {
             _args.SetNeighbourhoodOwner(this);
         }
@@ -237,8 +250,7 @@ namespace Muragatte.Core.Environment.Agents
                 }
             }
             dirDelta.Normalize();
-            //noise temporary, needs further work
-            _altDirection = Vector2.Normalized(_direction + dirDelta + Angle.Random(1));
+            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
             ProperDirection();
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
@@ -248,7 +260,7 @@ namespace Muragatte.Core.Environment.Agents
             base.EnableSteering();
             AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
             AddSteering(new SeekSteering(this, _args.Modifiers[AdvancedBoidAgentArgs.MOD_ASSERTIVITY]));
-            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL]));
+            AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL], _model.Random));
         }
 
         #endregion

@@ -12,18 +12,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Muragatte.Common;
-using Muragatte.Random;
 
-namespace Muragatte.Core.Environment
+namespace Muragatte.Random
 {
-    public enum ElementNature
+    public class ZeroNoise : Noise
     {
-        Unknown,
-        Companion,
-        Goal,
-        Obstacle,
-        Threat,
-        Ignored
+        #region Constructors
+
+        public ZeroNoise() : base(null, 0, 0) { }
+
+        #endregion
+
+        #region Properties
+
+        public override Distribution Distribution
+        {
+            get { return Distribution.Unknown; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        protected override double SafeApply(RandomMT random)
+        {
+            return 0;
+        }
+
+        #endregion
     }
 }

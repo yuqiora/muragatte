@@ -17,6 +17,7 @@ using System.Text;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.Random;
 
 namespace Muragatte.Core
 {
@@ -25,12 +26,13 @@ namespace Muragatte.Core
         #region Fields
 
         private int _iSteps = 0;
-        private double _dTimePerStep = 1;
-        private IStorage _storage = null;
-        private Region _region = null;
-        private SpeciesCollection _species = new SpeciesCollection();
+        private double _dTimePerStep;
+        private IStorage _storage;
+        private Region _region;
+        private SpeciesCollection _species;
         private History _history = new History();
         private List<Group> _groups = new List<Group>();
+        private RandomMT _random;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,10 +40,15 @@ namespace Muragatte.Core
 
         #region Constructors
 
-        public MultiAgentSystem(IStorage storage, Region region, double timePerStep = 1)
+        public MultiAgentSystem(IStorage storage, Region region, RandomMT random, double timePerStep = 1)
+            : this(storage, region, new SpeciesCollection(true), random, timePerStep) { }
+
+        public MultiAgentSystem(IStorage storage, Region region, SpeciesCollection species, RandomMT random, double timePerStep = 1)
         {
             _storage = storage;
             _region = region;
+            _species = species;
+            _random = random;
             _dTimePerStep = timePerStep;
         }
 
@@ -95,6 +102,11 @@ namespace Muragatte.Core
         {
             get { return _groups; }
         }
+
+        public RandomMT Random
+        {
+            get { return _random; }
+        }
         
         #endregion
 
@@ -108,19 +120,27 @@ namespace Muragatte.Core
             _storage.Clear();
             Element.ResetIDCounter();
             _history.Clear();
+            _groups.Clear();
+        }
+
+        public void Reset()
+        {
+            StepCount = 0;
+            if (_history.Count > 0)
+            {
+                foreach (Element e in _storage)
+                {
+                    e.LoadStatus(_history[0][e.ID]);
+                }
+                _history.Clear();
+            }
+            UpdateGroupsAndCentroids();
         }
 
         public void Initialize()
         {
             _storage.Initialize();
-            List<Centroid> centroids = new List<Centroid>();
-            foreach (Agent a in _storage.Agents)
-            {
-                a.CreateRepresentative();
-                centroids.Add(a.Representative);
-            }
-            _storage.Add(centroids);
-            UpdateGroupsAndCentroids();
+            CreateCentroids();
             HistoryRecord record = new HistoryRecord();
             foreach (Element e in _storage)
             {
@@ -130,32 +150,27 @@ namespace Muragatte.Core
             //_history.Archive(_species.Values);
         }
 
+        //will be removed
         public void Scatter()
         {
             IEnumerable<Agent> agents = _storage.Agents;
             foreach (Agent a in agents)
             {
                 a.SetMovementInfo(
-                    Vector2.RandomUniform(_region.Width, _region.Height),
-                    Vector2.RandomNormalized());
+                    _random.UniformVector(0, _region.Width, 0, Region.Height),
+                    _random.NormalizedVector());
             }
         }
 
+        //will be removed
         public void GroupStart(double size)
         {
-            Vector2 centre = Vector2.RandomUniform(_region.Width, _region.Height);
             IEnumerable<Agent> agents = _storage.Agents;
-            Vector2 direction = Vector2.RandomNormalized();
+            Vector2 direction = _random.NormalizedVector();
             foreach (Agent a in agents)
             {
-                double x;
-                double y;
-                double ss;
-                RNGs.Ran2.Disk(out x, out y, out ss);
-                Vector2 pos = new Vector2(x, y);
-                pos *= size;
-                pos += new Vector2(_region.Width / 2, Region.Height / 2);
-                a.SetMovementInfo(pos, direction + Angle.Random(5));
+                Vector2 position = _random.Disk(new Vector2(_region.Width / 2, Region.Height / 2), size, size);
+                a.SetMovementInfo(position, direction + _random.GaussAngle(5));
             }
         }
 
@@ -205,6 +220,20 @@ namespace Muragatte.Core
             {
                 c.ConfirmUpdate();
             }
+        }
+
+        private void CreateCentroids()
+        {
+            List<Centroid> centroids = new List<Centroid>();
+            int id = _storage.Count;
+            foreach (Agent a in _storage.Agents)
+            {
+                a.CreateRepresentative(id);
+                centroids.Add(a.Representative);
+                id++;
+            }
+            _storage.Add(centroids);
+            UpdateGroupsAndCentroids();
         }
 
         private void NotifyPropertyChanged(String propertyName)
@@ -271,7 +300,7 @@ namespace Muragatte.Core
             if (spawnSpots == null || spawnSpots.Count() == 0)
             {
                 List<SpawnSpot> result = new List<SpawnSpot>();
-                result.Add(new SpawnRectangle(new Vector2(_region.Width / 2.0, _region.Height / 2.0), _region.Width * 0.9, _region.Height * 0.9));
+                result.Add(new RectangleSpawnSpot(new Vector2(_region.Width / 2.0, _region.Height / 2.0), _region.Width * 0.9, _region.Height * 0.9));
                 return result;
             }
             else
@@ -281,25 +310,5 @@ namespace Muragatte.Core
         }
 
         #endregion
-    }
-
-    public abstract class Archetype
-    {
-        protected int _iCount;
-        protected Species _species;
-
-        public int Count
-        {
-            get { return _iCount; }
-            set { _iCount = value; }
-        }
-
-        public Species Species
-        {
-            get { return _species; }
-            set { _species = value; }
-        }
-
-        public abstract IEnumerable<Element> CreateItems();
     }
 }

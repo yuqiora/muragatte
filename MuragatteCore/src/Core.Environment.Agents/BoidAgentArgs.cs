@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Core.Environment.SteeringUtils;
+using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
@@ -20,9 +21,10 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public BoidAgentArgs() : this(1, 1, 1) { }
+        public BoidAgentArgs() : this(1, 1, 1, Distribution.Gaussian, 0, 2) { }
 
-        public BoidAgentArgs(double separation, double cohesion, double alignment)
+        public BoidAgentArgs(double separation, double cohesion, double alignment, Distribution distribution, double noiseA, double noiseB)
+            : base(distribution, noiseA, noiseB)
         {
             _modifiers.Add(SeparationSteering.LABEL, separation);
             _modifiers.Add(CohesionSteering.LABEL, cohesion);
@@ -67,11 +69,12 @@ namespace Muragatte.Core.Environment.Agents
 
         public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1) { }
 
-        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity) : this(goal, personalArea, assertivity, 1, 1, 1, 1, 10) { }
+        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity) :
+            this(goal, personalArea, assertivity, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2) { }
 
-        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity,
-            double separation, double cohesion, double alignment, double obstacleAvoidance, double wander)
-            : base(separation, cohesion, alignment)
+        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double separation, double cohesion,
+            double alignment, double obstacleAvoidance, double wander, Distribution distribution, double noiseA, double noiseB)
+            : base(separation, cohesion, alignment, distribution, noiseA, noiseB)
         {
             _goal = goal;
             _neighbourhoods.Add(NEIGH_PERSONAL_AREA, personalArea);

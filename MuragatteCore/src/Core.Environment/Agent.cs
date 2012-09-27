@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using Muragatte.Common;
 using Muragatte.Core.Environment.SteeringUtils;
+using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
 {
@@ -30,25 +31,35 @@ namespace Muragatte.Core.Environment
         protected Centroid _representative = null;
         protected Dictionary<string, Steering> _steering = new Dictionary<string, Steering>();
         protected AgentArgs _args = null;
+        protected Noise _noise;
         
         #endregion
 
         #region Constructors
 
-        public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction,
-            double speed, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
-            : base(model, position)
+        public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
+            : this(IdCounter.Next(), model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        public Agent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
+            : this(IdCounter.Next(), model, species, fieldOfView, turningAngle, args) { }
+
+        public Agent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
+            Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
+            : base(id, model, position)
         {
             _direction = direction;
             _dSpeed = speed;
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
             FieldOfView = fieldOfView;
             _dTurningAngle = turningAngle;
             _args = args;
+            _noise = _args.Distribution.Noise(_model.Random, _args.NoiseArgA, _args.NoiseArgB);
             EnableSteering();
         }
 
-        public Agent(MultiAgentSystem model, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
-            : this(model, Vector2.Zero, Vector2.X0Y1, 1, fieldOfView, turningAngle, args) { }
+        public Agent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
+            : this(id, model, Vector2.Zero, Vector2.X0Y1, 1, species, fieldOfView, turningAngle, args) { }
         
         #endregion
 
@@ -181,6 +192,11 @@ namespace Muragatte.Core.Environment
             _representative = new Centroid(this);
         }
 
+        public void CreateRepresentative(int id)
+        {
+            _representative = new Centroid(id, this);
+        }
+
         protected bool IsGroupCandidate(Agent a)
         {
             return a.IsEnabled && !a.Representative.IsInGroup && (_fieldOfView.Covers(a) || a.FieldOfView.Covers(this));
@@ -201,6 +217,12 @@ namespace Muragatte.Core.Environment
         public override Storage.ElementStatus ReportStatus()
         {
             return ReportStatus(_args.Modifiers.Values);
+        }
+
+        public override void LoadStatus(Storage.ElementStatus status)
+        {
+            base.LoadStatus(status);
+            //load modifiers
         }
 
         protected void ProperDirection()
@@ -226,6 +248,12 @@ namespace Muragatte.Core.Environment
         protected void AddSteering(Steering steering)
         {
             _steering.Add(steering.Name, steering);
+        }
+
+        public override void ConfirmUpdate()
+        {
+            Position = _model.Region.Outside(_altPosition);
+            _direction = _altDirection;
         }
 
         protected abstract void ApplyRules(IEnumerable<Element> locals);

@@ -20,17 +20,29 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public Extras(MultiAgentSystem model)
-            : base(model) { }
+        public Extras(MultiAgentSystem model, Species species)
+            : base(model)
+        {
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_EXTRAS_LABEL);
+        }
 
-        public Extras(MultiAgentSystem model, Vector2 position)
-            : base(model, position) { }
+        public Extras(MultiAgentSystem model, Vector2 position, Species species)
+            : base(model, position)
+        {
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_EXTRAS_LABEL);
+        }
 
-        public Extras(int id, MultiAgentSystem model)
-            : base(id, model) { }
+        public Extras(int id, MultiAgentSystem model, Species species)
+            : base(id, model)
+        {
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_EXTRAS_LABEL);
+        }
 
-        public Extras(int id, MultiAgentSystem model, Vector2 position)
-            : base(id, model, position) { }
+        public Extras(int id, MultiAgentSystem model, Vector2 position, Species species)
+            : base(id, model, position)
+        {
+            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_EXTRAS_LABEL);
+        }
 
         #endregion
 
@@ -78,14 +90,14 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public AttractSpot(MultiAgentSystem model, double radius = DEFAULT_RADIUS)
-            : base(model)
+        public AttractSpot(MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
+            : base(model, species)
         {
             _dRadius = radius;
         }
 
-        public AttractSpot(MultiAgentSystem model, Vector2 position, double radius = DEFAULT_RADIUS)
-            : base(model, position)
+        public AttractSpot(MultiAgentSystem model, Vector2 position, Species species, double radius = DEFAULT_RADIUS)
+            : base(model, position, species)
         {
             _dRadius = radius;
         }
@@ -146,11 +158,11 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public RepelSpot(MultiAgentSystem model, double radius = DEFAULT_RADIUS)
-            : base(model, radius) { }
+        public RepelSpot(MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
+            : base(model, species, radius) { }
 
-        public RepelSpot(MultiAgentSystem model, Vector2 position, double radius = DEFAULT_RADIUS)
-            : base(model, position, radius) { }
+        public RepelSpot(MultiAgentSystem model, Vector2 position, Species species, double radius = DEFAULT_RADIUS)
+            : base(model, position, species, radius) { }
 
         #endregion
 
@@ -179,14 +191,14 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Guidepost(MultiAgentSystem model, Vector2 direction)
-            : base(model)
+        public Guidepost(MultiAgentSystem model, Vector2 direction, Species species)
+            : base(model, species)
         {
             _direction = direction;
         }
 
-        public Guidepost(MultiAgentSystem model, Vector2 position, Vector2 direction)
-            : base(model, position)
+        public Guidepost(MultiAgentSystem model, Vector2 position, Vector2 direction, Species species)
+            : base(model, position, species)
         {
             _direction = direction;
         }

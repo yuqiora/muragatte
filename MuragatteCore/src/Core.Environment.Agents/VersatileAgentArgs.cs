@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Core.Environment.SteeringUtils;
+using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
@@ -38,11 +39,12 @@ namespace Muragatte.Core.Environment.Agents
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1, 1) { }
 
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double credibility)
-            : this(goal, personalArea, assertivity, credibility, 1, 1, 1, 1, 1, 1, 1, 1, 10) { }
+            : this(goal, personalArea, assertivity, credibility, 1, 1, 1, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2) { }
 
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double credibility,
-            double separation, double cohesion, double alignment, double obstacleAvoidance,
-            double seek, double flee, double pursuit, double evasion, double wander)
+            double separation, double cohesion, double alignment, double obstacleAvoidance, double seek, double flee,
+            double pursuit, double evasion, double wander, Distribution distribution, double noiseA, double noiseB)
+            : base(distribution, noiseA, noiseB)
         {
             _goal = goal;
             _neighbourhoods.Add(NEIGH_PERSONAL_AREA, personalArea);
