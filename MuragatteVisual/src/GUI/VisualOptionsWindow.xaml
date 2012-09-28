@@ -8,12 +8,12 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 *********************************************************************** -->
 
-<Window x:Class="Muragatte.GUI.VisualOptionsWindow"
+<Window x:Class="Muragatte.Visual.GUI.VisualOptionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:xtkc="clr-namespace:Xceed.Wpf.Toolkit.Core.Converters;assembly=WPFToolkit.Extended"
-        xmlns:mg="clr-namespace:Muragatte.GUI"
+        xmlns:mg="clr-namespace:Muragatte.Visual.GUI"
         xmlns:mv="clr-namespace:Muragatte.Visual"
         xmlns:mvc="clr-namespace:Muragatte.Visual.Converters"
         Title="Visualization Options" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">

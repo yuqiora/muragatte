@@ -8,7 +8,7 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 *********************************************************************** -->
 
-<Window x:Class="Muragatte.GUI.VisualCanvasWindow"
+<Window x:Class="Muragatte.Visual.GUI.VisualCanvasWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Muragatte Visualization Window" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">

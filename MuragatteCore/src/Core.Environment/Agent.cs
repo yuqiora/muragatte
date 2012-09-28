@@ -256,7 +256,24 @@ namespace Muragatte.Core.Environment
             _direction = _altDirection;
         }
 
-        protected abstract void ApplyRules(IEnumerable<Element> locals);
+        public override void Update()
+        {
+            UpdateMovement(ApplyRules(GetLocalNeighbours()));
+        }
+
+        protected virtual void UpdateMovement(Vector2 dirDelta)
+        {
+            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
+            ProperDirection();
+            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+        }
+
+        protected virtual IEnumerable<Element> GetLocalNeighbours()
+        {
+            return _fieldOfView.Within(_model.Elements.RangeSearch(this, VisibleRange));
+        }
+
+        protected abstract Vector2 ApplyRules(IEnumerable<Element> locals);
 
         protected abstract void EnableSteering();
 

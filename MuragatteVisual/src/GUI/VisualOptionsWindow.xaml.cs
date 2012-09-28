@@ -25,13 +25,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
-using Muragatte.Visual;
 using Muragatte.Visual.Shapes;
 using Muragatte.Visual.Styles;
 using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.Toolkit.Primitives;
 
-namespace Muragatte.GUI
+namespace Muragatte.Visual.GUI
 {
     /// <summary>
     /// Interaction logic for VisualOptionsWindow.xaml
@@ -42,7 +41,7 @@ namespace Muragatte.GUI
 
         private Visualization _visual;
         private ObservableCollection<Appearance> _appearances = new ObservableCollection<Appearance>();
-        private ObservableCollection<Visual.Styles.Style> _styles = new ObservableCollection<Visual.Styles.Style>();
+        private ObservableCollection<Styles.Style> _styles = new ObservableCollection<Styles.Style>();
         private CollectionViewSource _environmentView = new CollectionViewSource();
         private CollectionViewSource _agentsView = new CollectionViewSource();
         private CollectionViewSource _neighbourhoodsView = new CollectionViewSource();
@@ -58,7 +57,7 @@ namespace Muragatte.GUI
 
         private HistoryViewer _historyViewer = null;
 
-        private readonly List<Visual.Shapes.Shape> _shapes = null;
+        private readonly List<Shapes.Shape> _shapes = null;
 
         #endregion
 
@@ -125,12 +124,12 @@ namespace Muragatte.GUI
             get { return _enabledElementsView.View; }
         }
 
-        public List<Visual.Shapes.Shape> GetShapes
+        public List<Shapes.Shape> GetShapes
         {
             get { return _shapes; }
         }
 
-        public ObservableCollection<Visual.Styles.Style> GetStyles
+        public ObservableCollection<Styles.Style> GetStyles
         {
             get { return _styles; }
         }
@@ -164,7 +163,7 @@ namespace Muragatte.GUI
             if ((double)dudScale.Tag != dudScale.Value.Value)
             {
                 DefaultValues.Scale = dudScale.Value.Value;
-                foreach (Visual.Styles.Style s in _styles)
+                foreach (Styles.Style s in _styles)
                 {
                     s.Rescale(dudScale.Value.Value);
                 }
@@ -216,13 +215,13 @@ namespace Muragatte.GUI
 
         private void btnStylesNew_Click(object sender, RoutedEventArgs e)
         {
-            _styles.Add(new Visual.Styles.Style());
+            _styles.Add(new Styles.Style());
             lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
         }
 
         private void btnStylesCopy_Click(object sender, RoutedEventArgs e)
         {
-            _styles.Add(new Visual.Styles.Style(lboStyleEditorList.SelectedItem as Visual.Styles.Style));
+            _styles.Add(new Styles.Style(lboStyleEditorList.SelectedItem as Styles.Style));
             lboStyleEditorList.SelectedIndex = lboStyleEditorList.Items.Count - 1;
         }
 
@@ -291,7 +290,7 @@ namespace Muragatte.GUI
 
         private void CreateDefaultStyles()
         {
-            _styles.Add(new Visual.Styles.Style(
+            _styles.Add(new Styles.Style(
                 PointingCircleShape.Instance, "Agent", 1, 1,
                 Colors.Transparent, DefaultValues.AGENT_COLOR,
                 new NeighbourhoodStyle(
@@ -300,15 +299,15 @@ namespace Muragatte.GUI
                     5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), _visual.GetCanvas.Scale),
                 new TrackStyle(DefaultValues.AGENT_COLOR),
                 new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
-            _styles.Add(new Visual.Styles.Style(
+            _styles.Add(new Styles.Style(
                 EllipseShape.Instance, "Obstacle", 1, 1,
                 DefaultValues.OBSTACLE_COLOR, Colors.Transparent,
                 null, null, null));
-            _styles.Add(new Visual.Styles.Style(
+            _styles.Add(new Styles.Style(
                 RectangleShape.Instance, "Goal", 1, 1,
                 DefaultValues.GOAL_COLOR, Colors.Transparent,
                 null, null, null));
-            _styles.Add(new Visual.Styles.Style(
+            _styles.Add(new Styles.Style(
                 TriangleShape.Instance, "Centroid", 1, 1,
                 DefaultValues.CENTROID_COLOR, Colors.Transparent,
                 null, new TrackStyle(DefaultValues.CENTROID_COLOR),
@@ -317,7 +316,7 @@ namespace Muragatte.GUI
 
         private Appearance ElementToAppearance(Element e)
         {
-            Visual.Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
+            Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
             if (style == null)
             {
                 if (e is Agent) style = _styles[0];
@@ -372,7 +371,7 @@ namespace Muragatte.GUI
 
         private List<Visual.Shapes.Shape> CreateShapeList()
         {
-            List<Visual.Shapes.Shape> items = new List<Visual.Shapes.Shape>();
+            List<Shapes.Shape> items = new List<Shapes.Shape>();
             items.Add(PixelShape.Instance);
             items.Add(QuadPixelShape.Instance);
             items.Add(EllipseShape.Instance);
@@ -395,7 +394,7 @@ namespace Muragatte.GUI
         private void RedrawStylePreview()
         {
             _wbStylePreview.Clear(_visual.GetCanvas.BackgroundColor);
-            Visual.Styles.Style selectedStyle = (Visual.Styles.Style)lboStyleEditorList.SelectedItem;
+            Styles.Style selectedStyle = (Styles.Style)lboStyleEditorList.SelectedItem;
             if (selectedStyle != null)
             {
                 if (selectedStyle.HasNeighbourhood)

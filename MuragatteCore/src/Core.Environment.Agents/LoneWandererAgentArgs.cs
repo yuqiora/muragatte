@@ -30,6 +30,8 @@ namespace Muragatte.Core.Environment.Agents
             _modifiers.Add(ObstacleAvoidanceSteering.LABEL, obstacleAvoidance);
         }
 
+        protected LoneWandererAgentArgs(LoneWandererAgentArgs args) : base(args) { }
+
         #endregion
 
         #region Properties
@@ -43,6 +45,15 @@ namespace Muragatte.Core.Environment.Agents
         public override Dictionary<string, Neighbourhood> Neighbourhoods
         {
             get { return null; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override AgentArgs Clone()
+        {
+            return new LoneWandererAgentArgs(this);
         }
 
         #endregion

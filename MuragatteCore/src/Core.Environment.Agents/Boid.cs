@@ -88,19 +88,25 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override void Update()
+        //public override void Update()
+        //{
+        //    IEnumerable<Agent> locals = _model.Elements.RangeSearch<Agent>(this, VisibleRange);
+        //    IEnumerable<Agent> fov = _fieldOfView.Within(locals);
+        //    ApplyRules(fov);
+        //}
+
+        protected override IEnumerable<Element> GetLocalNeighbours()
         {
-            IEnumerable<Agent> locals = _model.Elements.RangeSearch<Agent>(this, VisibleRange);
-            IEnumerable<Agent> fov = _fieldOfView.Within(locals);
-            ApplyRules(fov);
+            return _fieldOfView.Within(_model.Elements.RangeSearch<Agent>(this, VisibleRange));
         }
 
-        protected override void ApplyRules(IEnumerable<Element> locals)
+        protected override Vector2 ApplyRules(IEnumerable<Element> locals)
         {
-            Vector2 dirDelta = Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
-            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            ProperDirection();
-            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            //Vector2 dirDelta = Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
+            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
+            //ProperDirection();
+            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            return Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
         }
 
         protected override void EnableSteering()
@@ -209,14 +215,19 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override void Update()
+        //public override void Update()
+        //{
+        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
+        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
+        //    ApplyRules(fov);
+        //}
+
+        protected override IEnumerable<Element> GetLocalNeighbours()
         {
-            IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-            IEnumerable<Element> fov = _fieldOfView.Within(locals);
-            ApplyRules(fov);
+            return _fieldOfView.Within(_model.Elements.RangeSearch(this, VisibleRange));
         }
 
-        protected override void ApplyRules(IEnumerable<Element> locals)
+        protected override Vector2 ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Vector2.Zero;
             IEnumerable<Element> companions = locals.Where(e => RelationshipWith(e) == ElementNature.Companion);
@@ -250,9 +261,10 @@ namespace Muragatte.Core.Environment.Agents
                 }
             }
             dirDelta.Normalize();
-            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            ProperDirection();
-            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
+            //ProperDirection();
+            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            return dirDelta;
         }
 
         protected override void EnableSteering()

@@ -102,9 +102,36 @@ namespace Muragatte.Visual
 
         #endregion
 
+        #region Blit
+
+        public static void Blit(this WriteableBitmap wb, Vector2 position, WriteableBitmap source)
+        {
+            wb.Blit(
+                new System.Windows.Rect(
+                    position.X - source.PixelWidth / 2,
+                    position.Y - source.PixelHeight / 2,
+                    source.PixelWidth, source.PixelHeight),
+                source,
+                new System.Windows.Rect(0, 0, source.PixelWidth, source.PixelHeight));
+        }
+
+        #endregion
+
+        #region Color Related
+
         public static bool NotTransparent(this Color color)
         {
             return color.A > 0;
+        }
+
+        public static bool NotOpaque(this Color color)
+        {
+            return color.A < byte.MaxValue;
+        }
+
+        public static bool IsSemiTransparent(this Color color)
+        {
+            return NotTransparent(color) && NotOpaque(color);
         }
 
         public static Color WithA(this Color color, byte a)
@@ -113,5 +140,7 @@ namespace Muragatte.Visual
             c.A = a;
             return c;
         }
+
+        #endregion
     }
 }

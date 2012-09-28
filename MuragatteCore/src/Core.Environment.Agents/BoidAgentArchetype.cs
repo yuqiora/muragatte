@@ -34,7 +34,7 @@ namespace Muragatte.Core.Environment.Agents
             return new BoidAgent(id, model, _spawnPosition.Respawn(model.Random),
                 _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
-                _turningAngle, (BoidAgentArgs)_args);
+                _turningAngle, (BoidAgentArgs)_args.Clone());
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace Muragatte.Core.Environment.Agents
             return new AdvancedBoidAgent(id, model, _spawnPosition.Respawn(model.Random),
                 _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
-                _turningAngle, (AdvancedBoidAgentArgs)_args);
+                _turningAngle, (AdvancedBoidAgentArgs)_args.Clone());
         }
 
         #endregion

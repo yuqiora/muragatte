@@ -22,7 +22,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Muragatte.GUI
+namespace Muragatte.Thesis.GUI
 {
     /// <summary>
     /// Interaction logic for ThesisMainWindow.xaml
