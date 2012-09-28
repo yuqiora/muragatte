@@ -34,7 +34,7 @@ namespace Muragatte.Core.Environment.Agents
             return new LoneWandererAgent(id, model, _spawnPosition.Respawn(model.Random),
                 _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
-                _turningAngle, (LoneWandererAgentArgs)_args);
+                _turningAngle, (LoneWandererAgentArgs)_args.Clone());
         }
 
         #endregion

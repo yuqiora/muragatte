@@ -36,6 +36,12 @@ namespace Muragatte.Core.Environment
             _dNoiseArgB = noiseB;
         }
 
+        protected AgentArgs(AgentArgs args)
+            : this(args._distribution, args._dNoiseArgA, args._dNoiseArgB)
+        {
+            _modifiers = new Dictionary<string, double>(args._modifiers);
+        }
+
         #endregion
 
         #region Properties
@@ -78,6 +84,18 @@ namespace Muragatte.Core.Environment
                 }
             }
         }
+
+        protected Dictionary<string, Neighbourhood> GetNeigbourhoodClones(Dictionary<string, Neighbourhood> neighbourhoods)
+        {
+            Dictionary<string, Neighbourhood> clones = new Dictionary<string, Neighbourhood>();
+            foreach (KeyValuePair<string, Neighbourhood> n in neighbourhoods)
+            {
+                clones.Add(n.Key, n.Value.Clone());
+            }
+            return clones;
+        }
+
+        public abstract AgentArgs Clone();
 
         #endregion
     }

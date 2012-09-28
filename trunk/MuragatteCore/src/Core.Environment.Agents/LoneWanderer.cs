@@ -73,23 +73,29 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        protected override void ApplyRules(IEnumerable<Element> locals)
+        protected override Vector2 ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Avoid.Steer(locals);
             if (dirDelta.IsZero)
             {
                 dirDelta = Wander.Steer();
             }
-            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            ProperDirection();
-            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
+            //ProperDirection();
+            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            return dirDelta;
         }
 
-        public override void Update()
+        //public override void Update()
+        //{
+        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
+        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
+        //    ApplyRules(fov.Where(e => NotIgnoredOrUnknown(RelationshipWith(e))));
+        //}
+
+        protected override IEnumerable<Element> GetLocalNeighbours()
         {
-            IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-            IEnumerable<Element> fov = _fieldOfView.Within(locals);
-            ApplyRules(fov.Where(e => NotIgnoredOrUnknown(RelationshipWith(e))));
+            return base.GetLocalNeighbours().Where(e => NotIgnoredOrUnknown(RelationshipWith(e)));
         }
 
         protected bool NotIgnoredOrUnknown(ElementNature nature)

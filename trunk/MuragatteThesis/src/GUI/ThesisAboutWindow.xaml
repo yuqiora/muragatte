@@ -8,7 +8,7 @@
 // Muragatte on the internet: http://code.google.com/p/muragatte/
 *********************************************************************** -->
 
-<Window x:Class="Muragatte.GUI.ThesisAboutWindow"
+<Window x:Class="Muragatte.Thesis.GUI.ThesisAboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="About Muragatte Thesis" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
@@ -63,6 +63,6 @@
             </TextBlock>
         </Grid>
         <TextBlock Text="Copyright © 2009-2012 Rene Schulte and contributors" FontSize="10" />
-        <Button Content="OK" Height="23" Name="btnOK" Width="75" HorizontalAlignment="Center" Margin="0,10,0,0" IsDefault="True" Click="btnOK_Click" />
+        <Button Content="OK" Height="23" Name="btnOK" Width="75" HorizontalAlignment="Center" Margin="0,10,0,0" IsDefault="True" IsCancel="True" Click="btnOK_Click" />
     </StackPanel>
 </Window>

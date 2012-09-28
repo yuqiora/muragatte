@@ -23,10 +23,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Muragatte.Visual;
 using Xceed.Wpf.Toolkit;
 
-namespace Muragatte.GUI
+namespace Muragatte.Visual.GUI
 {
     /// <summary>
     /// Interaction logic for VisualPlaybackWindow.xaml

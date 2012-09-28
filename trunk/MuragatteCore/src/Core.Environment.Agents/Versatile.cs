@@ -218,7 +218,7 @@ namespace Muragatte.Core.Environment.Agents
             return Credibility * _direction;
         }
 
-        protected override void ApplyRules(IEnumerable<Element> locals)
+        protected override Vector2 ApplyRules(IEnumerable<Element> locals)
         {
             Vector2 dirDelta = Vector2.Zero;
             List<Element> companions = new List<Element>();
@@ -281,17 +281,18 @@ namespace Muragatte.Core.Environment.Agents
                 }
             }
             dirDelta.Normalize();
-            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            ProperDirection();
-            _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
+            //ProperDirection();
+            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
+            return dirDelta;
         }
 
-        public override void Update()
-        {
-            IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-            IEnumerable<Element> fov = _fieldOfView.Within(locals);
-            ApplyRules(fov);
-        }
+        //public override void Update()
+        //{
+        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
+        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
+        //    ApplyRules(fov);
+        //}
 
         protected override void EnableSteering()
         {

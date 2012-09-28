@@ -21,9 +21,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Muragatte.Visual;
 
-namespace Muragatte.GUI
+namespace Muragatte.Visual.GUI
 {
     /// <summary>
     /// Interaction logic for VisualCanvasWindow.xaml
@@ -43,7 +42,7 @@ namespace Muragatte.GUI
         //    InitializeComponent();
         //}
 
-        public VisualCanvasWindow(Visualization visualization, Visual.Canvas canvas)
+        public VisualCanvasWindow(Visualization visualization, Canvas canvas)
         {
             InitializeComponent();
             _visualization = visualization;
@@ -54,7 +53,7 @@ namespace Muragatte.GUI
 
         #region Methods
 
-        public void Initialize(Visual.Canvas canvas)
+        public void Initialize(Canvas canvas)
         {
             imgCanvas.Width = canvas.PixelWidth;
             imgCanvas.Height = canvas.PixelHeight;

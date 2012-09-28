@@ -28,13 +28,12 @@ using Muragatte.Core.Environment;
 using Muragatte.Core.Environment.Agents;
 using Muragatte.Core.Storage;
 using Muragatte.Random;
-using Muragatte.Sandbox;
 using Muragatte.Visual;
 
 //temporary for now, mainly to test if things work as they should
 //will be completely reworked later when Core and Visual are much more functional
 
-namespace Muragatte.GUI
+namespace Muragatte.Sandbox.GUI
 {
     /// <summary>
     /// Interaction logic for SandboxMainWindow.xaml
@@ -58,6 +57,7 @@ namespace Muragatte.GUI
         private RandomMT _random;
 
         private Angle _boidFOVAngle = new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES);
+        private Angle _turningAngle = new Angle(60);
         private Species _boids = null;
         private Species _guides = null;
         private Species _intruders = null;
@@ -283,71 +283,42 @@ namespace Muragatte.GUI
 
         private void CreateBoids(int count, double fovRange)
         {
-            BoidAgentArchetype ba = new BoidAgentArchetype("Boids", count, StartingPosition(),
+            BoidAgentArchetype ba = new BoidAgentArchetype(
+                "Boids", count, StartingPosition(),
                 Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
-                new NoisedDouble(1), _boids, new Neighbourhood(fovRange, _boidFOVAngle), new Angle(60),
+                new NoisedDouble(1), _boids,
+                new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
                 new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
             _mas.Elements.Add(ba.CreateAgents(_mas.Elements.Count, _mas));
-            //for (int i = 0; i < count; i++)
-            //{
-            //    Neighbourhood n = new Neighbourhood(fovRange, _boidFOVAngle);
-            //    //Agent a = new BoidAgent(_mas, n, new Angle(60));
-            //    Agent a = new BoidAgent(_mas, _boids, n, new Angle(60), new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
-            //    a.Speed = 1;
-            //    //a.Species = _mas.Species[0];
-            //    _mas.Elements.Add(a);
-            //}
         }
 
         private void CreateAdvancedBoids(int naive, int guides, int intruders, double fovRange, double paRange)
         {
-            Angle turn = new Angle(60);
-            Angle fovAng = new Angle(150);
-            for (int i = 0; i < naive; i++)
-            {
-                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new Neighbourhood(paRange);
-                //Agent a = new AdvancedBoidAgent(_mas, n, turn, null, 0, n2);
-                Agent a = new AdvancedBoidAgent(_mas, _boids, n, turn, new AdvancedBoidAgentArgs(null, n2, 0, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
-                a.Speed = 1.05;
-                //a.Species = _mas.Species[0];
-                _mas.Elements.Add(a);
-            }
-            for (int i = 0; i < guides; i++)
-            {
-                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new Neighbourhood(paRange);
-                //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[0], 0.75, n2);
-                Agent a = new AdvancedBoidAgent(_mas, _guides, n, turn, new AdvancedBoidAgentArgs(_goals[0], n2, 0.75, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
-                a.Speed = 1;
-                //a.Species = _mas.Species[1];
-                _mas.Elements.Add(a);
-            }
-            for (int i = 0; i < intruders; i++)
-            {
-                Neighbourhood n = new Neighbourhood(fovRange, fovAng);
-                Neighbourhood n2 = new Neighbourhood(paRange);
-                //Agent a = new AdvancedBoidAgent(_mas, n, turn, _goals[1], 1, n2);
-                Agent a = new AdvancedBoidAgent(_mas, _intruders, n, turn, new AdvancedBoidAgentArgs(_goals[1], n2, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
-                a.Speed = 0.95;
-                //a.Species = _mas.Species[2];
-                _mas.Elements.Add(a);
-            }
-            //Neighbourhood lwn = new CircularNeighbourhood(fovRange, fovAng);
-            //lwn.Item = fovImg;
-            //LoneWandererAgent lw = new LoneWandererAgent(_mas, lwn, turn, 10, 2);
-            //lw.Speed = 1;
-            //lw.Species = _mas.Species[4];
-            //_mas.Elements.Add(lw);
-        }
+            Neighbourhood pa = new Neighbourhood(paRange);
+            AdvancedBoidAgentArchetype naiveArch = new AdvancedBoidAgentArchetype(
+                "Naive", naive, StartingPosition(),
+                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(1.05), _boids,
+                new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
+                new AdvancedBoidAgentArgs(null, pa.Clone(), 0, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+            _mas.Elements.Add(naiveArch.CreateAgents(_mas.Elements.Count, _mas));
 
-        //private void SetCentroidSpecies(IEnumerable<Centroid> items, Species species)
-        //{
-        //    foreach (Centroid c in items)
-        //    {
-        //        c.Species = species;
-        //    }
-        //}
+            AdvancedBoidAgentArchetype guideArch = new AdvancedBoidAgentArchetype(
+                "Guide", guides, StartingPosition(),
+                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(1), _guides,
+                new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
+                new AdvancedBoidAgentArgs(_goals[0], pa.Clone(), 0.75, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+            _mas.Elements.Add(guideArch.CreateAgents(_mas.Elements.Count, _mas));
+
+            AdvancedBoidAgentArchetype intruderArch = new AdvancedBoidAgentArchetype(
+                "Intruder", intruders, StartingPosition(),
+                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(0.95), _intruders,
+                new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
+                new AdvancedBoidAgentArgs(_goals[1], pa.Clone(), 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+            _mas.Elements.Add(intruderArch.CreateAgents(_mas.Elements.Count, _mas));
+        }
 
         private void HorizontalBorders()
         {

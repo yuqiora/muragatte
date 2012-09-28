@@ -34,7 +34,7 @@ namespace Muragatte.Core.Environment.Agents
             return new VersatileAgent(id, model, _spawnPosition.Respawn(model.Random),
                 _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
-                _turningAngle, (VersatileAgentArgs)_args);
+                _turningAngle, (VersatileAgentArgs)_args.Clone());
         }
 
         #endregion

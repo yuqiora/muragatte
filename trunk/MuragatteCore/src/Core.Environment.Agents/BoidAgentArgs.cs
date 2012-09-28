@@ -31,6 +31,8 @@ namespace Muragatte.Core.Environment.Agents
             _modifiers.Add(AlignmentSteering.LABEL, alignment);
         }
 
+        protected BoidAgentArgs(BoidAgentArgs args) : base(args) { }
+
         #endregion
 
         #region Properties
@@ -44,6 +46,15 @@ namespace Muragatte.Core.Environment.Agents
         public override Dictionary<string, Neighbourhood> Neighbourhoods
         {
             get { return null; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override AgentArgs Clone()
+        {
+            return new BoidAgentArgs(this);
         }
 
         #endregion
@@ -83,6 +94,13 @@ namespace Muragatte.Core.Environment.Agents
             _modifiers.Add(MOD_ASSERTIVITY, assertivity);
         }
 
+        protected AdvancedBoidAgentArgs(AdvancedBoidAgentArgs args)
+            : base(args)
+        {
+            _goal = args._goal;
+            _neighbourhoods = GetNeigbourhoodClones(args._neighbourhoods);
+        }
+
         #endregion
 
         #region Properties
@@ -96,6 +114,15 @@ namespace Muragatte.Core.Environment.Agents
         public override Dictionary<string, Neighbourhood> Neighbourhoods
         {
             get { return _neighbourhoods; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override AgentArgs Clone()
+        {
+            return new AdvancedBoidAgentArgs(this);
         }
 
         #endregion
