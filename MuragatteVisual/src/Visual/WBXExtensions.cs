@@ -142,5 +142,14 @@ namespace Muragatte.Visual
         }
 
         #endregion
+
+        #region Misc
+
+        public static Vector2 Center(this WriteableBitmap wb)
+        {
+            return new Vector2(wb.PixelWidth / 2, wb.PixelHeight / 2);
+        }
+
+        #endregion
     }
 }

@@ -245,14 +245,14 @@ namespace Muragatte.Visual.Styles
             _shape.Draw(target, position, new Angle(direction), _primaryColor, _secondaryColor, _coordinates);
         }
 
-        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color color)
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color primaryColor, Color secondaryColor)
         {
-            _shape.Draw(target, position, new Angle(direction), color, color, _coordinates);
+            _shape.Draw(target, position, new Angle(direction), primaryColor, secondaryColor, _coordinates);
         }
 
-        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color color, List<Coordinates> coordinates)
+        public void Draw(WriteableBitmap target, Vector2 position, Vector2 direction, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
         {
-            _shape.Draw(target, position, new Angle(direction), color, color,
+            _shape.Draw(target, position, new Angle(direction), primaryColor, secondaryColor,
                 coordinates == null || coordinates.Count == 0 ? _coordinates : coordinates);
         }
 

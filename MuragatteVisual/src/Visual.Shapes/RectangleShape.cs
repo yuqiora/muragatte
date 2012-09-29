@@ -48,19 +48,7 @@ namespace Muragatte.Visual.Shapes
 
         #region Methods
 
-        public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
-        {
-            if (width == 1 && height == 1)
-            {
-                PixelShape.Instance.Draw(target, position, angle, primaryColor, secondaryColor, width, height, other);
-            }
-            else
-            {
-                Draw(target, position, angle, primaryColor, secondaryColor, CreateCoordinates(width, height));
-            }
-        }
-
-        public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
+        protected override void FullDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
         {
             Coordinates points = coordinates[0].Move(position);
             if (angle.IsZero)
@@ -98,7 +86,8 @@ namespace Muragatte.Visual.Shapes
                 x1, y1,
                 x2, y1,
                 x2, y2,
-                x1, y2));
+                x1, y2,
+                BitmapFactory.New(width * 2, height * 2)));
         }
 
         public override string ToString()

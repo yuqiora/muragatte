@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Media.Imaging;
 using Muragatte.Common;
 
 namespace Muragatte.Visual.Shapes
@@ -20,60 +21,45 @@ namespace Muragatte.Visual.Shapes
     {
         #region Fields
 
-        private Vector2 _p1 = Vector2.Zero;
-        private Vector2 _p2 = Vector2.Zero;
-        private Vector2 _p3 = Vector2.Zero;
-        private Vector2 _p4 = Vector2.Zero;
+        private Vector2 _p1;
+        private Vector2 _p2;
+        private Vector2 _p3;
+        private Vector2 _p4;
+        private WriteableBitmap _wb;
 
         #endregion
 
         #region Constructors
 
-        public Coordinates(Vector2 p1)
+        public Coordinates(Vector2 p1, WriteableBitmap wb = null)
+            : this(p1, Vector2.Zero, Vector2.Zero, Vector2.Zero, wb) { }
+
+        public Coordinates(Vector2 p1, Vector2 p2, WriteableBitmap wb = null)
+            : this(p1, p2, Vector2.Zero, Vector2.Zero, wb) { }
+
+        public Coordinates(Vector2 p1, Vector2 p2, Vector2 p3, WriteableBitmap wb = null)
+            : this(p1, p2, p3, Vector2.Zero, wb) { }
+
+        public Coordinates(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, WriteableBitmap wb = null)
         {
             _p1 = p1;
-        }
-
-        public Coordinates(Vector2 p1, Vector2 p2)
-            : this(p1)
-        {
             _p2 = p2;
-        }
-
-        public Coordinates(Vector2 p1, Vector2 p2, Vector2 p3)
-            : this(p1, p2)
-        {
             _p3 = p3;
-        }
-
-        public Coordinates(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
-            : this(p1, p2, p3)
-        {
             _p4 = p4;
+            _wb = wb;
         }
 
-        public Coordinates(double x1, double y1)
-        {
-            _p1 = new Vector2(x1, y1);
-        }
+        public Coordinates(double x1, double y1, WriteableBitmap wb = null)
+            : this(x1, y1, 0, 0, 0, 0, 0, 0, wb) { }
 
-        public Coordinates(double x1, double y1, double x2, double y2)
-            : this(x1, y1)
-        {
-            _p2 = new Vector2(x2, y2);
-        }
+        public Coordinates(double x1, double y1, double x2, double y2, WriteableBitmap wb = null)
+            : this(x1, y1, x2, y2, 0, 0, 0, 0, wb) { }
 
-        public Coordinates(double x1, double y1, double x2, double y2, double x3, double y3)
-            : this(x1, y1, x2, y2)
-        {
-            _p3 = new Vector2(x3, y3);
-        }
+        public Coordinates(double x1, double y1, double x2, double y2, double x3, double y3, WriteableBitmap wb = null)
+            : this(x1, y1, x2, y2, x3, y3, 0, 0, wb) { }
 
-        public Coordinates(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
-            : this(x1, y1, x2, y2, x3, y3)
-        {
-            _p4 = new Vector2(x4, y4);
-        }
+        public Coordinates(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, WriteableBitmap wb = null)
+            : this(new Vector2(x1, y1), new Vector2(x2, y2), new Vector2(x3, y3), new Vector2(x4, y4), wb) { }
 
         #endregion
 
@@ -101,6 +87,12 @@ namespace Muragatte.Visual.Shapes
         {
             get { return _p4; }
             set { _p4 = value; }
+        }
+
+        public WriteableBitmap Bitmap
+        {
+            get { return _wb; }
+            set { _wb = value; }
         }
 
         #endregion
