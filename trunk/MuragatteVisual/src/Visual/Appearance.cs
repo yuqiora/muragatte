@@ -303,7 +303,17 @@ namespace Muragatte.Visual
         {
             if (_style.HasTrail)
             {
-                _style.Draw(target, position, direction, Style.Trail.Color.WithA(alpha), _elementCoordinates);
+                Color primary = Colors.Transparent;
+                Color secondary = Colors.Transparent;
+                if (_style.PrimaryColor.NotTransparent())
+                {
+                    primary = _style.Trail.Color.WithA(alpha);
+                }
+                else
+                {
+                    secondary = _style.Trail.Color.WithA(alpha);
+                }
+                _style.Draw(target, position, direction, primary, secondary, _elementCoordinates);
             }
         }
 

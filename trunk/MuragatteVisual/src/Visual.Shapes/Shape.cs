@@ -34,9 +34,48 @@ namespace Muragatte.Visual.Shapes
 
         #region Methods
 
-        public abstract void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null);
+        public virtual void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
+        {
+            if (width == 1 && height == 1)
+            {
+                PixelShape.Instance.Draw(target, position, angle, primaryColor, secondaryColor, width, height, other);
+            }
+            else
+            {
+                Draw(target, position, angle, primaryColor, secondaryColor, CreateCoordinates(width, height));
+            }
+        }
 
-        public abstract void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates);
+        public virtual void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
+        {
+            if (primaryColor.IsSemiTransparent() || secondaryColor.IsSemiTransparent())
+            {
+                BlitDraw(target, position, angle, primaryColor, secondaryColor, coordinates);
+            }
+            else
+            {
+                FullDraw(target, position, angle, primaryColor, secondaryColor, coordinates);
+            }
+        }
+
+        protected virtual void BlitDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
+        {
+            BlitDraw(target, position, angle, primaryColor, secondaryColor, CreateCoordinates(width, height));
+        }
+
+        protected virtual void BlitDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
+        {
+            coordinates[0].Bitmap.Clear();
+            FullDraw(coordinates[0].Bitmap, coordinates[0].Bitmap.Center(), angle, primaryColor, secondaryColor, coordinates);
+            target.Blit(position, coordinates[0].Bitmap);
+        }
+
+        protected virtual void FullDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
+        {
+            FullDraw(target, position, angle, primaryColor, secondaryColor, CreateCoordinates(width, height));
+        }
+
+        protected abstract void FullDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates);
 
         public abstract List<Coordinates> CreateCoordinates(int width, int height, object other = null);
 

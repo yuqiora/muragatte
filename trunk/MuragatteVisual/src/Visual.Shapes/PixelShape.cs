@@ -50,15 +50,22 @@ namespace Muragatte.Visual.Shapes
 
         public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, int width, int height, object other = null)
         {
-            Draw(target, position, primaryColor, secondaryColor);
+            Draw(target, position, angle, primaryColor, secondaryColor, null);
         }
 
-        public override void Draw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
+        protected override void BlitDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
         {
-            Draw(target, position, primaryColor, secondaryColor);
+            Color s = primaryColor.NotTransparent() ? primaryColor : secondaryColor;
+            Color d = target.GetPixel(position.Xi, position.Yi);
+            //based on Blit code from WriteableBitmapEx library
+            int destPixel = ((((s.A * s.A) + ((255 - s.A) * d.A)) >> 8) << 24) +
+                            ((((s.A * s.R) + ((255 - s.A) * d.R)) >> 8) << 16) +
+                            ((((s.A * s.G) + ((255 - s.A) * d.G)) >> 8) << 8) +
+                            (((s.A * s.B) + ((255 - s.A) * d.B)) >> 8);
+            target.SetPixel(position.Xi, position.Yi, destPixel);
         }
 
-        private void Draw(WriteableBitmap target, Vector2 position, Color primaryColor, Color secondaryColor)
+        protected override void FullDraw(WriteableBitmap target, Vector2 position, Angle angle, Color primaryColor, Color secondaryColor, List<Coordinates> coordinates)
         {
             target.SetPixel(position, primaryColor.NotTransparent() ? primaryColor : secondaryColor);
         }
