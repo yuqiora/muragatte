@@ -30,10 +30,10 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="Open" Height="23" Name="btnOpen" Width="75" />
                 <Button Content="Load" Height="23" Name="btnLoad" Width="75" />
-                <Button Content="New" Height="23" Name="btnNew" Width="75" />
+                <Button Content="New" Height="23" Name="btnNew" Width="75" Click="btnNew_Click" />
                 <Button Content="Summary" Height="23" Name="btnSummary" Width="75" />
                 <Button Content="Modify" Height="23" Name="btnModify" Width="75" />
-                <Button Content="Run" Height="23" Name="btnRun" Width="75" />
+                <Button Content="Run" Height="23" Name="btnRun" Width="75" Click="btnRun_Click" />
                 <Button Content="Results" Height="23" Name="btnResults" Width="75" />
                 <Button Content="About" Height="23" Name="btnAbout" Width="75" Click="btnAbout_Click" />
             </StackPanel>

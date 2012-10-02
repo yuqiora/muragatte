@@ -1,0 +1,18 @@
+﻿<!-- **********************************************************************
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Thesis Application
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+*********************************************************************** -->
+
+<Window x:Class="Muragatte.Thesis.GUI.ThesisArchetypesEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ThesisArchetypesEditorWindow" Height="300" Width="300">
+    <Grid>
+        
+    </Grid>
+</Window>

@@ -39,6 +39,15 @@ namespace Muragatte.Random
 
         #endregion
 
+        #region Properties
+
+        public uint RandMax
+        {
+            get { return _random.RandMax; }
+        }
+
+        #endregion
+
         #region Methods
 
         public double Uniform()

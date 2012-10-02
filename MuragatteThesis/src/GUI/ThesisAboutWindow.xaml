@@ -46,7 +46,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Extended WPF Toolkit v1.6.0.0" Grid.Column="0" />
+            <TextBlock Text="Extended WPF Toolkit v1.7.0.0" Grid.Column="0" />
             <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://wpftoolkit.codeplex.com/">
                 <Hyperlink NavigateUri="http://wpftoolkit.codeplex.com/" Click="Hyperlink_Click">www</Hyperlink>
             </TextBlock>

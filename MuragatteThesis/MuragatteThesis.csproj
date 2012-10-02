@@ -62,8 +62,27 @@
     <Compile Include="src\GUI\ThesisAboutWindow.xaml.cs">
       <DependentUpon>ThesisAboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\GUI\ThesisArchetypesEditorWindow.xaml.cs">
+      <DependentUpon>ThesisArchetypesEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\GUI\ThesisExperimentEditorWindow.xaml.cs">
+      <DependentUpon>ThesisExperimentEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\GUI\ThesisSceneEditorWindow.xaml.cs">
+      <DependentUpon>ThesisSceneEditorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Thesis\Experiment.cs" />
+    <Compile Include="src\Thesis\Instance.cs" />
+    <Compile Include="src\Thesis\InstanceDefinition.cs" />
     <Page Include="src\GUI\ThesisAboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\GUI\ThesisArchetypesEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\GUI\ThesisExperimentEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -79,6 +98,10 @@
       <DependentUpon>ThesisMainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="src\GUI\ThesisSceneEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
