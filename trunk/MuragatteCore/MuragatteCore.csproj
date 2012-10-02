@@ -103,6 +103,7 @@
     <Compile Include="src\Core.Storage\SimpleBruteForce.cs" />
     <Compile Include="src\Core.Storage\SpeciesCollection.cs" />
     <Compile Include="src\Core\MultiAgentSystem.cs" />
+    <Compile Include="src\Core\Scene.cs" />
     <Compile Include="src\Random\Distribution.cs" />
     <Compile Include="src\Random\GaussianNoise.cs" />
     <Compile Include="src\Random\Noise.cs" />

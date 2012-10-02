@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Muragatte.Random;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -29,9 +30,23 @@ namespace Muragatte.Thesis.GUI
     /// </summary>
     public partial class ThesisMainWindow : Window
     {
+        private RandomMT _random = new RandomMT();
+        private Experiment _experiment = null;
+
         public ThesisMainWindow()
         {
             InitializeComponent();
+        }
+
+        public Experiment Experiment
+        {
+            get { return _experiment; }
+            set { _experiment = value; }
+        }
+
+        public RandomMT Random
+        {
+            get { return _random; }
         }
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
@@ -39,6 +54,22 @@ namespace Muragatte.Thesis.GUI
             ThesisAboutWindow about = new ThesisAboutWindow();
             about.Owner = this;
             about.ShowDialog();
+        }
+
+        private void btnNew_Click(object sender, RoutedEventArgs e)
+        {
+            ThesisExperimentEditorWindow editor = new ThesisExperimentEditorWindow(this);
+            editor.Show();
+        }
+
+        private void btnRun_Click(object sender, RoutedEventArgs e)
+        {
+            if (_experiment != null)
+            {
+                binProgress.IsBusy = true;
+                _experiment.Run();
+                binProgress.IsBusy = false;
+            }
         }
     }
 }

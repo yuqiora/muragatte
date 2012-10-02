@@ -53,7 +53,6 @@ namespace Muragatte.Visual.GUI
         private List<ICollectionView> _views = new List<ICollectionView>();
 
         private WriteableBitmap _wbStylePreview = null;
-        private Vector2 _stylePreviewCenter = Vector2.Zero;
 
         private HistoryViewer _historyViewer = null;
 
@@ -63,26 +62,38 @@ namespace Muragatte.Visual.GUI
 
         #region Constructors
 
-        public VisualOptionsWindow(Visualization visualization)
+        public VisualOptionsWindow(Visualization visualization, IEnumerable<Styles.Style> styles = null, bool allOptions = true)
         {
             InitializeComponent();
             DataContext = this;
-            _visual = visualization;
-            _historyViewer = new HistoryViewer(_visual.GetModel.History, _visual.GetPlayback);
-            
-            FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
-            dudScale.Value = _visual.GetCanvas.Scale;
-            dudScale.Tag = _visual.GetCanvas.Scale;
+
+            if (allOptions)
+            {
+                _visual = visualization;
+                _historyViewer = new HistoryViewer(_visual.GetModel.History, _visual.GetPlayback);
+
+                FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
+                dudScale.Value = _visual.GetCanvas.Scale;
+                dudScale.Tag = _visual.GetCanvas.Scale;
+
+                _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
+                SetViews();
+            }
 
             _shapes = CreateShapeList();
-
-            CreateDefaultStyles();
-            _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
-            SetViews();
-
+            if (styles == null || styles.Count() == 0)
+            {
+                CreateDefaultStyles();
+            }
+            else
+            {
+                foreach (Styles.Style s in styles)
+                {
+                    _styles.Add(s);
+                }
+            }
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
             imgStylesPreview.Source = _wbStylePreview;
-            _stylePreviewCenter = new Vector2(_wbStylePreview.PixelWidth / 2, _wbStylePreview.PixelHeight / 2);
         }
 
         #endregion
@@ -213,6 +224,11 @@ namespace Muragatte.Visual.GUI
             DeleteSelectedStyle();
         }
 
+        private void btnStylesClear_Click(object sender, RoutedEventArgs e)
+        {
+            _styles.Clear();
+        }
+
         private void btnStylesNew_Click(object sender, RoutedEventArgs e)
         {
             _styles.Add(new Styles.Style());
@@ -296,7 +312,7 @@ namespace Muragatte.Visual.GUI
                 new NeighbourhoodStyle(
                     ArcShape.Instance,
                     Colors.Transparent, DefaultValues.NEIGHBOURHOOD_COLOR,
-                    5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), _visual.GetCanvas.Scale),
+                    5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), DefaultValues.Scale),
                 new TrackStyle(DefaultValues.AGENT_COLOR),
                 new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
             _styles.Add(new Styles.Style(
@@ -369,7 +385,7 @@ namespace Muragatte.Visual.GUI
             return a.Style.HasTrail;
         }
 
-        private List<Visual.Shapes.Shape> CreateShapeList()
+        private List<Shapes.Shape> CreateShapeList()
         {
             List<Shapes.Shape> items = new List<Shapes.Shape>();
             items.Add(PixelShape.Instance);
@@ -393,13 +409,13 @@ namespace Muragatte.Visual.GUI
 
         private void RedrawStylePreview()
         {
-            _wbStylePreview.Clear(_visual.GetCanvas.BackgroundColor);
+            _wbStylePreview.Clear(_visual == null ? DefaultValues.BACKGROUND_COLOR : _visual.GetCanvas.BackgroundColor);
             Styles.Style selectedStyle = (Styles.Style)lboStyleEditorList.SelectedItem;
             if (selectedStyle != null)
             {
                 if (selectedStyle.HasNeighbourhood)
-                    selectedStyle.Neighbourhood.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
-                selectedStyle.Draw(_wbStylePreview, _stylePreviewCenter, Vector2.X0Y1);
+                    selectedStyle.Neighbourhood.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X0Y1);
+                selectedStyle.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X0Y1);
             }
         }
 
@@ -421,6 +437,20 @@ namespace Muragatte.Visual.GUI
             _views.Add(TrailsView);
             _views.Add(CentroidsView);
             _views.Add(EnabledElementsView);
+        }
+
+        public static IEnumerable<Styles.Style> StyleEditorDialog(IEnumerable<Styles.Style> styles)
+        {
+            VisualOptionsWindow editor = new VisualOptionsWindow(null, styles, false);
+            foreach (TabItem t in editor.tabOptions.Items)
+            {
+                t.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            editor.titStyleEditor.Visibility = System.Windows.Visibility.Visible;
+            editor.tabOptions.SelectedItem = editor.titStyleEditor;
+            ObservableCollection<Styles.Style> editedStyles = editor.GetStyles;
+            editor.ShowDialog();
+            return editedStyles;
         }
 
         #endregion

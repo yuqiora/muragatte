@@ -1,0 +1,61 @@
+﻿<!-- **********************************************************************
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Thesis Application
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+*********************************************************************** -->
+
+<Window x:Class="Muragatte.Thesis.GUI.ThesisExperimentEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="Experiment Editor" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <StackPanel>
+        <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="200" Height="23" />
+        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="200" Height="23" />
+        <xtk:IntegerUpDown Name="iudRepeat" Width="80" Height="23" Minimum="1" Watermark="Repeat" />
+        <StackPanel Orientation="Horizontal">
+            <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="120" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" />
+            <Button Content="Random" Height="23" Name="btnRandomSeed" Width="75" Click="btnRandomSeed_Click" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <xtk:DropDownButton Name="ddbStyles" Content="Styles" Height="23" Width="120">
+                <xtk:DropDownButton.DropDownContent>
+                    <ListBox MaxHeight="200" Name="lboStyles" />
+                </xtk:DropDownButton.DropDownContent>
+            </xtk:DropDownButton>
+            <Button Content="Edit" Height="23" Name="btnStyleEditor" Width="75" Click="btnStyleEditor_Click" />
+        </StackPanel>
+        <xtk:DoubleUpDown Name="dudTimePerStep" Watermark="Time per step" Width="80" Height="23" Maximum="1" Minimum="0.05" Increment="0.05" Value="0.25" />
+        <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="80" Height="23" Value="100" />
+        <StackPanel Orientation="Horizontal">
+            <xtk:DropDownButton Name="ddbSpecies" Content="Species" Height="23" Width="120">
+                <xtk:DropDownButton.DropDownContent>
+                    <ListBox MaxHeight="200" Name="lboSpecies" />
+                </xtk:DropDownButton.DropDownContent>
+            </xtk:DropDownButton>
+            <Button Content="Edit" Height="23" Name="btnSpeciesEditor" Width="75" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <xtk:IntegerUpDown Name="iudWidth" Watermark="Width" Height="23" Width="56" />
+            <TextBlock Text="x" VerticalAlignment="Center" Width="8" />
+            <xtk:IntegerUpDown Name="iudHeight" Watermark="Height" Height="23" Width="56" />
+            <Button Content="Scene" Height="23" Name="btnSceneEditor" Width="75" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <xtk:DropDownButton Name="ddbArchetypes" Content="Archetypes" Height="23" Width="120">
+                <xtk:DropDownButton.DropDownContent>
+                    <ListBox MaxHeight="200" Name="lboArchetypes" />
+                </xtk:DropDownButton.DropDownContent>
+            </xtk:DropDownButton>
+            <Button Content="Edit" Height="23" Name="btnArchetypesEditor" Width="75" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="OK" Height="23" Name="btnOK" Width="75" IsDefault="True" Click="btnOK_Click" />
+            <Button Content="Cancel" Height="23" Name="btnCancel" Width="75" IsCancel="True" Click="btnCancel_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>
