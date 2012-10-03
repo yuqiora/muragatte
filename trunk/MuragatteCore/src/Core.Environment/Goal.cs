@@ -44,6 +44,12 @@ namespace Muragatte.Core.Environment
             SetSpecies(species, Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
         }
 
+        protected Goal(Goal other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _species = other._species;
+        }
+
         #endregion
 
         #region Properties

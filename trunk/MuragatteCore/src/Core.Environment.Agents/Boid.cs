@@ -35,6 +35,8 @@ namespace Muragatte.Core.Environment.Agents
             Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
             : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
 
+        protected BoidAgent(BoidAgent other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -88,13 +90,6 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        //public override void Update()
-        //{
-        //    IEnumerable<Agent> locals = _model.Elements.RangeSearch<Agent>(this, VisibleRange);
-        //    IEnumerable<Agent> fov = _fieldOfView.Within(locals);
-        //    ApplyRules(fov);
-        //}
-
         protected override IEnumerable<Element> GetLocalNeighbours()
         {
             return _fieldOfView.Within(_model.Elements.RangeSearch<Agent>(this, VisibleRange));
@@ -102,10 +97,6 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override Vector2 ApplyRules(IEnumerable<Element> locals)
         {
-            //Vector2 dirDelta = Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
-            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            //ProperDirection();
-            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
             return Separation.Steer(locals) + Cohesion.Steer(locals) + Alignment.Steer(locals);
         }
 
@@ -114,6 +105,11 @@ namespace Muragatte.Core.Environment.Agents
             AddSteering(new SeparationSteering(this, _args.Modifiers[SeparationSteering.LABEL]));
             AddSteering(new CohesionSteering(this, _args.Modifiers[CohesionSteering.LABEL]));
             AddSteering(new AlignmentSteering(this, _args.Modifiers[AlignmentSteering.LABEL]));
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new BoidAgent(this, model);
         }
 
         #endregion
@@ -147,6 +143,12 @@ namespace Muragatte.Core.Environment.Agents
         public AdvancedBoidAgent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
             Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
             : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args)
+        {
+            _args.SetNeighbourhoodOwner(this);
+        }
+
+        protected AdvancedBoidAgent(AdvancedBoidAgent other, MultiAgentSystem model)
+            : base(other, model)
         {
             _args.SetNeighbourhoodOwner(this);
         }
@@ -215,13 +217,6 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        //public override void Update()
-        //{
-        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
-        //    ApplyRules(fov);
-        //}
-
         protected override IEnumerable<Element> GetLocalNeighbours()
         {
             return _fieldOfView.Within(_model.Elements.RangeSearch(this, VisibleRange));
@@ -261,9 +256,6 @@ namespace Muragatte.Core.Environment.Agents
                 }
             }
             dirDelta.Normalize();
-            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            //ProperDirection();
-            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
             return dirDelta;
         }
 
@@ -273,6 +265,11 @@ namespace Muragatte.Core.Environment.Agents
             AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
             AddSteering(new SeekSteering(this, _args.Modifiers[AdvancedBoidAgentArgs.MOD_ASSERTIVITY]));
             AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL], _model.Random));
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new AdvancedBoidAgent(this, model);
         }
 
         #endregion

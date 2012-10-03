@@ -24,27 +24,33 @@ namespace Muragatte.Core.Environment.Agents
         public VersatileAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
             : base(model, species, fieldOfView, turningAngle, args)
         {
-            args.SetNeighbourhoodOwner(this);
+            _args.SetNeighbourhoodOwner(this);
         }
 
         public VersatileAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
             Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
             : base(model, position, direction, speed, species, fieldOfView, turningAngle, args)
         {
-            args.SetNeighbourhoodOwner(this);
+            _args.SetNeighbourhoodOwner(this);
         }
 
         public VersatileAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
             : base(id, model, species, fieldOfView, turningAngle, args)
         {
-            args.SetNeighbourhoodOwner(this);
+            _args.SetNeighbourhoodOwner(this);
         }
 
         public VersatileAgent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
             Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
             : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args)
         {
-            args.SetNeighbourhoodOwner(this);
+            _args.SetNeighbourhoodOwner(this);
+        }
+
+        protected VersatileAgent(VersatileAgent other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _args.SetNeighbourhoodOwner(this);
         }
 
         #endregion
@@ -281,18 +287,8 @@ namespace Muragatte.Core.Environment.Agents
                 }
             }
             dirDelta.Normalize();
-            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            //ProperDirection();
-            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
             return dirDelta;
         }
-
-        //public override void Update()
-        //{
-        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
-        //    ApplyRules(fov);
-        //}
 
         protected override void EnableSteering()
         {
@@ -305,6 +301,11 @@ namespace Muragatte.Core.Environment.Agents
             AddSteering(new PursuitSteering(this, _args.Modifiers[PursuitSteering.LABEL]));
             AddSteering(new EvasionSteering(this, _args.Modifiers[EvasionSteering.LABEL]));
             AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL], _model.Random));
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new VersatileAgent(this, model);
         }
 
         #endregion

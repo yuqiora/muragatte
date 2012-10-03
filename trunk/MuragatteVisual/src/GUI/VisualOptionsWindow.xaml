@@ -304,16 +304,16 @@
                         <Button Content="Delete" Height="23" Name="btnStylesDelete" Width="75" Click="btnStylesDelete_Click" />
                         <Button Content="Clear" Height="23" Name="btnStylesClear" Width="75" Click="btnStylesClear_Click" />
                     </StackPanel>
-                    <ListBox Name="lboStyleEditorList" Margin="10,0,10,10" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetStyles}" ItemTemplate="{StaticResource StyleSummaryTemplate}" IsSynchronizedWithCurrentItem="True" Grid.IsSharedSizeScope="True" SelectionChanged="StyleEditor_SelectionChanged" />
+                    <ListBox Name="lboStyleEditorList" Margin="10,0,10,10" DockPanel.Dock="Left" MinWidth="150" ItemsSource="{Binding Path=GetStyles}" ItemTemplate="{StaticResource StyleSummaryTemplate}" IsSynchronizedWithCurrentItem="True" Grid.IsSharedSizeScope="True" SelectionChanged="StyleEditor_SelectionChanged" />
                     <StackPanel DockPanel.Dock="Left">
                         <GroupBox Header="Main" Name="grbStylesMain" Margin="2">
                             <StackPanel>
                                 <xtk:WatermarkTextBox Height="23" Name="txtStylesMainName" Width="120" Watermark="Name" Text="{Binding Path=SelectedItem.Name, ElementName=lboStyleEditorList}" />
                                 <ComboBox Height="23" Name="cmbStylesMainShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Shape, ElementName=lboStyleEditorList}" SelectionChanged="StyleEditor_SelectionChanged" />
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <xtk:DoubleUpDown Name="dudStylesMainWidth" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Width" Value="{Binding Path=SelectedItem.UnitWidth, ElementName=lboStyleEditorList}" ValueChanged="StyleEditor_NumericValueChanged" />
+                                    <xtk:DoubleUpDown Name="dudStylesMainWidth" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Width" Value="{Binding Path=SelectedItem.UnitWidth, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" />
                                     <TextBlock Height="23" Text=" x " />
-                                    <xtk:DoubleUpDown Name="dudStylesMainHeight" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Height" Value="{Binding Path=SelectedItem.UnitHeight, ElementName=lboStyleEditorList}" ValueChanged="StyleEditor_NumericValueChanged" />
+                                    <xtk:DoubleUpDown Name="dudStylesMainHeight" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Height" Value="{Binding Path=SelectedItem.UnitHeight, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" />
                                 </StackPanel>
                                 <xtk:ColorPicker Name="cpiStylesMainPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" />
                                 <xtk:ColorPicker Name="cpiStylesMainSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" />
@@ -327,8 +327,8 @@
                                 <ComboBox Height="23" Name="cmbStylesNeighbourhoodShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Neighbourhood.Shape, ElementName=lboStyleEditorList}" SelectionChanged="StyleEditor_SelectionChanged" />
                                 <xtk:ColorPicker Name="cpiStylesNeighbourhoodPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" />
                                 <xtk:ColorPicker Name="cpiStylesNeighbourhoodSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" />
-                                <xtk:DoubleUpDown Name="dudStylesNeighbourhoodRadius" Height="23" Width="120" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Radius" Value="{Binding Path=SelectedItem.Neighbourhood.UnitRadius, ElementName=lboStyleEditorList}" ValueChanged="StyleEditor_NumericValueChanged" />
-                                <xtk:IntegerUpDown Name="iudStylesNeighbourhoodAngle" Height="23" Width="120" Minimum="1" Maximum="180" Watermark="Angle" Value="{Binding Path=SelectedItem.Neighbourhood.Angle, ElementName=lboStyleEditorList, Converter={StaticResource AngleToIntConverter}}" ValueChanged="StyleEditor_NumericValueChanged" />
+                                <xtk:DoubleUpDown Name="dudStylesNeighbourhoodRadius" Height="23" Width="120" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Radius" Value="{Binding Path=SelectedItem.Neighbourhood.UnitRadius, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" />
+                                <xtk:IntegerUpDown Name="iudStylesNeighbourhoodAngle" Height="23" Width="120" Minimum="1" Maximum="180" Watermark="Angle" Value="{Binding Path=SelectedItem.Neighbourhood.Angle, ElementName=lboStyleEditorList, Converter={StaticResource AngleToIntConverter}, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" />
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
@@ -347,7 +347,7 @@
                             </GroupBox.Header>
                             <StackPanel IsEnabled="{Binding ElementName=chbStylesTrailEnabled, Path=IsChecked}">
                                 <xtk:ColorPicker Name="cpiStylesTrailColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Trail.Color, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
-                                <xtk:IntegerUpDown Name="iudStylesTrailLength" Height="23" Width="120" Minimum="0" Maximum="{x:Static mv:DefaultValues.MAXIMUM_TRAIL_LENGTH}" Watermark="Length" Value="{Binding Path=SelectedItem.Trail.Length, ElementName=lboStyleEditorList}" />
+                                <xtk:IntegerUpDown Name="iudStylesTrailLength" Height="23" Width="120" Minimum="0" Maximum="{x:Static mv:DefaultValues.MAXIMUM_TRAIL_LENGTH}" Watermark="Length" Value="{Binding Path=SelectedItem.Trail.Length, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Preview" Name="grbStylesPreview" Margin="2">
@@ -361,5 +361,6 @@
                 </DockPanel>
             </TabItem>
         </TabControl>
+        <Button Content="Close" Height="23" HorizontalAlignment="Left" Margin="10" Name="btnClose" VerticalAlignment="Bottom" Width="75" Visibility="Hidden" IsEnabled="False" Click="btnClose_Click" />
     </Grid>
 </Window>

@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core;
@@ -26,7 +27,7 @@ namespace Muragatte.Thesis
         private int _iLength;
         private Scene _scene = null;
         private SpeciesCollection _species;
-        private List<AgentArchetype> _archetypes = new List<AgentArchetype>();
+        private ObservableCollection<AgentArchetype> _archetypes = new ObservableCollection<AgentArchetype>();
 
         #endregion
 
@@ -38,7 +39,7 @@ namespace Muragatte.Thesis
             _iLength = length;
             _scene = scene;
             _species = species;
-            _archetypes = archetypes == null ? new List<AgentArchetype>() : new List<AgentArchetype>(archetypes);
+            _archetypes = archetypes == null ? new ObservableCollection<AgentArchetype>() : new ObservableCollection<AgentArchetype>(archetypes);
         }
 
         #endregion
@@ -67,7 +68,7 @@ namespace Muragatte.Thesis
             get { return _species; }
         }
 
-        public List<AgentArchetype> Archetypes
+        public ObservableCollection<AgentArchetype> Archetypes
         {
             get { return _archetypes; }
         }

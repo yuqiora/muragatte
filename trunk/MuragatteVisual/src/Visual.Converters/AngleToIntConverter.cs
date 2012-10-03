@@ -29,8 +29,8 @@ namespace Muragatte.Visual.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int degrees = (int)value;
-            return new Angle(degrees);
+            int? degrees = (int?)value;
+            return new Angle(degrees.GetValueOrDefault(0));
         }
     }
 }

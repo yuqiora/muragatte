@@ -60,6 +60,10 @@ namespace Muragatte.Core.Environment
 
         public Agent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
             : this(id, model, Vector2.Zero, Vector2.X0Y1, 1, species, fieldOfView, turningAngle, args) { }
+
+        protected Agent(Agent other, MultiAgentSystem model)
+            : this(other._iElementID, model, other._position, other._direction, other._dSpeed,
+            other._species, other._fieldOfView.Clone(), other._dTurningAngle, other._args.Clone()) { }
         
         #endregion
 
@@ -80,11 +84,13 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return 1; }
+            set { }
         }
 
         public override double Height
         {
             get { return 1; }
+            set { }
         }
 
         public override double Radius

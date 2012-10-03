@@ -33,7 +33,7 @@ namespace Muragatte.Core.Environment
             set { }
         }
 
-        public override double Heigth
+        public override double Height
         {
             get { return 1; }
             set { }
@@ -46,6 +46,11 @@ namespace Muragatte.Core.Environment
         public override Vector2 Respawn(RandomMT random)
         {
             return Respawn();
+        }
+
+        public override string ToString()
+        {
+            return string.Format(". {0} .", base.ToString());
         }
 
         #endregion

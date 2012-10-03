@@ -99,8 +99,10 @@ namespace Muragatte.Visual.Styles
             Rescale(DefaultValues.Scale);
         }
 
-        public Style(Style other)
-            : this(other._shape, "Copy of " + other.Name, other.UnitWidth, other.UnitHeight, other._primaryColor, other._secondaryColor,
+        public Style(Style other) : this(other, "Copy of " + other.Name) { }
+
+        public Style(Style other, string name)
+            : this(other._shape, name, other.UnitWidth, other.UnitHeight, other._primaryColor, other._secondaryColor,
             new NeighbourhoodStyle(other._neighbourhood), new TrackStyle(other._track), new TrailStyle(other._trail))
         {
             _bNeighbourhood = other._bNeighbourhood;
