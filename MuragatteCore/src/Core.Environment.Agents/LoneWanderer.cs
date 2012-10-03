@@ -35,6 +35,8 @@ namespace Muragatte.Core.Environment.Agents
             Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
             : base(id, model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
 
+        protected LoneWandererAgent(LoneWandererAgent other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -80,18 +82,8 @@ namespace Muragatte.Core.Environment.Agents
             {
                 dirDelta = Wander.Steer();
             }
-            //_altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            //ProperDirection();
-            //_altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
             return dirDelta;
         }
-
-        //public override void Update()
-        //{
-        //    IEnumerable<Element> locals = _model.Elements.RangeSearch(this, VisibleRange);
-        //    IEnumerable<Element> fov = _fieldOfView.Within(locals);
-        //    ApplyRules(fov.Where(e => NotIgnoredOrUnknown(RelationshipWith(e))));
-        //}
 
         protected override IEnumerable<Element> GetLocalNeighbours()
         {
@@ -107,6 +99,11 @@ namespace Muragatte.Core.Environment.Agents
         {
             AddSteering(new WanderSteering(this, _args.Modifiers[WanderSteering.LABEL], _model.Random));
             AddSteering(new ObstacleAvoidanceSteering(this, _args.Modifiers[ObstacleAvoidanceSteering.LABEL], VisibleRange));
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new LoneWandererAgent(this, model);
         }
 
         #endregion

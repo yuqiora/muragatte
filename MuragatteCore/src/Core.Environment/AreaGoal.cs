@@ -48,6 +48,13 @@ namespace Muragatte.Core.Environment
             _dHeight = height;
         }
 
+        protected AreaGoal(AreaGoal other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _dWidth = other._dWidth;
+            _dHeight = other._dHeight;
+        }
+
         #endregion
 
         #region Properties
@@ -55,11 +62,13 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return _dWidth; }
+            set { _dWidth = value; }
         }
 
         public override double Height
         {
             get { return _dHeight; }
+            set { _dHeight = value; }
         }
 
         public override double Radius
@@ -79,6 +88,11 @@ namespace Muragatte.Core.Environment
         public override Vector2 GetPosition()
         {
             return _model.Random.Disk(_position, _dWidth, _dHeight);
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new AreaGoal(this, model);
         }
 
         #endregion

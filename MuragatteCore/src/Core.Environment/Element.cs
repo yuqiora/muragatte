@@ -69,6 +69,9 @@ namespace Muragatte.Core.Environment
             _position = position;
         }
 
+        protected Element(Element other, MultiAgentSystem model)
+            : this(other._iElementID, model, other._position) { }
+
         #endregion
 
         #region Properties
@@ -120,9 +123,9 @@ namespace Muragatte.Core.Environment
 
         public abstract double Speed { get; set; }
 
-        public abstract double Width { get; }
+        public abstract double Width { get; set; }
 
-        public abstract double Height { get; }
+        public abstract double Height { get; set; }
 
         public abstract double Radius { get; }
 
@@ -203,7 +206,7 @@ namespace Muragatte.Core.Environment
 
         protected void SetSpecies(Species s, string name)
         {
-            _species = s ?? _model.Species[name];
+            _species = s ?? (_model == null ? null : _model.Species[name]);
         }
 
         #endregion
@@ -285,6 +288,8 @@ namespace Muragatte.Core.Environment
         public abstract void ConfirmUpdate();
 
         public abstract ElementNature RelationshipWith(Element e);
+
+        public abstract Element CloneTo(MultiAgentSystem model);
 
         #endregion
     }

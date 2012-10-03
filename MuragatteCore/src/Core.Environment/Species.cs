@@ -10,12 +10,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace Muragatte.Core.Environment
 {
-    public class Species
+    public class Species : INotifyPropertyChanged
     {
         #region Statics
 
@@ -32,19 +33,21 @@ namespace Muragatte.Core.Environment
 
         private int _iSpeciesID = -1;
         private string _sName = null;
-        private string _sFullName = null;
+        //private string _sFullName = null;
         private Species _ancestor = null;
         private Dictionary<Species, ElementNature> _relationships = new Dictionary<Species, ElementNature>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         #region Constructors
 
-        public Species(string name)
+        public Species(string name) : this(name, null)
         {
-            _iSpeciesID = IdCounter.Next();
-            _sName = name;
-            _sFullName = name;
+            //_iSpeciesID = IdCounter.Next();
+            //_sName = name;
+            //_sFullName = name;
         }
 
         public Species(string name, Species ancestor)
@@ -52,7 +55,7 @@ namespace Muragatte.Core.Environment
             _iSpeciesID = IdCounter.Next();
             _sName = name;
             _ancestor = ancestor;
-            _sFullName = _ancestor == null ? name : _ancestor.FullName + "." + name;
+            //_sFullName = _ancestor == null ? name : _ancestor.FullName + "." + name;
         }
 
         #endregion
@@ -67,11 +70,18 @@ namespace Muragatte.Core.Environment
         public string Name
         {
             get { return _sName; }
+            set
+            {
+                _sName = value;
+                NotifyPropertyChanged("Name");
+                NotifyPropertyChanged("FullName");
+            }
         }
 
         public string FullName
         {
-            get { return _sFullName; }
+            get { return _ancestor == null ? _sName : _ancestor.FullName + "." + _sName; }
+            //get { return _sFullName; }
         }
 
         public Species Ancestor
@@ -134,7 +144,8 @@ namespace Muragatte.Core.Environment
 
         public bool Equals(Species s)
         {
-            return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
+            //return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
+            return _iSpeciesID == s._iSpeciesID && FullName == s.FullName;
         }
 
         public override bool Equals(object obj)
@@ -142,7 +153,8 @@ namespace Muragatte.Core.Environment
             if (obj != null && obj is Species)
             {
                 Species s = (Species)obj;
-                return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
+                //return _iSpeciesID == s._iSpeciesID && _sFullName == s._sFullName;
+                return _iSpeciesID == s._iSpeciesID && FullName == s.FullName;
             }
             else { return false; }
         }
@@ -154,7 +166,16 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
-            return _sFullName;
+            //return _sFullName;
+            return FullName;
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

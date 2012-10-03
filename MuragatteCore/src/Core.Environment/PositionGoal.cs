@@ -32,6 +32,8 @@ namespace Muragatte.Core.Environment
         public PositionGoal(int id, MultiAgentSystem model, Vector2 position, Species species)
             : base(id, model, position, species) { }
 
+        protected PositionGoal(PositionGoal other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -39,11 +41,13 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return 1; }
+            set { }
         }
 
         public override double Height
         {
             get { return 1; }
+            set { }
         }
 
         public override double Radius
@@ -54,6 +58,15 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("Gp"); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new PositionGoal(this, model);
         }
 
         #endregion

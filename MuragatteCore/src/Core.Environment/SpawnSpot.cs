@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -17,13 +18,15 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class SpawnSpot
+    public abstract class SpawnSpot : INotifyPropertyChanged
     {
         #region Fields
 
         protected Vector2 _position;
         protected double _dWidth;
         protected double _dHeight;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -43,19 +46,31 @@ namespace Muragatte.Core.Environment
         public Vector2 Position
         {
             get { return _position; }
-            set { _position = value; }
+            set
+            {
+                _position = value;
+                NotifyPropertyChanged("Position");
+            }
         }
 
         public virtual double Width
         {
             get { return _dWidth; }
-            set { _dWidth = value; }
+            set
+            {
+                _dWidth = value;
+                NotifyPropertyChanged("Width");
+            }
         }
 
-        public virtual double Heigth
+        public virtual double Height
         {
             get { return _dHeight; }
-            set { _dHeight = value; }
+            set
+            {
+                _dHeight = value;
+                NotifyPropertyChanged("Height");
+            }
         }
 
         #endregion
@@ -68,6 +83,19 @@ namespace Muragatte.Core.Environment
         }
 
         public abstract Vector2 Respawn(RandomMT random);
+
+        public override string ToString()
+        {
+            return string.Format("{0}x{1} @ <{2}>", _dWidth, _dHeight, _position);
+        }
+
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         #endregion
     }

@@ -44,6 +44,12 @@ namespace Muragatte.Core.Environment
             SetSpecies(species, Storage.SpeciesCollection.DEFAULT_EXTRAS_LABEL);
         }
 
+        protected Extras(Extras other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _species = other._species;
+        }
+
         #endregion
 
         #region Properties
@@ -102,6 +108,12 @@ namespace Muragatte.Core.Environment
             _dRadius = radius;
         }
 
+        protected AttractSpot(AttractSpot other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _dRadius = other._dRadius;
+        }
+
         #endregion
 
         #region Properties
@@ -121,11 +133,13 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return 2 * _dRadius; }
+            set { }
         }
 
         public override double Height
         {
             get { return 2 * _dRadius; }
+            set { }
         }
 
         public override double Radius
@@ -151,6 +165,11 @@ namespace Muragatte.Core.Environment
 
         public override void ConfirmUpdate() { }
 
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new AttractSpot(this, model);
+        }
+
         #endregion
     }
 
@@ -164,6 +183,8 @@ namespace Muragatte.Core.Environment
         public RepelSpot(MultiAgentSystem model, Vector2 position, Species species, double radius = DEFAULT_RADIUS)
             : base(model, position, species, radius) { }
 
+        protected RepelSpot(RepelSpot other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -176,6 +197,15 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("Er"); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new RepelSpot(this, model);
         }
 
         #endregion
@@ -203,6 +233,12 @@ namespace Muragatte.Core.Environment
             _direction = direction;
         }
 
+        protected Guidepost(Guidepost other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _direction = other._direction;
+        }
+
         #endregion
 
         #region Properties
@@ -216,6 +252,15 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("Eg"); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new Guidepost(this, model);
         }
 
         #endregion

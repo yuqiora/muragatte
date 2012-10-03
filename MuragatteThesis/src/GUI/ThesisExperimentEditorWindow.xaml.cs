@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -31,10 +32,10 @@ namespace Muragatte.Thesis.GUI
         #region Fields
 
         private ThesisMainWindow _wndThesis;
-        private List<Visual.Styles.Style> _styles = null;
+        private ObservableCollection<Visual.Styles.Style> _styles = null;
         private Core.Scene _scene = null;
         private Core.Storage.SpeciesCollection _species = null;
-        private List<Core.Environment.AgentArchetype> _archetypes = null;
+        private ObservableCollection<Core.Environment.AgentArchetype> _archetypes = null;
 
         #endregion
 
@@ -46,6 +47,13 @@ namespace Muragatte.Thesis.GUI
             DataContext = this;
 
             _wndThesis = main;
+            if (GetExperiment == null)
+            {
+                _styles = new ObservableCollection<Visual.Styles.Style>();
+                _scene = new Core.Scene(new Core.Environment.Region(100, true));
+                _species = new Core.Storage.SpeciesCollection(true);
+                _archetypes = new ObservableCollection<Core.Environment.AgentArchetype>();
+            }
         }
 
         #endregion
@@ -62,6 +70,26 @@ namespace Muragatte.Thesis.GUI
             get { return _wndThesis.Experiment; }
         }
 
+        public ObservableCollection<Visual.Styles.Style> GetStyles
+        {
+            get { return GetExperiment == null ? _styles : GetExperiment.Styles; }
+        }
+
+        public Core.Scene GetScene
+        {
+            get { return GetExperiment == null ? _scene : GetExperiment.Definition.Scene; }
+        }
+
+        public Core.Storage.SpeciesCollection GetSpecies
+        {
+            get { return GetExperiment == null ? _species : GetExperiment.Definition.Species; }
+        }
+
+        public ObservableCollection<Core.Environment.AgentArchetype> GetArchetypes
+        {
+            get { return GetExperiment == null ? _archetypes : GetExperiment.Definition.Archetypes; }
+        }
+
         #endregion
 
         #region Events
@@ -74,20 +102,35 @@ namespace Muragatte.Thesis.GUI
         private void btnStyleEditor_Click(object sender, RoutedEventArgs e)
         {
             Visual.DefaultValues.Scale = 5;
-            _styles = new List<Visual.Styles.Style>(Visual.GUI.VisualOptionsWindow.StyleEditorDialog(GetExperiment == null ? null : GetExperiment.Styles));
+            Visual.GUI.VisualOptionsWindow.StyleEditorDialog(GetStyles);
         }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            _wndThesis.Experiment = new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
-                new InstanceDefinition(dudTimePerStep.Value.Value, iudLength.Value.Value, _scene, _species, _archetypes),
-                _styles, (uint)dudSeed.Value.Value);
+            if (GetExperiment == null)
+            {
+                _wndThesis.Experiment = new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
+                    new InstanceDefinition(dudTimePerStep.Value.Value, iudLength.Value.Value, _scene, _species, _archetypes),
+                    _styles, (uint)dudSeed.Value.Value);
+            }
             Close();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void btnSpeciesEditor_Click(object sender, RoutedEventArgs e)
+        {
+            ThesisSpeciesEditorWindow editor = new ThesisSpeciesEditorWindow(GetSpecies);
+            editor.ShowDialog();
+        }
+
+        private void btnSceneEditor_Click(object sender, RoutedEventArgs e)
+        {
+            ThesisSceneEditorWindow editor = new ThesisSceneEditorWindow(GetScene, GetSpecies);
+            editor.ShowDialog();
         }
 
         #endregion

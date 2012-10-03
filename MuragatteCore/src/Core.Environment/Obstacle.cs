@@ -28,15 +28,29 @@ namespace Muragatte.Core.Environment
         #region Constructors
 
         public Obstacle(MultiAgentSystem model, Species species, double width, double height)
-            : base(model)
+            : this(IdCounter.Next(), model, species, width, height) { }
+
+        public Obstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : this(IdCounter.Next(), model, position, species, width, height) { }
+
+        public Obstacle(int id, MultiAgentSystem model, Species species, double width, double height)
+            : base(id, model)
         {
             Construct(species, width, height);
         }
 
-        public Obstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
-            : base(model, position)
+        public Obstacle(int id, MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(id, model, position)
         {
             Construct(species, width, height);
+        }
+
+        protected Obstacle(Obstacle other, MultiAgentSystem model)
+            : base(other, model)
+        {
+            _species = other._species;
+            _dWidth = other._dWidth;
+            _dHeight = other._dHeight;
         }
 
         #endregion
@@ -58,11 +72,13 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return _dWidth; }
+            set { _dWidth = value; }
         }
 
         public override double Height
         {
             get { return _dHeight; }
+            set { _dHeight = value; }
         }
 
         public override ElementNature DefaultNature
@@ -124,6 +140,20 @@ namespace Muragatte.Core.Environment
         public EllipseObstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
             : base(model, position, species, width, height) { }
 
+        public EllipseObstacle(int id, MultiAgentSystem model, Species species, double size)
+            : base(id, model, species, size, size) { }
+
+        public EllipseObstacle(int id, MultiAgentSystem model, Species species, double width, double height)
+            : base(id, model, species, width, height) { }
+
+        public EllipseObstacle(int id, MultiAgentSystem model, Vector2 position, Species species, double size)
+            : base(id, model, position, species, size, size) { }
+
+        public EllipseObstacle(int id, MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(id, model, position, species, width, height) { }
+
+        protected EllipseObstacle(EllipseObstacle other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -136,6 +166,15 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("Oe"); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new EllipseObstacle(this, model);
         }
 
         #endregion
@@ -157,6 +196,20 @@ namespace Muragatte.Core.Environment
         public RectangleObstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
             : base(model, position, species, width, height) { }
 
+        public RectangleObstacle(int id, MultiAgentSystem model, Species species, double size)
+            : base(id, model, species, size, size) { }
+
+        public RectangleObstacle(int id, MultiAgentSystem model, Species species, double width, double height)
+            : base(id, model, species, width, height) { }
+
+        public RectangleObstacle(int id, MultiAgentSystem model, Vector2 position, Species species, double size)
+            : base(id, model, position, species, size, size) { }
+
+        public RectangleObstacle(int id, MultiAgentSystem model, Vector2 position, Species species, double width, double height)
+            : base(id, model, position, species, width, height) { }
+
+        protected RectangleObstacle(RectangleObstacle other, MultiAgentSystem model) : base(other, model) { }
+
         #endregion
 
         #region Properties
@@ -169,6 +222,15 @@ namespace Muragatte.Core.Environment
         public override string Name
         {
             get { return CreateName("Or"); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new RectangleObstacle(this, model);
         }
 
         #endregion

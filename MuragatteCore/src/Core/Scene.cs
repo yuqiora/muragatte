@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -22,8 +23,8 @@ namespace Muragatte.Core
         #region Fields
 
         private Region _region;
-        private List<SpawnSpot> _spawn;
-        private List<Element> _stationary;
+        private ObservableCollection<SpawnSpot> _spawn;
+        private ObservableCollection<Element> _stationary;
 
         #endregion
 
@@ -39,7 +40,7 @@ namespace Muragatte.Core
         {
             _region = region;
             _spawn = GetSpawnSpotsOrDefault(spawnSpots);
-            _stationary = stationaryElements == null ? new List<Element>() : new List<Element>(stationaryElements);
+            _stationary = stationaryElements == null ? new ObservableCollection<Element>() : new ObservableCollection<Element>(stationaryElements);
         }
 
         #endregion
@@ -51,12 +52,12 @@ namespace Muragatte.Core
             get { return _region; }
         }
 
-        public List<SpawnSpot> SpawnSpots
+        public ObservableCollection<SpawnSpot> SpawnSpots
         {
             get { return _spawn; }
         }
 
-        public List<Element> StationaryElements
+        public ObservableCollection<Element> StationaryElements
         {
             get { return _stationary; }
         }
@@ -65,18 +66,28 @@ namespace Muragatte.Core
 
         #region Methods
 
-        private List<SpawnSpot> GetSpawnSpotsOrDefault(IEnumerable<SpawnSpot> spawnSpots)
+        private ObservableCollection<SpawnSpot> GetSpawnSpotsOrDefault(IEnumerable<SpawnSpot> spawnSpots)
         {
             if (spawnSpots == null || spawnSpots.Count() == 0)
             {
-                List<SpawnSpot> result = new List<SpawnSpot>();
+                ObservableCollection<SpawnSpot> result = new ObservableCollection<SpawnSpot>();
                 result.Add(new RectangleSpawnSpot(new Vector2(_region.Width / 2.0, _region.Height / 2.0), _region.Width * 0.9, _region.Height * 0.9));
                 return result;
             }
             else
             {
-                return new List<SpawnSpot>(spawnSpots);
+                return new ObservableCollection<SpawnSpot>(spawnSpots);
             }
+        }
+
+        public IEnumerable<Element> ApplyStationaryElements(MultiAgentSystem model)
+        {
+            List<Element> result = new List<Element>();
+            foreach (Element e in _stationary)
+            {
+                result.Add(e.CloneTo(model));
+            }
+            return result;
         }
 
         #endregion

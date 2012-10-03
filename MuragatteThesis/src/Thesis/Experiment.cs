@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core;
@@ -29,7 +30,7 @@ namespace Muragatte.Thesis
         private int _iRepeatCount;
         private InstanceDefinition _definition;
         private List<Instance> _instances = new List<Instance>();
-        private List<Style> _styles;
+        private ObservableCollection<Style> _styles;
         private bool _bComplete = false;
         private ExperimentResults _results = null;
         private uint _uiSeed;
@@ -45,7 +46,7 @@ namespace Muragatte.Thesis
             _sPath = path;
             _iRepeatCount = repeat;
             _definition = definition;
-            _styles = styles == null ? new List<Style>() : new List<Style>(styles);
+            _styles = styles == null ? new ObservableCollection<Style>() : new ObservableCollection<Style>(styles);
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
         }
@@ -77,7 +78,7 @@ namespace Muragatte.Thesis
             get { return _instances; }
         }
 
-        public List<Style> Styles
+        public ObservableCollection<Style> Styles
         {
             get { return _styles; }
         }

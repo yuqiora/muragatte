@@ -17,6 +17,7 @@ using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
+    //needs some reworking, current version not sufficent
     public class SpeciesCollection : Dictionary<int, Species>, INotifyCollectionChanged
     {
         #region Constants
@@ -95,7 +96,7 @@ namespace Muragatte.Core.Storage
         public new void Add(int key, Species value)
         {
             base.Add(key, value);
-            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, value);
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<int, Species>(key, value));
         }
 
         public void Add(IEnumerable<Species> items)
@@ -113,7 +114,7 @@ namespace Muragatte.Core.Storage
             {
                 base.Remove(key);
                 _defaults.Remove(s.Name);
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, s);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<int, Species>(key, s));
                 return true;
             }
             else
@@ -129,7 +130,7 @@ namespace Muragatte.Core.Storage
             NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
         }
 
-        protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, Species changedItem)
+        protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<int, Species>? changedItem)
         {
             if (CollectionChanged != null)
             {

@@ -54,6 +54,9 @@ namespace Muragatte.Core.Environment
 
         public Centroid(int id, Agent source) : this(id, source.Model, source.Position, source.Direction, source.Speed, null) { }
 
+        protected Centroid(Centroid other, MultiAgentSystem model) :
+            this(other._iElementID, model, other._position, other._direction, other._dSpeed, other._species) { }
+
         #endregion
 
         #region Properties
@@ -72,12 +75,14 @@ namespace Muragatte.Core.Environment
 
         public override double Width
         {
-            get { return 2 * Radius; }
+            get { return 1; }
+            set { }
         }
 
         public override double Height
         {
-            get { return 2 * Radius; }
+            get { return 1; }
+            set { }
         }
 
         public override double Radius
@@ -164,6 +169,11 @@ namespace Muragatte.Core.Environment
         public override string ToString()
         {
             return ToString("C");
+        }
+
+        public override Element CloneTo(MultiAgentSystem model)
+        {
+            return new Centroid(this, model);
         }
 
         #endregion

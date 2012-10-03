@@ -34,6 +34,11 @@ namespace Muragatte.Core.Environment
             return random.UniformVector(_position, _dWidth, _dHeight);
         }
 
+        public override string ToString()
+        {
+            return string.Format("[ {0} ]", base.ToString());
+        }
+
         #endregion
     }
 }

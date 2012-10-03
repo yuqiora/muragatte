@@ -42,7 +42,8 @@ namespace Muragatte.Thesis
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
             //storage type fixed for now, might be selectable in the future
-            _mas = new MultiAgentSystem(new SimpleBruteForceStorage(scene.StationaryElements), scene.Region, species, _random, timePerStep);
+            _mas = new MultiAgentSystem(new SimpleBruteForceStorage(), scene.Region, species, _random, timePerStep);
+            _mas.Elements.Add(scene.ApplyStationaryElements(_mas));
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }

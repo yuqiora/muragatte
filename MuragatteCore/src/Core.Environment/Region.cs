@@ -10,13 +10,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public class Region
+    public class Region : INotifyPropertyChanged
     {
         #region Fields
 
@@ -25,9 +26,13 @@ namespace Muragatte.Core.Environment
         private bool _bBorderedHorizontal = true;   // - (y)
         private bool _bBorderedVertical = true;     // | (x)
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Contructors
+
+        public Region() : this(100, true) { }
 
         public Region(int width, int height, bool borderedHorizontal, bool borderedVertical)
         {
@@ -53,13 +58,21 @@ namespace Muragatte.Core.Environment
         public int Width
         {
             get { return _iWidth; }
-            set { _iWidth = value; }
+            set
+            {
+                _iWidth = value;
+                NotifyPropertyChanged("Width");
+            }
         }
 
         public int Height
         {
             get { return _iHeight; }
-            set { _iHeight = value; }
+            set
+            {
+                _iHeight = value;
+                NotifyPropertyChanged("Height");
+            }
         }
 
         public bool IsBordered
@@ -69,19 +82,32 @@ namespace Muragatte.Core.Environment
             {
                 _bBorderedHorizontal = value;
                 _bBorderedVertical = value;
+                NotifyPropertyChanged("IsBorderedHorizontally");
+                NotifyPropertyChanged("IsBorderedVertically");
+                NotifyPropertyChanged("IsBordered");
             }
         }
 
         public bool IsBorderedHorizontally
         {
             get { return _bBorderedHorizontal; }
-            set { _bBorderedHorizontal = value; }
+            set
+            {
+                _bBorderedHorizontal = value;
+                NotifyPropertyChanged("IsBorderedHorizontally");
+                NotifyPropertyChanged("IsBordered");
+            }
         }
 
         public bool IsBorderedVertically
         {
             get { return _bBorderedVertical; }
-            set { _bBorderedVertical= value; }
+            set
+            {
+                _bBorderedVertical= value;
+                NotifyPropertyChanged("IsBorderedVertically");
+                NotifyPropertyChanged("IsBordered");
+            }
         }
         
         #endregion
@@ -133,7 +159,14 @@ namespace Muragatte.Core.Environment
             return value;
         }
 
-        #endregion
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
+        #endregion
     }
 }

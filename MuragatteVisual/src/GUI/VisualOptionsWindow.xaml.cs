@@ -41,7 +41,7 @@ namespace Muragatte.Visual.GUI
 
         private Visualization _visual;
         private ObservableCollection<Appearance> _appearances = new ObservableCollection<Appearance>();
-        private ObservableCollection<Styles.Style> _styles = new ObservableCollection<Styles.Style>();
+        private ObservableCollection<Styles.Style> _styles = null;
         private CollectionViewSource _environmentView = new CollectionViewSource();
         private CollectionViewSource _agentsView = new CollectionViewSource();
         private CollectionViewSource _neighbourhoodsView = new CollectionViewSource();
@@ -53,6 +53,7 @@ namespace Muragatte.Visual.GUI
         private List<ICollectionView> _views = new List<ICollectionView>();
 
         private WriteableBitmap _wbStylePreview = null;
+        private double _currentScale = 1;
 
         private HistoryViewer _historyViewer = null;
 
@@ -62,36 +63,32 @@ namespace Muragatte.Visual.GUI
 
         #region Constructors
 
-        public VisualOptionsWindow(Visualization visualization, IEnumerable<Styles.Style> styles = null, bool allOptions = true)
+        public VisualOptionsWindow(Visualization visualization, ObservableCollection<Styles.Style> styles = null, bool asStyleEditor = false)
         {
             InitializeComponent();
             DataContext = this;
 
-            if (allOptions)
+            if (asStyleEditor)
+            {
+                btnClose.Visibility = System.Windows.Visibility.Visible;
+                btnClose.IsEnabled = true;
+            }
+            else
             {
                 _visual = visualization;
                 _historyViewer = new HistoryViewer(_visual.GetModel.History, _visual.GetPlayback);
 
                 FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
                 dudScale.Value = _visual.GetCanvas.Scale;
-                dudScale.Tag = _visual.GetCanvas.Scale;
+                _currentScale = _visual.GetCanvas.Scale;
 
                 _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
                 SetViews();
             }
 
             _shapes = CreateShapeList();
-            if (styles == null || styles.Count() == 0)
-            {
-                CreateDefaultStyles();
-            }
-            else
-            {
-                foreach (Styles.Style s in styles)
-                {
-                    _styles.Add(s);
-                }
-            }
+            _styles = styles ?? new ObservableCollection<Styles.Style>();
+            if (styles != null && !asStyleEditor) RescaleStyles(_currentScale);
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
             imgStylesPreview.Source = _wbStylePreview;
         }
@@ -171,20 +168,7 @@ namespace Muragatte.Visual.GUI
 
         private void btnRescaleApply_Click(object sender, RoutedEventArgs e)
         {
-            if ((double)dudScale.Tag != dudScale.Value.Value)
-            {
-                DefaultValues.Scale = dudScale.Value.Value;
-                foreach (Styles.Style s in _styles)
-                {
-                    s.Rescale(dudScale.Value.Value);
-                }
-                foreach (Appearance a in _appearances)
-                {
-                    a.Rescale(dudScale.Value.Value);
-                }
-                _visual.GetCanvas.Rescale(dudScale.Value.Value);
-                dudScale.Tag = dudScale.Value.Value;
-            }
+            Rescale(dudScale.Value.Value);
         }
 
         private void btnRescaleCancel_Click(object sender, RoutedEventArgs e)
@@ -271,6 +255,11 @@ namespace Muragatte.Visual.GUI
             RedrawCurrentIfStopped();
         }
 
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         #endregion
 
         #region Methods
@@ -280,9 +269,35 @@ namespace Muragatte.Visual.GUI
             label.Content = string.Format("{0} x {1}", width, height);
         }
 
+        private void Rescale(double value)
+        {
+            if (_currentScale != value)
+            {
+                DefaultValues.Scale = value;
+                foreach (Styles.Style s in _styles)
+                {
+                    s.Rescale(value);
+                }
+                foreach (Appearance a in _appearances)
+                {
+                    a.Rescale(value);
+                }
+                _visual.GetCanvas.Rescale(value);
+                _currentScale = value;
+            }
+        }
+
+        private void RescaleStyles(double value)
+        {
+            foreach (Styles.Style s in _styles)
+            {
+                s.Rescale(value);
+            }
+        }
+
         private void RevertScale()
         {
-            dudScale.Value = (double)dudScale.Tag;
+            dudScale.Value = _currentScale;
         }
 
         private void SetViews()
@@ -304,41 +319,29 @@ namespace Muragatte.Visual.GUI
             FillViews();
         }
 
-        private void CreateDefaultStyles()
-        {
-            _styles.Add(new Styles.Style(
-                PointingCircleShape.Instance, "Agent", 1, 1,
-                Colors.Transparent, DefaultValues.AGENT_COLOR,
-                new NeighbourhoodStyle(
-                    ArcShape.Instance,
-                    Colors.Transparent, DefaultValues.NEIGHBOURHOOD_COLOR,
-                    5, new Angle(DefaultValues.NEIGHBOURHOOD_ANGLE_DEGREES), DefaultValues.Scale),
-                new TrackStyle(DefaultValues.AGENT_COLOR),
-                new TrailStyle(DefaultValues.AGENT_COLOR, DefaultValues.TRAIL_LENGTH)));
-            _styles.Add(new Styles.Style(
-                EllipseShape.Instance, "Obstacle", 1, 1,
-                DefaultValues.OBSTACLE_COLOR, Colors.Transparent,
-                null, null, null));
-            _styles.Add(new Styles.Style(
-                RectangleShape.Instance, "Goal", 1, 1,
-                DefaultValues.GOAL_COLOR, Colors.Transparent,
-                null, null, null));
-            _styles.Add(new Styles.Style(
-                TriangleShape.Instance, "Centroid", 1, 1,
-                DefaultValues.CENTROID_COLOR, Colors.Transparent,
-                null, new TrackStyle(DefaultValues.CENTROID_COLOR),
-                new TrailStyle(DefaultValues.CENTROID_COLOR, DefaultValues.TRAIL_LENGTH)));
-        }
-
         private Appearance ElementToAppearance(Element e)
         {
             Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
             if (style == null)
             {
-                if (e is Agent) style = _styles[0];
-                if (e is Obstacle) style = _styles[1];
-                if (e is Goal) style = _styles[2];
-                if (e is Centroid) style = _styles[3];
+                string name = e.Species == null ? e.GetType().ToString() : e.Species.FullName;
+                if (e is Agent)
+                {
+                    style = new Styles.Style(DefaultValues.AGENT_STYLE, name);
+                }
+                else if (e is Centroid)
+                {
+                    style = new Styles.Style(DefaultValues.CENTROID_STYLE, name);
+                }
+                else
+                {
+                    style = new Styles.Style(DefaultValues.STYLE, name);
+                    if (e is Obstacle) style.PrimaryColor = DefaultValues.OBSTACLE_COLOR;
+                    if (e is Goal) style.PrimaryColor = DefaultValues.GOAL_COLOR;
+                    if (e is Extras) style.PrimaryColor = DefaultValues.EXTRAS_COLOR;
+                }
+                style.Rescale(_currentScale);
+                _styles.Add(style);
             }
             return new Appearance(e, style, _visual.GetCanvas.Scale, _historyViewer);
         }
@@ -439,18 +442,17 @@ namespace Muragatte.Visual.GUI
             _views.Add(EnabledElementsView);
         }
 
-        public static IEnumerable<Styles.Style> StyleEditorDialog(IEnumerable<Styles.Style> styles)
+        public static void StyleEditorDialog(ObservableCollection<Styles.Style> styles)
         {
-            VisualOptionsWindow editor = new VisualOptionsWindow(null, styles, false);
+            VisualOptionsWindow editor = new VisualOptionsWindow(null, styles, true);
             foreach (TabItem t in editor.tabOptions.Items)
             {
                 t.Visibility = System.Windows.Visibility.Collapsed;
             }
+            editor._currentScale = 5;
             editor.titStyleEditor.Visibility = System.Windows.Visibility.Visible;
             editor.tabOptions.SelectedItem = editor.titStyleEditor;
-            ObservableCollection<Styles.Style> editedStyles = editor.GetStyles;
             editor.ShowDialog();
-            return editedStyles;
         }
 
         #endregion
