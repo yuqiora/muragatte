@@ -68,6 +68,9 @@
     <Compile Include="src\GUI\ThesisExperimentEditorWindow.xaml.cs">
       <DependentUpon>ThesisExperimentEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\GUI\ThesisExperimentResultsWindow.xaml.cs">
+      <DependentUpon>ThesisExperimentResultsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\GUI\ThesisSceneEditorWindow.xaml.cs">
       <DependentUpon>ThesisSceneEditorWindow.xaml</DependentUpon>
     </Compile>
@@ -86,6 +89,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="src\GUI\ThesisExperimentEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\GUI\ThesisExperimentResultsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

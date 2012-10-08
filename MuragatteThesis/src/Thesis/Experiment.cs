@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core;
@@ -21,7 +22,7 @@ using Muragatte.Visual.Styles;
 
 namespace Muragatte.Thesis
 {
-    public class Experiment
+    public class Experiment : INotifyPropertyChanged
     {
         #region Fields
 
@@ -35,6 +36,8 @@ namespace Muragatte.Thesis
         private ExperimentResults _results = null;
         private uint _uiSeed;
         private RandomMT _random;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -58,19 +61,31 @@ namespace Muragatte.Thesis
         public string Name
         {
             get { return _sName; }
-            set { _sName = value; }
+            set
+            {
+                _sName = value;
+                NotifyPropertyChanged("Name");
+            }
         }
 
         public string Path
         {
             get { return _sPath; }
-            set { _sPath = value; }
+            set
+            {
+                _sPath = value;
+                NotifyPropertyChanged("Path");
+            }
         }
 
         public int RepeatCount
         {
             get { return _iRepeatCount; }
-            set { _iRepeatCount = value; }
+            set
+            {
+                _iRepeatCount = value;
+                NotifyPropertyChanged("RepeatCount");
+            }
         }
 
         public List<Instance> Instances
@@ -86,11 +101,21 @@ namespace Muragatte.Thesis
         public bool IsComplete
         {
             get { return _bComplete; }
+            private set
+            {
+                _bComplete = value;
+                NotifyPropertyChanged("IsComplete");
+            }
         }
 
         public uint Seed
         {
             get { return _uiSeed; }
+            set
+            {
+                _uiSeed=value;
+                NotifyPropertyChanged("Seed");
+            }
         }
 
         public ExperimentResults Results
@@ -102,6 +127,11 @@ namespace Muragatte.Thesis
         {
             get { return _definition; }
         }
+
+        //public Instance CurrentInstance
+        //{
+        //    get { return _instances[_instances.Count - 1]; }
+        //}
 
         #endregion
 
@@ -122,7 +152,27 @@ namespace Muragatte.Thesis
                 }
                 //results post-processing
                 ProcessResults();
-                _bComplete = true;
+                IsComplete = true;
+            }
+        }
+
+        public void PreProcessing()
+        {
+            if (!_bComplete)
+            {
+                for (int i = 0; i < _iRepeatCount; i++)
+                {
+                    CreateNewInstance(i);
+                }
+            }
+        }
+
+        public void PostProcessing()
+        {
+            if (!_bComplete)
+            {
+                //results
+                IsComplete = true;
             }
         }
 
@@ -132,6 +182,14 @@ namespace Muragatte.Thesis
         }
 
         private void ProcessResults() { }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         #endregion
     }

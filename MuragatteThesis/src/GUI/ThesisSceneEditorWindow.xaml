@@ -13,62 +13,71 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="Scene Editor" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
-    <StackPanel Margin="5">
-        <GroupBox Header="Region" Name="grbRegion" >
-            <DockPanel>
-                <Button Content="Apply" Height="23" Name="btnRegionApply" Width="75" DockPanel.Dock="Bottom" Click="btnRegionApply_Click" />
-                <StackPanel>
-                    <xtk:IntegerUpDown Name="iudRegionWidth" Watermark="Width" Height="23" Width="80" Minimum="10" />
-                    <xtk:IntegerUpDown Name="iudRegionHeight" Watermark="Height" Height="23" Width="80" Minimum="10" />
-                </StackPanel>
-                <StackPanel>
-                    <CheckBox Content="Horizontal Borders" Height="16" Name="chbHorizontalBorders" />
-                    <CheckBox Content="Vertical Borders" Height="16" Name="chbVerticalBorders" />
-                </StackPanel>
-            </DockPanel>
-        </GroupBox>
-        <GroupBox Header="Stationary Elements" Name="grbStationary" >
-            <DockPanel>
-                <ListBox Height="160" Name="lboStationary" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.StationaryElements}" DisplayMemberPath="Name" />
-                <StackPanel>
-                    <Button Content="Delete" Height="23" Name="btnStationaryDelete" Width="75" Click="btnStationaryDelete_Click" />
-                    <xtk:DropDownButton Name="ddbStationaryNew" Content="New" Height="23" Width="75">
-                        <xtk:DropDownButton.DropDownContent>
-                            <StackPanel>
-                                <Button Content="Goal (Position)" Height="23" Name="btnStationaryNewGoalPosition" Width="120" Click="btnStationaryNewGoalPosition_Click" />
-                                <Button Content="Obstacle (Ellipse)" Height="23" Name="btnStationaryNewObstacleEllipse" Width="120" Click="btnStationaryNewObstacleEllipse_Click" />
-                            </StackPanel>
-                        </xtk:DropDownButton.DropDownContent>
-                    </xtk:DropDownButton>
-                    <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Position.X, ElementName=lboStationary}" />
-                    <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Position.Y, ElementName=lboStationary}" />
-                    <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary}" />
-                    <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary}" />
-                    <ComboBox Height="23" Name="cmbStationarySpecies" Width="75" ItemsSource="{Binding GetSpecies}" SelectedValuePath="Value" DisplayMemberPath="Value" />
-                </StackPanel>
-            </DockPanel>
-        </GroupBox>
-        <GroupBox Header="Spawn Spots" Name="grbSpawn">
-            <DockPanel>
-                <ListBox Height="140" Name="lboSpawn" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.SpawnSpots}" />
-                <StackPanel>
-                    <Button Content="Delete" Height="23" Name="btnSpawnDelete" Width="75" Click="btnSpawnDelete_Click" />
-                    <xtk:DropDownButton Name="ddbSpawnNew" Content="New" Height="23" Width="75">
-                        <xtk:DropDownButton.DropDownContent>
-                            <StackPanel>
-                                <Button Content="Point" Height="23" Name="btnSpawnNewPoint" Width="75" Click="btnSpawnNewPoint_Click" />
-                                <Button Content="Ellipse" Height="23" Name="btnSpawnNewEllipse" Width="75" Click="btnSpawnNewEllipse_Click" />
-                                <Button Content="Rectangle" Height="23" Name="btnSpawnNewRectangle" Width="75" Click="btnSpawnNewRectangle_Click" />
-                            </StackPanel>
-                        </xtk:DropDownButton.DropDownContent>
-                    </xtk:DropDownButton>
-                    <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Position.X, ElementName=lboSpawn}" />
-                    <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Position.Y, ElementName=lboSpawn}" />
-                    <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn}" />
-                    <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn}" />
-                </StackPanel>
-            </DockPanel>
-        </GroupBox>
-        <Button Content="Close" Height="23" Name="btnClose" Width="75" Margin="0,5,0,0" Click="btnClose_Click" />
-    </StackPanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel Margin="5" Grid.Column="0">
+            <GroupBox Header="Region" Name="grbRegion" >
+                <DockPanel>
+                    <Button Content="Apply" Height="23" Name="btnRegionApply" Width="75" DockPanel.Dock="Bottom" Click="btnRegionApply_Click" />
+                    <StackPanel>
+                        <xtk:IntegerUpDown Name="iudRegionWidth" Watermark="Width" Height="23" Width="80" Minimum="10" />
+                        <xtk:IntegerUpDown Name="iudRegionHeight" Watermark="Height" Height="23" Width="80" Minimum="10" />
+                    </StackPanel>
+                    <StackPanel>
+                        <CheckBox Content="Horizontal Borders" Height="16" Name="chbHorizontalBorders" />
+                        <CheckBox Content="Vertical Borders" Height="16" Name="chbVerticalBorders" />
+                    </StackPanel>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Header="Stationary Elements" Name="grbStationary" >
+                <DockPanel>
+                    <ListBox Height="160" Name="lboStationary" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.StationaryElements}" DisplayMemberPath="Name" SelectionChanged="List_SelectionChanged" />
+                    <StackPanel>
+                        <Button Content="Delete" Height="23" Name="btnStationaryDelete" Width="75" Click="btnStationaryDelete_Click" />
+                        <xtk:DropDownButton Name="ddbStationaryNew" Content="New" Height="23" Width="75">
+                            <xtk:DropDownButton.DropDownContent>
+                                <StackPanel>
+                                    <Button Content="Goal (Position)" Height="23" Name="btnStationaryNewGoalPosition" Width="120" Click="btnStationaryNewGoalPosition_Click" />
+                                    <Button Content="Obstacle (Ellipse)" Height="23" Name="btnStationaryNewObstacleEllipse" Width="120" Click="btnStationaryNewObstacleEllipse_Click" />
+                                </StackPanel>
+                            </xtk:DropDownButton.DropDownContent>
+                        </xtk:DropDownButton>
+                        <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboStationary}" />
+                        <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboStationary}" />
+                        <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary}" />
+                        <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary}" />
+                        <ComboBox Height="23" Name="cmbStationarySpecies" Width="75" ItemsSource="{Binding GetSpecies}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedValue="{Binding Path=SelectedItem.Species, ElementName=lboStationary}" />
+                    </StackPanel>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Header="Spawn Spots" Name="grbSpawn">
+                <DockPanel>
+                    <ListBox Height="140" Name="lboSpawn" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.SpawnSpots}" DisplayMemberPath="Info" SelectionChanged="List_SelectionChanged" />
+                    <StackPanel>
+                        <Button Content="Delete" Height="23" Name="btnSpawnDelete" Width="75" Click="btnSpawnDelete_Click" />
+                        <xtk:DropDownButton Name="ddbSpawnNew" Content="New" Height="23" Width="75">
+                            <xtk:DropDownButton.DropDownContent>
+                                <StackPanel>
+                                    <Button Content="Point" Height="23" Name="btnSpawnNewPoint" Width="75" Click="btnSpawnNewPoint_Click" />
+                                    <Button Content="Ellipse" Height="23" Name="btnSpawnNewEllipse" Width="75" Click="btnSpawnNewEllipse_Click" />
+                                    <Button Content="Rectangle" Height="23" Name="btnSpawnNewRectangle" Width="75" Click="btnSpawnNewRectangle_Click" />
+                                </StackPanel>
+                            </xtk:DropDownButton.DropDownContent>
+                        </xtk:DropDownButton>
+                        <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboSpawn}" />
+                        <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboSpawn}" />
+                        <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn}" />
+                        <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn}" />
+                    </StackPanel>
+                </DockPanel>
+            </GroupBox>
+            <Button Content="Close" Height="23" Name="btnClose" Width="75" Margin="0,5,0,0" Click="btnClose_Click" />
+        </StackPanel>
+        <Border Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" BorderThickness="1" BorderBrush="Black">
+            <Image Height="100" Name="imgPreview" Stretch="Fill" Width="100" Grid.Column="1" />
+        </Border>
+    </Grid>
 </Window>

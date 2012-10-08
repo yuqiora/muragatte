@@ -83,12 +83,17 @@ namespace Muragatte.Visual.GUI
                 _currentScale = _visual.GetCanvas.Scale;
 
                 _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
-                SetViews();
+                //SetViews();
             }
 
             _shapes = CreateShapeList();
             _styles = styles ?? new ObservableCollection<Styles.Style>();
-            if (styles != null && !asStyleEditor) RescaleStyles(_currentScale);
+            if (styles != null && !asStyleEditor)
+            {
+                RescaleStyles(_currentScale);
+                LoadElements(_visual.GetModel.Elements);
+                SetViews();
+            }
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
             imgStylesPreview.Source = _wbStylePreview;
         }
@@ -440,6 +445,14 @@ namespace Muragatte.Visual.GUI
             _views.Add(TrailsView);
             _views.Add(CentroidsView);
             _views.Add(EnabledElementsView);
+        }
+
+        private void LoadElements(IEnumerable<Element> items)
+        {
+            foreach (Element e in items)
+            {
+                _appearances.Add(ElementToAppearance(e));
+            }
         }
 
         public static void StyleEditorDialog(ObservableCollection<Styles.Style> styles)

@@ -39,16 +39,16 @@ namespace Muragatte.Visual
         public static readonly Color NEIGHBOURHOOD_COLOR = Colors.LightGreen;
         public static readonly Color CENTROID_COLOR = Colors.Silver;
         public static readonly Color EXTRAS_COLOR = Colors.Green;
-        public static readonly Color SPAWNSPOT_COLOR = Colors.Yellow;
+        public static readonly Color SPAWNSPOT_COLOR = Colors.Yellow.WithA(128);
         public static readonly Color HIGHLIGHT_COLOR = Colors.Purple.WithA(128);
 
         private static double _dScale = 1;
 
         public static readonly Style STYLE = new Style(EllipseShape.Instance, "Default", 1, 1, AGENT_COLOR, Colors.Transparent, null, null, null);
-        public static readonly Style AGENT_STYLE = new Style(EllipseShape.Instance, "Agent", 1, 1, AGENT_COLOR, Colors.Transparent,
+        public static readonly Style AGENT_STYLE = new Style(PointingCircleShape.Instance, "Agent", 1, 1, Colors.Transparent, AGENT_COLOR,
             new NeighbourhoodStyle(ArcShape.Instance, Colors.Transparent, NEIGHBOURHOOD_COLOR, 10, new Common.Angle(NEIGHBOURHOOD_ANGLE_DEGREES), _dScale),
             new TrackStyle(AGENT_COLOR), new TrailStyle(AGENT_COLOR, TRAIL_LENGTH));
-        public static readonly Style CENTROID_STYLE = new Style(EllipseShape.Instance, "Centroid", 1, 1, CENTROID_COLOR, Colors.Transparent, null,
+        public static readonly Style CENTROID_STYLE = new Style(PointingCircleShape.Instance, "Centroid", 1, 1, CENTROID_COLOR, AGENT_COLOR, null,
             new TrackStyle(CENTROID_COLOR), new TrailStyle(CENTROID_COLOR, TRAIL_LENGTH));
 
         #endregion
