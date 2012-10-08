@@ -157,6 +157,18 @@ namespace Muragatte.Core.Storage
             Add(s);
         }
 
+        public void SetDefaultCentroidSpecies(Species species)
+        {
+            if (_defaults.ContainsKey(DEFAULT_CENTROIDS_LABEL))
+            {
+                _defaults[DEFAULT_CENTROIDS_LABEL] = species;
+            }
+            else
+            {
+                _defaults.Add(DEFAULT_CENTROIDS_LABEL, species);
+            }
+        }
+
         #endregion
     }
 }

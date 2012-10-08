@@ -50,6 +50,33 @@ namespace Muragatte.Core.Environment
             {
                 _position = value;
                 NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("Info");
+            }
+        }
+
+        public double PositionX
+        {
+            get { return _position.X; }
+            set
+            {
+                _position.X = value;
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("Info");
+            }
+        }
+
+        public double PositionY
+        {
+            get { return _position.Y; }
+            set
+            {
+                _position.Y = value;
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("Info");
             }
         }
 
@@ -60,6 +87,7 @@ namespace Muragatte.Core.Environment
             {
                 _dWidth = value;
                 NotifyPropertyChanged("Width");
+                NotifyPropertyChanged("Info");
             }
         }
 
@@ -70,7 +98,13 @@ namespace Muragatte.Core.Environment
             {
                 _dHeight = value;
                 NotifyPropertyChanged("Height");
+                NotifyPropertyChanged("Info");
             }
+        }
+
+        public string Info
+        {
+            get { return ToString(); }
         }
 
         #endregion

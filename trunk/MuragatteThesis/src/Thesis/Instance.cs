@@ -103,6 +103,19 @@ namespace Muragatte.Thesis
             }
         }
 
+        public void Update()
+        {
+            if (!_bComplete)
+            {
+                _mas.Update();
+                if (_mas.StepCount == _iLength)
+                {
+                    //results
+                    _bComplete = true;
+                }
+            }
+        }
+
         private void AgentsFromArchetypes(int startID, IEnumerable<AgentArchetype> archetypes)
         {
             foreach (AgentArchetype a in archetypes)

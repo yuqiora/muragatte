@@ -31,6 +31,9 @@ namespace Muragatte.Visual
         #region Constructors
 
         public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner)
+            : this(model, width, height, scale, owner, null) { }
+
+        public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner, System.Collections.ObjectModel.ObservableCollection<Styles.Style> styles)
         {
             DefaultValues.Scale = scale;
             _model = model;
@@ -39,7 +42,7 @@ namespace Muragatte.Visual
             _wndCanvas.Owner = owner;
             _wndPlayback = new GUI.VisualPlaybackWindow(this);
             _wndPlayback.Owner = owner;
-            _wndOptions = new GUI.VisualOptionsWindow(this);
+            _wndOptions = new GUI.VisualOptionsWindow(this, styles);
             _wndOptions.Owner = owner;
         }
 

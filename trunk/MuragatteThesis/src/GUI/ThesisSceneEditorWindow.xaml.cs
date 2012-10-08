@@ -24,6 +24,7 @@ using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.Visual;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -36,6 +37,7 @@ namespace Muragatte.Thesis.GUI
 
         private Scene _scene = null;
         private SpeciesCollection _species = null;
+        private Visual.Canvas _canvas;
 
         #endregion
 
@@ -53,6 +55,12 @@ namespace Muragatte.Thesis.GUI
             iudRegionHeight.Value = _scene.Region.Height;
             chbHorizontalBorders.IsChecked = _scene.Region.IsBorderedHorizontally;
             chbVerticalBorders.IsChecked = _scene.Region.IsBorderedVertically;
+            _canvas = new Visual.Canvas(_scene.Region.Width, _scene.Region.Height, 5, null);
+            imgPreview.Width = _canvas.PixelWidth;
+            imgPreview.Height = _canvas.PixelHeight;
+            imgPreview.Source = _canvas.Image;
+
+            RedrawPreview();
         }
 
         #endregion
@@ -111,14 +119,12 @@ namespace Muragatte.Thesis.GUI
 
         private void btnStationaryNewGoalPosition_Click(object sender, RoutedEventArgs e)
         {
-            _scene.StationaryElements.Add(new PositionGoal(null, Vector2.Zero, null));
-            lboStationary.SelectedIndex = lboStationary.Items.Count - 1;
+            NewStationaryElement(new PositionGoal(null, Vector2.Zero, null));
         }
 
         private void btnStationaryNewObstacleEllipse_Click(object sender, RoutedEventArgs e)
         {
-            _scene.StationaryElements.Add(new EllipseObstacle(null, Vector2.Zero, null, 5, 5));
-            lboStationary.SelectedIndex = lboStationary.Items.Count - 1;
+            NewStationaryElement(new EllipseObstacle(null, Vector2.Zero, null, 5, 5));
         }
 
         private void btnRegionApply_Click(object sender, RoutedEventArgs e)
@@ -127,6 +133,13 @@ namespace Muragatte.Thesis.GUI
             _scene.Region.Height = iudRegionHeight.Value.Value;
             _scene.Region.IsBorderedHorizontally = chbHorizontalBorders.IsChecked.Value;
             _scene.Region.IsBorderedVertically = chbVerticalBorders.IsChecked.Value;
+            imgPreview.Width = iudRegionWidth.Value.Value;
+            imgPreview.Height = iudRegionHeight.Value.Value;
+            _canvas = new Visual.Canvas(iudRegionWidth.Value.Value, iudRegionHeight.Value.Value, 5, null);
+            imgPreview.Width = _canvas.PixelWidth;
+            imgPreview.Height = _canvas.PixelHeight;
+            imgPreview.Source = _canvas.Image;
+            RedrawPreview();
         }
 
         #endregion
@@ -135,16 +148,48 @@ namespace Muragatte.Thesis.GUI
 
         private void NewSpawnSpot(SpawnSpot s)
         {
+            ddbSpawnNew.IsOpen = false;
             _scene.SpawnSpots.Add(s);
             lboSpawn.SelectedIndex = lboSpawn.Items.Count - 1;
+            RedrawPreview();
         }
 
         private void NewStationaryElement(Element e)
         {
+            ddbStationaryNew.IsOpen = false;
             _scene.StationaryElements.Add(e);
             lboStationary.SelectedIndex = lboStationary.Items.Count - 1;
+            RedrawPreview();
+        }
+
+        private void RedrawPreview()
+        {
+            _canvas.Clear();
+            RedrawStationaryElements();
+            RedrawSpawnSpots();
+        }
+
+        private void RedrawStationaryElements()
+        {
+            foreach (Element e in _scene.StationaryElements)
+            {
+                _canvas.DrawStationaryElement(e);
+            }
+        }
+
+        private void RedrawSpawnSpots()
+        {
+            foreach (SpawnSpot s in _scene.SpawnSpots)
+            {
+                _canvas.DrawSpawnSpot(s);
+            }
         }
 
         #endregion
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RedrawPreview();
+        }
     }
 }

@@ -132,6 +132,11 @@ namespace Muragatte.Core.Environment
 
         protected abstract Agent CreateOneAgent(int id, MultiAgentSystem model);
 
+        public override string ToString()
+        {
+            return string.Format("{0} ({1}x)", _sName, _iCount);
+        }
+
         #endregion
     }
 }

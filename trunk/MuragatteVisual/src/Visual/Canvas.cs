@@ -388,6 +388,43 @@ namespace Muragatte.Visual
             }
         }
 
+        public void DrawSpawnSpot(SpawnSpot spawn)
+        {
+            if (spawn is PointSpawnSpot)
+            {
+                Shapes.PixelShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
+                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR, 1, 1);
+            }
+            if (spawn is EllipseSpawnSpot)
+            {
+                Shapes.EllipseShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
+                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR,
+                    (int)(spawn.Width * _dScale), (int)(spawn.Height * _dScale));
+            }
+            if (spawn is RectangleSpawnSpot)
+            {
+                Shapes.RectangleShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
+                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR,
+                    (int)(spawn.Width * _dScale), (int)(spawn.Height * _dScale));
+            }
+        }
+
+        public void DrawStationaryElement(Element element)
+        {
+            if (element is PositionGoal)
+            {
+                Shapes.EllipseShape.Instance.Draw(_wb, element.Position * _dScale, Angle.Zero,
+                    DefaultValues.GOAL_COLOR, DefaultValues.GOAL_COLOR,
+                    (int)(element.Width * _dScale), (int)(element.Height * _dScale));
+            }
+            if (element is EllipseObstacle)
+            {
+                Shapes.EllipseShape.Instance.Draw(_wb, element.Position * _dScale, Angle.Zero,
+                    DefaultValues.OBSTACLE_COLOR, DefaultValues.OBSTACLE_COLOR,
+                    (int)(element.Width * _dScale), (int)(element.Height * _dScale));
+            }
+        }
+
         #endregion
     }
 }

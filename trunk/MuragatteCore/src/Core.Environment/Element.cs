@@ -94,6 +94,30 @@ namespace Muragatte.Core.Environment
             {
                 _position = value;
                 NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+            }
+        }
+
+        public double PositionX
+        {
+            get { return _position.X; }
+            set
+            {
+                _position.X = value;
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionX");
+            }
+        }
+
+        public double PositionY
+        {
+            get { return _position.Y; }
+            set
+            {
+                _position.Y = value;
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("PositionY");
             }
         }
 

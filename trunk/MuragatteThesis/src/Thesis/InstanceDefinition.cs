@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core;
@@ -19,7 +20,7 @@ using Muragatte.Core.Storage;
 
 namespace Muragatte.Thesis
 {
-    public class InstanceDefinition
+    public class InstanceDefinition : INotifyPropertyChanged
     {
         #region Fields
 
@@ -28,6 +29,8 @@ namespace Muragatte.Thesis
         private Scene _scene = null;
         private SpeciesCollection _species;
         private ObservableCollection<AgentArchetype> _archetypes = new ObservableCollection<AgentArchetype>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -49,13 +52,21 @@ namespace Muragatte.Thesis
         public double TimePerStep
         {
             get { return _dTimePerStep; }
-            set { _dTimePerStep = value; }
+            set
+            {
+                _dTimePerStep = value;
+                NotifyPropertyChanged("TimePerStep");
+            }
         }
 
         public int Length
         {
             get { return _iLength; }
-            set { _iLength = value; }
+            set
+            {
+                _iLength = value;
+                NotifyPropertyChanged("Length");
+            }
         }
 
         public Scene Scene
@@ -80,6 +91,14 @@ namespace Muragatte.Thesis
         public Instance CreateInstance(int number, uint seed)
         {
             return new Instance(number, _iLength, _dTimePerStep, _scene, _archetypes, _species, seed);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

@@ -14,11 +14,11 @@
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="Experiment Editor" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <StackPanel Margin="5">
-        <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="200" Height="23" />
-        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="200" Height="23" />
-        <xtk:IntegerUpDown Name="iudRepeat" Width="80" Height="23" Minimum="1" Watermark="Repeat" />
+        <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="200" Height="23" Text="{Binding Path=GetExperiment.Name}" />
+        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="200" Height="23" Text="{Binding Path=GetExperiment.Path}" />
+        <xtk:IntegerUpDown Name="iudRepeat" Width="80" Height="23" Minimum="1" Watermark="Repeat" Value="{Binding Path=GetExperiment.RepeatCount}"  />
         <StackPanel Orientation="Horizontal">
-            <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="120" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" />
+            <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="120" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" Value="{Binding Path=GetExperiment.Seed}" />
             <Button Content="Random" Height="23" Name="btnRandomSeed" Width="75" Click="btnRandomSeed_Click" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
@@ -29,12 +29,12 @@
             </xtk:DropDownButton>
             <Button Content="Edit" Height="23" Name="btnStyleEditor" Width="75" Click="btnStyleEditor_Click" />
         </StackPanel>
-        <xtk:DoubleUpDown Name="dudTimePerStep" Watermark="Time per step" Width="80" Height="23" Maximum="1" Minimum="0.05" Increment="0.05" Value="0.25" />
-        <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="80" Height="23" Value="100" />
+        <xtk:DoubleUpDown Name="dudTimePerStep" Watermark="Time per step" Width="80" Height="23" Maximum="1" Minimum="0.05" Increment="0.05" Value="{Binding Path=GetExperiment.Definition.TimePerStep}" />
+        <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="80" Height="23" Value="{Binding Path=GetExperiment.Definition.Length}" />
         <StackPanel Orientation="Horizontal">
             <xtk:DropDownButton Name="ddbSpecies" Content="Species" Height="23" Width="120">
                 <xtk:DropDownButton.DropDownContent>
-                    <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="Value" />
+                    <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="Value" Margin="5" />
                 </xtk:DropDownButton.DropDownContent>
             </xtk:DropDownButton>
             <Button Content="Edit" Height="23" Name="btnSpeciesEditor" Width="75" Click="btnSpeciesEditor_Click" />
@@ -42,7 +42,7 @@
         <StackPanel Orientation="Horizontal">
             <xtk:DropDownButton Name="ddbScene" Content="Scene" Height="23" Width="120">
                 <xtk:DropDownButton.DropDownContent>
-                    <StackPanel>
+                    <StackPanel Margin="10">
                         <TextBlock Name="txbSceneSize">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}x{1}">
@@ -61,7 +61,8 @@
         <StackPanel Orientation="Horizontal">
             <xtk:DropDownButton Name="ddbArchetypes" Content="Archetypes" Height="23" Width="120">
                 <xtk:DropDownButton.DropDownContent>
-                    <ListBox MaxHeight="200" Name="lboArchetypes" ItemsSource="{Binding GetArchetypes}" />
+                    <ListBox MaxHeight="200" Name="lboArchetypes" ItemsSource="{Binding GetArchetypes}" Margin="5">
+                    </ListBox>
                 </xtk:DropDownButton.DropDownContent>
             </xtk:DropDownButton>
             <Button Content="Edit" Height="23" Name="btnArchetypesEditor" Width="75" />
