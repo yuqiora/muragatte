@@ -238,7 +238,7 @@ namespace Muragatte.Thesis.GUI
         private void PredefinedSampleThesis2()
         {
             List<Core.Environment.SpawnSpot> spawns = new List<Core.Environment.SpawnSpot>();
-            Core.Environment.SpawnSpot spawn = new Core.Environment.EllipseSpawnSpot(new Common.Vector2(125, 220), 40, 40);
+            Core.Environment.SpawnSpot spawn = new Core.Environment.EllipseSpawnSpot(new Common.Vector2(125, 205), 50, 50);
             spawns.Add(spawn);
 
             Core.Storage.SpeciesCollection species = new Core.Storage.SpeciesCollection();

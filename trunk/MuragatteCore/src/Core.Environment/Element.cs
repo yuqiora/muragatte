@@ -159,6 +159,10 @@ namespace Muragatte.Core.Environment
 
         public abstract bool IsStationary { get; }
 
+        public abstract bool IsDirectable { get; }
+
+        public abstract bool IsResizeable { get; }
+
         #endregion
 
         #region Methods

@@ -145,6 +145,16 @@ namespace Muragatte.Core.Environment
             get { return _fieldOfView == null ? 0 : _fieldOfView.Range; }
         }
 
+        public override bool IsDirectable
+        {
+            get { return true; }
+        }
+
+        public override bool IsResizeable
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Methods

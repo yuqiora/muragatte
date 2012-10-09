@@ -47,19 +47,15 @@ namespace Muragatte.Visual
         #region Constructors
 
         public Canvas(int width, int height, Visualization visualization)
-        {
-            _iUnitWidth = width;
-            _iUnitHeight = height;
-            _wb = BitmapFactory.New(width, height);
-            _visual = visualization;
-        }
+            : this(width, height, 1, visualization) { }
 
         public Canvas(int width, int height, double scale, Visualization visualization)
-            : this((int)(width * scale), (int)(height * scale), visualization)
         {
             _dScale = scale;
             _iUnitWidth = width;
             _iUnitHeight = height;
+            _wb = BitmapFactory.New((int)(width * scale), (int)(height * scale));
+            _visual = visualization;
         }
 
         #endregion
@@ -175,7 +171,7 @@ namespace Muragatte.Visual
             if (value != _dScale)
             {
                 _wb = BitmapFactory.New((int)(_iUnitWidth * value), (int)(_iUnitHeight * value));
-                _visual.GetWindow.Initialize(this);
+                if (_visual != null) _visual.GetWindow.Initialize(this);
                 _dScale = value;
             }
         }
@@ -320,7 +316,8 @@ namespace Muragatte.Visual
 
         private List<int[]> TrackLinePoints(List<Vector2> positions)
         {
-            int limit = Math.Min(UnitWidth, UnitHeight) / 3;
+            //int limit = Math.Min(UnitWidth, UnitHeight) / 3;
+            int limit = (int)(_dScale * 3);
             List<int[]> points = new List<int[]>();
             if (positions.Count > 0)
             {
@@ -350,7 +347,7 @@ namespace Muragatte.Visual
                 (a.Y > UnitHeight - limit && b.Y < limit);
         }
 
-        private int Scaled(double value)
+        protected int Scaled(double value)
         {
             return (int)(value * _dScale);
         }
@@ -365,7 +362,7 @@ namespace Muragatte.Visual
             return record;
         }
 
-        private void NotifyPropertyChanged(String propertyName)
+        protected void NotifyPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
             {
@@ -385,43 +382,6 @@ namespace Muragatte.Visual
                         if (v[q] != null) _wb.DrawLine(v.Position * _dScale, v[q].Position * _dScale, v == v[q][q.Opposite()] ? Colors.DarkGoldenrod : Colors.PaleGoldenrod);
                     }
                 }
-            }
-        }
-
-        public void DrawSpawnSpot(SpawnSpot spawn)
-        {
-            if (spawn is PointSpawnSpot)
-            {
-                Shapes.PixelShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
-                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR, 1, 1);
-            }
-            if (spawn is EllipseSpawnSpot)
-            {
-                Shapes.EllipseShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
-                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR,
-                    (int)(spawn.Width * _dScale), (int)(spawn.Height * _dScale));
-            }
-            if (spawn is RectangleSpawnSpot)
-            {
-                Shapes.RectangleShape.Instance.Draw(_wb, spawn.Position * _dScale, Angle.Zero,
-                    DefaultValues.SPAWNSPOT_COLOR, DefaultValues.SPAWNSPOT_COLOR,
-                    (int)(spawn.Width * _dScale), (int)(spawn.Height * _dScale));
-            }
-        }
-
-        public void DrawStationaryElement(Element element)
-        {
-            if (element is PositionGoal)
-            {
-                Shapes.EllipseShape.Instance.Draw(_wb, element.Position * _dScale, Angle.Zero,
-                    DefaultValues.GOAL_COLOR, DefaultValues.GOAL_COLOR,
-                    (int)(element.Width * _dScale), (int)(element.Height * _dScale));
-            }
-            if (element is EllipseObstacle)
-            {
-                Shapes.EllipseShape.Instance.Draw(_wb, element.Position * _dScale, Angle.Zero,
-                    DefaultValues.OBSTACLE_COLOR, DefaultValues.OBSTACLE_COLOR,
-                    (int)(element.Width * _dScale), (int)(element.Height * _dScale));
             }
         }
 

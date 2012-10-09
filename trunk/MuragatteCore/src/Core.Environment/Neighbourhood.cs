@@ -65,12 +65,19 @@ namespace Muragatte.Core.Environment
         public double Range
         {
             get { return _dRange; }
+            set { _dRange = value; }
         }
 
         public Angle Angle
         {
             get { return _angle; }
             set { _angle = value; }
+        }
+
+        public Metric Metric
+        {
+            get { return _metric; }
+            set { _metric = value; }
         }
 
         #endregion

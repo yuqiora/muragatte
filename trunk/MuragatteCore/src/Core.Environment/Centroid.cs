@@ -122,6 +122,16 @@ namespace Muragatte.Core.Environment
             get { return _group != null && this == _group.FirstMember.Representative; }
         }
 
+        public override bool IsDirectable
+        {
+            get { return true; }
+        }
+
+        public override bool IsResizeable
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Methods
