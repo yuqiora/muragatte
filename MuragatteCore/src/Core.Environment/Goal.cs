@@ -16,7 +16,7 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class Goal : Element
+    public abstract class Goal : StationaryElement
     {
         #region Constructors
 
@@ -54,18 +54,6 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
-        public override Vector2 Direction
-        {
-            get { return new Vector2(0, 0); }
-            set { }
-        }
-
-        public override double Speed
-        {
-            get { return 0; }
-            set { }
-        }
-
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Goal; }
@@ -76,23 +64,9 @@ namespace Muragatte.Core.Environment
             get { return CreateName("G"); }
         }
 
-        public override bool IsStationary
-        {
-            get { return true; }
-        }
-
         #endregion
 
         #region Methods
-
-        public override void Update() { }
-
-        public override void ConfirmUpdate() { }
-
-        public override ElementNature RelationshipWith(Element e)
-        {
-            return ElementNature.Ignored;
-        }
 
         public override string ToString()
         {

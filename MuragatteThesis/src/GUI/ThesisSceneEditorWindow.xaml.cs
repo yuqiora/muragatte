@@ -37,7 +37,7 @@ namespace Muragatte.Thesis.GUI
 
         private Scene _scene = null;
         private SpeciesCollection _species = null;
-        private Visual.Canvas _canvas;
+        private ScenePreview _preview;
 
         #endregion
 
@@ -55,12 +55,7 @@ namespace Muragatte.Thesis.GUI
             iudRegionHeight.Value = _scene.Region.Height;
             chbHorizontalBorders.IsChecked = _scene.Region.IsBorderedHorizontally;
             chbVerticalBorders.IsChecked = _scene.Region.IsBorderedVertically;
-            _canvas = new Visual.Canvas(_scene.Region.Width, _scene.Region.Height, 5, null);
-            imgPreview.Width = _canvas.PixelWidth;
-            imgPreview.Height = _canvas.PixelHeight;
-            imgPreview.Source = _canvas.Image;
-
-            RedrawPreview();
+            CreatePreview(_scene.Region.Width, _scene.Region.Height);
         }
 
         #endregion
@@ -75,6 +70,11 @@ namespace Muragatte.Thesis.GUI
         public SpeciesCollection GetSpecies
         {
             get { return _species; }
+        }
+
+        private Vector2 PreviewCenter
+        {
+            get { return new Vector2(_preview.UnitWidth / 2, _preview.UnitHeight / 2); }
         }
 
         #endregion
@@ -96,17 +96,17 @@ namespace Muragatte.Thesis.GUI
 
         private void btnSpawnNewPoint_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new PointSpawnSpot(Vector2.Zero));
+            NewSpawnSpot(new PointSpawnSpot(PreviewCenter));
         }
 
         private void btnSpawnNewEllipse_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new EllipseSpawnSpot(Vector2.Zero, 5, 5));
+            NewSpawnSpot(new EllipseSpawnSpot(PreviewCenter, 5, 5));
         }
 
         private void btnSpawnNewRectangle_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new RectangleSpawnSpot(Vector2.Zero, 5, 5));
+            NewSpawnSpot(new RectangleSpawnSpot(PreviewCenter, 5, 5));
         }
 
         private void btnStationaryDelete_Click(object sender, RoutedEventArgs e)
@@ -119,12 +119,37 @@ namespace Muragatte.Thesis.GUI
 
         private void btnStationaryNewGoalPosition_Click(object sender, RoutedEventArgs e)
         {
-            NewStationaryElement(new PositionGoal(null, Vector2.Zero, null));
+            NewStationaryElement(new PositionGoal(NewStationaryElementID(), null, PreviewCenter, null));
+        }
+
+        private void btnStationaryNewGoalArea_Click(object sender, RoutedEventArgs e)
+        {
+            NewStationaryElement(new AreaGoal(NewStationaryElementID(), null, PreviewCenter, null, 5, 5));
         }
 
         private void btnStationaryNewObstacleEllipse_Click(object sender, RoutedEventArgs e)
         {
-            NewStationaryElement(new EllipseObstacle(null, Vector2.Zero, null, 5, 5));
+            NewStationaryElement(new EllipseObstacle(NewStationaryElementID(), null, PreviewCenter, null, 5, 5));
+        }
+
+        private void btnStationaryNewObstacleRectangle_Click(object sender, RoutedEventArgs e)
+        {
+            NewStationaryElement(new RectangleObstacle(NewStationaryElementID(), null, PreviewCenter, null, 5, 5));
+        }
+
+        private void btnStationaryNewAttractSpot_Click(object sender, RoutedEventArgs e)
+        {
+            NewStationaryElement(new AttractSpot(NewStationaryElementID(), null, PreviewCenter, null));
+        }
+
+        private void btnStationaryNewRepelSpot_Click(object sender, RoutedEventArgs e)
+        {
+            NewStationaryElement(new RepelSpot(NewStationaryElementID(), null, PreviewCenter, null));
+        }
+
+        private void btnStationaryNewGuidepost_Click(object sender, RoutedEventArgs e)
+        {
+            NewStationaryElement(new Guidepost(NewStationaryElementID(), null, PreviewCenter, Vector2.X0Y1, null));
         }
 
         private void btnRegionApply_Click(object sender, RoutedEventArgs e)
@@ -133,13 +158,7 @@ namespace Muragatte.Thesis.GUI
             _scene.Region.Height = iudRegionHeight.Value.Value;
             _scene.Region.IsBorderedHorizontally = chbHorizontalBorders.IsChecked.Value;
             _scene.Region.IsBorderedVertically = chbVerticalBorders.IsChecked.Value;
-            imgPreview.Width = iudRegionWidth.Value.Value;
-            imgPreview.Height = iudRegionHeight.Value.Value;
-            _canvas = new Visual.Canvas(iudRegionWidth.Value.Value, iudRegionHeight.Value.Value, 5, null);
-            imgPreview.Width = _canvas.PixelWidth;
-            imgPreview.Height = _canvas.PixelHeight;
-            imgPreview.Source = _canvas.Image;
-            RedrawPreview();
+            CreatePreview(iudRegionWidth.Value.Value, iudRegionHeight.Value.Value);
         }
 
         #endregion
@@ -162,33 +181,43 @@ namespace Muragatte.Thesis.GUI
             RedrawPreview();
         }
 
+        private int NewStationaryElementID()
+        {
+            return _scene.StationaryElements.Count > 0 ? _scene.StationaryElements.Last().ID + 1 : 0;
+        }
+
+        private void CreatePreview(int width, int height)
+        {
+            _preview = new ScenePreview(width, height);
+            SetPreviewImage();
+            RedrawPreview();
+        }
+
+        private void SetPreviewImage()
+        {
+            imgPreview.Width = _preview.PixelWidth;
+            imgPreview.Height = _preview.PixelHeight;
+            imgPreview.Source = _preview.Image;
+        }
+
         private void RedrawPreview()
         {
-            _canvas.Clear();
-            RedrawStationaryElements();
-            RedrawSpawnSpots();
-        }
-
-        private void RedrawStationaryElements()
-        {
-            foreach (Element e in _scene.StationaryElements)
-            {
-                _canvas.DrawStationaryElement(e);
-            }
-        }
-
-        private void RedrawSpawnSpots()
-        {
-            foreach (SpawnSpot s in _scene.SpawnSpots)
-            {
-                _canvas.DrawSpawnSpot(s);
-            }
+            _preview.Clear();
+            _preview.DrawStationaryElement(_scene.StationaryElements);
+            _preview.DrawSpawnSpot(_scene.SpawnSpots);
         }
 
         #endregion
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            RedrawPreview();
+        }
+
+        private void btnRescale_Click(object sender, RoutedEventArgs e)
+        {
+            _preview.Rescale(dudScale.Value.Value);
+            SetPreviewImage();
             RedrawPreview();
         }
     }

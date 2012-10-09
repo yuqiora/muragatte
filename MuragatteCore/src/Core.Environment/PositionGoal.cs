@@ -50,6 +50,11 @@ namespace Muragatte.Core.Environment
             set { }
         }
 
+        public override bool IsResizeable
+        {
+            get { return false; }
+        }
+
         public override double Radius
         {
             get { return DEFAULT_RADIUS; }

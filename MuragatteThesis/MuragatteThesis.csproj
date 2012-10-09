@@ -77,9 +77,11 @@
     <Compile Include="src\GUI\ThesisSpeciesEditorWindow.xaml.cs">
       <DependentUpon>ThesisSpeciesEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\Thesis.Converters\DirectionToDegreesConverter.cs" />
     <Compile Include="src\Thesis\Experiment.cs" />
     <Compile Include="src\Thesis\Instance.cs" />
     <Compile Include="src\Thesis\InstanceDefinition.cs" />
+    <Compile Include="src\Thesis\ScenePreview.cs" />
     <Page Include="src\GUI\ThesisAboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

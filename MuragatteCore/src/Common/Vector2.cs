@@ -259,7 +259,7 @@ namespace Muragatte.Common
 
         public static Vector2 operator +(Vector2 vector, Angle angle)
         {
-            double radians = angle.Radians;
+            double radians = -angle.Radians;
             double sin = Math.Sin(radians);
             double cos = Math.Cos(radians);
             return new Vector2(vector.X * cos - vector.Y * sin, vector.X * sin + vector.Y * cos);

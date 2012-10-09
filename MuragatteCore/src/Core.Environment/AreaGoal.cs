@@ -62,13 +62,21 @@ namespace Muragatte.Core.Environment
         public override double Width
         {
             get { return _dWidth; }
-            set { _dWidth = value; }
+            set
+            {
+                _dWidth = value;
+                NotifyPropertyChanged("Width");
+            }
         }
 
         public override double Height
         {
             get { return _dHeight; }
-            set { _dHeight = value; }
+            set
+            {
+                _dHeight = value;
+                NotifyPropertyChanged("Height");
+            }
         }
 
         public override double Radius

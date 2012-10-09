@@ -21,6 +21,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Muragatte.Core;
+using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -33,9 +36,9 @@ namespace Muragatte.Thesis.GUI
 
         private ThesisMainWindow _wndThesis;
         private ObservableCollection<Visual.Styles.Style> _styles = null;
-        private Core.Scene _scene = null;
-        private Core.Storage.SpeciesCollection _species = null;
-        private ObservableCollection<Core.Environment.AgentArchetype> _archetypes = null;
+        private Scene _scene = null;
+        private SpeciesCollection _species = null;
+        private ObservableCollection<AgentArchetype> _archetypes = null;
 
         #endregion
 
@@ -50,9 +53,9 @@ namespace Muragatte.Thesis.GUI
             if (GetExperiment == null)
             {
                 _styles = new ObservableCollection<Visual.Styles.Style>();
-                _scene = new Core.Scene(new Core.Environment.Region(100, true));
-                _species = new Core.Storage.SpeciesCollection(true);
-                _archetypes = new ObservableCollection<Core.Environment.AgentArchetype>();
+                _scene = new Scene(new Region(100, true));
+                _species = new SpeciesCollection(true);
+                _archetypes = new ObservableCollection<AgentArchetype>();
             }
         }
 
@@ -75,17 +78,17 @@ namespace Muragatte.Thesis.GUI
             get { return GetExperiment == null ? _styles : GetExperiment.Styles; }
         }
 
-        public Core.Scene GetScene
+        public Scene GetScene
         {
             get { return GetExperiment == null ? _scene : GetExperiment.Definition.Scene; }
         }
 
-        public Core.Storage.SpeciesCollection GetSpecies
+        public SpeciesCollection GetSpecies
         {
             get { return GetExperiment == null ? _species : GetExperiment.Definition.Species; }
         }
 
-        public ObservableCollection<Core.Environment.AgentArchetype> GetArchetypes
+        public ObservableCollection<AgentArchetype> GetArchetypes
         {
             get { return GetExperiment == null ? _archetypes : GetExperiment.Definition.Archetypes; }
         }
@@ -130,6 +133,12 @@ namespace Muragatte.Thesis.GUI
         private void btnSceneEditor_Click(object sender, RoutedEventArgs e)
         {
             ThesisSceneEditorWindow editor = new ThesisSceneEditorWindow(GetScene, GetSpecies);
+            editor.ShowDialog();
+        }
+
+        private void btnArchetypesEditor_Click(object sender, RoutedEventArgs e)
+        {
+            ThesisArchetypesEditorWindow editor = new ThesisArchetypesEditorWindow(GetArchetypes, GetScene.StationaryElements, GetSpecies);
             editor.ShowDialog();
         }
 
