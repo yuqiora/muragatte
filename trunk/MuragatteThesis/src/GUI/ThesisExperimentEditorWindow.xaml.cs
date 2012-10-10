@@ -126,19 +126,26 @@ namespace Muragatte.Thesis.GUI
 
         private void btnSpeciesEditor_Click(object sender, RoutedEventArgs e)
         {
-            ThesisSpeciesEditorWindow editor = new ThesisSpeciesEditorWindow(GetSpecies);
-            editor.ShowDialog();
+            OpenEditorDialog(new ThesisSpeciesEditorWindow(GetSpecies));
         }
 
         private void btnSceneEditor_Click(object sender, RoutedEventArgs e)
         {
-            ThesisSceneEditorWindow editor = new ThesisSceneEditorWindow(GetScene, GetSpecies);
-            editor.ShowDialog();
+            OpenEditorDialog(new ThesisSceneEditorWindow(GetScene, GetSpecies));
         }
 
         private void btnArchetypesEditor_Click(object sender, RoutedEventArgs e)
         {
-            ThesisArchetypesEditorWindow editor = new ThesisArchetypesEditorWindow(GetArchetypes, GetScene.StationaryElements, GetSpecies);
+            OpenEditorDialog(new ThesisArchetypesEditorWindow(GetArchetypes, GetScene, GetSpecies));
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void OpenEditorDialog(Window editor)
+        {
+            editor.Owner = this;
             editor.ShowDialog();
         }
 

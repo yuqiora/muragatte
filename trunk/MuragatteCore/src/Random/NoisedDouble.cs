@@ -61,6 +61,7 @@ namespace Muragatte.Random
         public Noise Noise
         {
             get { return _noise; }
+            set { _noise = value; }
         }
 
         #endregion

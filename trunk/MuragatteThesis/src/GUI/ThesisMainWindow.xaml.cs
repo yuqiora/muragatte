@@ -144,8 +144,7 @@ namespace Muragatte.Thesis.GUI
 
             List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
             archetypes.Add(new Core.Environment.Agents.BoidAgentArchetype("Boids", 50, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(1), boids,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), boids,
                 new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.BoidAgentArgs()));
 
@@ -196,20 +195,17 @@ namespace Muragatte.Thesis.GUI
 
             List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Naive Boids", 44, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(1.05), naive,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1.05), naive,
                 new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(null,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0)));
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Guide Boids", 5, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(1), guide,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), guide,
                 new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(goalGuide,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0.75)));
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(0.95), intruder,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
                 new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(goalIntruder,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 1)));
@@ -270,20 +266,17 @@ namespace Muragatte.Thesis.GUI
 
             List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Naive Boids", 89, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(1.05), naive,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1.05), naive,
                 new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(null,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0)));
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Guide Boids", 10, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(1), guide,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), guide,
                 new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(goalGuide,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0.75)));
             archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
-                Common.Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -180, 180),
-                new NoisedDouble(0.95), intruder,
+                new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
                 new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
                 new Core.Environment.Agents.AdvancedBoidAgentArgs(goalIntruder,
                     new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 1)));

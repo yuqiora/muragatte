@@ -24,7 +24,7 @@ namespace Muragatte.Core.Environment.Agents
         public LoneWandererAgentArgs() : this(10, 1) { }
 
         public LoneWandererAgentArgs(double wander, double obstacleAvoidance)
-            : base(Distribution.Unknown, 0, 0)
+            : base(Distribution.None, 0, 0)
         {
             _modifiers.Add(WanderSteering.LABEL, wander);
             _modifiers.Add(ObstacleAvoidanceSteering.LABEL, obstacleAvoidance);
@@ -35,6 +35,16 @@ namespace Muragatte.Core.Environment.Agents
         #endregion
 
         #region Properties
+
+        public override bool HasGoal
+        {
+            get { return false; }
+        }
+
+        public override bool HasNeighbourhoods
+        {
+            get { return false; }
+        }
 
         public override Goal Goal
         {

@@ -285,7 +285,7 @@ namespace Muragatte.Sandbox.GUI
         {
             BoidAgentArchetype ba = new BoidAgentArchetype(
                 "Boids", count, StartingPosition(),
-                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1), _boids,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
                 new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
@@ -297,7 +297,7 @@ namespace Muragatte.Sandbox.GUI
             Neighbourhood pa = new Neighbourhood(paRange);
             AdvancedBoidAgentArchetype naiveArch = new AdvancedBoidAgentArchetype(
                 "Naive", naive, StartingPosition(),
-                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1.05), _boids,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
                 new AdvancedBoidAgentArgs(null, pa.Clone(), 0, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
@@ -305,7 +305,7 @@ namespace Muragatte.Sandbox.GUI
 
             AdvancedBoidAgentArchetype guideArch = new AdvancedBoidAgentArchetype(
                 "Guide", guides, StartingPosition(),
-                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1), _guides,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
                 new AdvancedBoidAgentArgs(_goals[0], pa.Clone(), 0.75, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
@@ -313,7 +313,7 @@ namespace Muragatte.Sandbox.GUI
 
             AdvancedBoidAgentArchetype intruderArch = new AdvancedBoidAgentArchetype(
                 "Intruder", intruders, StartingPosition(),
-                Vector2.X0Y1, new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
+                new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(0.95), _intruders,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
                 new AdvancedBoidAgentArgs(_goals[1], pa.Clone(), 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
