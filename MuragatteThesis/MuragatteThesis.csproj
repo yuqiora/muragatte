@@ -78,6 +78,8 @@
       <DependentUpon>ThesisSpeciesEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\Thesis.Converters\DirectionToDegreesConverter.cs" />
+    <Compile Include="src\Thesis.Converters\IntToBoolConverter.cs" />
+    <Compile Include="src\Thesis.Converters\NoiseToDistributionConverter.cs" />
     <Compile Include="src\Thesis\Experiment.cs" />
     <Compile Include="src\Thesis\Instance.cs" />
     <Compile Include="src\Thesis\InstanceDefinition.cs" />

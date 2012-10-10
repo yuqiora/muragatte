@@ -37,6 +37,16 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Properties
 
+        public override bool HasGoal
+        {
+            get { return false; }
+        }
+
+        public override bool HasNeighbourhoods
+        {
+            get { return false; }
+        }
+
         public override Goal Goal
         {
             get { return null; }
@@ -104,6 +114,16 @@ namespace Muragatte.Core.Environment.Agents
         #endregion
 
         #region Properties
+
+        public override bool HasGoal
+        {
+            get { return true; }
+        }
+
+        public override bool HasNeighbourhoods
+        {
+            get { return true; }
+        }
 
         public override Goal Goal
         {

@@ -21,9 +21,9 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public BoidAgentArchetype(string name, int count, SpawnSpot spawnPos, Vector2 baseDir, NoisedDouble noisedDir,
+        public BoidAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
-            : base(name, count, spawnPos, baseDir, noisedDir, speed, species, fieldOfView, turningAngle, args) { }
+            : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace Muragatte.Core.Environment.Agents
         protected override Agent CreateOneAgent(int id, MultiAgentSystem model)
         {
             return new BoidAgent(id, model, _spawnPosition.Respawn(model.Random),
-                _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
+                Vector2.X0Y1 + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
                 _turningAngle, (BoidAgentArgs)_args.Clone());
         }
@@ -44,9 +44,9 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public AdvancedBoidAgentArchetype(string name, int count, SpawnSpot spawnPos, Vector2 baseDir, NoisedDouble noisedDir,
+        public AdvancedBoidAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
-            : base(name, count, spawnPos, baseDir, noisedDir, speed, species, fieldOfView, turningAngle, args) { }
+            : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace Muragatte.Core.Environment.Agents
         protected override Agent CreateOneAgent(int id, MultiAgentSystem model)
         {
             return new AdvancedBoidAgent(id, model, _spawnPosition.Respawn(model.Random),
-                _baseDirection + new Angle(_noisedDirection.GetValue(model.Random)),
+                Vector2.X0Y1 + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
                 _turningAngle, (AdvancedBoidAgentArgs)_args.Clone());
         }

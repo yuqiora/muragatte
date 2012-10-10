@@ -148,6 +148,5 @@ namespace Muragatte.Core.Environment
         }
 
         #endregion
-
     }
 }

@@ -27,7 +27,7 @@ namespace Muragatte.Random
 
         public override Distribution Distribution
         {
-            get { return Distribution.Unknown; }
+            get { return Distribution.None; }
         }
 
         #endregion

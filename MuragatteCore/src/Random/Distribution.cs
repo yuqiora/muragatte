@@ -17,7 +17,7 @@ namespace Muragatte.Random
 {
     public enum Distribution
     {
-        Unknown,
+        None,
         Uniform,
         Gaussian
     }

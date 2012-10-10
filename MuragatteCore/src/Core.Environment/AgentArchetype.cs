@@ -24,7 +24,6 @@ namespace Muragatte.Core.Environment
         protected string _sName;
         protected int _iCount;
         protected SpawnSpot _spawnPosition;
-        protected Vector2 _baseDirection;
         protected NoisedDouble _noisedDirection;
         protected NoisedDouble _noisedSpeed;
         protected Species _species;
@@ -36,14 +35,13 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public AgentArchetype(string name, int count, SpawnSpot spawnPos, Vector2 baseDir, NoisedDouble noisedDir,
+        public AgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
         {
             _sName = name;
             _iCount = count;
             _spawnPosition = spawnPos;
-            _baseDirection = baseDir;
-            _noisedDirection = noisedDir;
+            _noisedDirection = direction;
             _noisedSpeed = speed;
             _species = species;
             _fieldOfView = fieldOfView;
@@ -71,12 +69,6 @@ namespace Muragatte.Core.Environment
         {
             get { return _spawnPosition; }
             set { _spawnPosition = value; }
-        }
-
-        public Vector2 BaseDirection
-        {
-            get { return _baseDirection; }
-            set { _baseDirection = value; }
         }
 
         public NoisedDouble NoisedDirection

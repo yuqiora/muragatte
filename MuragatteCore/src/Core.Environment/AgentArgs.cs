@@ -46,6 +46,10 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        public abstract bool HasGoal { get; }
+
+        public abstract bool HasNeighbourhoods { get; }
+
         public abstract Goal Goal { get; set; }
 
         public abstract Dictionary<string, Neighbourhood> Neighbourhoods { get; }
@@ -58,16 +62,19 @@ namespace Muragatte.Core.Environment
         public Distribution Distribution
         {
             get { return _distribution; }
+            set { _distribution = value; }
         }
 
         public double NoiseArgA
         {
             get { return _dNoiseArgA; }
+            set { _dNoiseArgA = value; }
         }
 
         public double NoiseArgB
         {
             get { return _dNoiseArgB; }
+            set { _dNoiseArgB = value; }
         }
 
         #endregion
