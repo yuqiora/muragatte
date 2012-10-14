@@ -56,6 +56,7 @@ namespace Muragatte.Thesis.GUI
                 _scene = new Scene(new Region(100, true));
                 _species = new SpeciesCollection(true);
                 _archetypes = new ObservableCollection<AgentArchetype>();
+                btnCancel.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
@@ -102,7 +103,7 @@ namespace Muragatte.Thesis.GUI
             dudSeed.Value = _wndThesis.Random.UInt();
         }
 
-        private void btnStyleEditor_Click(object sender, RoutedEventArgs e)
+        private void spbStyles_Click(object sender, RoutedEventArgs e)
         {
             Visual.DefaultValues.Scale = 5;
             Visual.GUI.VisualOptionsWindow.StyleEditorDialog(GetStyles);
@@ -124,17 +125,17 @@ namespace Muragatte.Thesis.GUI
             Close();
         }
 
-        private void btnSpeciesEditor_Click(object sender, RoutedEventArgs e)
+        private void spbSpecies_Click(object sender, RoutedEventArgs e)
         {
             OpenEditorDialog(new ThesisSpeciesEditorWindow(GetSpecies));
         }
 
-        private void btnSceneEditor_Click(object sender, RoutedEventArgs e)
+        private void spbScene_Click(object sender, RoutedEventArgs e)
         {
             OpenEditorDialog(new ThesisSceneEditorWindow(GetScene, GetSpecies));
         }
 
-        private void btnArchetypesEditor_Click(object sender, RoutedEventArgs e)
+        private void spbArchetypes_Click(object sender, RoutedEventArgs e)
         {
             OpenEditorDialog(new ThesisArchetypesEditorWindow(GetArchetypes, GetScene, GetSpecies));
         }

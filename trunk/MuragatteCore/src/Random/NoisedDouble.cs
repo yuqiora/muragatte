@@ -10,17 +10,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace Muragatte.Random
 {
-    public class NoisedDouble
+    public class NoisedDouble : INotifyPropertyChanged
     {
         #region Fields
 
         private double _dBaseValue;
         private Noise _noise;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -55,13 +58,21 @@ namespace Muragatte.Random
         public double BaseValue
         {
             get { return _dBaseValue; }
-            set { _dBaseValue = value; }
+            set
+            {
+                _dBaseValue = value;
+                NotifyPropertyChanged("BaseValue");
+            }
         }
 
         public Noise Noise
         {
             get { return _noise; }
-            set { _noise = value; }
+            set
+            {
+                _noise = value;
+                NotifyPropertyChanged("Noise");
+            }
         }
 
         #endregion
@@ -81,6 +92,14 @@ namespace Muragatte.Random
         public void ChangeNoiseDistribution(Distribution d)
         {
             _noise = d.Noise(_noise.Random, _noise.A, _noise.B);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

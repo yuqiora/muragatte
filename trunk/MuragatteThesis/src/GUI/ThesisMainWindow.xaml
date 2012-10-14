@@ -28,7 +28,7 @@
                     <TextBlock Name="txbInstanceProgress" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" />
                     <ProgressBar Name="prbExperiment" Height="15" Grid.Row="2" VerticalAlignment="Center" />
                     <TextBlock Name="txbExperimentProgress" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" />
-                    <Button Name="btnCancel" Content="Cancel" Width="75" Height="23" Grid.Row="3" />
+                    <Button Name="btnCancel" Content="Cancel" Width="75" Height="23" Grid.Row="3" Click="btnCancel_Click" />
                 </Grid>
             </xtk:BusyIndicator.BusyContent>
             <xtk:BusyIndicator.ProgressBarStyle>
@@ -48,16 +48,12 @@
                     <Button Content="Thesis Sample 1" Height="23" Name="btnThesisSample" Width="100" Click="btnThesisSample_Click" />
                     <Button Content="Thesis Sample 2" Height="23" Name="btnThesisSample2" Width="100" Click="btnThesisSample2_Click" />
                 </StackPanel>
-                <!--<StackPanel Orientation="Horizontal">
-                    <Button Content="Modify" Height="23" Name="btnModify" Width="75" Click="btnModify_Click" />
-                    <Button Content="Run" Height="23" Name="btnRun" Width="75" Click="btnRun_Click" />
-                    <Button Content="Results" Height="23" Name="btnResults" Width="75" Click="btnResults_Click" />
-                </StackPanel>-->
                 <GroupBox Name="grbExperimentSummary" Visibility="Collapsed" Margin="5">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Left">
                             <Button Content="Modify" Height="23" Name="btnModify" Width="75" Click="btnModify_Click" />
                             <Button Content="Run" Height="23" Name="btnRun" Width="75" Click="btnRun_Click" />
+                            <Button Content="Reset" Height="23" Name="btnReset" Width="75" Click="btnReset_Click" />
                             <Button Content="Results" Height="23" Name="btnResults" Width="75" Click="btnResults_Click" IsEnabled="False" />
                         </StackPanel>
                         <StackPanel>

@@ -99,6 +99,36 @@ namespace Muragatte.Thesis.GUI
             }
         }
 
+        private void btnModify_Click(object sender, RoutedEventArgs e)
+        {
+            if (_experiment != null)
+            {
+                ThesisExperimentEditorWindow editor = new ThesisExperimentEditorWindow(this);
+                editor.ShowDialog();
+                ShowExperimentSummary();
+            }
+        }
+
+        private void btnResults_Click(object sender, RoutedEventArgs e)
+        {
+            if (_experiment.IsComplete)
+            {
+                ThesisExperimentResultsWindow results = new ThesisExperimentResultsWindow(_experiment);
+                results.ShowDialog();
+            }
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            //reset to initial state
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _worker.CancelAsync();
+            _experiment.Cancel();
+        }
+
         void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             binProgress.IsBusy = false;
@@ -116,6 +146,11 @@ namespace Muragatte.Thesis.GUI
             _experiment.PreProcessing();
             for (int i = 0; i < _experiment.RepeatCount; i++)
             {
+                if (_worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
                 while (!_experiment.Instances[i].IsComplete)
                 {
                     _experiment.Instances[i].Update();
@@ -347,25 +382,6 @@ namespace Muragatte.Thesis.GUI
         {
             PredefinedSampleThesis2();
             ShowExperimentSummary();
-        }
-
-        private void btnModify_Click(object sender, RoutedEventArgs e)
-        {
-            if (_experiment != null)
-            {
-                ThesisExperimentEditorWindow editor = new ThesisExperimentEditorWindow(this);
-                editor.ShowDialog();
-                ShowExperimentSummary();
-            }
-        }
-
-        private void btnResults_Click(object sender, RoutedEventArgs e)
-        {
-            if (_experiment.IsComplete)
-            {
-                ThesisExperimentResultsWindow results = new ThesisExperimentResultsWindow(_experiment);
-                results.ShowDialog();
-            }
         }
     }
 }

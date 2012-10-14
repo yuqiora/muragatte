@@ -33,6 +33,7 @@ namespace Muragatte.Thesis
         private List<Instance> _instances = new List<Instance>();
         private ObservableCollection<Style> _styles;
         private bool _bComplete = false;
+        private bool _bCanceled = false;
         private ExperimentResults _results = null;
         private uint _uiSeed;
         private RandomMT _random;
@@ -108,6 +109,16 @@ namespace Muragatte.Thesis
             }
         }
 
+        public bool IsCanceled
+        {
+            get { return _bCanceled; }
+            private set
+            {
+                _bCanceled= value;
+                NotifyPropertyChanged("IsCanceled");
+            }
+        }
+
         public uint Seed
         {
             get { return _uiSeed; }
@@ -128,31 +139,37 @@ namespace Muragatte.Thesis
             get { return _definition; }
         }
 
-        //public Instance CurrentInstance
-        //{
-        //    get { return _instances[_instances.Count - 1]; }
-        //}
-
         #endregion
 
         #region Methods
+
+        public void Cancel()
+        {
+            IsCanceled = true;
+        }
+
+        public void Reset()
+        {
+            foreach (Instance i in _instances)
+            {
+                i.Reset();
+            }
+            _instances.Clear();
+            //results reset
+            IsComplete = false;
+            IsCanceled = false;
+        }
 
         public void Run()
         {
             if (!_bComplete)
             {
-                //if (_instances.Count > 0 && !_instances.Last().IsComplete)
-                //{
-                //    _instances.Last().Run();
-                //}
-                for (int i = _instances.Count; i < _iRepeatCount; i++)
+                PreProcessing();
+                for (int i = 0; i < _iRepeatCount; i++)
                 {
-                    CreateNewInstance(i);
                     _instances[i].Run();
                 }
-                //results post-processing
-                ProcessResults();
-                IsComplete = true;
+                PostProcessing();
             }
         }
 
@@ -169,7 +186,7 @@ namespace Muragatte.Thesis
 
         public void PostProcessing()
         {
-            if (!_bComplete)
+            if (!_bComplete && !_bCanceled)
             {
                 //results
                 IsComplete = true;

@@ -49,6 +49,9 @@ namespace Muragatte.Thesis.GUI
         private Neighbourhood _selectedArgsNeighbourhood = null;
         private string _selectedArgsModifierLabel = null;
 
+        private Neighbourhood _defaultNeighbourhood = new Neighbourhood(10, new Angle(135));
+        private Angle _defaultTurningAngle = new Angle(60);
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
@@ -164,16 +167,17 @@ namespace Muragatte.Thesis.GUI
 
         private void btnNewBoid_Click(object sender, RoutedEventArgs e)
         {
-            NewArchetype(new BoidAgentArchetype("Boids", 10, _spawnSpots.FirstOrDefault(),
-                new NoisedDouble(Distribution.Uniform, -180, 180), new NoisedDouble(1),
-                null, new Neighbourhood(10), new Angle(135), new BoidAgentArgs()));
+            NewArchetype(new BoidAgentArchetype("Boids", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
+                new BoidAgentArgs()));
         }
 
         private void btnNewAdvancedBoid_Click(object sender, RoutedEventArgs e)
         {
             NewArchetype(new AdvancedBoidAgentArchetype("Advanced Boids", 10,
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
-                new NoisedDouble(1), null, new Neighbourhood(10), new Angle(135),
+                new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
                 new AdvancedBoidAgentArgs(null, new Neighbourhood(2))));
         }
 
@@ -181,15 +185,16 @@ namespace Muragatte.Thesis.GUI
         {
             NewArchetype(new VersatileAgentArchetype("Versatiles", 10,
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
-                new NoisedDouble(1), null, new Neighbourhood(10), new Angle(135),
+                new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
                 new VersatileAgentArgs(null, new Neighbourhood(2))));
         }
 
         private void btnLoneWanderer_Click(object sender, RoutedEventArgs e)
         {
-            NewArchetype(new LoneWandererAgentArchetype("Lone Wanderers", 10, _spawnSpots.FirstOrDefault(),
-                new NoisedDouble(Distribution.Uniform, -180, 180), new NoisedDouble(1),
-                null, new Neighbourhood(10), new Angle(135), new LoneWandererAgentArgs()));
+            NewArchetype(new LoneWandererAgentArchetype("Lone Wanderers", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
+                new LoneWandererAgentArgs()));
         }
 
         #endregion

@@ -42,8 +42,7 @@ namespace Muragatte.Thesis
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
             //storage type fixed for now, might be selectable in the future
-            _mas = new MultiAgentSystem(new SimpleBruteForceStorage(), scene.Region, species, _random, timePerStep);
-            _mas.Elements.Add(scene.ApplyStationaryElements(_mas));
+            _mas = new MultiAgentSystem(new SimpleBruteForceStorage(), scene, species, _random, timePerStep);
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }
@@ -93,12 +92,10 @@ namespace Muragatte.Thesis
         {
             if (!_bComplete)
             {
-                for (int i = _mas.StepCount; i < _iLength; i++)
+                for (int i = 0; i < _iLength; i++)
                 {
                     _mas.Update();
                 }
-                //results post-processing
-                ProcessResults();
                 _bComplete = true;
             }
         }
@@ -114,6 +111,13 @@ namespace Muragatte.Thesis
                     _bComplete = true;
                 }
             }
+        }
+
+        public void Reset()
+        {
+            _mas.Clear();
+            //results
+            _bComplete = false;
         }
 
         private void AgentsFromArchetypes(int startID, IEnumerable<AgentArchetype> archetypes)

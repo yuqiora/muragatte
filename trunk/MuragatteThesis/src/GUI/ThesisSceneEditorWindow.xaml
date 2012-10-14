@@ -13,7 +13,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:mtc="clr-namespace:Muragatte.Thesis.Converters"
-        Title="Scene Editor" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+        Title="Scene Editor" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
     <Window.Resources>
         <mtc:DirectionToDegreesConverter x:Key="DirectionToDegreesConverter" />
     </Window.Resources>
@@ -39,7 +39,7 @@
                 </GroupBox>
                 <GroupBox Header="Stationary Elements" Name="grbStationary" >
                     <DockPanel>
-                        <ListBox Height="160" Name="lboStationary" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.StationaryElements}" DisplayMemberPath="Name" SelectionChanged="List_SelectionChanged" />
+                        <ListBox Height="160" Name="lboStationary" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.StationaryElements}" DisplayMemberPath="Name" />
                         <StackPanel>
                             <Button Content="Delete" Height="23" Name="btnStationaryDelete" Width="75" Click="btnStationaryDelete_Click" />
                             <xtk:DropDownButton Name="ddbStationaryNew" Content="New" Height="23" Width="75">
@@ -55,18 +55,18 @@
                                     </StackPanel>
                                 </xtk:DropDownButton.DropDownContent>
                             </xtk:DropDownButton>
-                            <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboStationary}" />
-                            <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboStationary}" />
-                            <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" />
-                            <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" />
-                            <xtk:DoubleUpDown Name="dudDirection" Watermark="Direction" Height="23" Width="75" Minimum="-180"  Maximum="180" Value="{Binding Path=SelectedItem.Direction, ElementName=lboStationary, Converter={StaticResource DirectionToDegreesConverter}}" IsEnabled="{Binding Path=SelectedItem.IsDirectable, ElementName=lboStationary}" />
+                            <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:DoubleUpDown Name="dudDirection" Watermark="Direction" Height="23" Width="75" Minimum="-180"  Maximum="180" Value="{Binding Path=SelectedItem.Direction, ElementName=lboStationary, Converter={StaticResource DirectionToDegreesConverter}}" IsEnabled="{Binding Path=SelectedItem.IsDirectable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
                             <ComboBox Height="23" Name="cmbStationarySpecies" Width="75" ItemsSource="{Binding GetSpecies}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedValue="{Binding Path=SelectedItem.Species, ElementName=lboStationary}" />
                         </StackPanel>
                     </DockPanel>
                 </GroupBox>
                 <GroupBox Header="Spawn Spots" Name="grbSpawn">
                     <DockPanel>
-                        <ListBox Height="140" Name="lboSpawn" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.SpawnSpots}" DisplayMemberPath="Info" SelectionChanged="List_SelectionChanged" />
+                        <ListBox Height="140" Name="lboSpawn" Width="120" DockPanel.Dock="Left" ItemsSource="{Binding Path=GetScene.SpawnSpots}" DisplayMemberPath="Info" />
                         <StackPanel>
                             <Button Content="Delete" Height="23" Name="btnSpawnDelete" Width="75" Click="btnSpawnDelete_Click" />
                             <xtk:DropDownButton Name="ddbSpawnNew" Content="New" Height="23" Width="75">
@@ -78,10 +78,10 @@
                                     </StackPanel>
                                 </xtk:DropDownButton.DropDownContent>
                             </xtk:DropDownButton>
-                            <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboSpawn}" />
-                            <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboSpawn}" />
-                            <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn}" />
-                            <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn}" />
+                            <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboSpawn}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboSpawn}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn}" ValueChanged="NumericUpDown_ValueChanged" />
                         </StackPanel>
                     </DockPanel>
                 </GroupBox>

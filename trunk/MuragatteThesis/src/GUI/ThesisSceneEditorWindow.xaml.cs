@@ -161,6 +161,18 @@ namespace Muragatte.Thesis.GUI
             CreatePreview(iudRegionWidth.Value.Value, iudRegionHeight.Value.Value);
         }
 
+        private void btnRescale_Click(object sender, RoutedEventArgs e)
+        {
+            _preview.Rescale(dudScale.Value.Value);
+            SetPreviewImage();
+            RedrawPreview();
+        }
+
+        private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            RedrawPreview();
+        }
+
         #endregion
 
         #region Methods
@@ -208,17 +220,5 @@ namespace Muragatte.Thesis.GUI
         }
 
         #endregion
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RedrawPreview();
-        }
-
-        private void btnRescale_Click(object sender, RoutedEventArgs e)
-        {
-            _preview.Rescale(dudScale.Value.Value);
-            SetPreviewImage();
-            RedrawPreview();
-        }
     }
 }
