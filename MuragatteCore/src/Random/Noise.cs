@@ -10,19 +10,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
 
 namespace Muragatte.Random
 {
-    public abstract class Noise
+    public abstract class Noise : INotifyPropertyChanged
     {
         #region Fields
 
         protected RandomMT _random;
         protected double _dA;
         protected double _dB;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -42,13 +45,21 @@ namespace Muragatte.Random
         public double A
         {
             get { return _dA; }
-            set { _dA = value; }
+            set
+            {
+                _dA = value;
+                NotifyPropertyChanged("A");
+            }
         }
 
         public double B
         {
             get { return _dB; }
-            set { _dB = value; }
+            set
+            {
+                _dB = value;
+                NotifyPropertyChanged("B");
+            }
         }
 
         public RandomMT Random
@@ -83,6 +94,14 @@ namespace Muragatte.Random
         }
 
         protected abstract double SafeApply(RandomMT random);
+
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         #endregion
     }

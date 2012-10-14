@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
@@ -17,7 +18,7 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
 {
-    public abstract class AgentArchetype
+    public abstract class AgentArchetype : INotifyPropertyChanged
     {
         #region Fields
 
@@ -30,6 +31,8 @@ namespace Muragatte.Core.Environment
         protected Neighbourhood _fieldOfView;
         protected Angle _turningAngle;
         protected AgentArgs _args;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -56,13 +59,21 @@ namespace Muragatte.Core.Environment
         public string Name
         {
             get { return _sName; }
-            set { _sName = value; }
+            set
+            {
+                _sName = value;
+                NotifyPropertyChanged("Name");
+            }
         }
 
         public int Count
         {
             get { return _iCount; }
-            set { _iCount = value; }
+            set
+            {
+                _iCount = value;
+                NotifyPropertyChanged("Count");
+            }
         }
 
         public SpawnSpot SpawnPosition
@@ -127,6 +138,14 @@ namespace Muragatte.Core.Environment
         public override string ToString()
         {
             return string.Format("{0} ({1}x)", _sName, _iCount);
+        }
+
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

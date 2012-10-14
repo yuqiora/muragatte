@@ -52,6 +52,15 @@ namespace Muragatte.Core
             _dTimePerStep = timePerStep;
         }
 
+        public MultiAgentSystem(IStorage storage, Scene scene, RandomMT random, double timePerStep = 1)
+            : this(storage, scene, new SpeciesCollection(true), random, timePerStep) { }
+
+        public MultiAgentSystem(IStorage storage, Scene scene, SpeciesCollection species, RandomMT random, double timePerStep = 1)
+            : this(storage, scene.Region, species, random, timePerStep)
+        {
+            _storage.Add(scene.ApplyStationaryElements(this));
+        }
+
         #endregion
 
         #region Properties
@@ -59,7 +68,7 @@ namespace Muragatte.Core
         public int StepCount
         {
             get { return _iSteps; }
-            protected set
+            private set
             {
                 _iSteps = value;
                 NotifyPropertyChanged("StepCount");
@@ -90,7 +99,6 @@ namespace Muragatte.Core
         public SpeciesCollection Species
         {
             get { return _species; }
-            //set { _species = value; }
         }
 
         public History History
@@ -198,7 +206,7 @@ namespace Muragatte.Core
             StepCount++;
         }
 
-        public void UpdateGroupsAndCentroids()
+        private void UpdateGroupsAndCentroids()
         {
             foreach (Group g in _groups)
             {

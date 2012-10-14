@@ -12,61 +12,48 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Experiment Editor" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+        Title="Experiment Editor" SizeToContent="WidthAndHeight" ResizeMode="NoResize" ShowInTaskbar="False">
     <StackPanel Margin="5">
-        <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="200" Height="23" Text="{Binding Path=GetExperiment.Name}" />
-        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="200" Height="23" Text="{Binding Path=GetExperiment.Path}" />
-        <xtk:IntegerUpDown Name="iudRepeat" Width="80" Height="23" Minimum="1" Watermark="Repeat" Value="{Binding Path=GetExperiment.RepeatCount}"  />
-        <StackPanel Orientation="Horizontal">
-            <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="120" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" Value="{Binding Path=GetExperiment.Seed}" />
-            <Button Content="Random" Height="23" Name="btnRandomSeed" Width="75" Click="btnRandomSeed_Click" />
+        <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="170" Height="23" Text="{Binding Path=GetExperiment.Name}" ToolTip="Name" />
+        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="170" Height="23" Text="{Binding Path=GetExperiment.Path}" ToolTip="Path" />
+        <xtk:IntegerUpDown Name="iudRepeat" Width="170" Height="23" Minimum="1" Watermark="Repeat" Value="{Binding Path=GetExperiment.RepeatCount}" ToolTip="Repeat Count" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="110" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" Value="{Binding Path=GetExperiment.Seed}" ToolTip="Seed of Pseudo-Random Number Generator" />
+            <Button Content="Random" Height="23" Name="btnRandomSeed" Width="60" Click="btnRandomSeed_Click" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <xtk:DropDownButton Name="ddbStyles" Content="Styles" Height="23" Width="120">
-                <xtk:DropDownButton.DropDownContent>
-                    <ListBox MaxHeight="200" Name="lboStyles" ItemsSource="{Binding GetStyles}" Margin="5" />
-                </xtk:DropDownButton.DropDownContent>
-            </xtk:DropDownButton>
-            <Button Content="Edit" Height="23" Name="btnStyleEditor" Width="75" Click="btnStyleEditor_Click" />
-        </StackPanel>
-        <xtk:DoubleUpDown Name="dudTimePerStep" Watermark="Time per step" Width="80" Height="23" Maximum="1" Minimum="0.05" Increment="0.05" Value="{Binding Path=GetExperiment.Definition.TimePerStep}" />
-        <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="80" Height="23" Value="{Binding Path=GetExperiment.Definition.Length}" />
-        <StackPanel Orientation="Horizontal">
-            <xtk:DropDownButton Name="ddbSpecies" Content="Species" Height="23" Width="120">
-                <xtk:DropDownButton.DropDownContent>
-                    <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="Value" Margin="5" />
-                </xtk:DropDownButton.DropDownContent>
-            </xtk:DropDownButton>
-            <Button Content="Edit" Height="23" Name="btnSpeciesEditor" Width="75" Click="btnSpeciesEditor_Click" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <xtk:DropDownButton Name="ddbScene" Content="Scene" Height="23" Width="120">
-                <xtk:DropDownButton.DropDownContent>
-                    <StackPanel Margin="10">
-                        <TextBlock Name="txbSceneSize">
+        <xtk:SplitButton Name="spbStyles" Content="Edit Styles" Height="23" Width="170" Click="spbStyles_Click">
+            <xtk:SplitButton.DropDownContent>
+                <ListBox MaxHeight="200" Name="lboStyles" ItemsSource="{Binding GetStyles}" Margin="5" />
+            </xtk:SplitButton.DropDownContent>
+        </xtk:SplitButton>
+        <xtk:DoubleUpDown Name="dudTimePerStep" Watermark="Time per step" Width="170" Height="23" Maximum="1" Minimum="0.05" Increment="0.05" Value="{Binding Path=GetExperiment.Definition.TimePerStep}" ToolTip="Time per step" />
+        <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="170" Height="23" Minimum="1" Value="{Binding Path=GetExperiment.Definition.Length}" ToolTip="Length" />
+        <xtk:SplitButton Name="spbSpecies" Content="Edit Species" Height="23" Width="170" Click="spbSpecies_Click">
+            <xtk:SplitButton.DropDownContent>
+                <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="Value" Margin="5" />
+            </xtk:SplitButton.DropDownContent>
+        </xtk:SplitButton>
+        <xtk:SplitButton Name="spbScene" Content="Edit Scene" Height="23" Width="170" Click="spbScene_Click">
+            <xtk:SplitButton.DropDownContent>
+                <StackPanel Margin="10">
+                    <TextBlock Name="txbSceneSize">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}x{1}">
                                     <Binding Path="GetScene.Region.Width" />
                                     <Binding Path="GetScene.Region.Height" />
                                 </MultiBinding>
                             </TextBlock.Text>
-                        </TextBlock>
-                        <TextBlock Name="txbSceneStationary" Text="{Binding Path=GetScene.StationaryElements.Count, StringFormat='{}Stationary Elements: {0}'}" />
-                        <TextBlock Name="txbSceneSpawn" Text="{Binding Path=GetScene.SpawnSpots.Count, StringFormat='{}Spawn Spots: {0}'}" />
-                    </StackPanel>
-                </xtk:DropDownButton.DropDownContent>
-            </xtk:DropDownButton>
-            <Button Content="Edit" Height="23" Name="btnSceneEditor" Width="75" Click="btnSceneEditor_Click" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <xtk:DropDownButton Name="ddbArchetypes" Content="Archetypes" Height="23" Width="120">
-                <xtk:DropDownButton.DropDownContent>
-                    <ListBox MaxHeight="200" Name="lboArchetypes" ItemsSource="{Binding GetArchetypes}" Margin="5">
-                    </ListBox>
-                </xtk:DropDownButton.DropDownContent>
-            </xtk:DropDownButton>
-            <Button Content="Edit" Height="23" Name="btnArchetypesEditor" Width="75" Click="btnArchetypesEditor_Click" />
-        </StackPanel>
+                    </TextBlock>
+                    <TextBlock Name="txbSceneStationary" Text="{Binding Path=GetScene.StationaryElements.Count, StringFormat='{}Stationary Elements: {0}'}" />
+                    <TextBlock Name="txbSceneSpawn" Text="{Binding Path=GetScene.SpawnSpots.Count, StringFormat='{}Spawn Spots: {0}'}" />
+                </StackPanel>
+            </xtk:SplitButton.DropDownContent>
+        </xtk:SplitButton>
+        <xtk:SplitButton Name="spbArchetypes" Content="Edit Archetypes" Height="23" Width="170" Click="spbArchetypes_Click">
+            <xtk:SplitButton.DropDownContent>
+                <ListBox MaxHeight="200" Name="lboArchetypes" ItemsSource="{Binding GetArchetypes}" Margin="5" />
+            </xtk:SplitButton.DropDownContent>
+        </xtk:SplitButton>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="OK" Height="23" Name="btnOK" Width="75" IsDefault="True" Click="btnOK_Click" />
             <Button Content="Cancel" Height="23" Name="btnCancel" Width="75" IsCancel="True" Click="btnCancel_Click" />

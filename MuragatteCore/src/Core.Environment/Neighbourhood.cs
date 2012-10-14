@@ -10,13 +10,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
-    public class Neighbourhood
+    public class Neighbourhood : INotifyPropertyChanged
     {
         #region Fields
 
@@ -24,6 +25,8 @@ namespace Muragatte.Core.Environment
         protected double _dRange = 0;
         protected Angle _angle = Angle.Deg180;
         protected Metric _metric = Metric.Euclidean;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -65,19 +68,31 @@ namespace Muragatte.Core.Environment
         public double Range
         {
             get { return _dRange; }
-            set { _dRange = value; }
+            set
+            {
+                _dRange = value;
+                NotifyPropertyChanged("Range");
+            }
         }
 
         public Angle Angle
         {
             get { return _angle; }
-            set { _angle = value; }
+            set
+            {
+                _angle = value;
+                NotifyPropertyChanged("Angle");
+            }
         }
 
         public Metric Metric
         {
             get { return _metric; }
-            set { _metric = value; }
+            set
+            {
+                _metric = value;
+                NotifyPropertyChanged("Metric");
+            }
         }
 
         #endregion
@@ -145,6 +160,14 @@ namespace Muragatte.Core.Environment
         public Neighbourhood Clone(bool withSource = false)
         {
             return new Neighbourhood(withSource ? _source : null, _dRange, _angle, _metric);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion
