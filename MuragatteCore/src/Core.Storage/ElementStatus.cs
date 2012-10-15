@@ -25,7 +25,7 @@ namespace Muragatte.Core.Storage
         private Vector2 _direction;
         private double _dSpeed;
         private bool _bEnabled;
-        private int _iSpeciesID;
+        private string _sSpeciesName;
         private int _iGroupID;
         private List<double> _modifiers = null;
 
@@ -33,20 +33,20 @@ namespace Muragatte.Core.Storage
 
         #region Constructors
 
-        public ElementStatus(int elementID, Vector2 position, Vector2 direction, double speed, bool enabled, int speciesID, int groupID)
+        public ElementStatus(int elementID, Vector2 position, Vector2 direction, double speed, bool enabled, string speciesName, int groupID)
         {
             _iElementID = elementID;
             _position = position;
             _direction = direction;
             _dSpeed = speed;
             _bEnabled = enabled;
-            _iSpeciesID = speciesID;
+            _sSpeciesName = speciesName;
             _iGroupID = groupID;
         }
 
         public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, int speciesID, int groupID, IEnumerable<double> modifiers)
-            : this(elementID, position, direction, speed, enabled, speciesID, groupID)
+            double speed, bool enabled, string speciesName, int groupID, IEnumerable<double> modifiers)
+            : this(elementID, position, direction, speed, enabled, speciesName, groupID)
         {
             _modifiers = modifiers == null ? null : new List<double>(modifiers);
         }
@@ -80,9 +80,9 @@ namespace Muragatte.Core.Storage
             get { return _bEnabled; }
         }
 
-        public int SpeciesID
+        public string SpeciesName
         {
-            get { return _iSpeciesID; }
+            get { return _sSpeciesName; }
         }
 
         public int GroupID
@@ -116,7 +116,7 @@ namespace Muragatte.Core.Storage
         public override string ToString()
         {
             return string.Format("{0} {1} {2} {3} {4} {5} {6}{7}",
-                _iElementID, _position, _direction, _dSpeed, _bEnabled, _iSpeciesID, _iGroupID, ModifiersToString());
+                _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID, ModifiersToString());
         }
 
         #endregion

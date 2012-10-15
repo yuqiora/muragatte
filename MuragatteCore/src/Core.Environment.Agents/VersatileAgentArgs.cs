@@ -39,7 +39,7 @@ namespace Muragatte.Core.Environment.Agents
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1, 1) { }
 
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double credibility)
-            : this(goal, personalArea, assertivity, credibility, 1, 1, 1, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2) { }
+            : this(goal, personalArea, assertivity, credibility, 1, 1, 1, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double credibility,
             double separation, double cohesion, double alignment, double obstacleAvoidance, double seek, double flee,

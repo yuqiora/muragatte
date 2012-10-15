@@ -30,7 +30,7 @@
         <xtk:IntegerUpDown Name="iudLength" Watermark="Length" Width="170" Height="23" Minimum="1" Value="{Binding Path=GetExperiment.Definition.Length}" ToolTip="Length" />
         <xtk:SplitButton Name="spbSpecies" Content="Edit Species" Height="23" Width="170" Click="spbSpecies_Click">
             <xtk:SplitButton.DropDownContent>
-                <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="Value" Margin="5" />
+                <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" Margin="5" />
             </xtk:SplitButton.DropDownContent>
         </xtk:SplitButton>
         <xtk:SplitButton Name="spbScene" Content="Edit Scene" Height="23" Width="170" Click="spbScene_Click">

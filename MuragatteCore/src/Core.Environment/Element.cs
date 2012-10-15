@@ -221,7 +221,7 @@ namespace Muragatte.Core.Environment
         protected ElementStatus ReportStatus(IEnumerable<double> modifiers)
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
-                _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID, modifiers);
+                _species == null ? null : _species.FullName, Group == null ? -1 : Group.ID, modifiers);
         }
 
         protected void NotifyPropertyChanged(String propertyName)
@@ -234,7 +234,7 @@ namespace Muragatte.Core.Environment
 
         protected void SetSpecies(Species s, string name)
         {
-            _species = s ?? (_model == null ? null : _model.Species[name]);
+            _species = s ?? (_model == null ? null : _model.Species.GetDefault(name));
         }
 
         #endregion
@@ -295,7 +295,7 @@ namespace Muragatte.Core.Environment
         public virtual ElementStatus ReportStatus()
         {
             return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
-                _species == null ? -1 : _species.ID, Group == null ? -1 : Group.ID);
+                _species == null ? null : _species.FullName, Group == null ? -1 : Group.ID);
         }
 
         public virtual void LoadStatus(ElementStatus status)
@@ -304,7 +304,7 @@ namespace Muragatte.Core.Environment
             Direction = status.Direction;
             Speed = status.Speed;
             IsEnabled = status.IsEnabled;
-            Species = status.SpeciesID < 0 ? null : _model.Species[status.SpeciesID];
+            Species = status.SpeciesName == null ? null : _model.Species[status.SpeciesName];
         }
 
         #endregion

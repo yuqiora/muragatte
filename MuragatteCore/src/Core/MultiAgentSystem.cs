@@ -124,7 +124,7 @@ namespace Muragatte.Core
         {
             StepCount = 0;
             _species.Clear();
-            Environment.Species.ResetIDCounter();
+            //Environment.Species.ResetIDCounter();
             _storage.Clear();
             Element.ResetIDCounter();
             _history.Clear();

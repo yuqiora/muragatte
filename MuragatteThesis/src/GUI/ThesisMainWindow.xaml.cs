@@ -173,9 +173,9 @@ namespace Muragatte.Thesis.GUI
             Core.Storage.SpeciesCollection species = new Core.Storage.SpeciesCollection();
             Core.Environment.Species boids = new Core.Environment.Species("Boids");
             Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boids);
-            species.Add(centroid);
-            species.SetDefaultCentroidSpecies(centroid);
+            species.Add(boids, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
+            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
+            //species.SetDefaultCentroidSpecies(centroid);
 
             List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
             archetypes.Add(new Core.Environment.Agents.BoidAgentArchetype("Boids", 50, spawn,
@@ -210,16 +210,16 @@ namespace Muragatte.Thesis.GUI
             Core.Environment.Species goalG = goal.CreateSubSpecies("gG");
             Core.Environment.Species goalI = goal.CreateSubSpecies("gI");
             Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boid);
+            species.Add(boid, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
             species.Add(naive);
             species.Add(guide);
             species.Add(intruder);
-            species.Add(obstacle);
-            species.Add(goal);
+            species.Add(obstacle, Core.Storage.SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
+            species.Add(goal, Core.Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
             species.Add(goalG);
             species.Add(goalI);
-            species.Add(centroid);
-            species.SetDefaultCentroidSpecies(centroid);
+            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
+            //species.SetDefaultCentroidSpecies(centroid);
 
             List<Core.Environment.Element> stationaries = new List<Core.Environment.Element>();
             Core.Environment.Goal goalGuide = new Core.Environment.PositionGoal(0, null, new Common.Vector2(25, 25), goalG);
@@ -282,16 +282,16 @@ namespace Muragatte.Thesis.GUI
             Core.Environment.Species goalG = goal.CreateSubSpecies("gG");
             Core.Environment.Species goalI = goal.CreateSubSpecies("gI");
             Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boid);
+            species.Add(boid, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
             species.Add(naive);
             species.Add(guide);
             species.Add(intruder);
-            species.Add(obstacle);
-            species.Add(goal);
+            species.Add(obstacle, Core.Storage.SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
+            species.Add(goal, Core.Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
             species.Add(goalG);
             species.Add(goalI);
-            species.Add(centroid);
-            species.SetDefaultCentroidSpecies(centroid);
+            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
+            //species.SetDefaultCentroidSpecies(centroid);
 
             List<Core.Environment.Element> stationaries = new List<Core.Environment.Element>();
             Core.Environment.Goal goalGuide = new Core.Environment.PositionGoal(0, null, new Common.Vector2(25, 25), goalG);

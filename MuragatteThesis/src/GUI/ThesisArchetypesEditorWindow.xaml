@@ -49,12 +49,12 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <xtk:WatermarkTextBox Height="23" Name="txtName" Width="150" Watermark="Name" Grid.Column="0" Text="{Binding Path=SelectedArchetype.Name}" Margin="5,0" ToolTip="Name" />
-            <xtk:IntegerUpDown Name="iudCount" Height="23" Width="120" Watermark="Count" Minimum="1" Grid.Column="1" Value="{Binding Path=SelectedArchetype.Count}" ToolTip="Count" />
+            <xtk:IntegerUpDown Name="iudCount" Height="23" Width="120" Watermark="Count" Minimum="1" Grid.Column="1" Value="{Binding Path=SelectedArchetype.Count, UpdateSourceTrigger=PropertyChanged}" ToolTip="Count" />
         </Grid>
         <GroupBox Header="Common" DockPanel.Dock="Left">
             <StackPanel>
                 <ComboBox Height="23" Name="cmbSpawnSpot" Width="150" ItemsSource="{Binding Path=GetSpawnSpots}" SelectedItem="{Binding Path=SelectedArchetype.SpawnPosition}" ToolTip="Spawn Spot" />
-                <xtk:DropDownButton Name="ddbDirection" Height="23" Width="150">
+                <xtk:DropDownButton Name="ddbDirection" Height="23" Width="150" ToolTip="Direction">
                     <xtk:DropDownButton.Content>
                         <TextBlock>
                             <TextBlock.Text>
@@ -70,15 +70,15 @@
                     <xtk:DropDownButton.DropDownContent>
                         <GroupBox Header="Direction">
                             <StackPanel Margin="5">
-                                <xtk:DoubleUpDown Name="dudDirectionNoiseBase" Height="23" Width="120" Minimum="-180" Maximum="180" Watermark="Base Noise Value" Value="{Binding Path=SelectedArchetype.NoisedDirection.BaseValue}" ToolTip="Base Value" />
+                                <xtk:DoubleUpDown Name="dudDirectionNoiseBase" Height="23" Width="120" Minimum="-180" Maximum="180" Watermark="Base Noise Value" Value="{Binding Path=SelectedArchetype.NoisedDirection.BaseValue, UpdateSourceTrigger=PropertyChanged}" ToolTip="Base Value" />
                                 <ComboBox Height="23" Name="cmbDirectionNoiseDistribution" Width="120" ItemsSource="{Binding GetDistributionOptions}" SelectedItem="{Binding Path=SelectedArchetype.NoisedDirection.Noise, Converter={StaticResource NoiseToDistributionConverter}}" ToolTip="Noise Distribution" />
-                                <xtk:DoubleUpDown Name="dudDirectionNoiseA" Height="23" Width="120" Watermark="Noise Param A" Value="{Binding Path=SelectedArchetype.NoisedDirection.Noise.A}" ToolTip="Noise Parameter A" />
-                                <xtk:DoubleUpDown Name="dudDirectionNoiseB" Height="23" Width="120" Watermark="Noise Param B" Value="{Binding Path=SelectedArchetype.NoisedDirection.Noise.B}" ToolTip="Noise Parameter B" />
+                                <xtk:DoubleUpDown Name="dudDirectionNoiseA" Height="23" Width="120" Watermark="Noise Param A" Increment="0.5" Value="{Binding Path=SelectedArchetype.NoisedDirection.Noise.A, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter A" />
+                                <xtk:DoubleUpDown Name="dudDirectionNoiseB" Height="23" Width="120" Watermark="Noise Param B" Increment="0.5" Value="{Binding Path=SelectedArchetype.NoisedDirection.Noise.B, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter B" />
                             </StackPanel>
                         </GroupBox>
                     </xtk:DropDownButton.DropDownContent>
                 </xtk:DropDownButton>
-                <xtk:DropDownButton Name="ddbSpeedNoise" Height="23" Width="150">
+                <xtk:DropDownButton Name="ddbSpeedNoise" Height="23" Width="150" ToolTip="Speed">
                     <xtk:DropDownButton.Content>
                         <TextBlock>
                             <TextBlock.Text>
@@ -94,16 +94,16 @@
                     <xtk:DropDownButton.DropDownContent>
                         <GroupBox Header="Speed">
                             <StackPanel Margin="5">
-                                <xtk:DoubleUpDown Name="dudSpeedNoiseBase" Height="23" Width="120" Watermark="Base Value" Minimum="0" Increment="0.05" Value="{Binding Path=SelectedArchetype.NoisedSpeed.BaseValue}" ToolTip="Base Value" />
+                                <xtk:DoubleUpDown Name="dudSpeedNoiseBase" Height="23" Width="120" Watermark="Base Value" Minimum="0" Increment="0.05" Value="{Binding Path=SelectedArchetype.NoisedSpeed.BaseValue, UpdateSourceTrigger=PropertyChanged}" ToolTip="Base Value" />
                                 <ComboBox Height="23" Name="cmbSpeedNoiseDistribution" Width="120" ItemsSource="{Binding GetDistributionOptions}" SelectedItem="{Binding Path=SelectedArchetype.NoisedSpeed.Noise, Converter={StaticResource NoiseToDistributionConverter}}" ToolTip="Noise Distribution" />
-                                <xtk:DoubleUpDown Name="dudSpeedNoiseA" Height="23" Width="120" Watermark="Noise Param A" Value="{Binding Path=SelectedArchetype.NoisedSpeed.Noise.A}" ToolTip="Noise Parameter A" />
-                                <xtk:DoubleUpDown Name="dudSpeedNoiseB" Height="23" Width="120" Watermark="Noise Param B" Value="{Binding Path=SelectedArchetype.NoisedSpeed.Noise.B}" ToolTip="Noise Parameter B" />
+                                <xtk:DoubleUpDown Name="dudSpeedNoiseA" Height="23" Width="120" Watermark="Noise Param A" Increment="0.5" Value="{Binding Path=SelectedArchetype.NoisedSpeed.Noise.A, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter A" />
+                                <xtk:DoubleUpDown Name="dudSpeedNoiseB" Height="23" Width="120" Watermark="Noise Param B" Increment="0.5" Value="{Binding Path=SelectedArchetype.NoisedSpeed.Noise.B, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter B" />
                             </StackPanel>
                         </GroupBox>
                     </xtk:DropDownButton.DropDownContent>
                 </xtk:DropDownButton>
                 <ComboBox Height="23" Name="cmbSpecies" Width="150" ItemsSource="{Binding GetSpecies}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedValue="{Binding Path=SelectedItem.Species, ElementName=lboArchetypes}" ToolTip="Species" />
-                <xtk:DropDownButton Name="ddbFieldOfView" Height="23" Width="150">
+                <xtk:DropDownButton Name="ddbFieldOfView" Height="23" Width="150" ToolTip="Field of View">
                     <xtk:DropDownButton.Content>
                         <TextBlock>
                             <TextBlock.Text>
@@ -118,8 +118,8 @@
                     <xtk:DropDownButton.DropDownContent>
                         <GroupBox Header="Field of View">
                             <StackPanel Margin="5">
-                                <xtk:DoubleUpDown Name="dudFieldOfViewRange" Height="23" Width="120" Watermark="Range" Minimum="1" Increment="0.5" Value="{Binding Path=SelectedArchetype.FieldOfView.Range}" ToolTip="Range" />
-                                <xtk:IntegerUpDown Name="iudFieldOfViewAngle" Height="23" Width="120" Watermark="Angle" Minimum="-180" Maximum="180" Value="{Binding Path=SelectedArchetype.FieldOfView.Angle, Converter={StaticResource AngleToIntConverter}}" ToolTip="Angle" />
+                                <xtk:DoubleUpDown Name="dudFieldOfViewRange" Height="23" Width="120" Watermark="Range" Minimum="1" Increment="0.5" Value="{Binding Path=SelectedArchetype.FieldOfView.Range, UpdateSourceTrigger=PropertyChanged}" ToolTip="Range" />
+                                <xtk:IntegerUpDown Name="iudFieldOfViewAngle" Height="23" Width="120" Watermark="Angle" Minimum="-180" Maximum="180" Value="{Binding Path=SelectedArchetype.FieldOfView.Angle, Converter={StaticResource AngleToIntConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="Angle" />
                                 <ComboBox Height="23" Name="cmbFieldOfViewMetric" Width="120" ItemsSource="{Binding GetMetricOptions}" SelectedItem="{Binding Path=SelectedArchetype.FieldOfView.Metric}" ToolTip="Metric" />
                             </StackPanel>
                         </GroupBox>
@@ -136,8 +136,8 @@
                     </CheckBox.Content>
                 </CheckBox>
                 <ComboBox Height="23" Name="cmbArgsNoiseDistribution" Width="120" ItemsSource="{Binding GetDistributionOptions}" SelectedItem="{Binding Path=SelectedArchetype.Specifics.Distribution}" ToolTip="Noise Distribution" />
-                <xtk:DoubleUpDown Name="dudArgsNoiseA" Height="23" Width="120" Watermark="Noise Param A" Value="{Binding Path=SelectedArchetype.Specifics.NoiseArgA}" ToolTip="Noise Parameter A" />
-                <xtk:DoubleUpDown Name="dudArgsNoiseB" Height="23" Width="120" Watermark="Noise Param B" Value="{Binding Path=SelectedArchetype.Specifics.NoiseArgB}" ToolTip="Noise Parameter B" />
+                <xtk:DoubleUpDown Name="dudArgsNoiseA" Height="23" Width="120" Watermark="Noise Param A" Increment="0.5" Value="{Binding Path=SelectedArchetype.Specifics.NoiseArgA, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter A" />
+                <xtk:DoubleUpDown Name="dudArgsNoiseB" Height="23" Width="120" Watermark="Noise Param B" Increment="0.5" Value="{Binding Path=SelectedArchetype.Specifics.NoiseArgB, UpdateSourceTrigger=PropertyChanged}" ToolTip="Noise Parameter B" />
                 <xtk:DropDownButton Name="ddbArgsNeighbourhoods" Height="23" Width="120" Content="Neighbourhoods" IsEnabled="{Binding Path=SelectedArchetype.Specifics.HasNeighbourhoods}">
                     <xtk:DropDownButton.DropDownContent>
                         <Grid Margin="5">
@@ -157,7 +157,7 @@
                 <xtk:DropDownButton Name="ddbArgsModifiers" Height="23" Width="120" Content="Modifiers">
                     <xtk:DropDownButton.DropDownContent>
                         <StackPanel Margin="5">
-                            <ListBox Name="lboArgsModifiers" MaxHeight="100" Width="170" ItemsSource="{Binding Path=SelectedArchetype.Specifics.Modifiers}" SelectedValuePath="Key" SelectedValue="{Binding SelectedArgsModifierLabel}" Grid.IsSharedSizeScope="True">
+                            <ListBox Name="lboArgsModifiers" MaxHeight="100" MaxWidth="170" ItemsSource="{Binding Path=SelectedArchetype.Specifics.Modifiers}" SelectedValuePath="Key" SelectedValue="{Binding SelectedArgsModifierLabel}" Grid.IsSharedSizeScope="True">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -171,7 +171,7 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <xtk:DoubleUpDown Name="dudArgsModifiersValue" Height="23" Width="75" Watermark="Range" Minimum="0" Increment="0.1" Value="{Binding Path=SelectedArgsModifierValue}" ToolTip="Modifier Value" />
+                            <xtk:DoubleUpDown Name="dudArgsModifiersValue" Height="23" Width="75" Watermark="Range" Minimum="0" Increment="0.1" Value="{Binding Path=SelectedArgsModifierValue, UpdateSourceTrigger=PropertyChanged}" ToolTip="Modifier Value" />
                         </StackPanel>
                     </xtk:DropDownButton.DropDownContent>
                 </xtk:DropDownButton>

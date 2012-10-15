@@ -70,6 +70,14 @@ namespace Muragatte.Random
             return _random.Gauss(mean, deviation);
         }
 
+        public double GaussLimited(double deviation, double limit)
+        {
+            double value = _random.Gauss(0, deviation);
+            if (value > limit) value = limit;
+            if (value < -limit) value = -limit;
+            return value;
+        }
+
         public uint UInt()
         {
             return _random.Rand();
@@ -93,6 +101,11 @@ namespace Muragatte.Random
         public Angle GaussAngle(double mean, double deviation)
         {
             return new Angle(Gauss(mean, deviation));
+        }
+
+        public Angle GaussAngleLimited(double deviation, double limit)
+        {
+            return new Angle(GaussLimited(deviation, limit));
         }
 
         public void Disk(out double x, out double y, out double sumSquares)
