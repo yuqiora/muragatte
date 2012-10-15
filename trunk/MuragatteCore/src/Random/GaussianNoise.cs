@@ -19,19 +19,19 @@ namespace Muragatte.Random
     {
         #region Constructors
 
-        public GaussianNoise(RandomMT random, double mean, double deviation) : base(random, mean, deviation) { }
+        public GaussianNoise(RandomMT random, double deviation, double limit) : base(random, deviation, limit) { }
 
         #endregion
 
         #region Properties
 
-        public double Mean
+        public double Deviation
         {
             get { return _dA; }
             set { _dA = value; }
         }
 
-        public double Deviation
+        public double Limit
         {
             get { return _dB; }
             set { _dB = value; }
@@ -48,7 +48,7 @@ namespace Muragatte.Random
 
         protected override double SafeApply(RandomMT random)
         {
-            return random.Gauss(_dA, _dB);
+            return random.GaussLimited(_dA, _dB);
         }
 
         #endregion

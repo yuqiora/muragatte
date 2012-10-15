@@ -21,7 +21,7 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public BoidAgentArgs() : this(1, 1, 1, Distribution.Gaussian, 0, 2) { }
+        public BoidAgentArgs() : this(1, 1, 1, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
         public BoidAgentArgs(double separation, double cohesion, double alignment, Distribution distribution, double noiseA, double noiseB)
             : base(distribution, noiseA, noiseB)
@@ -91,7 +91,7 @@ namespace Muragatte.Core.Environment.Agents
         public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1) { }
 
         public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity) :
-            this(goal, personalArea, assertivity, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2) { }
+            this(goal, personalArea, assertivity, 1, 1, 1, 1, 10, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
         public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double separation, double cohesion,
             double alignment, double obstacleAvoidance, double wander, Distribution distribution, double noiseA, double noiseB)

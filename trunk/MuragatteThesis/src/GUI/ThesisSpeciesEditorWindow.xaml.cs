@@ -66,25 +66,26 @@ namespace Muragatte.Thesis.GUI
 
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
-            _species.Add(new Species("New"));
-            lboSpecies.SelectedIndex = lboSpecies.Items.Count - 1;
+            Species s = new Species("New");
+            _species.Add(s);
+            lboSpecies.SelectedItem = s;
         }
 
         private void btnSub_Click(object sender, RoutedEventArgs e)
         {
             if (lboSpecies.SelectedItem != null)
             {
-                _species.Add(new Species("Sub", (Species)lboSpecies.SelectedValue));
-                lboSpecies.SelectedIndex = lboSpecies.Items.Count - 1;
+                Species s = new Species("Sub", (Species)lboSpecies.SelectedItem);
+                _species.Add(s);
+                lboSpecies.SelectedItem = s;
             }
         }
 
-        //issues with SpeciesCollection when removing
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (lboSpecies.SelectedItem != null)
             {
-                _species.Remove(((Species)lboSpecies.SelectedValue).ID);
+                _species.Remove(((Species)lboSpecies.SelectedItem));
             }
         }
 

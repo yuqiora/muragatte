@@ -17,8 +17,7 @@ using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
-    //needs some reworking, current version not sufficent
-    public class SpeciesCollection : Dictionary<int, Species>, INotifyCollectionChanged
+    public class SpeciesCollection : ICollection<Species>, INotifyCollectionChanged
     {
         #region Constants
 
@@ -32,6 +31,9 @@ namespace Muragatte.Core.Storage
 
         #region Fields
 
+        private static readonly List<string> _labels = new List<string>() { DEFAULT_AGENTS_LABEL, DEFAULT_GOALS_LABEL, DEFAULT_OBSTACLES_LABEL, DEFAULT_CENTROIDS_LABEL, DEFAULT_EXTRAS_LABEL };
+
+        private List<Species> _items = new List<Species>();
         private Dictionary<string, Species> _defaults = new Dictionary<string, Species>();
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -40,97 +42,176 @@ namespace Muragatte.Core.Storage
 
         #region Constructors
 
-        public SpeciesCollection(bool withDefaults = false) : base()
+        public SpeciesCollection(bool withDefaults = false)
         {
-            if (withDefaults) CreateDefaultSpecies();
+            InitializeDefaults();
+            if (withDefaults) CreateDefaults();
         }
 
-        public SpeciesCollection(IDictionary<int, Species> dictionary) : base(dictionary) { }
-
         public SpeciesCollection(IEnumerable<Species> items)
-            : base()
         {
-            foreach (Species s in items)
-            {
-                base.Add(s.ID, s);
-            }
+            InitializeDefaults();
+            Add(items);
         }
 
         #endregion
 
         #region Properties
 
-        public new Species this[int key]
+        public int Count
         {
-            get { return base[key]; }
-            set { }
+            get { return _items.Count; }
         }
 
-        public Species this[string key]
+        public bool IsReadOnly
         {
-            get
-            {
-                Species s;
-                if (!_defaults.TryGetValue(key, out s))
-                {
-                    s = null;
-                }
-                return s;
-            }
+            get { return false; }
         }
 
-        public bool HasDefaults
+        public Species this[string name]
         {
-            get { return _defaults.Count > 0; }
+            get { return _items.Find(s => s.FullName == name); }
+        }
+
+        public Species this[int index]
+        {
+            get { return index >= 0 && index < _items.Count ? _items[index] : null; }
         }
 
         #endregion
 
         #region Methods
 
-        public void Add(Species item)
+        public void Clear()
         {
-            Add(item.ID, item);
+            _items.Clear();
+            InitializeDefaults();
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
         }
 
-        public new void Add(int key, Species value)
+        public bool Contains(Species item)
         {
-            base.Add(key, value);
-            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<int, Species>(key, value));
+            return _items.Contains(item);
+        }
+
+        public void CopyTo(Species[] array, int arrayIndex)
+        {
+            _items.CopyTo(array, arrayIndex);
+        }
+
+        public Species GetDefault(string label)
+        {
+            return _labels.Contains(label) ? _defaults[label] : null;
+        }
+
+        public void Add(Species item)
+        {
+            if (item.Ancestor == null || !_items.Contains(item.Ancestor))
+            {
+                _items.Add(item);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+            }
+            else
+            {
+                int i = _items.FindLastIndex(s => s.IsDescendantOf(item.Ancestor));
+                int index = (i < 0 ? _items.IndexOf(item.Ancestor) : i) + 1;
+                if (index >= _items.Count)
+                {
+                    _items.Add(item);
+                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+                }
+                else
+                {
+                    _items.Insert(index, item);
+                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
+                }
+            }
+        }
+
+        public void Add(Species item, string key)
+        {
+            Add(item);
+            if (_labels.Contains(key)) _defaults[key] = item;
         }
 
         public void Add(IEnumerable<Species> items)
         {
             foreach (Species s in items)
             {
-                Add(s.ID, s);
+                _items.Add(s);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
             }
         }
 
-        public new bool Remove(int key)
+        public bool Remove(Species item)
         {
-            Species s;
-            if (TryGetValue(key, out s))
+            if (_items.Contains(item))
             {
-                base.Remove(key);
-                _defaults.Remove(s.Name);
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<int, Species>(key, s));
+                RemoveAndNotify(item);
+                List<Species> toRemove = new List<Species>();
+                foreach (Species s in _items)
+                {
+                    if (s.IsDescendantOf(item)) toRemove.Add(s);
+                }
+                foreach (Species s in toRemove)
+                {
+                    RemoveAndNotify(s);
+                }
                 return true;
             }
-            else
+            else return false;
+        }
+
+        private void RemoveAndNotify(Species item)
+        {
+            int index = _items.IndexOf(item);
+            _items.RemoveAt(index);
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+        }
+
+        private void InitializeDefaults()
+        {
+            _defaults.Clear();
+            foreach (string s in _labels)
             {
-                return false;
+                _defaults.Add(s, null);
             }
         }
 
-        public new void Clear()
+        private void CreateDefaults()
         {
-            base.Clear();
-            _defaults.Clear();
-            NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
+            foreach (string s in _labels)
+            {
+                Add(new Species(s), s);
+            }
         }
 
-        protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<int, Species>? changedItem)
+        public void SetDefaultSpecies(Species species, string key)
+        {
+            if (_labels.Contains(key))
+            {
+                if (_items.Contains(species))
+                {
+                    _defaults[key] = species;
+                }
+                else
+                {
+                    Add(species, key);
+                }
+            }
+        }
+
+        public IEnumerator<Species> GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return (System.Collections.IEnumerator)GetEnumerator();
+        }
+
+        private void NotifyCollectionChanged(NotifyCollectionChangedAction action, Species changedItem)
         {
             if (CollectionChanged != null)
             {
@@ -138,34 +219,11 @@ namespace Muragatte.Core.Storage
             }
         }
 
-        public void CreateDefaultSpecies()
+        private void NotifyCollectionChanged(NotifyCollectionChangedAction action, Species changedItem, int index)
         {
-            if (_defaults.Count == 0)
+            if (CollectionChanged != null)
             {
-                CreateDefaultSpecies(DEFAULT_AGENTS_LABEL);
-                CreateDefaultSpecies(DEFAULT_GOALS_LABEL);
-                CreateDefaultSpecies(DEFAULT_OBSTACLES_LABEL);
-                CreateDefaultSpecies(DEFAULT_CENTROIDS_LABEL);
-                CreateDefaultSpecies(DEFAULT_EXTRAS_LABEL);
-            }
-        }
-
-        private void CreateDefaultSpecies(string name)
-        {
-            Species s = new Species(name);
-            _defaults.Add(name, s);
-            Add(s);
-        }
-
-        public void SetDefaultCentroidSpecies(Species species)
-        {
-            if (_defaults.ContainsKey(DEFAULT_CENTROIDS_LABEL))
-            {
-                _defaults[DEFAULT_CENTROIDS_LABEL] = species;
-            }
-            else
-            {
-                _defaults.Add(DEFAULT_CENTROIDS_LABEL, species);
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem, index));
             }
         }
 

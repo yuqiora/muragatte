@@ -264,21 +264,21 @@ namespace Muragatte.Sandbox.GUI
         private void CreateSpecies()
         {
             _mas.Species.Clear();
-            Species.ResetIDCounter();
-            _mas.Species.CreateDefaultSpecies();
+            //Species.ResetIDCounter();
+            //_mas.Species.CreateDefaultSpecies();
             int scale = int.Parse(txtScale.Text);
             _boids = new Species("Boids");
-            _mas.Species.Add(_boids.ID, _boids);
+            _mas.Species.Add(_boids);
             _guides = _boids.CreateSubSpecies("Guides");
-            _mas.Species.Add(_guides.ID, _guides);
+            _mas.Species.Add(_guides);
             _intruders = _boids.CreateSubSpecies("Intruders");
-            _mas.Species.Add(_intruders.ID, _intruders);
+            _mas.Species.Add(_intruders);
             //Species centroids = new Species("Centroids");
             //_mas.Species.Add(centroids.ID, centroids);
             Species wanderers = new Species("Wanderers");
-            _mas.Species.Add(wanderers.ID, wanderers);
+            _mas.Species.Add(wanderers);
             Species versatiles = new Species("Versatiles");
-            _mas.Species.Add(versatiles.ID, versatiles);
+            _mas.Species.Add(versatiles);
         }
 
         private void CreateBoids(int count, double fovRange)
@@ -288,7 +288,7 @@ namespace Muragatte.Sandbox.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1), _boids,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
-                new BoidAgentArgs(1, 1, 1, Distribution.Gaussian, 0, 2));
+                new BoidAgentArgs());
             _mas.Elements.Add(ba.CreateAgents(_mas.Elements.Count, _mas));
         }
 
@@ -300,7 +300,7 @@ namespace Muragatte.Sandbox.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1.05), _boids,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
-                new AdvancedBoidAgentArgs(null, pa.Clone(), 0, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+                new AdvancedBoidAgentArgs(null, pa.Clone(), 0));
             _mas.Elements.Add(naiveArch.CreateAgents(_mas.Elements.Count, _mas));
 
             AdvancedBoidAgentArchetype guideArch = new AdvancedBoidAgentArchetype(
@@ -308,7 +308,7 @@ namespace Muragatte.Sandbox.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(1), _guides,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
-                new AdvancedBoidAgentArgs(_goals[0], pa.Clone(), 0.75, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+                new AdvancedBoidAgentArgs(_goals[0], pa.Clone(), 0.75));
             _mas.Elements.Add(guideArch.CreateAgents(_mas.Elements.Count, _mas));
 
             AdvancedBoidAgentArchetype intruderArch = new AdvancedBoidAgentArchetype(
@@ -316,7 +316,7 @@ namespace Muragatte.Sandbox.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -Angle.MaxDegree, Angle.MaxDegree),
                 new NoisedDouble(0.95), _intruders,
                 new Neighbourhood(fovRange, _boidFOVAngle), _turningAngle,
-                new AdvancedBoidAgentArgs(_goals[1], pa.Clone(), 1, 1, 1, 1, 1, 10, Distribution.Gaussian, 0, 2));
+                new AdvancedBoidAgentArgs(_goals[1], pa.Clone(), 1));
             _mas.Elements.Add(intruderArch.CreateAgents(_mas.Elements.Count, _mas));
         }
 

@@ -18,6 +18,13 @@ namespace Muragatte.Core.Environment
 {
     public abstract class AgentArgs
     {
+        #region Constants
+
+        protected const double DEFAULT_DEVIATION = 0.01 * 180 / Math.PI;    //0.01 radians
+        protected const double DEFAULT_LIMIT = 5;
+
+        #endregion
+
         #region Fields
 
         protected Dictionary<string, double> _modifiers = new Dictionary<string, double>();

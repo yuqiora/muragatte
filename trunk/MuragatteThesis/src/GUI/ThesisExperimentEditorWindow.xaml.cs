@@ -56,6 +56,9 @@ namespace Muragatte.Thesis.GUI
                 _scene = new Scene(new Region(100, true));
                 _species = new SpeciesCollection(true);
                 _archetypes = new ObservableCollection<AgentArchetype>();
+            }
+            else
+            {
                 btnCancel.Visibility = System.Windows.Visibility.Collapsed;
             }
         }

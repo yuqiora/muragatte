@@ -47,7 +47,7 @@ namespace Muragatte.Visual
         private List<Coordinates> _neighbourhoodCoordinates = null;
 
         private HistoryViewer _historyViewer = null;
-        private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, -1, -1);
+        private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, "", -1);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -90,7 +90,7 @@ namespace Muragatte.Visual
 
         public string Species
         {
-            get { return FromHistory.SpeciesID < 0 ? string.Empty : _element.Model.Species[FromHistory.SpeciesID].Name; }
+            get { return FromHistory.SpeciesName == null ? string.Empty : _element.Model.Species[FromHistory.SpeciesName].Name; }
         }
 
         public double UnitWidth
