@@ -20,18 +20,6 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public Goal(MultiAgentSystem model, Species species)
-            : base(model)
-        {
-            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
-        }
-
-        public Goal(MultiAgentSystem model, Vector2 position, Species species)
-            : base(model, position)
-        {
-            SetSpecies(species, Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
-        }
-
         public Goal(int id, MultiAgentSystem model, Species species)
             : base(id, model)
         {

@@ -124,9 +124,7 @@ namespace Muragatte.Core
         {
             StepCount = 0;
             _species.Clear();
-            //Environment.Species.ResetIDCounter();
             _storage.Clear();
-            Element.ResetIDCounter();
             _history.Clear();
             _groups.Clear();
         }
@@ -136,13 +134,24 @@ namespace Muragatte.Core
             StepCount = 0;
             if (_history.Count > 0)
             {
-                foreach (Element e in _storage)
-                {
-                    e.LoadStatus(_history[0][e.ID]);
-                }
+                LoadInitialElementStatus();
                 _history.Clear();
             }
             UpdateGroupsAndCentroids();
+        }
+
+        private void LoadInitialElementStatus()
+        {
+            LoadInitialElementStatus(_storage);
+            LoadInitialElementStatus(_storage.Centroids);
+        }
+
+        private void LoadInitialElementStatus(IEnumerable<Element> items)
+        {
+            foreach (Element e in items)
+            {
+                e.LoadStatus(_history[0][e.ID]);
+            }
         }
 
         public void Initialize()
@@ -150,12 +159,24 @@ namespace Muragatte.Core
             _storage.Initialize();
             CreateCentroids();
             HistoryRecord record = new HistoryRecord();
-            foreach (Element e in _storage)
+            ReportStatus(record);
+            _history.Add(record);
+            //_history.Archive(_species.Values);
+        }
+
+        private void ReportStatus(HistoryRecord record)
+        {
+            ReportStatus(_storage, record);
+            ReportStatus(_storage.Centroids, record);
+            record.StoreGroups(_groups);
+        }
+
+        private void ReportStatus(IEnumerable<Element> items, HistoryRecord record)
+        {
+            foreach (Element e in items)
             {
                 record.Add(e.ReportStatus());
             }
-            _history.Add(record);
-            //_history.Archive(_species.Values);
         }
 
         //will be removed
@@ -184,30 +205,28 @@ namespace Muragatte.Core
 
         public void Update()
         {
-            foreach (Element e in _storage)
+            foreach (Element e in _storage.Items)
             {
                 e.Update();
             }
             HistoryRecord record = new HistoryRecord();
-            foreach (Element e in _storage)
+            foreach (Element e in _storage.Items)
             {
-                if (!(e is Centroid))
-                {
-                    e.ConfirmUpdate();
-                }
+                e.ConfirmUpdate();
             }
             _storage.Update();
             UpdateGroupsAndCentroids();
-            foreach (Element e in _storage)
-            {
-                record.Add(e.ReportStatus());
-            }
+            ReportStatus(record);
             _history.Add(record);
             StepCount++;
         }
 
         private void UpdateGroupsAndCentroids()
         {
+            foreach (Centroid c in _storage.Centroids)
+            {
+                c.Update();
+            }
             foreach (Group g in _groups)
             {
                 g.Clear();

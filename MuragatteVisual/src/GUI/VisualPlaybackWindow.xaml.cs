@@ -54,16 +54,15 @@ namespace Muragatte.Visual.GUI
         public VisualPlaybackWindow(Visualization visualization)
         {
             InitializeComponent();
+            DataContext = this;
+
             _visual = visualization;
+
             _visTimer = new DispatcherTimer();
             _visTimer.Tick += new EventHandler(_visTimer_Tick);
             _visTimer.Interval = TimeSpan.FromMilliseconds(DEFAULT_DELAY);
+
             iudDelay.Value = DEFAULT_DELAY;
-            Binding bindStepCount = new Binding("StepCount");
-            bindStepCount.Source = _visual.GetModel;
-            sldFrame.SetBinding(Slider.MaximumProperty, bindStepCount);
-            dudFrame.SetBinding(DoubleUpDown.MaximumProperty, bindStepCount);
-            lblFrameCount.SetBinding(Label.ContentProperty, bindStepCount);
             int substeps = _visual.GetModel.Substeps;
             if (substeps == 1)
             {
@@ -87,6 +86,11 @@ namespace Muragatte.Visual.GUI
                 _bPlaying = value;
                 NotifyPropertyChanged("IsPlaying");
             }
+        }
+
+        public Core.MultiAgentSystem GetModel
+        {
+            get { return _visual.GetModel; }
         }
 
         #endregion
@@ -230,11 +234,6 @@ namespace Muragatte.Visual.GUI
         {
             CompositionTarget.Rendering -= CompositionTarget_Rendering;
         }
-
-        //private void Playing(bool value)
-        //{
-        //    _bPlaying = value;
-        //}
 
         private void NotifyPropertyChanged(String propertyName)
         {

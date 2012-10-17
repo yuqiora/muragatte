@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
@@ -20,6 +21,7 @@ namespace Muragatte.Core.Storage
         #region Fields
 
         private Dictionary<int, ElementStatus> _items = new Dictionary<int, ElementStatus>();
+        private List<Group> _groups = null;
 
         #endregion
 
@@ -36,6 +38,11 @@ namespace Muragatte.Core.Storage
             get { return _items[id]; }
         }
 
+        public IEnumerable<Group> Groups
+        {
+            get { return _groups; }
+        }
+
         #endregion
 
         #region Methods
@@ -48,9 +55,15 @@ namespace Muragatte.Core.Storage
             }
         }
 
+        public void StoreGroups(IEnumerable<Group> items)
+        {
+            _groups = new List<Group>(items);
+        }
+
         public void Clear()
         {
             _items.Clear();
+            _groups = null;
         }
 
         public IEnumerator<ElementStatus> GetEnumerator()

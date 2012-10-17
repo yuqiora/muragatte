@@ -13,7 +13,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="Visualization Playback" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
-    <StackPanel Margin="10">
+    <StackPanel Margin="5">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="_Play" Height="23" Name="btnPlay" Width="65" Click="btnPlay_Click" />
             <Button Content="Pa_use" Height="23" Name="btnPause" Width="65" Click="btnPause_Click" />
@@ -26,25 +26,22 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Center">
-                <Label Content="_Delay (ms):" Height="28" Name="lblDelay" Target="{Binding ElementName=iudDelay}" />
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" >
+                <Label Content="_Delay (ms):" Name="lblDelay" Target="{Binding ElementName=iudDelay}" />
                 <xtk:IntegerUpDown Name="iudDelay" Width="60" Height="23" Minimum="1" Maximum="1000" ValueChanged="iudDelay_ValueChanged" />
             </StackPanel>
-            <CheckBox Content="_Automatic delay" Height="16" Name="chbAutoDelay" Grid.Column="1" HorizontalAlignment="Center" Checked="chbAutoDelay_Checked" Unchecked="chbAutoDelay_Unchecked" />
-        </Grid>
-        <Grid Margin="0,6,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Center">
-                <Label Content="_Frame" Height="28" Name="lblFrame" Target="{Binding ElementName=dudFrame}" />
-                <xtk:DoubleUpDown Name="dudFrame" Height="23" Width="60" Minimum="0" Text="F0" Value="{Binding Path=Value, ElementName=sldFrame, Mode=TwoWay, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" />
-                <Label Content="of" Height="28" Name="lblFrameOf" />
-                <Label Content="0" Height="28" Name="lblFrameCount" />
+            <CheckBox Content="_Automatic delay" Height="16" Name="chbAutoDelay" Grid.Column="1" Grid.Row="0" Checked="chbAutoDelay_Checked" Unchecked="chbAutoDelay_Unchecked" Margin="5,0" />
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" >
+                <Label Content="_Frame:" Name="lblFrame" Target="{Binding ElementName=dudFrame}" />
+                <xtk:DoubleUpDown Name="dudFrame" Height="23" Width="60" Minimum="0" Text="F0" Value="{Binding Path=Value, ElementName=sldFrame, Mode=TwoWay, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding Path=GetModel.StepCount}" />
+                <TextBlock Text="{Binding Path=GetModel.StepCount, StringFormat='{} of {0}'}" VerticalAlignment="Center" />
             </StackPanel>
-            <CheckBox Content="_Skip substeps" Height="16" Name="chbSkipSubsteps" Grid.Column="1" HorizontalAlignment="Center" Checked="chbSkipSubsteps_Checked" Unchecked="chbSkipSubsteps_Unchecked" />
+            <CheckBox Content="_Skip substeps" Height="16" Name="chbSkipSubsteps" Grid.Column="1" Grid.Row="1" Checked="chbSkipSubsteps_Checked" Unchecked="chbSkipSubsteps_Unchecked" Margin="5,0" />
         </Grid>
-        <Slider Height="23" HorizontalAlignment="Center" Name="sldFrame" Width="320" TickPlacement="None" IsMoveToPointEnabled="True" LargeChange="10" SmallChange="1" TickFrequency="1" ValueChanged="sldFrame_ValueChanged" IsSnapToTickEnabled="True" />
+        <Slider Height="23" HorizontalAlignment="Center" Name="sldFrame" Width="320" TickPlacement="None" IsMoveToPointEnabled="True" LargeChange="10" SmallChange="1" TickFrequency="1" ValueChanged="sldFrame_ValueChanged" IsSnapToTickEnabled="True" Maximum="{Binding Path=GetModel.StepCount}" />
     </StackPanel>
 </Window>

@@ -26,12 +26,6 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Extras(MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
-            : this(IdCounter.Next(), model, species, radius) { }
-
-        public Extras(MultiAgentSystem model, Vector2 position, Species species, double radius = DEFAULT_RADIUS)
-            : this(IdCounter.Next(), model, position, species, radius) { }
-
         public Extras(int id, MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model)
         {

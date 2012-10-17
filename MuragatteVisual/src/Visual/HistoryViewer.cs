@@ -54,6 +54,7 @@ namespace Muragatte.Visual
                 if (_iTime >= _history.Count) _iTime = _history.Count - 1;
                 if (_iTime < 0) _iTime = 0;
                 NotifyPropertyChanged("Time");
+                NotifyPropertyChanged("Current");
             }
         }
 

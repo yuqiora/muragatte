@@ -63,6 +63,7 @@ namespace Muragatte.Core.Environment
             {
                 _sName = value;
                 NotifyPropertyChanged("Name");
+                NotifyPropertyChanged("NameAndCount");
             }
         }
 
@@ -73,7 +74,13 @@ namespace Muragatte.Core.Environment
             {
                 _iCount = value;
                 NotifyPropertyChanged("Count");
+                NotifyPropertyChanged("NameAndCount");
             }
+        }
+
+        public string NameAndCount
+        {
+            get { return string.Format("{0} ({1}x)", _sName, _iCount); }
         }
 
         public SpawnSpot SpawnPosition
@@ -137,7 +144,7 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
-            return string.Format("{0} ({1}x)", _sName, _iCount);
+            return NameAndCount;
         }
 
         protected void NotifyPropertyChanged(String propertyName)

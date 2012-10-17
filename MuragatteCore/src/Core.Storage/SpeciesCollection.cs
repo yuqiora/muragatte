@@ -11,13 +11,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
-    public class SpeciesCollection : ICollection<Species>, INotifyCollectionChanged
+    public class SpeciesCollection : ICollection<Species>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         #region Constants
 
@@ -37,6 +38,7 @@ namespace Muragatte.Core.Storage
         private Dictionary<string, Species> _defaults = new Dictionary<string, Species>();
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -78,6 +80,36 @@ namespace Muragatte.Core.Storage
             get { return index >= 0 && index < _items.Count ? _items[index] : null; }
         }
 
+        public Species DefaultForAgents
+        {
+            get { return _defaults[DEFAULT_AGENTS_LABEL]; }
+            set { SetDefaultSpecies(value, DEFAULT_AGENTS_LABEL); }
+        }
+
+        public Species DefaultForGoals
+        {
+            get { return _defaults[DEFAULT_GOALS_LABEL]; }
+            set { SetDefaultSpecies(value, DEFAULT_GOALS_LABEL); }
+        }
+
+        public Species DefaultForObstacles
+        {
+            get { return _defaults[DEFAULT_OBSTACLES_LABEL]; }
+            set { SetDefaultSpecies(value, DEFAULT_OBSTACLES_LABEL); }
+        }
+
+        public Species DefaultForCentroids
+        {
+            get { return _defaults[DEFAULT_CENTROIDS_LABEL]; }
+            set { SetDefaultSpecies(value, DEFAULT_CENTROIDS_LABEL); }
+        }
+
+        public Species DefaultForExtras
+        {
+            get { return _defaults[DEFAULT_EXTRAS_LABEL]; }
+            set { SetDefaultSpecies(value, DEFAULT_EXTRAS_LABEL); }
+        }
+
         #endregion
 
         #region Methods
@@ -87,6 +119,7 @@ namespace Muragatte.Core.Storage
             _items.Clear();
             InitializeDefaults();
             NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
+            NotifyPropertyChanged("Count");
         }
 
         public bool Contains(Species item)
@@ -126,6 +159,7 @@ namespace Muragatte.Core.Storage
                     NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
                 }
             }
+            NotifyPropertyChanged("Count");
         }
 
         public void Add(Species item, string key)
@@ -141,6 +175,7 @@ namespace Muragatte.Core.Storage
                 _items.Add(s);
                 NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
             }
+            NotifyPropertyChanged("Count");
         }
 
         public bool Remove(Species item)
@@ -157,6 +192,7 @@ namespace Muragatte.Core.Storage
                 {
                     RemoveAndNotify(s);
                 }
+                NotifyPropertyChanged("Count");
                 return true;
             }
             else return false;
@@ -166,6 +202,14 @@ namespace Muragatte.Core.Storage
         {
             int index = _items.IndexOf(item);
             _items.RemoveAt(index);
+            foreach (string s in _labels)
+            {
+                if (_defaults[s] == item)
+                {
+                    _defaults[s] = null;
+                    break;
+                }
+            }
             NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
         }
 
@@ -190,7 +234,7 @@ namespace Muragatte.Core.Storage
         {
             if (_labels.Contains(key))
             {
-                if (_items.Contains(species))
+                if (species == null || _items.Contains(species))
                 {
                     _defaults[key] = species;
                 }
@@ -198,6 +242,7 @@ namespace Muragatte.Core.Storage
                 {
                     Add(species, key);
                 }
+                NotifyPropertyChanged("DefaultFor" + key);
             }
         }
 
@@ -224,6 +269,14 @@ namespace Muragatte.Core.Storage
             if (CollectionChanged != null)
             {
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem, index));
+            }
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

@@ -28,12 +28,6 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public AreaGoal(MultiAgentSystem model, Species species, double width, double height)
-            : this(IdCounter.Next(), model, species, width, height) { }
-
-        public AreaGoal(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
-            : this(IdCounter.Next(), model, position, species, width, height) { }
-
         public AreaGoal(int id, MultiAgentSystem model, Species species, double width, double height)
             : base(id, model, species)
         {

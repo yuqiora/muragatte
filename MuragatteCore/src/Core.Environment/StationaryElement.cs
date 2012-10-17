@@ -20,10 +20,6 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public StationaryElement(MultiAgentSystem model) : base(model) { }
-
-        public StationaryElement(MultiAgentSystem model, Vector2 position) : base(model, position) { }
-
         public StationaryElement(int id, MultiAgentSystem model) : base(id, model) { }
 
         public StationaryElement(int id, MultiAgentSystem model, Vector2 position) : base(id, model, position) { }

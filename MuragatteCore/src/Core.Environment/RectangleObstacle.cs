@@ -20,18 +20,6 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public RectangleObstacle(MultiAgentSystem model, Species species, double size)
-            : base(model, species, size, size) { }
-
-        public RectangleObstacle(MultiAgentSystem model, Species species, double width, double height)
-            : base(model, species, width, height) { }
-
-        public RectangleObstacle(MultiAgentSystem model, Vector2 position, Species species, double size)
-            : base(model, position, species, size, size) { }
-
-        public RectangleObstacle(MultiAgentSystem model, Vector2 position, Species species, double width, double height)
-            : base(model, position, species, width, height) { }
-
         public RectangleObstacle(int id, MultiAgentSystem model, Species species, double size)
             : base(id, model, species, size, size) { }
 

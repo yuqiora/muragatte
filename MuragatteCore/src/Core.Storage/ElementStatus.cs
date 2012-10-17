@@ -27,7 +27,7 @@ namespace Muragatte.Core.Storage
         private bool _bEnabled;
         private string _sSpeciesName;
         private int _iGroupID;
-        private List<double> _modifiers = null;
+        //private List<double> _modifiers = null;
 
         #endregion
 
@@ -44,12 +44,12 @@ namespace Muragatte.Core.Storage
             _iGroupID = groupID;
         }
 
-        public ElementStatus(int elementID, Vector2 position, Vector2 direction,
-            double speed, bool enabled, string speciesName, int groupID, IEnumerable<double> modifiers)
-            : this(elementID, position, direction, speed, enabled, speciesName, groupID)
-        {
-            _modifiers = modifiers == null ? null : new List<double>(modifiers);
-        }
+        //public ElementStatus(int elementID, Vector2 position, Vector2 direction,
+        //    double speed, bool enabled, string speciesName, int groupID, IEnumerable<double> modifiers)
+        //    : this(elementID, position, direction, speed, enabled, speciesName, groupID)
+        //{
+        //    _modifiers = modifiers == null ? null : new List<double>(modifiers);
+        //}
 
         #endregion
 
@@ -90,33 +90,34 @@ namespace Muragatte.Core.Storage
             get { return _iGroupID; }
         }
 
-        public List<double> Modifiers
-        {
-            get { return _modifiers; }
-        }
+        //public List<double> Modifiers
+        //{
+        //    get { return _modifiers; }
+        //}
 
         #endregion
 
         #region Methods
 
-        private string ModifiersToString()
-        {
-            if (_modifiers == null)
-            {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            foreach (double mod in _modifiers)
-            {
-                sb.AppendFormat(" {0}", mod);
-            }
-            return sb.ToString();
-        }
+        //private string ModifiersToString()
+        //{
+        //    if (_modifiers == null)
+        //    {
+        //        return "";
+        //    }
+        //    StringBuilder sb = new StringBuilder();
+        //    foreach (double mod in _modifiers)
+        //    {
+        //        sb.AppendFormat(" {0}", mod);
+        //    }
+        //    return sb.ToString();
+        //}
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2} {3} {4} {5} {6}{7}",
-                _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID, ModifiersToString());
+            //return string.Format("{0} {1} {2} {3} {4} {5} {6}{7}",
+            //    _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID, ModifiersToString());
+            return string.Format("{0} {1} {2} {3} {4} {5} {6}", _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID);
         }
 
         #endregion

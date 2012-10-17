@@ -59,6 +59,8 @@ namespace Muragatte.Visual.GUI
 
         private readonly List<Shapes.Shape> _shapes = null;
 
+        private ObservableCollection<int?> _groups = new ObservableCollection<int?>();
+
         #endregion
 
         #region Constructors
@@ -83,7 +85,6 @@ namespace Muragatte.Visual.GUI
                 _currentScale = _visual.GetCanvas.Scale;
 
                 _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
-                //SetViews();
             }
 
             _shapes = CreateShapeList();
@@ -91,7 +92,8 @@ namespace Muragatte.Visual.GUI
             if (styles != null && !asStyleEditor)
             {
                 RescaleStyles(_currentScale);
-                LoadElements(_visual.GetModel.Elements);
+                LoadElements(_visual.GetModel.Elements.Items);
+                LoadElements(_visual.GetModel.Elements.Centroids);
                 SetViews();
             }
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
@@ -152,18 +154,23 @@ namespace Muragatte.Visual.GUI
             get { return _visual; }
         }
 
+        public ObservableCollection<int?> GetGroups
+        {
+            get { return _groups; }
+        }
+
         #endregion
 
         #region Events
 
         private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
-            ccBackgroundColor.SelectedColor = DefaultValues.BACKGROUND_COLOR;
+            cpiBackgroundColor.SelectedColor = DefaultValues.BACKGROUND_COLOR;
         }
 
         private void btnHighlightColorDefault_Click(object sender, RoutedEventArgs e)
         {
-            ccHighlightColor.SelectedColor = DefaultValues.HIGHLIGHT_COLOR;
+            cpiHighlightColor.SelectedColor = DefaultValues.HIGHLIGHT_COLOR;
         }
 
         private void dudScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -189,6 +196,7 @@ namespace Muragatte.Visual.GUI
                 if (tabOptions.SelectedIndex > 0 && tabOptions.SelectedIndex < _views.Count)
                 {
                     _views[tabOptions.SelectedIndex].Refresh();
+                    if (!_visual.GetPlayback.IsPlaying) UpdateGroups();
                 }
             }
         }
@@ -204,6 +212,13 @@ namespace Muragatte.Visual.GUI
                 foreach (object item in e.NewItems)
                 {
                     _appearances.Add(ElementToAppearance(item as Element));
+                }
+            }
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (object item in e.OldItems)
+                {
+                    _appearances.RemoveAt(e.OldStartingIndex);
                 }
             }
         }
@@ -263,6 +278,33 @@ namespace Muragatte.Visual.GUI
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void chbSelectAll_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            foreach (Appearance a in _views[tabOptions.SelectedIndex])
+            {
+                selection(a, chbSelectAll.IsChecked.Value);
+            }
+        }
+
+        private void SelectSpecies_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        {
+            Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            foreach (Appearance a in _views[tabOptions.SelectedIndex])
+            {
+                if (a.Species == (e.Item as Species).FullName) selection(a, e.IsSelected);
+            }
+        }
+
+        private void SelectGroups_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        {
+            Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            foreach (Appearance a in _views[tabOptions.SelectedIndex])
+            {
+                if (a.Group == (int?)e.Item) selection(a, e.IsSelected);
+            }
         }
 
         #endregion
@@ -452,6 +494,33 @@ namespace Muragatte.Visual.GUI
             foreach (Element e in items)
             {
                 _appearances.Add(ElementToAppearance(e));
+            }
+        }
+
+        private Action<Appearance, bool> SelectSpecified(int tab)
+        {
+            switch (tab)
+            {
+                case 3:
+                    return new Action<Appearance, bool>((a, b) => a.IsNeighbourhoodEnabled = b);
+                case 4:
+                    return new Action<Appearance, bool>((a, b) => a.IsTrackEnabled = b);
+                case 5:
+                    return new Action<Appearance, bool>((a, b) => a.IsTrailEnabled = b);
+                case 7:
+                    return new Action<Appearance, bool>((a, b) => a.IsHighlighted = b);
+                default:
+                    return new Action<Appearance, bool>((a, b) => a.IsEnabled = b);
+            }
+        }
+
+        private void UpdateGroups()
+        {
+            _groups.Clear();
+            _groups.Add((int?)null);
+            foreach (Group g in _historyViewer.Current.Groups)
+            {
+                _groups.Add(g.ID);
             }
         }
 
