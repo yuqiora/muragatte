@@ -26,12 +26,6 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Guidepost(MultiAgentSystem model, Vector2 direction, Species species, double radius = DEFAULT_RADIUS)
-            : this(IdCounter.Next(), model, direction, species, radius) { }
-
-        public Guidepost(MultiAgentSystem model, Vector2 position, Vector2 direction, Species species, double radius = DEFAULT_RADIUS)
-            : this(IdCounter.Next(), model, position, direction, species, radius) { }
-
         public Guidepost(int id, MultiAgentSystem model, Vector2 direction, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model, species, radius)
         {

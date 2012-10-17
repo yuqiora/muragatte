@@ -22,7 +22,8 @@ namespace Muragatte.Core.Storage
     {
         #region Fields
 
-        private List<Element> _items = null;
+        private List<Element> _items = new List<Element>();
+        private List<Centroid> _centroids = new List<Centroid>();
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -30,14 +31,11 @@ namespace Muragatte.Core.Storage
 
         #region Constructors
 
-        public SimpleBruteForceStorage()
-        {
-            _items = new List<Element>();
-        }
+        public SimpleBruteForceStorage() { }
 
         public SimpleBruteForceStorage(IEnumerable<Element> items)
         {
-            _items = new List<Element>(items);
+            Add(items);
         }
 
         #endregion
@@ -47,6 +45,11 @@ namespace Muragatte.Core.Storage
         public int Count
         {
             get { return _items.Count; }
+        }
+
+        public int CountAll
+        {
+            get { return _items.Count + _centroids.Count; }
         }
 
         public bool IsReadOnly
@@ -70,22 +73,22 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Agent> Agents
         {
-            get { return _items.OfType<Agent>(); /*ItemsOfType<Agent>();*/ }
+            get { return _items.OfType<Agent>(); }
         }
 
         public IEnumerable<Obstacle> Obstacles
         {
-            get { return _items.OfType<Obstacle>(); /*ItemsOfType<Obstacle>();*/ }
+            get { return _items.OfType<Obstacle>(); }
         }
 
         public IEnumerable<Goal> Goals
         {
-            get { return _items.OfType<Goal>(); /*ItemsOfType<Goal>();*/ }
+            get { return _items.OfType<Goal>(); }
         }
 
         public IEnumerable<Extras> Extras
         {
-            get { return _items.OfType<Extras>(); /*ItemsOfType<Extras>();*/ }
+            get { return _items.OfType<Extras>(); }
         }
 
         public IEnumerable<Element> Stationary
@@ -95,7 +98,7 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<Centroid> Centroids
         {
-            get { return _items.OfType<Centroid>(); /*ItemsOfType<Centroid>();*/ }
+            get { return _centroids; }
         }
 
         #endregion
@@ -104,8 +107,23 @@ namespace Muragatte.Core.Storage
         
         public void Add(Element item)
         {
-            _items.Add(item);
-            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+            if (item is Centroid)
+            {
+                _centroids.Add(item as Centroid);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+            }
+            else
+            {
+                _items.Add(item);
+                if (_centroids.Count > 0)
+                {
+                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, _items.Count - 1);
+                }
+                else
+                {
+                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+                }
+            }
         }
 
         public void Add(IEnumerable<Element> items)
@@ -118,29 +136,14 @@ namespace Muragatte.Core.Storage
 
         public bool Remove(Element item)
         {
-            if (_items.Remove(item))
-            {
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, item);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Remove(item.ID);
         }
 
         public void Remove(IEnumerable<Element> items)
         {
-            if (this == items)
+            foreach (Element e in items)
             {
-                Clear();
-            }
-            else
-            {
-                foreach (Element e in items)
-                {
-                    Remove(e);
-                }
+                Remove(e.ID);
             }
         }
 
@@ -155,20 +158,33 @@ namespace Muragatte.Core.Storage
             {
                 Element e = _items[index];
                 _items.RemoveAt(index);
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, e);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, e, index);
+                if (e is Agent) RemoveCentroid((e as Agent).Representative);
                 return true;
+            }
+        }
+
+        private void RemoveCentroid(Centroid item)
+        {
+            int index = _centroids.FindIndex(e => e.ID == item.ID);
+            if (index >= 0)
+            {
+                Centroid c = _centroids[index];
+                _centroids.RemoveAt(index);
+                NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, c, index + _items.Count);
             }
         }
 
         public void Clear()
         {
             _items.Clear();
+            _centroids.Clear();
             NotifyCollectionChanged(NotifyCollectionChangedAction.Reset, null);
         }
 
         public bool Contains(Element item)
         {
-            return _items.Contains(item);
+            return item is Centroid ? _items.Contains(item) : _centroids.Contains(item as Centroid);
         }
 
         public void CopyTo(Element[] array, int arrayIndex)
@@ -211,42 +227,20 @@ namespace Muragatte.Core.Storage
                 }
             }
             return result;
-            //return RangeSearch<Element>(e, range);
         }
 
         public IEnumerable<T> RangeSearch<T>(Element e, double range) where T : Element
         {
-            //List<T> inRange = new List<T>();
-            //foreach (Element n in _items)
-            //{
-            //    if (e != n && n.IsEnabled && n is T &&
-            //        Vector2.Distance(e.Position, n.Position) - n.Radius < range)
-            //    {
-            //        inRange.Add((T)n);
-            //    }
-            //}
-            //return inRange;
             return RangeSearch(e, range).OfType<T>();
         }
 
         public IEnumerable<Element> RangeSearch(Element e, double range, Func<Element, bool> match)
         {
-            //return RangeSearch<Element>(e, range, match);
             return RangeSearch(e, range).Where(match);
         }
 
         public IEnumerable<T> RangeSearch<T>(Element e, double range, Func<T, bool> match) where T : Element
         {
-            //List<T> inRange = new List<T>();
-            //foreach (Element n in _items)
-            //{
-            //    if (e != n && n.IsEnabled && n is T &&
-            //        Vector2.Distance(e.Position, n.Position) - n.Radius < range && match((T)n))
-            //    {
-            //        inRange.Add((T)n);
-            //    }
-            //}
-            //return inRange;
             return RangeSearch<T>(e, range).Where(match);
         }
 
@@ -266,24 +260,19 @@ namespace Muragatte.Core.Storage
 
         public void Rebuild() { }
 
-        //private IEnumerable<T> ItemsOfType<T>() where T : Element
-        //{
-        //    List<T> items = new List<T>();
-        //    foreach (Element e in _items)
-        //    {
-        //        if (e is T)
-        //        {
-        //            items.Add((T)e);
-        //        }
-        //    }
-        //    return items;
-        //}
-
-        protected void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem)
+        private void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem)
         {
             if (CollectionChanged != null)
             {
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
+            }
+        }
+
+        private void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem, int index)
+        {
+            if (CollectionChanged != null)
+            {
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem, index));
             }
         }
 

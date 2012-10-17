@@ -13,10 +13,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="About Muragatte Thesis" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
     <StackPanel Margin="5">
-        <TextBlock Text="Muragatte Thesis vAlpha" FontSize="14" FontWeight="Bold" Margin="0,0,0,5" />
+        <TextBlock Name="txbMuragatteThesisVersion" Text="Muragatte Thesis v" FontSize="14" FontWeight="Bold" Margin="0,0,0,5" />
         <TextBlock Text="Copyright © 2012 Jiří Vejmola" />
-        <TextBlock Text="MuragatteCore vAlpha" />
-        <TextBlock Text="MuragatteVisual vBeta" />
+        <TextBlock Name="txbMuragatteCoreVersion" Text="MuragatteCore v" />
+        <TextBlock Name="txbMuragatteVisualVersion" Text="MuragatteVisual v" />
         <Grid Width="150">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -35,7 +35,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="RandomOps v2.1.0.0" Grid.Column="0" />
+            <TextBlock Name="txbRandomOpsVersion" Text="RandomOps v" Grid.Column="0" />
             <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://www.hvass-labs.org/projects/randomops/cs/">
                 <Hyperlink NavigateUri="http://www.hvass-labs.org/projects/randomops/cs/" Click="Hyperlink_Click">www</Hyperlink>
             </TextBlock>
@@ -46,7 +46,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Extended WPF Toolkit v1.7.0.0" Grid.Column="0" />
+            <TextBlock Name="txbExtendedWPFToolkitVersion" Text="Extended WPF Toolkit v" Grid.Column="0" />
             <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://wpftoolkit.codeplex.com/">
                 <Hyperlink NavigateUri="http://wpftoolkit.codeplex.com/" Click="Hyperlink_Click">www</Hyperlink>
             </TextBlock>
@@ -57,7 +57,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="WriteableBitmapEx v1.0.3.0" Grid.Column="0" />
+            <TextBlock Name="txbWriteableBitmapExVersion" Text="WriteableBitmapEx v" Grid.Column="0" />
             <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://writeablebitmapex.codeplex.com/">
                 <Hyperlink NavigateUri="http://writeablebitmapex.codeplex.com/" Click="Hyperlink_Click">www</Hyperlink>
             </TextBlock>

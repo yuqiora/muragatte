@@ -20,17 +20,6 @@ namespace Muragatte.Core.Environment
 {
     public abstract class Element : INotifyPropertyChanged
     {
-        #region Statics
-
-        protected static Counter IdCounter = new Counter();
-
-        public static void ResetIDCounter()
-        {
-            IdCounter.Reset();
-        }
-
-        #endregion
-
         #region Constants
 
         public const double DEFAULT_RADIUS = 0.5;
@@ -50,12 +39,6 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
-
-        public Element(MultiAgentSystem model)
-            : this(IdCounter.Next(), model) { }
-
-        public Element(MultiAgentSystem model, Vector2 position)
-            : this(IdCounter.Next(), model, position) { }
 
         public Element(int id, MultiAgentSystem model)
         {
@@ -218,11 +201,11 @@ namespace Muragatte.Core.Environment
             return IsStationary || steps == 0 ? GetPosition() : GetPosition() + Speed * _model.TimePerStep * steps * Direction;
         }
 
-        protected ElementStatus ReportStatus(IEnumerable<double> modifiers)
-        {
-            return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
-                _species == null ? null : _species.FullName, Group == null ? -1 : Group.ID, modifiers);
-        }
+        //protected ElementStatus ReportStatus(IEnumerable<double> modifiers)
+        //{
+        //    return new ElementStatus(_iElementID, _position, Direction, Speed, _bEnabled,
+        //        _species == null ? null : _species.FullName, Group == null ? -1 : Group.ID, modifiers);
+        //}
 
         protected void NotifyPropertyChanged(String propertyName)
         {

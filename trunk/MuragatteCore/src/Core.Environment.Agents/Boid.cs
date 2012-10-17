@@ -21,13 +21,6 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public BoidAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
-            : base(model, species, fieldOfView, turningAngle, args) { }
-
-        public BoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
-            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
-
         public BoidAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
             : base(id, model, species, fieldOfView, turningAngle, args) { }
 
@@ -120,19 +113,6 @@ namespace Muragatte.Core.Environment.Agents
     public class AdvancedBoidAgent : BoidAgent
     {
         #region Constructors
-
-        public AdvancedBoidAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
-            : base(model, species, fieldOfView, turningAngle, args)
-        {
-            _args.SetNeighbourhoodOwner(this);
-        }
-
-        public AdvancedBoidAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
-            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args)
-        {
-            _args.SetNeighbourhoodOwner(this);
-        }
 
         public AdvancedBoidAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
             : base(id, model, species, fieldOfView, turningAngle, args)

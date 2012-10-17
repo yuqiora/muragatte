@@ -246,8 +246,8 @@ namespace Muragatte.Sandbox.GUI
 
         private void CreateGoals()
         {
-            _goals.Add(new PositionGoal(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
-            _goals.Add(new PositionGoal(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
+            _goals.Add(new PositionGoal(_mas.Elements.Count, _mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
+            _goals.Add(new PositionGoal(_mas.Elements.Count, _mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null));
             _mas.Elements.Add(_goals);
         }
 
@@ -256,7 +256,7 @@ namespace Muragatte.Sandbox.GUI
             int obstacles = int.Parse(txtObstacles.Text);
             for (int i = 0; i < obstacles; i++)
             {
-                _obstacles.Add(new EllipseObstacle(_mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null, Math.Round(_random.Uniform(10, 30), 2)));
+                _obstacles.Add(new EllipseObstacle(_mas.Elements.Count, _mas, _random.UniformVector(0, _mas.Region.Width, 0, _mas.Region.Height), null, Math.Round(_random.Uniform(10, 30), 2)));
             }
             _mas.Elements.Add(_obstacles);
         }

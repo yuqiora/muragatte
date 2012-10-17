@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,12 +30,30 @@ namespace Muragatte.Thesis.GUI
     /// </summary>
     public partial class ThesisAboutWindow : Window
     {
+        #region Constants
+
         private const string LICENSE_PATH = "license.txt";
+
+        #endregion
+
+        #region Constructors
 
         public ThesisAboutWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
+            txbMuragatteThesisVersion.Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            txbMuragatteCoreVersion.Text += Assembly.ReflectionOnlyLoadFrom(@".\MuragatteCore.dll").GetName().Version.ToString();
+            txbMuragatteVisualVersion.Text += Assembly.ReflectionOnlyLoadFrom(@".\MuragatteVisual.dll").GetName().Version.ToString();
+            txbRandomOpsVersion.Text += Assembly.ReflectionOnlyLoadFrom(@".\RandomOps.dll").GetName().Version.ToString();
+            txbExtendedWPFToolkitVersion.Text += Assembly.ReflectionOnlyLoadFrom(@".\WPFToolkit.Extended.dll").GetName().Version.ToString();
+            txbWriteableBitmapExVersion.Text += Assembly.ReflectionOnlyLoadFrom(@".\WriteableBitmapEx.Wpf.dll").GetName().Version.ToString();
         }
+
+        #endregion
+
+        #region Events
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
@@ -53,5 +72,7 @@ namespace Muragatte.Thesis.GUI
                 Process.Start(LICENSE_PATH);
             }
         }
+
+        #endregion
     }
 }

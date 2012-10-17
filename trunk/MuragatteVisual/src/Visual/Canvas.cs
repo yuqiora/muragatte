@@ -310,7 +310,7 @@ namespace Muragatte.Visual
         private void DrawHighlight(Appearance a, ElementStatus es)
         {
             Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
-                _visual.GetOptions.ccHighlightColor.SelectedColor, Colors.Transparent,
+                _visual.GetOptions.cpiHighlightColor.SelectedColor, Colors.Transparent,
                 (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
         }
 

@@ -20,12 +20,6 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public RepelSpot(MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
-            : base(model, species, radius) { }
-
-        public RepelSpot(MultiAgentSystem model, Vector2 position, Species species, double radius = DEFAULT_RADIUS)
-            : base(model, position, species, radius) { }
-
         public RepelSpot(int id, MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model, species, radius) { }
 

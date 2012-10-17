@@ -120,7 +120,13 @@ namespace Muragatte.Thesis.GUI
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            //reset to initial state
+            _experiment.Reset();
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            _experiment = null;
+            ShowExperimentSummary();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

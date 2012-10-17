@@ -30,12 +30,6 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Centroid(MultiAgentSystem model, Species species)
-            : this(IdCounter.Next(), model, species) { }
-
-        public Centroid(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed, Species species)
-            : this(IdCounter.Next(), model, position, direction, speed, species) { }
-
         public Centroid(int id, MultiAgentSystem model, Species species)
             : base(id, model)
         {
@@ -49,8 +43,6 @@ namespace Muragatte.Core.Environment
             _dSpeed = speed;
             SetSpecies(species, Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
         }
-
-        public Centroid(Agent source) : this(source.Model, source.Position, source.Direction, source.Speed, null) { }
 
         public Centroid(int id, Agent source) : this(id, source.Model, source.Position, source.Direction, source.Speed, null) { }
 

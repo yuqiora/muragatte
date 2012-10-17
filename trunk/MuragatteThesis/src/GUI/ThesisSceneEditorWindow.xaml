@@ -28,8 +28,8 @@
                     <DockPanel>
                         <Button Content="Apply" Height="23" Name="btnRegionApply" Width="75" DockPanel.Dock="Bottom" Click="btnRegionApply_Click" />
                         <StackPanel>
-                            <xtk:IntegerUpDown Name="iudRegionWidth" Watermark="Width" Height="23" Width="80" Minimum="10" />
-                            <xtk:IntegerUpDown Name="iudRegionHeight" Watermark="Height" Height="23" Width="80" Minimum="10" />
+                            <xtk:IntegerUpDown Name="iudRegionWidth" Watermark="Width" Height="23" Width="80" Minimum="10" ToolTip="Region Width" />
+                            <xtk:IntegerUpDown Name="iudRegionHeight" Watermark="Height" Height="23" Width="80" Minimum="10" ToolTip="Region Height" />
                         </StackPanel>
                         <StackPanel>
                             <CheckBox Content="Horizontal Borders" Height="16" Name="chbHorizontalBorders" />
@@ -55,12 +55,12 @@
                                     </StackPanel>
                                 </xtk:DropDownButton.DropDownContent>
                             </xtk:DropDownButton>
-                            <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:DoubleUpDown Name="dudDirection" Watermark="Direction" Height="23" Width="75" Minimum="-180"  Maximum="180" Increment="0.5" Value="{Binding Path=SelectedItem.Direction, ElementName=lboStationary, Converter={StaticResource DirectionToDegreesConverter}, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsDirectable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <ComboBox Height="23" Name="cmbStationarySpecies" Width="75" ItemsSource="{Binding GetSpecies}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedValue="{Binding Path=SelectedItem.Species, ElementName=lboStationary}" />
+                            <xtk:DoubleUpDown Name="dudStationaryX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Position X" />
+                            <xtk:DoubleUpDown Name="dudStationaryY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Position Y" />
+                            <xtk:IntegerUpDown Name="iudStationaryWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Width" />
+                            <xtk:IntegerUpDown Name="iudStationaryHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboStationary, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsResizeable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Height" />
+                            <xtk:DoubleUpDown Name="dudDirection" Watermark="Direction" Height="23" Width="75" Minimum="-180"  Maximum="180" Increment="0.5" Value="{Binding Path=SelectedItem.Direction, ElementName=lboStationary, Converter={StaticResource DirectionToDegreesConverter}, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=SelectedItem.IsDirectable, ElementName=lboStationary}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Direction" />
+                            <ComboBox Height="23" Name="cmbStationarySpecies" Width="75" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="FullName" SelectedValue="{Binding Path=SelectedItem.Species, ElementName=lboStationary}" ToolTip="Species" />
                         </StackPanel>
                     </DockPanel>
                 </GroupBox>
@@ -78,10 +78,10 @@
                                     </StackPanel>
                                 </xtk:DropDownButton.DropDownContent>
                             </xtk:DropDownButton>
-                            <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
-                            <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" />
+                            <xtk:DoubleUpDown Name="dudSpawnX" Watermark="X" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.PositionX, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Position X" />
+                            <xtk:DoubleUpDown Name="dudSpawnY" Watermark="Y" Height="23" Width="75" Minimum="0"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.PositionY, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Position Y" />
+                            <xtk:IntegerUpDown Name="iudSpawnWidth" Watermark="Width" Height="23" Width="75" Minimum="1" Maximum="{Binding Path=Value, ElementName=iudRegionWidth}" Value="{Binding Path=SelectedItem.Width, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Width" />
+                            <xtk:IntegerUpDown Name="iudSpawnHeight" Watermark="Height" Height="23" Width="75" Minimum="1"  Maximum="{Binding Path=Value, ElementName=iudRegionHeight}" Value="{Binding Path=SelectedItem.Height, ElementName=lboSpawn, UpdateSourceTrigger=PropertyChanged}" ValueChanged="NumericUpDown_ValueChanged" ToolTip="Height" />
                         </StackPanel>
                     </DockPanel>
                 </GroupBox>

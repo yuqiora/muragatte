@@ -37,13 +37,6 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Agent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
-            : this(IdCounter.Next(), model, position, direction, speed, species, fieldOfView, turningAngle, args) { }
-
-        public Agent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
-            : this(IdCounter.Next(), model, species, fieldOfView, turningAngle, args) { }
-
         public Agent(int id, MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
             Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
             : base(id, model, position)
@@ -205,11 +198,11 @@ namespace Muragatte.Core.Environment
 
         public void CreateRepresentative()
         {
-            _representative = new Centroid(this);
+            _representative = new Centroid(-_iElementID, this);
         }
-
         public void CreateRepresentative(int id)
         {
+
             _representative = new Centroid(id, this);
         }
 
@@ -230,16 +223,16 @@ namespace Muragatte.Core.Environment
             return members;
         }
 
-        public override Storage.ElementStatus ReportStatus()
-        {
-            return ReportStatus(_args.Modifiers.Values);
-        }
+        //public override Storage.ElementStatus ReportStatus()
+        //{
+        //    return ReportStatus(_args.Modifiers.Values);
+        //}
 
-        public override void LoadStatus(Storage.ElementStatus status)
-        {
-            base.LoadStatus(status);
-            //load modifiers
-        }
+        //public override void LoadStatus(Storage.ElementStatus status)
+        //{
+        //    base.LoadStatus(status);
+        //    //load modifiers
+        //}
 
         protected void ProperDirection()
         {

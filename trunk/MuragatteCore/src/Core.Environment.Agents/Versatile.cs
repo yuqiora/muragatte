@@ -21,19 +21,6 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
-        public VersatileAgent(MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
-            : base(model, species, fieldOfView, turningAngle, args)
-        {
-            _args.SetNeighbourhoodOwner(this);
-        }
-
-        public VersatileAgent(MultiAgentSystem model, Vector2 position, Vector2 direction, double speed,
-            Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
-            : base(model, position, direction, speed, species, fieldOfView, turningAngle, args)
-        {
-            _args.SetNeighbourhoodOwner(this);
-        }
-
         public VersatileAgent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, VersatileAgentArgs args)
             : base(id, model, species, fieldOfView, turningAngle, args)
         {

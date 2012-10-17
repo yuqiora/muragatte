@@ -8,7 +8,7 @@
     <ProjectGuid>{1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Muragatte.Core</RootNamespace>
+    <RootNamespace>Muragatte</RootNamespace>
     <AssemblyName>MuragatteCore</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
