@@ -28,7 +28,7 @@ namespace Muragatte.Thesis
         private int _iLength;
         private Scene _scene = null;
         private SpeciesCollection _species;
-        private ObservableCollection<AgentArchetype> _archetypes = new ObservableCollection<AgentArchetype>();
+        private ObservableCollection<ObservedArchetype> _archetypes = new ObservableCollection<ObservedArchetype>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,13 +36,13 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public InstanceDefinition(double timePerStep, int length, Scene scene, SpeciesCollection species, IEnumerable<AgentArchetype> archetypes)
+        public InstanceDefinition(double timePerStep, int length, Scene scene, SpeciesCollection species, IEnumerable<ObservedArchetype> archetypes)
         {
             _dTimePerStep = timePerStep;
             _iLength = length;
             _scene = scene;
             _species = species;
-            _archetypes = archetypes == null ? new ObservableCollection<AgentArchetype>() : new ObservableCollection<AgentArchetype>(archetypes);
+            _archetypes = archetypes == null ? new ObservableCollection<ObservedArchetype>() : new ObservableCollection<ObservedArchetype>(archetypes);
         }
 
         #endregion
@@ -79,7 +79,7 @@ namespace Muragatte.Thesis
             get { return _species; }
         }
 
-        public ObservableCollection<AgentArchetype> Archetypes
+        public ObservableCollection<ObservedArchetype> Archetypes
         {
             get { return _archetypes; }
         }

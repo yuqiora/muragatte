@@ -24,6 +24,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Muragatte.Random;
 
+using Muragatte.Common;
+using Muragatte.Core;
+using Muragatte.Core.Environment;
+using Muragatte.Core.Environment.Agents;
+using Muragatte.Core.Storage;
+using Muragatte.Visual;
+
 namespace Muragatte.Thesis.GUI
 {
     /// <summary>
@@ -172,174 +179,164 @@ namespace Muragatte.Thesis.GUI
 
         private void PredefinedSampleBoids()
         {
-            List<Core.Environment.SpawnSpot> spawns = new List<Core.Environment.SpawnSpot>();
-            Core.Environment.SpawnSpot spawn = new Core.Environment.RectangleSpawnSpot(new Common.Vector2(70, 70), 120);
+            List<SpawnSpot> spawns = new List<SpawnSpot>();
+            SpawnSpot spawn = new RectangleSpawnSpot(new Vector2(70, 70), 120);
             spawns.Add(spawn);
 
-            Core.Storage.SpeciesCollection species = new Core.Storage.SpeciesCollection();
-            Core.Environment.Species boids = new Core.Environment.Species("Boids");
-            Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boids, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
-            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
-            //species.SetDefaultCentroidSpecies(centroid);
+            SpeciesCollection species = new SpeciesCollection();
+            Species boids = new Species("Boids");
+            Species centroid = new Species("Centroid");
+            species.Add(boids, SpeciesCollection.DEFAULT_AGENTS_LABEL);
+            species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
-            List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
-            archetypes.Add(new Core.Environment.Agents.BoidAgentArchetype("Boids", 50, spawn,
+            List<ObservedArchetype> archetypes = new List<ObservedArchetype>();
+            archetypes.Add(new ObservedArchetype(new BoidAgentArchetype("Boids", 50, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), boids,
-                new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.BoidAgentArgs()));
+                new Neighbourhood(10, new Angle(135)), new Angle(60),
+                new BoidAgentArgs())));
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.DefaultValues.AGENT_STYLE, "Boids"));
             styles.Add(new Visual.Styles.Style(Visual.DefaultValues.CENTROID_STYLE, "Centroid"));
 
             _experiment = new Experiment("Boids Sample", "", 5,
-                new InstanceDefinition(0.25, 1000,
-                    new Core.Scene(new Core.Environment.Region(140, false), spawns, new List<Core.Environment.Element>()),
-                    species, archetypes),
+                new InstanceDefinition(0.25, 1000, new Scene(new Region(140, false),
+                    spawns, new List<Element>()), species, archetypes),
                 styles, _random.UInt());
         }
 
         private void PredefinedSampleThesis()
         {
-            List<Core.Environment.SpawnSpot> spawns = new List<Core.Environment.SpawnSpot>();
-            Core.Environment.SpawnSpot spawn = new Core.Environment.EllipseSpawnSpot(new Common.Vector2(70, 120), 30, 30);
+            List<SpawnSpot> spawns = new List<SpawnSpot>();
+            SpawnSpot spawn = new EllipseSpawnSpot(new Vector2(70, 120), 30, 30);
             spawns.Add(spawn);
 
-            Core.Storage.SpeciesCollection species = new Core.Storage.SpeciesCollection();
-            Core.Environment.Species boid = new Core.Environment.Species("Boid");
-            Core.Environment.Species naive = boid.CreateSubSpecies("Naive");
-            Core.Environment.Species guide = boid.CreateSubSpecies("Guide");
-            Core.Environment.Species intruder = boid.CreateSubSpecies("Intruder");
-            Core.Environment.Species obstacle = new Core.Environment.Species("Obstacle");
-            Core.Environment.Species goal = new Core.Environment.Species("Goal");
-            Core.Environment.Species goalG = goal.CreateSubSpecies("gG");
-            Core.Environment.Species goalI = goal.CreateSubSpecies("gI");
-            Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boid, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
+            SpeciesCollection species = new SpeciesCollection();
+            Species boid = new Species("Boid");
+            Species naive = boid.CreateSubSpecies("Naive");
+            Species guide = boid.CreateSubSpecies("Guide");
+            Species intruder = boid.CreateSubSpecies("Intruder");
+            Species obstacle = new Core.Environment.Species("Obstacle");
+            Species goal = new Core.Environment.Species("Goal");
+            Species goalG = goal.CreateSubSpecies("gG");
+            Species goalI = goal.CreateSubSpecies("gI");
+            Species centroid = new Core.Environment.Species("Centroid");
+            species.Add(boid, SpeciesCollection.DEFAULT_AGENTS_LABEL);
             species.Add(naive);
             species.Add(guide);
             species.Add(intruder);
-            species.Add(obstacle, Core.Storage.SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
-            species.Add(goal, Core.Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
+            species.Add(obstacle, SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
+            species.Add(goal, SpeciesCollection.DEFAULT_GOALS_LABEL);
             species.Add(goalG);
             species.Add(goalI);
-            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
-            //species.SetDefaultCentroidSpecies(centroid);
+            species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
-            List<Core.Environment.Element> stationaries = new List<Core.Environment.Element>();
-            Core.Environment.Goal goalGuide = new Core.Environment.PositionGoal(0, null, new Common.Vector2(25, 25), goalG);
-            Core.Environment.Goal goalIntruder = new Core.Environment.PositionGoal(1, null, new Common.Vector2(115, 25), goalI);
+            List<Element> stationaries = new List<Element>();
+            Goal goalGuide = new PositionGoal(0, null, new Vector2(25, 25), goalG);
+            Goal goalIntruder = new PositionGoal(1, null, new Vector2(115, 25), goalI);
             stationaries.Add(goalGuide);
             stationaries.Add(goalIntruder);
-            stationaries.Add(new Core.Environment.EllipseObstacle(2, null, new Common.Vector2(70, 55), obstacle, 20));
+            stationaries.Add(new EllipseObstacle(2, null, new Vector2(70, 55), obstacle, 20));
 
-            List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Naive Boids", 44, spawn,
+            List<ObservedArchetype> archetypes = new List<ObservedArchetype>();
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Naive Boids", 44, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1.05), naive,
-                new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(null,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0)));
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Guide Boids", 5, spawn,
+                new Neighbourhood(7.5, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(null, new Neighbourhood(2, new Angle(135)), 0))));
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Guide Boids", 5, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), guide,
-                new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(goalGuide,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0.75)));
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
+                new Neighbourhood(7.5, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(goalGuide, new Neighbourhood(2, new Angle(135)), 0.75))));
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
-                new Core.Environment.Neighbourhood(7.5, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(goalIntruder,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 1)));
+                new Neighbourhood(7.5, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(goalIntruder, new Neighbourhood(2, new Angle(135)), 1))));
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Obstacle", 20, 20, Colors.Gray, Colors.Gray, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Goal.gG", 1, 1, Colors.Blue, Colors.Blue, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Goal.gI", 1, 1, Colors.Red, Colors.Red, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Naive", 1, 1, Colors.Transparent, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightGreen, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightGreen, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.Black), new Visual.Styles.TrailStyle(Colors.Black, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Guide", 1, 1, Colors.CornflowerBlue, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSkyBlue, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSkyBlue, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.RoyalBlue), new Visual.Styles.TrailStyle(Colors.CornflowerBlue, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Intruder", 1, 1, Colors.IndianRed, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSalmon, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSalmon, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.Crimson), new Visual.Styles.TrailStyle(Colors.IndianRed, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Centroid", 1, 1, Colors.Silver, Colors.DimGray, null,
                 new Visual.Styles.TrackStyle(Colors.DimGray), new Visual.Styles.TrailStyle(Colors.Silver, 10)));
 
             _experiment = new Experiment("Thesis Sample", "", 5,
-                new InstanceDefinition(0.2, 1250, new Core.Scene(new Core.Environment.Region(140, true), spawns, stationaries), species, archetypes),
+                new InstanceDefinition(0.2, 1250, new Scene(new Region(140, true), spawns, stationaries), species, archetypes),
                 styles, _random.UInt());
         }
 
         private void PredefinedSampleThesis2()
         {
-            List<Core.Environment.SpawnSpot> spawns = new List<Core.Environment.SpawnSpot>();
-            Core.Environment.SpawnSpot spawn = new Core.Environment.EllipseSpawnSpot(new Common.Vector2(125, 205), 50, 50);
+            List<SpawnSpot> spawns = new List<SpawnSpot>();
+            SpawnSpot spawn = new EllipseSpawnSpot(new Vector2(125, 205), 50, 50);
             spawns.Add(spawn);
 
-            Core.Storage.SpeciesCollection species = new Core.Storage.SpeciesCollection();
-            Core.Environment.Species boid = new Core.Environment.Species("Boid");
-            Core.Environment.Species naive = boid.CreateSubSpecies("Naive");
-            Core.Environment.Species guide = boid.CreateSubSpecies("Guide");
-            Core.Environment.Species intruder = boid.CreateSubSpecies("Intruder");
-            Core.Environment.Species obstacle = new Core.Environment.Species("Obstacle");
-            Core.Environment.Species goal = new Core.Environment.Species("Goal");
-            Core.Environment.Species goalG = goal.CreateSubSpecies("gG");
-            Core.Environment.Species goalI = goal.CreateSubSpecies("gI");
-            Core.Environment.Species centroid = new Core.Environment.Species("Centroid");
-            species.Add(boid, Core.Storage.SpeciesCollection.DEFAULT_AGENTS_LABEL);
+            SpeciesCollection species = new SpeciesCollection();
+            Species boid = new Species("Boid");
+            Species naive = boid.CreateSubSpecies("Naive");
+            Species guide = boid.CreateSubSpecies("Guide");
+            Species intruder = boid.CreateSubSpecies("Intruder");
+            Species obstacle = new Species("Obstacle");
+            Species goal = new Core.Environment.Species("Goal");
+            Species goalG = goal.CreateSubSpecies("gG");
+            Species goalI = goal.CreateSubSpecies("gI");
+            Species centroid = new Species("Centroid");
+            species.Add(boid, SpeciesCollection.DEFAULT_AGENTS_LABEL);
             species.Add(naive);
             species.Add(guide);
             species.Add(intruder);
-            species.Add(obstacle, Core.Storage.SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
-            species.Add(goal, Core.Storage.SpeciesCollection.DEFAULT_GOALS_LABEL);
+            species.Add(obstacle, SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
+            species.Add(goal, SpeciesCollection.DEFAULT_GOALS_LABEL);
             species.Add(goalG);
             species.Add(goalI);
-            species.Add(centroid, Core.Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
-            //species.SetDefaultCentroidSpecies(centroid);
+            species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
-            List<Core.Environment.Element> stationaries = new List<Core.Environment.Element>();
-            Core.Environment.Goal goalGuide = new Core.Environment.PositionGoal(0, null, new Common.Vector2(25, 25), goalG);
-            Core.Environment.Goal goalIntruder = new Core.Environment.PositionGoal(1, null, new Common.Vector2(225, 25), goalI);
+            List<Element> stationaries = new List<Element>();
+            Goal goalGuide = new PositionGoal(0, null, new Vector2(25, 25), goalG);
+            Goal goalIntruder = new PositionGoal(1, null, new Vector2(225, 25), goalI);
             stationaries.Add(goalGuide);
             stationaries.Add(goalIntruder);
 
-            List<Core.Environment.AgentArchetype> archetypes = new List<Core.Environment.AgentArchetype>();
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Naive Boids", 89, spawn,
+            List<ObservedArchetype> archetypes = new List<ObservedArchetype>();
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Naive Boids", 89, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1.05), naive,
-                new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(null,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0)));
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Guide Boids", 10, spawn,
+                new Neighbourhood(10, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(null, new Neighbourhood(2, new Angle(135)), 0))));
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Guide Boids", 10, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), guide,
-                new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(goalGuide,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 0.75)));
-            archetypes.Add(new Core.Environment.Agents.AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
+                new Neighbourhood(10, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(goalGuide, new Neighbourhood(2, new Angle(135)), 0.75))));
+            archetypes.Add(new ObservedArchetype(new AdvancedBoidAgentArchetype("Intruder Boids", 1, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
-                new Core.Environment.Neighbourhood(10, new Common.Angle(135)), new Common.Angle(60),
-                new Core.Environment.Agents.AdvancedBoidAgentArgs(goalIntruder,
-                    new Core.Environment.Neighbourhood(2, new Common.Angle(135)), 1)));
+                new Neighbourhood(10, new Angle(135)), new Angle(60),
+                new AdvancedBoidAgentArgs(goalIntruder, new Neighbourhood(2, new Angle(135)), 1))));
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Obstacle", 20, 20, Colors.Gray, Colors.Gray, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Goal.gG", 1, 1, Colors.Blue, Colors.Blue, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Goal.gI", 1, 1, Colors.Red, Colors.Red, null, null, null));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Naive", 1, 1, Colors.Transparent, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightGreen, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightGreen, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.Black), new Visual.Styles.TrailStyle(Colors.Black, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Guide", 1, 1, Colors.CornflowerBlue, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSkyBlue, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSkyBlue, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.RoyalBlue), new Visual.Styles.TrailStyle(Colors.CornflowerBlue, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Boid.Intruder", 1, 1, Colors.IndianRed, Colors.Black,
-                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSalmon, 10, new Common.Angle(135), 1),
+                new Visual.Styles.NeighbourhoodStyle(Visual.Shapes.ArcShape.Instance, Colors.Transparent, Colors.LightSalmon, 10, new Angle(135), 1),
                 new Visual.Styles.TrackStyle(Colors.Crimson), new Visual.Styles.TrailStyle(Colors.IndianRed, 10)));
             styles.Add(new Visual.Styles.Style(Visual.Shapes.PointingCircleShape.Instance, "Centroid", 1, 1, Colors.Silver, Colors.DimGray, null,
                 new Visual.Styles.TrackStyle(Colors.DimGray), new Visual.Styles.TrailStyle(Colors.Silver, 10)));
 
             _experiment = new Experiment("Thesis Sample", "", 5,
-                new InstanceDefinition(0.2, 1250, new Core.Scene(new Core.Environment.Region(250, true), spawns, stationaries), species, archetypes),
+                new InstanceDefinition(0.2, 1250, new Scene(new Region(250, true), spawns, stationaries), species, archetypes),
                 styles, _random.UInt());
         }
 

@@ -32,6 +32,7 @@ namespace Muragatte.Core
         private SpeciesCollection _species;
         private History _history = new History();
         private List<Group> _groups = new List<Group>();
+        private List<Agent> _strays = new List<Agent>();
         private RandomMT _random;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -127,6 +128,7 @@ namespace Muragatte.Core
             _storage.Clear();
             _history.Clear();
             _groups.Clear();
+            _strays.Clear();
         }
 
         public void Reset()
@@ -168,7 +170,7 @@ namespace Muragatte.Core
         {
             ReportStatus(_storage, record);
             ReportStatus(_storage.Centroids, record);
-            record.StoreGroups(_groups);
+            record.GroupsAndStrays(_groups, _strays);
         }
 
         private void ReportStatus(IEnumerable<Element> items, HistoryRecord record)
@@ -232,6 +234,7 @@ namespace Muragatte.Core
                 g.Clear();
             }
             _groups.Clear();
+            _strays.Clear();
             foreach (Agent a in _storage.Agents)
             {
                 if (a.Group == null)
@@ -240,6 +243,10 @@ namespace Muragatte.Core
                     if (members.Count() > 0)
                     {
                         _groups.Add(new Group(a, members));
+                    }
+                    else
+                    {
+                        _strays.Add(a);
                     }
                 }
             }

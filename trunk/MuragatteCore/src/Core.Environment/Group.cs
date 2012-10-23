@@ -59,6 +59,11 @@ namespace Muragatte.Core.Environment
             get { return _members.Count > 0 ? _members[0] : null; }
         }
 
+        public Centroid Centroid
+        {
+            get { return _members.Count > 0 ? _members[0].Representative : null; }
+        }
+
         #endregion
 
         #region Methods
@@ -78,6 +83,32 @@ namespace Muragatte.Core.Environment
             _members.Clear();
         }
 
+        public Goal GetGoal()
+        {
+            Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
+            foreach (Agent a in _members)
+            {
+                if (a.Goal != null)
+                {
+                    if (goals.ContainsKey(a.Goal))
+                    {
+                        goals[a.Goal]++;
+                    }
+                    else
+                    {
+                        goals.Add(a.Goal, 1);
+                    }
+                }
+            }
+            int count = 0;
+            Goal goal = null;
+            foreach (KeyValuePair<Goal, int> gi in goals)
+            {
+                if (gi.Value > count) goal = gi.Key;
+            }
+            return goal;
+        }
+
         public IEnumerator<Agent> GetEnumerator()
         {
             return _members.GetEnumerator();
@@ -90,7 +121,7 @@ namespace Muragatte.Core.Environment
 
         public override string ToString()
         {
-            return _iGroupID.ToString();
+            return string.Format("Group {0} [{1}]", _iGroupID, _members.Count);
         }
 
         #endregion

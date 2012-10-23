@@ -60,7 +60,7 @@
                         <StackPanel Margin="5">
                             <TextBlock Name="txbPath" />
                             <TextBlock Name="txbTotalSteps" />
-                            <ListBox Height="75" Name="lboArchetypes" HorizontalAlignment="Left" DisplayMemberPath="NameAndCount" />
+                            <ListBox Height="75" Name="lboArchetypes" HorizontalAlignment="Left" DisplayMemberPath="Archetype.NameAndCount" />
                         </StackPanel>
                     </DockPanel>
                 </GroupBox>
