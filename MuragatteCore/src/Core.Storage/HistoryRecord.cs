@@ -22,6 +22,7 @@ namespace Muragatte.Core.Storage
 
         private Dictionary<int, ElementStatus> _items = new Dictionary<int, ElementStatus>();
         private List<Group> _groups = null;
+        private List<Agent> _strays = null;
 
         #endregion
 
@@ -43,6 +44,11 @@ namespace Muragatte.Core.Storage
             get { return _groups; }
         }
 
+        public IEnumerable<Agent> StrayAgents
+        {
+            get { return _strays; }
+        }
+
         #endregion
 
         #region Methods
@@ -55,9 +61,10 @@ namespace Muragatte.Core.Storage
             }
         }
 
-        public void StoreGroups(IEnumerable<Group> items)
+        public void GroupsAndStrays(IEnumerable<Group> groups, IEnumerable<Agent> strays)
         {
-            _groups = new List<Group>(items);
+            _groups = groups == null ? new List<Group>() : new List<Group>(groups);
+            _strays = strays == null ? new List<Agent>() : new List<Agent>(strays);
         }
 
         public void Clear()

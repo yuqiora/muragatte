@@ -137,11 +137,11 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Properties
 
-        public Goal Goal
-        {
-            get { return _args.Goal; }
-            set { _args.Goal = value; }
-        }
+        //public Goal Goal
+        //{
+        //    get { return _args.Goal; }
+        //    set { _args.Goal = value; }
+        //}
 
         public Neighbourhood PersonalArea
         {

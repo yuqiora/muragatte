@@ -16,6 +16,7 @@ using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
 using Muragatte.Random;
+using Muragatte.Thesis.Results;
 
 namespace Muragatte.Thesis
 {
@@ -30,12 +31,13 @@ namespace Muragatte.Thesis
         private InstanceResults _results = null;
         private uint _uiSeed;
         private RandomMT _random;
+        private List<ArchetypeOverviewInfo> _observedInfos = new List<ArchetypeOverviewInfo>();
 
         #endregion
 
         #region Constructors
 
-        public Instance(int number, int length, double timePerStep, Scene scene, IEnumerable<AgentArchetype> archetypes, SpeciesCollection species, uint seed)
+        public Instance(int number, int length, double timePerStep, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
         {
             _iNumber = number;
             _iLength = length;
@@ -108,6 +110,7 @@ namespace Muragatte.Thesis
                 if (_mas.StepCount == _iLength)
                 {
                     //results
+                    ProcessResults();
                     _bComplete = true;
                 }
             }
@@ -120,19 +123,21 @@ namespace Muragatte.Thesis
             _bComplete = false;
         }
 
-        private void AgentsFromArchetypes(int startID, IEnumerable<AgentArchetype> archetypes)
+        private void AgentsFromArchetypes(int startID, IEnumerable<ObservedArchetype> archetypes)
         {
-            foreach (AgentArchetype a in archetypes)
+            foreach (ObservedArchetype a in archetypes)
             {
                 _mas.Elements.Add(a.CreateAgents(startID, _mas));
-                startID += a.Count;
+                if (a.IsObserved) _observedInfos.Add(a.OverviewInfo);
+                startID += a.Archetype.Count;
             }
         }
 
-        private void ProcessResults() { }
+        private void ProcessResults()
+        {
+            _results = new InstanceResults(_iNumber, _mas.History, _mas.Substeps, _observedInfos);
+        }
 
         #endregion
     }
-
-    public class InstanceResults { }
 }

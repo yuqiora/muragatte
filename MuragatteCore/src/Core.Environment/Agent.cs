@@ -148,6 +148,12 @@ namespace Muragatte.Core.Environment
             get { return false; }
         }
 
+        public Goal Goal
+        {
+            get { return _args.Goal; }
+            set { if (_args.HasGoal) _args.Goal = value; }
+        }
+
         #endregion
 
         #region Methods

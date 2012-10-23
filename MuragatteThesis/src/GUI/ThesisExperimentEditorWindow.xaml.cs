@@ -38,7 +38,7 @@ namespace Muragatte.Thesis.GUI
         private ObservableCollection<Visual.Styles.Style> _styles = null;
         private Scene _scene = null;
         private SpeciesCollection _species = null;
-        private ObservableCollection<AgentArchetype> _archetypes = null;
+        private ObservableCollection<ObservedArchetype> _archetypes = null;
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace Muragatte.Thesis.GUI
                 _styles = new ObservableCollection<Visual.Styles.Style>();
                 _scene = new Scene(new Region(100, true));
                 _species = new SpeciesCollection(true);
-                _archetypes = new ObservableCollection<AgentArchetype>();
+                _archetypes = new ObservableCollection<ObservedArchetype>();
             }
             else
             {
@@ -92,7 +92,7 @@ namespace Muragatte.Thesis.GUI
             get { return GetExperiment == null ? _species : GetExperiment.Definition.Species; }
         }
 
-        public ObservableCollection<AgentArchetype> GetArchetypes
+        public ObservableCollection<ObservedArchetype> GetArchetypes
         {
             get { return GetExperiment == null ? _archetypes : GetExperiment.Definition.Archetypes; }
         }

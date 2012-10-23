@@ -83,9 +83,17 @@
     <Compile Include="src\Thesis.Converters\DirectionToDegreesConverter.cs" />
     <Compile Include="src\Thesis.Converters\IntToBoolConverter.cs" />
     <Compile Include="src\Thesis.Converters\NoiseToDistributionConverter.cs" />
+    <Compile Include="src\Thesis.Results\GroupOverview.cs" />
+    <Compile Include="src\Thesis.Results\InstanceResults.cs" />
+    <Compile Include="src\Thesis.Results\NumericSummary.cs" />
+    <Compile Include="src\Thesis.Results\ObservedArchetypeInstanceSummary.cs" />
+    <Compile Include="src\Thesis.Results\ObservedArchetypeOverview.cs" />
+    <Compile Include="src\Thesis.Results\StepOverview.cs" />
+    <Compile Include="src\Thesis\ArchetypeOverviewInfo.cs" />
     <Compile Include="src\Thesis\Experiment.cs" />
     <Compile Include="src\Thesis\Instance.cs" />
     <Compile Include="src\Thesis\InstanceDefinition.cs" />
+    <Compile Include="src\Thesis\ObservedArchetype.cs" />
     <Compile Include="src\Thesis\ScenePreview.cs" />
     <Page Include="src\GUI\ThesisAboutWindow.xaml">
       <SubType>Designer</SubType>

@@ -38,7 +38,7 @@ namespace Muragatte.Thesis.GUI
     {
         #region Fields
 
-        private ObservableCollection<AgentArchetype> _archetypes = null;
+        private ObservableCollection<ObservedArchetype> _archetypes = null;
         private ObservableCollection<SpawnSpot> _spawnSpots = null;
         private SpeciesCollection _species = null;
         private List<Metric> _metrics = new List<Metric>() { Metric.Euclidean, Metric.Manhattan, Metric.Maximum };
@@ -57,7 +57,7 @@ namespace Muragatte.Thesis.GUI
         #endregion
 
         #region Constructors
-        public ThesisArchetypesEditorWindow(ObservableCollection<AgentArchetype> archetypes, Scene scene, SpeciesCollection species)
+        public ThesisArchetypesEditorWindow(ObservableCollection<ObservedArchetype> archetypes, Scene scene, SpeciesCollection species)
         {
             InitializeComponent();
             DataContext = this;
@@ -74,7 +74,7 @@ namespace Muragatte.Thesis.GUI
 
         #region Properties
 
-        public ObservableCollection<AgentArchetype> GetArchetypes
+        public ObservableCollection<ObservedArchetype> GetArchetypes
         {
             get { return _archetypes; }
         }
@@ -212,7 +212,7 @@ namespace Muragatte.Thesis.GUI
         private void NewArchetype(AgentArchetype a)
         {
             ddbNew.IsOpen = false;
-            _archetypes.Add(a);
+            _archetypes.Add(new ObservedArchetype(a));
             lboArchetypes.SelectedIndex = lboArchetypes.Items.Count - 1;
         }
 
