@@ -39,7 +39,7 @@ namespace Muragatte.Thesis.Results
             _strays = record.StrayAgents;
             _iStrayWander = StraysWander.Count();
             _iStrayGoal = StraysGoal.Count();
-            GatherGroupDetails(record.Groups);
+            GatherGroupDetails(record.Groups, record);
             foreach (ArchetypeOverviewInfo info in observedInfo)
             {
                 _observed.Add(new ObservedArchetypeOverview(record, info, _groupDetails, _mainGroup.ID));
@@ -109,11 +109,11 @@ namespace Muragatte.Thesis.Results
 
         #region Methods
 
-        private void GatherGroupDetails(IEnumerable<Group> groups)
+        private void GatherGroupDetails(IEnumerable<Group> groups, HistoryRecord record)
         {
             foreach (Group g in groups)
             {
-                GroupOverview go = new GroupOverview(g);
+                GroupOverview go = new GroupOverview(g, record);
                 _groupDetails.Add(go);
                 if (_mainGroup == null || go.Size > _mainGroup.Size) _mainGroup = go;
             }

@@ -30,7 +30,7 @@ namespace Muragatte.Thesis.Results
         private int _iMajorityGroupSize = 0;
         private int _iGroupCount;
         private bool _bInOneGroup = true;
-        private Goal _goal;
+        private Goal _goal = null;
         private double? _dMinDistance = null;
         private double? _dMaxDistance = null;
         private double? _dAvgDistance = null;

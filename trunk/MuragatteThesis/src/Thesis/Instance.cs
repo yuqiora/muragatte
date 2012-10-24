@@ -98,6 +98,7 @@ namespace Muragatte.Thesis
                 {
                     _mas.Update();
                 }
+                ProcessResults();
                 _bComplete = true;
             }
         }
@@ -109,7 +110,6 @@ namespace Muragatte.Thesis
                 _mas.Update();
                 if (_mas.StepCount == _iLength)
                 {
-                    //results
                     ProcessResults();
                     _bComplete = true;
                 }
@@ -119,7 +119,7 @@ namespace Muragatte.Thesis
         public void Reset()
         {
             _mas.Clear();
-            //results
+            _results = null;
             _bComplete = false;
         }
 
@@ -140,4 +140,63 @@ namespace Muragatte.Thesis
 
         #endregion
     }
+
+    //public class VisualizationControl : INotifyPropertyChanged
+    //{
+    //    #region Fields
+
+    //    private Visualization _visual = null;
+    //    private MultiAgentSystem _model;
+    //    private bool _bInitialized = false;
+
+    //    public event PropertyChangedEventHandler PropertyChanged;
+
+    //    #endregion
+
+    //    #region Constructors
+
+    //    public VisualizationControl(MultiAgentSystem model)
+    //    {
+    //        _model = model;
+    //    }
+
+    //    #endregion
+
+    //    #region Properties
+
+    //    public bool IsInitialized
+    //    {
+    //        get { return _bInitialized; }
+    //        private set
+    //        {
+    //            _bInitialized = value;
+    //            NotifyPropertyChanged("IsInitialized");
+    //        }
+    //    }
+
+    //    #endregion
+
+    //    #region Methods
+
+    //    public void Initialize(System.Windows.Window owner, System.Collections.ObjectModel.ObservableCollection<Visual.Styles.Style> styles)
+    //    {
+    //        if (!_bInitialized)
+    //        {
+    //            double scaleWidth = Math.Floor(System.Windows.SystemParameters.WorkArea.Width / _model.Region.Width);
+    //            double scaleHeight = Math.Floor(System.Windows.SystemParameters.WorkArea.Height / _model.Region.Height);
+    //            _visual = new Visualization(_model, Math.Min(scaleWidth, scaleHeight), owner, styles);
+    //            IsInitialized = true;
+    //        }
+    //    }
+
+    //    private void NotifyPropertyChanged(String propertyName)
+    //    {
+    //        if (PropertyChanged != null)
+    //        {
+    //            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    //        }
+    //    }
+
+    //    #endregion
+    //}
 }

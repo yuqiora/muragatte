@@ -44,12 +44,6 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Properties
 
-        //public Goal Goal
-        //{
-        //    get { return _args.Goal; }
-        //    set { _args.Goal = value; }
-        //}
-
         public Neighbourhood PersonalArea
         {
             get { return _args.Neighbourhoods[VersatileAgentArgs.NEIGH_PERSONAL_AREA]; }

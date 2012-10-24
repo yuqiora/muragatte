@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
+using Muragatte.Core.Storage;
 
 namespace Muragatte.Thesis.Results
 {
@@ -22,7 +23,8 @@ namespace Muragatte.Thesis.Results
         #region Fields
 
         private Group _source;
-        private Goal _goal;
+        private Goal _goal = null;
+        private ElementStatus _centroid;
         private double? _dMinimumDistance = null;
         private double? _dMaximumDistance = null;
         private double? _dAverageDistance = null;
@@ -34,10 +36,11 @@ namespace Muragatte.Thesis.Results
 
         #region Constructors
 
-        public GroupOverview(Group source)
+        public GroupOverview(Group source, HistoryRecord record)
         {
             _source = source;
             _goal = _source.GetGoal();
+            _centroid = record[-_source.ID];
             Distances();
         }
 
@@ -62,12 +65,12 @@ namespace Muragatte.Thesis.Results
 
         public Vector2 Direction
         {
-            get { return _source.Centroid.Direction; }
+            get { return _centroid.Direction; }
         }
 
         public double Speed
         {
-            get { return _source.Centroid.Speed; }
+            get { return _centroid.Speed; }
         }
 
         public Goal MajorityGoal
@@ -119,7 +122,7 @@ namespace Muragatte.Thesis.Results
         {
             if (_goal != null)
             {
-                _dCentroidDistance = Vector2.Distance(_source.Centroid.Position, _goal.Position);
+                _dCentroidDistance = Vector2.Distance(_centroid.Position, _goal.Position);
                 _dMinimumDistance = double.MaxValue;
                 _dMaximumDistance = 0;
                 _dDistanceSum = 0;
@@ -132,6 +135,11 @@ namespace Muragatte.Thesis.Results
                 }
                 _dAverageDistance = _dDistanceSum / _source.Count;
             }
+        }
+
+        public override string ToString()
+        {
+            return _source.ToString();
         }
 
         #endregion

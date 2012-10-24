@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Core.Environment;
 
 namespace Muragatte.Thesis.Results
 {
@@ -21,6 +22,7 @@ namespace Muragatte.Thesis.Results
 
         private List<ObservedArchetypeOverview> _details;
         private NumericSummary _inMainGroup = new NumericSummary();
+        private NumericSummary _groups = new NumericSummary();
         private NumericSummary _stray = new NumericSummary();
         private NumericSummary _sharedGroupGoal = new NumericSummary();
         private NumericSummary _majorityGroupSize = new NumericSummary();
@@ -37,6 +39,7 @@ namespace Muragatte.Thesis.Results
             foreach (ObservedArchetypeOverview o in _details)
             {
                 _inMainGroup.UpdateMinMaxSum(o.InMainGroupCount);
+                _groups.UpdateMinMaxSum(o.GroupCount);
                 _stray.UpdateMinMaxSum(o.StrayCount);
                 _sharedGroupGoal.UpdateMinMaxSum(o.SharedGroupGoalCount);
                 _majorityGroupSize.UpdateMinMaxSum(o.MajorityGroupSize);
@@ -78,6 +81,21 @@ namespace Muragatte.Thesis.Results
         public NumericSummary InMainGroupCount
         {
             get { return _inMainGroup; }
+        }
+
+        public int GroupCountStart
+        {
+            get { return _details[0].GroupCount; }
+        }
+
+        public int GroupCountEnd
+        {
+            get { return _details.Last().GroupCount; }
+        }
+
+        public NumericSummary GroupCount
+        {
+            get { return _groups; }
         }
 
         public int StrayCountStart
@@ -140,6 +158,11 @@ namespace Muragatte.Thesis.Results
             get { return _dInOneGroup; }
         }
 
+        public Goal Goal
+        {
+            get { return _details[0].Goal; }
+        }
+
         public double? GoalEndDistanceMinimum
         {
             get { return _details.Last().GoalDistanceMinimum; }
@@ -167,6 +190,7 @@ namespace Muragatte.Thesis.Results
         private void UpdateSummaryAverage(double count)
         {
             _inMainGroup.UpdateAverage(count);
+            _groups.UpdateAverage(count);
             _stray.UpdateAverage(count);
             _sharedGroupGoal.UpdateAverage(count);
             _majorityGroupSize.UpdateAverage(count);
