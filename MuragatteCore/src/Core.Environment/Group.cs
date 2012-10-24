@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
 {
@@ -85,6 +86,11 @@ namespace Muragatte.Core.Environment
 
         public Goal GetGoal()
         {
+            return GetGoal(Centroid.Direction, Centroid.Position);
+        }
+
+        public Goal GetGoal(Vector2 centroidDir, Vector2 centroidPos)
+        {
             Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
             foreach (Agent a in _members)
             {
@@ -104,9 +110,18 @@ namespace Muragatte.Core.Environment
             Goal goal = null;
             foreach (KeyValuePair<Goal, int> gi in goals)
             {
-                if (gi.Value > count) goal = gi.Key;
+                if (gi.Value > count || (gi.Value == count && AngleToGoal(centroidDir, centroidPos, gi.Key) < AngleToGoal(centroidDir, centroidPos, goal)))
+                {
+                    goal = gi.Key;
+                    count = gi.Value;
+                }
             }
             return goal;
+        }
+
+        private Angle AngleToGoal(Vector2 centroidDirection, Vector2 centroidPosition, Goal goal)
+        {
+            return Vector2.AngleBetween(centroidDirection, goal.Position - centroidPosition);
         }
 
         public IEnumerator<Agent> GetEnumerator()

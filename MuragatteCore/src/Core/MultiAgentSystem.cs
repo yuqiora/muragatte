@@ -229,10 +229,6 @@ namespace Muragatte.Core
             {
                 c.Update();
             }
-            foreach (Group g in _groups)
-            {
-                g.Clear();
-            }
             _groups.Clear();
             _strays.Clear();
             foreach (Agent a in _storage.Agents)
@@ -258,15 +254,11 @@ namespace Muragatte.Core
 
         private void CreateCentroids()
         {
-            List<Centroid> centroids = new List<Centroid>();
-            int id = _storage.Count;
             foreach (Agent a in _storage.Agents)
             {
-                a.CreateRepresentative(id);
-                centroids.Add(a.Representative);
-                id++;
+                a.CreateRepresentative();
+                _storage.Add(a.Representative);
             }
-            _storage.Add(centroids);
             UpdateGroupsAndCentroids();
         }
 

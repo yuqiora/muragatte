@@ -83,16 +83,12 @@ namespace Muragatte.Thesis.GUI
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
         {
-            ThesisAboutWindow about = new ThesisAboutWindow();
-            about.Owner = this;
-            about.ShowDialog();
+            OpenDialogWindow(new ThesisAboutWindow());
         }
 
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
-            ThesisExperimentEditorWindow editor = new ThesisExperimentEditorWindow(this);
-            editor.ShowDialog();
-            //grbExperimentSummary.Visibility = System.Windows.Visibility.Visible;
+            OpenDialogWindow(new ThesisExperimentEditorWindow(this));
             ShowExperimentSummary();
         }
 
@@ -110,8 +106,7 @@ namespace Muragatte.Thesis.GUI
         {
             if (_experiment != null)
             {
-                ThesisExperimentEditorWindow editor = new ThesisExperimentEditorWindow(this);
-                editor.ShowDialog();
+                OpenDialogWindow(new ThesisExperimentEditorWindow(this));
                 ShowExperimentSummary();
             }
         }
@@ -120,8 +115,7 @@ namespace Muragatte.Thesis.GUI
         {
             if (_experiment.IsComplete)
             {
-                ThesisExperimentResultsWindow results = new ThesisExperimentResultsWindow(_experiment);
-                results.ShowDialog();
+                OpenDialogWindow(new ThesisExperimentResultsWindow(_experiment));
             }
         }
 
@@ -251,6 +245,8 @@ namespace Muragatte.Thesis.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
                 new Neighbourhood(7.5, new Angle(135)), new Angle(60),
                 new AdvancedBoidAgentArgs(goalIntruder, new Neighbourhood(2, new Angle(135)), 1))));
+            archetypes[1].IsObserved = true;
+            archetypes[2].IsObserved = true;
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Obstacle", 20, 20, Colors.Gray, Colors.Gray, null, null, null));
@@ -318,6 +314,8 @@ namespace Muragatte.Thesis.GUI
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(0.95), intruder,
                 new Neighbourhood(10, new Angle(135)), new Angle(60),
                 new AdvancedBoidAgentArgs(goalIntruder, new Neighbourhood(2, new Angle(135)), 1))));
+            archetypes[1].IsObserved = true;
+            archetypes[2].IsObserved = true;
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.Shapes.EllipseShape.Instance, "Obstacle", 20, 20, Colors.Gray, Colors.Gray, null, null, null));
@@ -365,6 +363,12 @@ namespace Muragatte.Thesis.GUI
             {
                 grbExperimentSummary.Visibility = System.Windows.Visibility.Collapsed;
             }
+        }
+
+        private void OpenDialogWindow(Window window)
+        {
+            window.Owner = this;
+            window.ShowDialog();
         }
 
         #endregion

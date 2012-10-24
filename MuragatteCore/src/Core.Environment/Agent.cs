@@ -206,6 +206,7 @@ namespace Muragatte.Core.Environment
         {
             _representative = new Centroid(-_iElementID, this);
         }
+
         public void CreateRepresentative(int id)
         {
 
@@ -221,24 +222,13 @@ namespace Muragatte.Core.Environment
         {
             _representative.IsInGroup = true;
             IEnumerable<Agent> candidates = _model.Elements.RangeSearch<Agent>(this, VisibleRange, e => IsGroupCandidate((Agent)e));
-            List<Agent> members = new List<Agent>(candidates);
+            HashSet<Agent> members = new HashSet<Agent>(candidates);
             foreach (Agent a in candidates)
             {
-                members.AddRange(a.GroupSearch());
+                members.UnionWith(a.GroupSearch());
             }
             return members;
         }
-
-        //public override Storage.ElementStatus ReportStatus()
-        //{
-        //    return ReportStatus(_args.Modifiers.Values);
-        //}
-
-        //public override void LoadStatus(Storage.ElementStatus status)
-        //{
-        //    base.LoadStatus(status);
-        //    //load modifiers
-        //}
 
         protected void ProperDirection()
         {

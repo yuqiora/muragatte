@@ -18,6 +18,7 @@ using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
 using Muragatte.Random;
+using Muragatte.Thesis.Results;
 using Muragatte.Visual.Styles;
 
 namespace Muragatte.Thesis
@@ -155,7 +156,7 @@ namespace Muragatte.Thesis
                 i.Reset();
             }
             _instances.Clear();
-            //results reset
+            _results = null;
             IsComplete = false;
             IsCanceled = false;
         }
@@ -188,7 +189,7 @@ namespace Muragatte.Thesis
         {
             if (!_bComplete && !_bCanceled)
             {
-                //results
+                _results = new ExperimentResults(_instances);
                 IsComplete = true;
             }
         }
@@ -198,7 +199,7 @@ namespace Muragatte.Thesis
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
         }
 
-        private void ProcessResults() { }
+        //private void ProcessResults() { }
 
         private void NotifyPropertyChanged(String propertyName)
         {
@@ -210,6 +211,4 @@ namespace Muragatte.Thesis
 
         #endregion
     }
-
-    public class ExperimentResults { }
 }

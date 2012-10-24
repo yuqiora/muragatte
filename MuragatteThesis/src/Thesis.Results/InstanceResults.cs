@@ -24,6 +24,7 @@ namespace Muragatte.Thesis.Results
         private int _iInstance;
         private List<StepOverview> _stepDetails = new List<StepOverview>();
         private NumericSummary _groupCount = new NumericSummary();
+        private NumericSummary _strayCount = new NumericSummary();
         private NumericSummary _strayWanderCount = new NumericSummary();
         private NumericSummary _strayGoalCount = new NumericSummary();
         private NumericSummary _mainGroupSize = new NumericSummary();
@@ -64,6 +65,21 @@ namespace Muragatte.Thesis.Results
         public NumericSummary GroupCount
         {
             get { return _groupCount; }
+        }
+
+        public int StrayCountStart
+        {
+            get { return _stepDetails[0].StrayCount; }
+        }
+
+        public int StrayCountEnd
+        {
+            get { return _stepDetails.Last().StrayCount; }
+        }
+
+        public NumericSummary StrayCount
+        {
+            get { return _strayCount; }
         }
 
         public int StrayWanderCountStart
@@ -131,6 +147,11 @@ namespace Muragatte.Thesis.Results
             get { return _mainGroupGoalPercentage; }
         }
 
+        public IEnumerable<ObservedArchetypeInstanceSummary> Observed
+        {
+            get { return _observed; }
+        }
+
         #endregion
 
         #region Methods
@@ -157,6 +178,7 @@ namespace Muragatte.Thesis.Results
             foreach (StepOverview so in _stepDetails)
             {
                 _groupCount.UpdateMinMaxSum(so.GroupCount);
+                _strayCount.UpdateMinMaxSum(so.StrayCount);
                 _strayWanderCount.UpdateMinMaxSum(so.StrayWanderCount);
                 _strayGoalCount.UpdateMinMaxSum(so.StrayGoalCount);
                 _mainGroupSize.UpdateMinMaxSum(so.MainGroup.Size);
@@ -210,6 +232,7 @@ namespace Muragatte.Thesis.Results
         private void UpdateSummaryAverage(double count)
         {
             _groupCount.UpdateAverage(count);
+            _strayCount.UpdateAverage(count);
             _strayWanderCount.UpdateAverage(count);
             _strayGoalCount.UpdateAverage(count);
             _mainGroupSize.UpdateAverage(count);

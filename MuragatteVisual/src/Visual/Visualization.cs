@@ -10,8 +10,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using Muragatte.Core;
 
 namespace Muragatte.Visual
@@ -30,10 +32,16 @@ namespace Muragatte.Visual
 
         #region Constructors
 
-        public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner)
+        public Visualization(MultiAgentSystem model, double scale, Window owner)
+            : this(model, model.Region.Width, model.Region.Height, scale, owner, null) { }
+
+        public Visualization(MultiAgentSystem model, int width, int height, double scale, Window owner)
             : this(model, width, height, scale, owner, null) { }
 
-        public Visualization(MultiAgentSystem model, int width, int height, double scale, System.Windows.Window owner, System.Collections.ObjectModel.ObservableCollection<Styles.Style> styles)
+        public Visualization(MultiAgentSystem model, double scale, Window owner, ObservableCollection<Styles.Style> styles)
+            : this(model, model.Region.Width, model.Region.Height, scale, owner, styles) { }
+
+        public Visualization(MultiAgentSystem model, int width, int height, double scale, Window owner, ObservableCollection<Styles.Style> styles)
         {
             DefaultValues.Scale = scale;
             _model = model;
@@ -82,9 +90,21 @@ namespace Muragatte.Visual
         public void Initialize()
         {
             _canvas.Clear();
+            ShowAll();
+        }
+
+        public void ShowAll()
+        {
             _wndCanvas.Show();
             _wndPlayback.Show();
             _wndOptions.Show();
+        }
+
+        public void HideAll()
+        {
+            _wndCanvas.Hide();
+            _wndPlayback.Hide();
+            _wndOptions.Hide();
         }
 
         public void Redraw()
@@ -104,7 +124,7 @@ namespace Muragatte.Visual
             CloseWindow(_wndOptions);
         }
 
-        private void CloseWindow(System.Windows.Window window)
+        private void CloseWindow(Window window)
         {
             if (window != null)
             {
