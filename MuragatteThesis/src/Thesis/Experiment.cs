@@ -189,7 +189,7 @@ namespace Muragatte.Thesis
         {
             if (!_bComplete && !_bCanceled)
             {
-                _results = new ExperimentResults(_instances);
+                _results = new ExperimentResults(/*_iRepeatCount, _definition.Length, _definition.AgentCount, */_instances);
                 IsComplete = true;
             }
         }
