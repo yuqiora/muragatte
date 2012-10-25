@@ -21,7 +21,54 @@
     <StackPanel Margin="5">
         <TabControl Name="tabResultsLevel" >
             <TabItem Header="Experiment" Name="titExperiment">
-                <Grid />
+                <StackPanel>
+                    <Grid HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="5">
+                            <TextBlock Text="Name:" />
+                            <TextBlock Text="# of Agents:" />
+                            <TextBlock Text="Cycles x Length:" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="5">
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                            <TextBlock Text="{Binding Path=Definition.AgentCount}" />
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} x {1}">
+                                        <Binding Path="RepeatCount" />
+                                        <Binding Path="Definition.Length" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                    <GroupBox Name="grbExperimentGeneral" DataContext="{Binding Results}">
+                        <GroupBox.Header>
+                            <CheckBox Content="General" Height="16" Name="chbExperimentGeneral" IsChecked="True" />
+                        </GroupBox.Header>
+                        <Grid HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentGeneral, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Name="grbExperimentMainGroup" DataContext="{Binding Results}">
+                        <GroupBox.Header>
+                            <CheckBox Content="Main Group" Height="16" Name="chbExperimentMainGroup" IsChecked="True" />
+                        </GroupBox.Header>
+                        <Grid HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentMainGroup, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Name="grbExperimentObserved">
+                        <GroupBox.Header>
+                            <CheckBox Content="Observed" Height="16" Name="chbExperimentObserved" IsChecked="True" />
+                        </GroupBox.Header>
+                        <StackPanel HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentObserved, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ComboBox Height="23" Name="cmdExperimentObserved" Width="120" HorizontalAlignment="Left" ItemsSource="{Binding Path=Results.Observed}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="True" />
+                            <ContentControl Name="conExperimentObserved" Content="{Binding Path=Results.Observed}" />
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Instance" Name="titInstance">
                 <StackPanel>
@@ -99,7 +146,11 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,5,5,0">
                                 <TextBlock Text="Start Size:" />
                                 <TextBlock Text="Size (Min/Avg/Max):" />
                                 <TextBlock Text="End Size:" />
@@ -107,7 +158,7 @@
                                 <TextBlock Text="End Majority Goal:" />
                                 <TextBlock Text="Majority Goal Percentage:" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="5">
+                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,5,5,0">
                                 <TextBlock Text="{Binding MainGroupSizeStart}" />
                                 <TextBlock>
                                     <TextBlock.Text>
@@ -121,7 +172,7 @@
                                 <TextBlock Text="{Binding MainGroupSizeEnd}" />
                                 <TextBlock Text="{Binding Path=MainGroupGoalStart, TargetNullValue='None'}" />
                                 <TextBlock Text="{Binding Path=MainGroupGoalEnd, TargetNullValue='None'}" />
-                                <ListBox Height="50" ItemsSource="{Binding MainGroupGoalPercentage}" Grid.IsSharedSizeScope="True">
+                                <ListBox MaxHeight="50" ItemsSource="{Binding MainGroupGoalPercentage}" Grid.IsSharedSizeScope="True">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid HorizontalAlignment="Stretch">
@@ -129,13 +180,27 @@
                                                     <ColumnDefinition SharedSizeGroup="Goal" />
                                                     <ColumnDefinition SharedSizeGroup="Percentage" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding Path=Item1.Name, TargetNullValue='None'}" Grid.Column="0" />
-                                                <TextBlock Text="{Binding Path=Item2, StringFormat='{}{0:F2}%'}" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" />
+                                                <TextBlock Text="{Binding GoalName}" Grid.Column="0" />
+                                                <TextBlock Text="{Binding PercentString}" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
                             </StackPanel>
+                            <StackPanel Grid.Column="0" Grid.Row="1" Margin="5,0,5,5">
+                                <TextBlock Text="Goal End Distance:"/>
+                                <TextBlock Text="(Min / Avg / Max | Cen)" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Margin="5,0,5,5" VerticalAlignment="Center">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0:F2} / {1:F2} / {2:F2} | {3:F2}">
+                                        <Binding Path="MainGroupGoalEndDistanceMinimum" TargetNullValue="" />
+                                        <Binding Path="MainGroupGoalEndDistanceAverage" TargetNullValue="" />
+                                        <Binding Path="MainGroupGoalEndDistanceMaximum" TargetNullValue="" />
+                                        <Binding Path="MainGroupGoalEndDistanceCentroid" TargetNullValue="" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                         </Grid>
                     </GroupBox>
                     <GroupBox Name="grbInstanceObserved">

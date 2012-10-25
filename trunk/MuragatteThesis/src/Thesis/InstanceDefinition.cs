@@ -84,6 +84,19 @@ namespace Muragatte.Thesis
             get { return _archetypes; }
         }
 
+        public int AgentCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (ObservedArchetype oa in _archetypes)
+                {
+                    count += oa.Archetype.Count;
+                }
+                return count;
+            }
+        }
+
         #endregion
 
         #region Methods
