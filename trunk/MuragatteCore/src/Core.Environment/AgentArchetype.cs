@@ -131,6 +131,7 @@ namespace Muragatte.Core.Environment
 
         public IEnumerable<Agent> CreateAgents(int startID, MultiAgentSystem model)
         {
+            if (startID == 0) startID++;
             List<Agent> agents = new List<Agent>();
             int endID = startID + _iCount;
             for (int i = startID; i < endID; i++)

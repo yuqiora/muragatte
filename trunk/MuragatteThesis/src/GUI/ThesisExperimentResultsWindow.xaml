@@ -31,6 +31,7 @@
                             <TextBlock Text="Name:" />
                             <TextBlock Text="# of Agents:" />
                             <TextBlock Text="Cycles x Length:" />
+                            <TextBlock Text="Time per Step:" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5">
                             <TextBlock Text="{Binding Name}" FontWeight="Bold" />
@@ -43,6 +44,7 @@
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
+                            <TextBlock Text="{Binding Path=Definition.TimePerStep}" />
                         </StackPanel>
                     </Grid>
                     <GroupBox Name="grbExperimentGeneral" DataContext="{Binding Results}">
@@ -50,22 +52,437 @@
                             <CheckBox Content="General" Height="16" Name="chbExperimentGeneral" IsChecked="True" />
                         </GroupBox.Header>
                         <Grid HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentGeneral, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="Margin" Value="3,0" />
+                                </Style>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Start" Grid.Column="1" Grid.Row="0" FontSize="11" />
+                            <TextBlock Text="Overall" Grid.Column="2" Grid.Row="0" FontSize="11" />
+                            <TextBlock Text="End" Grid.Column="3" Grid.Row="0" FontSize="11" />
+                            <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom">
+                                <TextBlock Text="# of Groups:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Stray Agents:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Strays with Goal:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Wandering Strays:" HorizontalAlignment="Left" />
+                            </StackPanel>
+                            <Grid Grid.Column="1" Grid.Row="1" Margin="4,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Start.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Start.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Start.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Start.Minimum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Start.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Start.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Start.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Start.Maximum}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Column="2" Grid.Row="1" Margin="4,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Overall.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Overall.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Minimum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.Overall.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.Overall.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Maximum}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Column="3" Grid.Row="1" Margin="4,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.End.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.End.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.End.Minimum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.End.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.End.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.End.Average, StringFormat=\{0:F2\}}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=GroupCount.End.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayCount.End.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayGoalCount.End.Maximum}" />
+                                </StackPanel>
+                            </Grid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Name="grbExperimentMainGroup" DataContext="{Binding Results}">
                         <GroupBox.Header>
-                            <CheckBox Content="Main Group" Height="16" Name="chbExperimentMainGroup" IsChecked="True" />
+                            <CheckBox Content="Main Group" Height="16" Name="chbExperimentMainGroup" />
                         </GroupBox.Header>
                         <Grid HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentMainGroup, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Size:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" />
+                            <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" DataContext="{Binding Path=MainGroupSize}">
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="Margin" Value="3,0" />
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+                                    <TextBlock Text="Start" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                    <TextBlock Text="Overall" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                    <TextBlock Text="End" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=Start.Minimum}" />
+                                    <TextBlock Text="{Binding Path=Overall.Minimum}" />
+                                    <TextBlock Text="{Binding Path=End.Minimum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=Start.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=Overall.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=End.Average, StringFormat=\{0:F2\}}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=Start.Maximum}" />
+                                    <TextBlock Text="{Binding Path=Overall.Maximum}" />
+                                    <TextBlock Text="{Binding Path=End.Maximum}" />
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Top">
+                                <TextBlock Text="Majority Goals:" />
+                                <TextBlock Text="(Goal, Start, Overall, End)" FontSize="10" />
+                            </StackPanel>
+                            <ListBox Name="lboExperimentMainGroupGoals" Grid.Column="1" Grid.Row="1" MaxHeight="70" ItemsSource="{Binding MainGroupGoalPercentage}" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.IsSharedSizeScope="True">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition SharedSizeGroup="GoalName" />
+                                                <ColumnDefinition SharedSizeGroup="StartPercent" />
+                                                <ColumnDefinition SharedSizeGroup="OverallPercent" />
+                                                <ColumnDefinition SharedSizeGroup="EndPercent" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding GoalName}" Margin="3,0" Grid.Column="0" />
+                                            <TextBlock Text="{Binding StartPercentString}" Margin="3,0" Grid.Column="1" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding PercentString}" Margin="3,0" Grid.Column="2" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding EndPercentString}" Margin="3,0" Grid.Column="3" HorizontalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Text="Goal End Distance:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" />
+                            <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left">
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="Margin" Value="3,0" />
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+                                    <TextBlock Text="Minimum" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                    <TextBlock Text="Average" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                    <TextBlock Text="Maximum" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                    <TextBlock Text="Centroid" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMinimum.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceAverage.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMaximum.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceCentroid.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMinimum.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceAverage.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMaximum.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceCentroid.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMinimum.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceAverage.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMaximum.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceCentroid.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                            </Grid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Name="grbExperimentObserved">
                         <GroupBox.Header>
-                            <CheckBox Content="Observed" Height="16" Name="chbExperimentObserved" IsChecked="True" />
+                            <CheckBox Content="Observed" Height="16" Name="chbExperimentObserved" />
                         </GroupBox.Header>
                         <StackPanel HorizontalAlignment="Center" Visibility="{Binding Path=IsChecked, ElementName=chbExperimentObserved, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ComboBox Height="23" Name="cmdExperimentObserved" Width="120" HorizontalAlignment="Left" ItemsSource="{Binding Path=Results.Observed}" DisplayMemberPath="Name" IsSynchronizedWithCurrentItem="True" />
-                            <ContentControl Name="conExperimentObserved" Content="{Binding Path=Results.Observed}" />
+                            <ContentControl Name="conExperimentObserved" Content="{Binding Path=Results.Observed}">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,5,5,0">
+                                                <TextBlock Text="Name (Count):" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" />
+                                                <TextBlock Text="Goal:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,5,5,0">
+                                                <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="5" HorizontalAlignment="Left" >
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name" />
+                                                            <Binding Path="./Count" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <TextBlock Text="{Binding Path=Goal, TargetNullValue='None'}" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="1" HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="0" Grid.Row="1" Margin="5,0" VerticalAlignment="Bottom">
+                                                <TextBlock Text="# of Groups:" />
+                                                <TextBlock Text="# of Stray Agents:" />
+                                                <TextBlock Text="# in Main Group:" />
+                                                <TextBlock Text="# of Sharing Group Goal:" />
+                                                <TextBlock Text="Majority Group Size:" />
+                                                <TextBlock Text="All in one Group:" />
+                                            </StackPanel>
+                                            <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0">
+                                                <Grid.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                                        <Setter Property="Margin" Value="3,0" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="Start" FontSize="11" />
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="Min" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Start.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Start.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Start.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Start.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Start.Minimum}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="Avg" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Start.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Start.Average, StringFormat=\{0:F2\}}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="2">
+                                                            <TextBlock Text="Max" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Start.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Start.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Start.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Start.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Start.Maximum}" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding Path=AllInOneGroupStart, StringFormat='{}{0:F2}%'}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="Overall" FontSize="11" />
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="Min" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Overall.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Overall.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Overall.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Overall.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Overall.Minimum}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="Avg" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Overall.Average, StringFormat=\{0:F2\}}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="2">
+                                                            <TextBlock Text="Max" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.Overall.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.Overall.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.Overall.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Overall.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Overall.Maximum}" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding Path=AllInOneGroup, StringFormat='{}{0:F2}%'}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="End" FontSize="11" />
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="Min" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.End.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.End.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.End.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.End.Minimum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.End.Minimum}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="Avg" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.End.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.End.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.End.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.End.Average, StringFormat=\{0:F2\}}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.End.Average, StringFormat=\{0:F2\}}" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="2">
+                                                            <TextBlock Text="Max" FontSize="10" />
+                                                            <TextBlock Text="{Binding Path=GroupCount.End.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=StrayCount.End.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=InMainGroupCount.End.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.End.Maximum}" />
+                                                            <TextBlock Text="{Binding Path=MajorityGroupSize.End.Maximum}" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding Path=AllInOneGroupEnd, StringFormat='{}{0:F2}%'}" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <TextBlock Text="Goal End Distance:" Grid.Column="0" Grid.Row="2" Margin="5,0" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <Grid Grid.Column="1" Grid.Row="2" Margin="5,0,5,5" HorizontalAlignment="Left" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <Grid.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                                        <Setter Property="Margin" Value="3,0" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+                                                    <TextBlock Text="Minimum" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                                    <TextBlock Text="Average" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                                    <TextBlock Text="Maximum" FontSize="11" Margin="3,0,3,1" HorizontalAlignment="Left" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="Min" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMinimum.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceAverage.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMaximum.Minimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Avg" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMinimum.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceAverage.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMaximum.Average, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="3">
+                                                    <TextBlock Text="Max" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMinimum.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceAverage.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                    <TextBlock Text="{Binding Path=GoalEndDistanceMaximum.Maximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -96,45 +513,47 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Instance:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding InstanceNumber}" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="5" HorizontalAlignment="Left" />
-                            <TextBlock Text="Start" Grid.Column="1" Grid.Row="1" FontSize="10" />
-                            <TextBlock Text="Min" Grid.Column="2" Grid.Row="1" FontSize="10" />
-                            <TextBlock Text="Avg" Grid.Column="3" Grid.Row="1" FontSize="10" />
-                            <TextBlock Text="Max" Grid.Column="4" Grid.Row="1" FontSize="10" />
-                            <TextBlock Text="End" Grid.Column="5" Grid.Row="1" FontSize="10" />
-                            <TextBlock Text="# of Groups:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding GroupCountStart}" Grid.Column="1" Grid.Row="2" />
-                            <TextBlock Text="{Binding Path=GroupCount.Minimum}" Grid.Column="2" Grid.Row="2" />
-                            <TextBlock Text="{Binding Path=GroupCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="2" />
-                            <TextBlock Text="{Binding Path=GroupCount.Maximum}" Grid.Column="4" Grid.Row="2" />
-                            <TextBlock Text="{Binding GroupCountEnd}" Grid.Column="5" Grid.Row="2" />
-                            <TextBlock Text="# of Stray Agents:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding StrayCountStart}" Grid.Column="1" Grid.Row="3" />
-                            <TextBlock Text="{Binding Path=StrayCount.Minimum}" Grid.Column="2" Grid.Row="3" />
-                            <TextBlock Text="{Binding Path=StrayCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="3" />
-                            <TextBlock Text="{Binding Path=StrayCount.Maximum}" Grid.Column="4" Grid.Row="3" />
-                            <TextBlock Text="{Binding StrayCountEnd}" Grid.Column="5" Grid.Row="3" />
-                            <TextBlock Text="# of Strays with Goal:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding StrayGoalCountStart}" Grid.Column="1" Grid.Row="4" />
-                            <TextBlock Text="{Binding Path=StrayGoalCount.Minimum}" Grid.Column="2" Grid.Row="4" />
-                            <TextBlock Text="{Binding Path=StrayGoalCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="4" />
-                            <TextBlock Text="{Binding Path=StrayGoalCount.Maximum}" Grid.Column="4" Grid.Row="4" />
-                            <TextBlock Text="{Binding StrayGoalCountEnd}" Grid.Column="5" Grid.Row="4" />
-                            <TextBlock Text="# of Wandering Strays:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding StrayWanderCountStart}" Grid.Column="1" Grid.Row="5" />
-                            <TextBlock Text="{Binding Path=StrayWanderCount.Minimum}" Grid.Column="2" Grid.Row="5" />
-                            <TextBlock Text="{Binding Path=StrayWanderCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="5" />
-                            <TextBlock Text="{Binding Path=StrayWanderCount.Maximum}" Grid.Column="4" Grid.Row="5" />
-                            <TextBlock Text="{Binding StrayWanderCountEnd}" Grid.Column="5" Grid.Row="5" />
+                            <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+                                <TextBlock Text="# of Groups:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Stray Agents:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Strays with Goal:" HorizontalAlignment="Left" />
+                                <TextBlock Text="# of Wandering Strays:" HorizontalAlignment="Left" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" >
+                                <TextBlock Text="Start" FontSize="10" />
+                                <TextBlock Text="{Binding GroupCountStart}" />
+                                <TextBlock Text="{Binding StrayCountStart}" />
+                                <TextBlock Text="{Binding StrayGoalCountStart}" />
+                                <TextBlock Text="{Binding StrayWanderCountStart}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" >
+                                <TextBlock Text="Min" FontSize="10" />
+                                <TextBlock Text="{Binding Path=GroupCount.Minimum}" />
+                                <TextBlock Text="{Binding Path=StrayCount.Minimum}" />
+                                <TextBlock Text="{Binding Path=StrayGoalCount.Minimum}" />
+                                <TextBlock Text="{Binding Path=StrayWanderCount.Minimum}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" >
+                                <TextBlock Text="Avg" FontSize="10" />
+                                <TextBlock Text="{Binding Path=GroupCount.Average, StringFormat=\{0:F2\}}" />
+                                <TextBlock Text="{Binding Path=StrayCount.Average, StringFormat=\{0:F2\}}" />
+                                <TextBlock Text="{Binding Path=StrayGoalCount.Average, StringFormat=\{0:F2\}}" />
+                                <TextBlock Text="{Binding Path=StrayWanderCount.Average, StringFormat=\{0:F2\}}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4" >
+                                <TextBlock Text="Max" FontSize="10" />
+                                <TextBlock Text="{Binding Path=GroupCount.Maximum}" />
+                                <TextBlock Text="{Binding Path=StrayCount.Maximum}" />
+                                <TextBlock Text="{Binding Path=StrayGoalCount.Maximum}" />
+                                <TextBlock Text="{Binding Path=StrayWanderCount.Maximum}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="5" >
+                                <TextBlock Text="End" FontSize="10" />
+                                <TextBlock Text="{Binding GroupCountEnd}" />
+                                <TextBlock Text="{Binding StrayCountEnd}" />
+                                <TextBlock Text="{Binding StrayGoalCountEnd}" />
+                                <TextBlock Text="{Binding StrayWanderCountEnd}" />
+                            </StackPanel>
                         </Grid>
                     </GroupBox>
                     <GroupBox Name="grbInstanceMainGroup" DataContext="{Binding Path=Results.InstanceDetails}">
@@ -149,58 +568,98 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,5,5,0">
-                                <TextBlock Text="Start Size:" />
-                                <TextBlock Text="Size (Min/Avg/Max):" />
-                                <TextBlock Text="End Size:" />
+                            <TextBlock Text="Size:" Grid.Column="0" Grid.Row="0" Margin="5,5,5,0" VerticalAlignment="Center" />
+                            <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="5,5,5,0">
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="Margin" Value="3,0" />
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Start" FontSize="10" />
+                                    <TextBlock Text="{Binding MainGroupSizeStart}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Min" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupSize.Minimum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Avg" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupSize.Average, StringFormat=\{0:F2\}}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="Max" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupSize.Maximum}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Text="End" FontSize="10" />
+                                    <TextBlock Text="{Binding MainGroupSizeEnd}" />
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Grid.Column="0" Grid.Row="1" Margin="5,0">
                                 <TextBlock Text="Start Majority Goal:" />
                                 <TextBlock Text="End Majority Goal:" />
                                 <TextBlock Text="Majority Goal Percentage:" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,5,5,0">
-                                <TextBlock Text="{Binding MainGroupSizeStart}" />
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} / {1:F2} / {2}">
-                                            <Binding Path="MainGroupSize.Minimum" />
-                                            <Binding Path="MainGroupSize.Average" />
-                                            <Binding Path="MainGroupSize.Maximum" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding MainGroupSizeEnd}" />
+                            <StackPanel Grid.Column="1" Grid.Row="1" Margin="5,0">
                                 <TextBlock Text="{Binding Path=MainGroupGoalStart, TargetNullValue='None'}" />
                                 <TextBlock Text="{Binding Path=MainGroupGoalEnd, TargetNullValue='None'}" />
-                                <ListBox MaxHeight="50" ItemsSource="{Binding MainGroupGoalPercentage}" Grid.IsSharedSizeScope="True">
+                                <ListBox MaxHeight="50" ItemsSource="{Binding MainGroupGoalPercentage}" HorizontalAlignment="Left" Grid.IsSharedSizeScope="True">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid HorizontalAlignment="Stretch">
+                                            <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition SharedSizeGroup="Goal" />
                                                     <ColumnDefinition SharedSizeGroup="Percentage" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding GoalName}" Grid.Column="0" />
+                                                <TextBlock Text="{Binding GoalName}" Grid.Column="0" Margin="5,0" />
                                                 <TextBlock Text="{Binding PercentString}" Grid.Column="1" HorizontalAlignment="Right" Margin="5,0" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
                             </StackPanel>
-                            <StackPanel Grid.Column="0" Grid.Row="1" Margin="5,0,5,5">
-                                <TextBlock Text="Goal End Distance:"/>
-                                <TextBlock Text="(Min / Avg / Max | Cen)" FontSize="10"/>
-                            </StackPanel>
-                            <TextBlock Grid.Column="1" Grid.Row="1" Margin="5,0,5,5" VerticalAlignment="Center">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0:F2} / {1:F2} / {2:F2} | {3:F2}">
-                                        <Binding Path="MainGroupGoalEndDistanceMinimum" TargetNullValue="" />
-                                        <Binding Path="MainGroupGoalEndDistanceAverage" TargetNullValue="" />
-                                        <Binding Path="MainGroupGoalEndDistanceMaximum" TargetNullValue="" />
-                                        <Binding Path="MainGroupGoalEndDistanceCentroid" TargetNullValue="" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
+                            <TextBlock Text="Goal End Distance:" Grid.Column="0" Grid.Row="2" Margin="5,0" VerticalAlignment="Center" Visibility="{Binding Path=HasMainGroupGoalEnd, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="5,0,5,5" Visibility="{Binding Path=HasMainGroupGoalEnd, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="Margin" Value="3,0" />
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Minimum" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMinimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Average" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceAverage, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Maximum" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceMaximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="Centroid" FontSize="10" />
+                                    <TextBlock Text="{Binding Path=MainGroupGoalEndDistanceCentroid, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                </StackPanel>
+                            </Grid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Name="grbInstanceObserved">
@@ -232,12 +691,6 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                                 <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <TextBlock Text="Name (Count):" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" />
                                             <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="5" HorizontalAlignment="Left" >
@@ -248,51 +701,63 @@
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
-                                            <TextBlock Text="Start" Grid.Column="1" Grid.Row="1" FontSize="10" />
-                                            <TextBlock Text="Min" Grid.Column="2" Grid.Row="1" FontSize="10" />
-                                            <TextBlock Text="Avg" Grid.Column="3" Grid.Row="1" FontSize="10" />
-                                            <TextBlock Text="Max" Grid.Column="4" Grid.Row="1" FontSize="10" />
-                                            <TextBlock Text="End" Grid.Column="5" Grid.Row="1" FontSize="10" />
-                                            <TextBlock Text="# of Groups:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding GroupCountStart}" Grid.Column="1" Grid.Row="2" />
-                                            <TextBlock Text="{Binding Path=GroupCount.Minimum}" Grid.Column="2" Grid.Row="2" />
-                                            <TextBlock Text="{Binding Path=GroupCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="2" />
-                                            <TextBlock Text="{Binding Path=GroupCount.Maximum}" Grid.Column="4" Grid.Row="2" />
-                                            <TextBlock Text="{Binding GroupCountEnd}" Grid.Column="5" Grid.Row="2" />
-                                            <TextBlock Text="# of Stray Agents:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding StrayCountStart}" Grid.Column="1" Grid.Row="3" />
-                                            <TextBlock Text="{Binding Path=StrayCount.Minimum}" Grid.Column="2" Grid.Row="3" />
-                                            <TextBlock Text="{Binding Path=StrayCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="3" />
-                                            <TextBlock Text="{Binding Path=StrayCount.Maximum}" Grid.Column="4" Grid.Row="3" />
-                                            <TextBlock Text="{Binding StrayCountEnd}" Grid.Column="5" Grid.Row="3" />
-                                            <TextBlock Text="# in Main Group:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding InMainGroupCountStart}" Grid.Column="1" Grid.Row="4" />
-                                            <TextBlock Text="{Binding Path=InMainGroupCount.Minimum}" Grid.Column="2" Grid.Row="4" />
-                                            <TextBlock Text="{Binding Path=InMainGroupCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="4" />
-                                            <TextBlock Text="{Binding Path=InMainGroupCount.Maximum}" Grid.Column="4" Grid.Row="4" />
-                                            <TextBlock Text="{Binding InMainGroupCountEnd}" Grid.Column="5" Grid.Row="4" />
-                                            <TextBlock Text="# of Sharing Group Goal:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding SharedGroupGoalCountStart}" Grid.Column="1" Grid.Row="5" />
-                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Minimum}" Grid.Column="2" Grid.Row="5" />
-                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="5" />
-                                            <TextBlock Text="{Binding Path=SharedGroupGoalCount.Maximum}" Grid.Column="4" Grid.Row="5" />
-                                            <TextBlock Text="{Binding SharedGroupGoalCountEnd}" Grid.Column="5" Grid.Row="5" />
-                                            <TextBlock Text="Majority Group Size:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding MajorityGroupSizeStart}" Grid.Column="1" Grid.Row="6" />
-                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Minimum}" Grid.Column="2" Grid.Row="6" />
-                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Average, StringFormat=\{0:F2\}}" Grid.Column="3" Grid.Row="6" />
-                                            <TextBlock Text="{Binding Path=MajorityGroupSize.Maximum}" Grid.Column="4" Grid.Row="6" />
-                                            <TextBlock Text="{Binding MajorityGroupSizeEnd}" Grid.Column="5" Grid.Row="6" />
-                                            <TextBlock Text="All in one Group:" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding AllInOneGroupStart}" Grid.Column="1" Grid.Row="7" />
-                                            <TextBlock Text="{Binding AllInOneGroup, StringFormat='{}{0:F2}%'}" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="7" />
-                                            <TextBlock Text="{Binding AllInOneGroupEnd}" Grid.Column="5" Grid.Row="7" />
-                                            <TextBlock Text="Goal:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding Path=Goal, TargetNullValue='None'}" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="8" HorizontalAlignment="Left" />
-                                            <TextBlock Text="End Distance:" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding GoalEndDistanceMinimum, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="2" Grid.Row="9" />
-                                            <TextBlock Text="{Binding GoalEndDistanceAverage, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="3" Grid.Row="9" />
-                                            <TextBlock Text="{Binding GoalEndDistanceMaximum, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="4" Grid.Row="9" />
+                                            <TextBlock Text="Goal:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Goal, TargetNullValue='None'}" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="1" HorizontalAlignment="Left" />
+                                            <StackPanel Grid.Column="0" Grid.Row="2" VerticalAlignment="Bottom">
+                                                <TextBlock Text="# of Groups:" HorizontalAlignment="Left" />
+                                                <TextBlock Text="# of Stray Agents:" HorizontalAlignment="Left" />
+                                                <TextBlock Text="# in Main Group:" HorizontalAlignment="Left" />
+                                                <TextBlock Text="# of Sharing Group Goal:" HorizontalAlignment="Left" />
+                                                <TextBlock Text="Majority Group Size:" HorizontalAlignment="Left" />
+                                                <TextBlock Text="All in one Group:" HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Top">
+                                                <TextBlock Text="Start" FontSize="10" />
+                                                <TextBlock Text="{Binding GroupCountStart}" />
+                                                <TextBlock Text="{Binding StrayCountStart}" />
+                                                <TextBlock Text="{Binding InMainGroupCountStart}" />
+                                                <TextBlock Text="{Binding SharedGroupGoalCountStart}" />
+                                                <TextBlock Text="{Binding MajorityGroupSizeStart}" />
+                                                <TextBlock Text="{Binding AllInOneGroupStart}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Top">
+                                                <TextBlock Text="Min" FontSize="10" />
+                                                <TextBlock Text="{Binding Path=GroupCount.Minimum}" />
+                                                <TextBlock Text="{Binding Path=StrayCount.Minimum}" />
+                                                <TextBlock Text="{Binding Path=InMainGroupCount.Minimum}" />
+                                                <TextBlock Text="{Binding Path=SharedGroupGoalCount.Minimum}" />
+                                                <TextBlock Text="{Binding Path=MajorityGroupSize.Minimum}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3" Grid.Row="2" VerticalAlignment="Top">
+                                                <TextBlock Text="Avg" FontSize="10" />
+                                                <TextBlock Text="{Binding Path=GroupCount.Average, StringFormat=\{0:F2\}}" />
+                                                <TextBlock Text="{Binding Path=StrayCount.Average, StringFormat=\{0:F2\}}" />
+                                                <TextBlock Text="{Binding Path=InMainGroupCount.Average, StringFormat=\{0:F2\}}" />
+                                                <TextBlock Text="{Binding Path=SharedGroupGoalCount.Average, StringFormat=\{0:F2\}}" />
+                                                <TextBlock Text="{Binding Path=MajorityGroupSize.Average, StringFormat=\{0:F2\}}" />
+                                                <TextBlock Text="{Binding AllInOneGroup, StringFormat='{}{0:F2}%'}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="4" Grid.Row="2" VerticalAlignment="Top">
+                                                <TextBlock Text="Max" FontSize="10" />
+                                                <TextBlock Text="{Binding Path=GroupCount.Maximum}" />
+                                                <TextBlock Text="{Binding Path=StrayCount.Maximum}" />
+                                                <TextBlock Text="{Binding Path=InMainGroupCount.Maximum}" />
+                                                <TextBlock Text="{Binding Path=SharedGroupGoalCount.Maximum}" />
+                                                <TextBlock Text="{Binding Path=MajorityGroupSize.Maximum}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="5" Grid.Row="2" VerticalAlignment="Top">
+                                                <TextBlock Text="End" FontSize="10" />
+                                                <TextBlock Text="{Binding GroupCountEnd}" />
+                                                <TextBlock Text="{Binding StrayCountEnd}" />
+                                                <TextBlock Text="{Binding InMainGroupCountEnd}" />
+                                                <TextBlock Text="{Binding SharedGroupGoalCountEnd}" />
+                                                <TextBlock Text="{Binding MajorityGroupSizeEnd}" />
+                                                <TextBlock Text="{Binding AllInOneGroupEnd}" />
+                                            </StackPanel>
+                                            <TextBlock Text="End Distance:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Text="{Binding GoalEndDistanceMinimum, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="2" Grid.Row="3" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Text="{Binding GoalEndDistanceAverage, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="3" Grid.Row="3" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Text="{Binding GoalEndDistanceMaximum, StringFormat=\{0:F2\}, TargetNullValue=''}" Grid.Column="4" Grid.Row="3" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
@@ -322,21 +787,12 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="5">
-                                <TextBlock Text="Step (@ Instance):" />
                                 <TextBlock Text="# of Groups:" />
                                 <TextBlock Text="# of Stray Agents:" />
                                 <TextBlock Text="# of Strays with Goal:" />
                                 <TextBlock Text="# of Wandering Strays:" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5">
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} (@ {1})">
-                                            <Binding Path="Step" />
-                                            <Binding Path="../InstanceNumber" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
                                 <TextBlock Text="{Binding GroupCount}" />
                                 <TextBlock Text="{Binding StrayCount}" />
                                 <TextBlock Text="{Binding StrayGoalCount}" />
@@ -361,34 +817,57 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,5,5,0">
                                                 <TextBlock Text="Group ID:" />
                                                 <TextBlock Text="Size:" />
                                                 <TextBlock Text="Is Main:" />
                                                 <TextBlock Text="Centroid Direction:" />
                                                 <TextBlock Text="Centroid Speed:" />
                                                 <TextBlock Text="Majority Goal:" />
-                                                <TextBlock Text="Distance (Min/Avg/Max):" />
-                                                <TextBlock Text="Centroid Distance:" />
                                             </StackPanel>
-                                            <StackPanel Grid.Column="1" Margin="5">
+                                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,5,5,0">
                                                 <TextBlock Text="{Binding ID}" />
                                                 <TextBlock Text="{Binding Size}" />
                                                 <TextBlock Text="{Binding IsMain}" />
                                                 <TextBlock Text="{Binding Path=Direction, StringFormat='{}{0:F2}°', Converter={StaticResource DirectionToDegreesConverter}}" />
                                                 <TextBlock Text="{Binding Path=Speed, StringFormat=\{0:F3\}}" />
                                                 <TextBlock Text="{Binding Path=MajorityGoal, TargetNullValue='None'}" />
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0:F2} / {1:F2} / {2:F2}">
-                                                            <Binding Path="MinimumDistance" TargetNullValue="" />
-                                                            <Binding Path="AverageDistance" TargetNullValue="" />
-                                                            <Binding Path="MaximumDistance" TargetNullValue="" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                                <TextBlock Text="{Binding Path=CentroidDistance, StringFormat=\{0:F2\}, TargetNullValue=''}" />
                                             </StackPanel>
+                                            <TextBlock Text="Goal Distance:" Grid.Column="0" Grid.Row="1" Margin="5,0" VerticalAlignment="Center" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0,5,5" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <Grid.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                                        <Setter Property="Margin" Value="3,0" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="Minimum" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=MinimumDistance, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="Average" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=AverageDistance, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Maximum" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=MaximumDistance, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="3">
+                                                    <TextBlock Text="Centroid" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=CentroidDistance, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                            </Grid>
                                         </Grid>
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
@@ -409,17 +888,21 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Column="0" Grid.Row="0"  Margin="5,5,5,0">
                                                 <TextBlock Text="Name (Count):" />
-                                                <TextBlock Text="# of Groups / Stray:" />
+                                                <TextBlock Text="Goal:" />
+                                                <TextBlock Text="# of Groups:" />
+                                                <TextBlock Text="# of Stray:" />
                                                 <TextBlock Text="# in Main Group:" />
                                                 <TextBlock Text="# of Sharing Group Goal:" />
                                                 <TextBlock Text="Majority Group Size:" />
                                                 <TextBlock Text="All in one Group:" />
-                                                <TextBlock Text="Goal:" />
-                                                <TextBlock Text="Distance (Min/Avg/Max):" />
                                             </StackPanel>
-                                            <StackPanel Grid.Column="1" Margin="5">
+                                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,5,5,0">
                                                 <TextBlock>
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0} ({1})">
@@ -428,29 +911,40 @@
                                                         </MultiBinding>
                                                     </TextBlock.Text>
                                                 </TextBlock>
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0} / {1}">
-                                                            <Binding Path="GroupCount" />
-                                                            <Binding Path="StrayCount" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
+                                                <TextBlock Text="{Binding Path=Goal, TargetNullValue='None'}" />
+                                                <TextBlock Text="{Binding GroupCount}" />
+                                                <TextBlock Text="{Binding StrayCount}" />
                                                 <TextBlock Text="{Binding InMainGroupCount}" />
                                                 <TextBlock Text="{Binding SharedGroupGoalCount}" />
                                                 <TextBlock Text="{Binding MajorityGroupSize}" />
                                                 <TextBlock Text="{Binding AllInOneGroup}" />
-                                                <TextBlock Text="{Binding Path=Goal, TargetNullValue='None'}" />
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0:F2} / {1:F2} / {2:F2}">
-                                                            <Binding Path="GoalDistanceMinimum" TargetNullValue="" />
-                                                            <Binding Path="GoalDistanceAverage" TargetNullValue="" />
-                                                            <Binding Path="GoalDistanceMaximum" TargetNullValue="" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
                                             </StackPanel>
+                                            <TextBlock Text="Goal Distance:" Grid.Column="0" Grid.Row="1" Margin="5,0" VerticalAlignment="Center" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="5,0,5,5" Visibility="{Binding Path=HasGoal, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <Grid.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                                        <Setter Property="Margin" Value="3,0" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="Minimum" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalDistanceMinimum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="Average" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalDistanceAverage, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Maximum" FontSize="10" />
+                                                    <TextBlock Text="{Binding Path=GoalDistanceMaximum, StringFormat=\{0:F2\}, TargetNullValue=''}" />
+                                                </StackPanel>
+                                            </Grid>
                                         </Grid>
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
