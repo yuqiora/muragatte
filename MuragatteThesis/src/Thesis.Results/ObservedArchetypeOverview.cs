@@ -109,6 +109,11 @@ namespace Muragatte.Thesis.Results
             get { return _goal; }
         }
 
+        public bool HasGoal
+        {
+            get { return _goal != null; }
+        }
+
         public double? GoalDistanceMinimum
         {
             get { return _dMinDistance; }
@@ -185,7 +190,7 @@ namespace Muragatte.Thesis.Results
                 }
             }
             _iGroupCount = groups.Count;
-            _bInOneGroup = groups.Count == 1;
+            _bInOneGroup = _iGroupCount == 1 && _iStray == 0;
             KeyValuePair<int, int> majority = new KeyValuePair<int, int>(-1, int.MinValue);
             foreach (KeyValuePair<int, int> g in groups)
             {

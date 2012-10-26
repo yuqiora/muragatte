@@ -15,22 +15,23 @@ using System.Text;
 
 namespace Muragatte.Thesis.Results
 {
-    public class NumericSummary
+    public class DoubleNumericSummary
     {
         #region Fields
 
-        private int _minimum = int.MaxValue;
-        private int _maximum = int.MinValue;
-        private double _average = 0;
-        private int _sum = 0;
+        private double? _minimum = null;
+        private double? _maximum = null;
+        private double? _average = null;
+        private double? _sum = null;
+        private int _iInvalidUpdates = 0;
 
         #endregion
 
         #region Constructors
 
-        public NumericSummary() { }
+        public DoubleNumericSummary() { }
 
-        public NumericSummary(int min, int max, double avg, int sum)
+        public DoubleNumericSummary(double min, double max, double avg, double sum)
         {
             _minimum = min;
             _maximum = max;
@@ -42,22 +43,22 @@ namespace Muragatte.Thesis.Results
 
         #region Properties
 
-        public int Minimum
+        public double? Minimum
         {
             get { return _minimum; }
         }
 
-        public int Maximum
+        public double? Maximum
         {
             get { return _maximum; }
         }
 
-        public double Average
+        public double? Average
         {
             get { return _average; }
         }
 
-        public int Sum
+        public double? Sum
         {
             get { return _sum; }
         }
@@ -66,16 +67,31 @@ namespace Muragatte.Thesis.Results
 
         #region Methods
 
-        public void UpdateMinMaxSum(int value)
+        public void UpdateMinMaxSum(double? value)
         {
-            if (value < _minimum) _minimum = value;
-            if (value > _maximum) _maximum = value;
-            _sum += value;
+            if (value.HasValue)
+            {
+                if (!_minimum.HasValue || value.Value < _minimum.Value) _minimum = value.Value;
+                if (!_maximum.HasValue || value.Value > _maximum.Value) _maximum = value.Value;
+                if (_sum.HasValue)
+                {
+                    _sum += value;
+                }
+                else
+                {
+                    _sum = value.Value;
+                }
+            }
+            else
+            {
+                _iInvalidUpdates++;
+            }
         }
 
         public void UpdateAverage(double count)
         {
-            if (count > 0)
+            count -= _iInvalidUpdates;
+            if (count > 0 && _sum.HasValue)
             {
                 _average = _sum / count;
             }

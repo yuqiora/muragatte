@@ -142,6 +142,11 @@ namespace Muragatte.Thesis.Results
             get { return _stepDetails.Last().MainGroup.MajorityGoal; }
         }
 
+        public bool HasMainGroupGoalEnd
+        {
+            get { return _stepDetails.Last().MainGroup.HasGoal; }
+        }
+
         public IEnumerable<GoalInstancePercentage> MainGroupGoalPercentage
         {
             get { return _mainGroupGoalPercentage; }
@@ -261,155 +266,6 @@ namespace Muragatte.Thesis.Results
             _strayWanderCount.UpdateAverage(count);
             _strayGoalCount.UpdateAverage(count);
             _mainGroupSize.UpdateAverage(count);
-        }
-
-        #endregion
-    }
-
-    public class GoalInstancePercentage
-    {
-        #region Fields
-
-        protected Goal _goal;
-        protected double _dPercent;
-
-        #endregion
-
-        #region Constructors
-
-        public GoalInstancePercentage(Goal goal, double percent)
-        {
-            _goal = goal;
-            Percent = percent;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public Goal Goal
-        {
-            get { return _goal; }
-        }
-
-        public double Percent
-        {
-            get { return _dPercent; }
-            set { _dPercent = InRange(value); }
-        }
-
-        public string GoalName
-        {
-            get { return _goal == null ? "None" : _goal.Name; }
-        }
-
-        public string PercentString
-        {
-            get { return CreatePercentString(_dPercent); }
-        }
-
-        #endregion
-
-        #region Methods
-
-        protected string CreatePercentString(double value)
-        {
-            return string.Format("{0:F2}%", value);
-        }
-
-        protected double InRange(double value)
-        {
-            if (_dPercent < 0) return 0;
-            if (_dPercent > 100) return 100;
-            return value;
-        }
-
-        #endregion
-    }
-
-    public class GoalExperimentPercentage : GoalInstancePercentage
-    {
-        #region Fields
-
-        private double _dStart = 0;
-        private double _dEnd = 0;
-        private int _iStartCount = 0;
-        private int _iEndCount = 0;
-        private int _iOverallCount = 0;
-
-        #endregion
-
-        #region Constructors
-
-        public GoalExperimentPercentage() : this(null, 0, 0, 0) { }
-
-        public GoalExperimentPercentage(Goal goal, double start, double overall, double end)
-            : base(goal, overall)
-        {
-            StartPercent = start;
-            EndPercent = end;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public double StartPercent
-        {
-            get { return _dStart; }
-            set { _dStart= InRange(value); }
-        }
-
-        public double EndPercent
-        {
-            get { return _dEnd; }
-            set { _dEnd= InRange(value); }
-        }
-
-        public string StartPercentString
-        {
-            get { return CreatePercentString(_dStart); }
-        }
-
-        public string EndPercentString
-        {
-            get { return CreatePercentString(_dEnd); }
-        }
-
-        public bool NotZero
-        {
-            get { return _dPercent + _dEnd + _dStart > 0; }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public void IncreaseStart()
-        {
-            _iStartCount++;
-        }
-
-        public void IncreaseEnd()
-        {
-            _iEndCount++;
-        }
-
-        public void IncreaseOverall()
-        {
-            _iOverallCount++;
-        }
-
-        public void ConvertCountToPercent(double subtotal, double total)
-        {
-            StartPercent = CountToPercent(_iStartCount, subtotal);
-            EndPercent = CountToPercent(_iEndCount, subtotal);
-            Percent = CountToPercent(_iOverallCount, total);
-        }
-
-        private double CountToPercent(int value, double count)
-        {
-            return 100d * value / count;
         }
 
         #endregion

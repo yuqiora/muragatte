@@ -21,9 +21,6 @@ namespace Muragatte.Thesis.Results
         #region Fields
 
         private List<InstanceResults> _instances = new List<InstanceResults>();
-        //private int _iAgentCount = 0;
-        //private int _iRepeatCount = 0;
-        //private int _iLength = 0;
         private ExtendedNumericSummary _groupCount = new ExtendedNumericSummary();
         private ExtendedNumericSummary _strayCount = new ExtendedNumericSummary();
         private ExtendedNumericSummary _strayWanderCount = new ExtendedNumericSummary();
@@ -41,11 +38,8 @@ namespace Muragatte.Thesis.Results
 
         #region Constructors
 
-        public ExperimentResults(/*int repeatCount, int Length, int agentCount, */IEnumerable<Instance> instances)
+        public ExperimentResults(IEnumerable<Instance> instances)
         {
-            //_iRepeatCount = repeatCount;
-            //_iLength = Length;
-            //_iAgentCount = agentCount;
             foreach (Instance i in instances)
             {
                 _instances.Add(i.Results);
@@ -62,21 +56,6 @@ namespace Muragatte.Thesis.Results
         {
             get { return _instances; }
         }
-
-        //public int AgentCount
-        //{
-        //    get { return _iAgentCount; }
-        //}
-
-        //public int RepeatCount
-        //{
-        //    get { return _iRepeatCount; }
-        //}
-
-        //public int Length
-        //{
-        //    get { return _iLength; }
-        //}
 
         public ExtendedNumericSummary GroupCount
         {
@@ -149,18 +128,11 @@ namespace Muragatte.Thesis.Results
             int countNoEndGoal = 0;
             foreach (InstanceResults ir in _instances)
             {
-                _groupCount.UpdateMinMaxSum(ir.GroupCountStart, ir.GroupCount.Sum, ir.GroupCountEnd);
-                _strayCount.UpdateMinMaxSum(ir.StrayCountStart, ir.StrayCount.Sum, ir.StrayCountEnd);
-                _strayWanderCount.UpdateMinMaxSum(ir.StrayWanderCountStart, ir.StrayWanderCount.Sum, ir.StrayWanderCountEnd);
-                _strayGoalCount.UpdateMinMaxSum(ir.StrayGoalCountStart, ir.StrayGoalCount.Sum, ir.StrayGoalCountEnd);
-                //_groupCount.UpdateStartMinMaxSum(ir.GroupCountStart);
-                //_groupCount.UpdateEndMinMaxSum(ir.GroupCountEnd);
-                //_strayCount.UpdateStartMinMaxSum(ir.StrayCountStart);
-                //_strayCount.UpdateEndMinMaxSum(ir.StrayCountEnd);
-                //_strayWanderCount.UpdateStartMinMaxSum(ir.StrayWanderCountStart);
-                //_strayWanderCount.UpdateEndMinMaxSum(ir.StrayWanderCountEnd);
-                //_strayGoalCount.UpdateStartMinMaxSum(ir.StrayGoalCountStart);
-                //_strayGoalCount.UpdateEndMinMaxSum(ir.StrayGoalCountEnd);
+                _groupCount.UpdateMinMaxSum(ir.GroupCountStart, ir.GroupCountEnd);
+                _strayCount.UpdateMinMaxSum(ir.StrayCountStart, ir.StrayCountEnd);
+                _strayWanderCount.UpdateMinMaxSum(ir.StrayWanderCountStart, ir.StrayWanderCountEnd);
+                _strayGoalCount.UpdateMinMaxSum(ir.StrayGoalCountStart, ir.StrayGoalCountEnd);
+                _mainGroupSize.UpdateMinMaxSum(ir.MainGroupSizeStart, ir.MainGroupSizeEnd);
                 _mainGroupGoalEndDistanceMinimum.UpdateMinMaxSum(ir.MainGroupGoalEndDistanceMinimum);
                 _mainGroupGoalEndDistanceMaximum.UpdateMinMaxSum(ir.MainGroupGoalEndDistanceMaximum);
                 _mainGroupGoalEndDistanceAverage.UpdateMinMaxSum(ir.MainGroupGoalEndDistanceAverage);
@@ -168,10 +140,11 @@ namespace Muragatte.Thesis.Results
                 if (ir.MainGroupGoalEnd == null) countNoEndGoal++;
                 foreach (StepOverview so in ir.StepDetails)
                 {
-                    //_groupCount.UpdateOverallMinMaxSum(so.GroupCount);
-                    //_strayCount.UpdateOverallMinMaxSum(so.StrayCount);
-                    //_strayWanderCount.UpdateOverallMinMaxSum(so.StrayWanderCount);
-                    //_strayGoalCount.UpdateOverallMinMaxSum(so.StrayGoalCount);
+                    _groupCount.UpdateOverallMinMaxSum(so.GroupCount);
+                    _strayCount.UpdateOverallMinMaxSum(so.StrayCount);
+                    _strayWanderCount.UpdateOverallMinMaxSum(so.StrayWanderCount);
+                    _strayGoalCount.UpdateOverallMinMaxSum(so.StrayGoalCount);
+                    _mainGroupSize.UpdateOverallMinMaxSum(so.MainGroup.Size);
                     if (so.MainGroup.HasGoal)
                     {
                         if (!goals.ContainsKey(so.MainGroup.MajorityGoal))
@@ -200,6 +173,7 @@ namespace Muragatte.Thesis.Results
             _strayCount.UpdateAverage(countStartEnd, countOverall, countStartEnd);
             _strayWanderCount.UpdateAverage(countStartEnd, countOverall, countStartEnd);
             _strayGoalCount.UpdateAverage(countStartEnd, countOverall, countStartEnd);
+            _mainGroupSize.UpdateAverage(countStartEnd, countOverall, countStartEnd);
             _mainGroupGoalEndDistanceMinimum.UpdateAverage(countStartEnd);
             _mainGroupGoalEndDistanceMaximum.UpdateAverage(countStartEnd);
             _mainGroupGoalEndDistanceAverage.UpdateAverage(countStartEnd);

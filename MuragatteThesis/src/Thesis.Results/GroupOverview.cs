@@ -41,7 +41,7 @@ namespace Muragatte.Thesis.Results
             _source = source;
             _goal = _source.GetGoal();
             _centroid = record[-_source.ID];
-            Distances();
+            Distances(record);
         }
 
         #endregion
@@ -118,7 +118,7 @@ namespace Muragatte.Thesis.Results
 
         #region Methods
 
-        private void Distances()
+        private void Distances(HistoryRecord record)
         {
             if (_goal != null)
             {
@@ -128,7 +128,7 @@ namespace Muragatte.Thesis.Results
                 _dDistanceSum = 0;
                 foreach (Agent a in _source)
                 {
-                    double distance = Vector2.Distance(a.Position, _goal.Position);
+                    double distance = Vector2.Distance(record[a.ID].Position, _goal.Position);
                     if (distance < _dMinimumDistance) _dMinimumDistance = distance;
                     if (distance > _dMaximumDistance) _dMaximumDistance = distance;
                     _dDistanceSum += distance;
