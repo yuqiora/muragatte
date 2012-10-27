@@ -280,12 +280,12 @@ namespace Muragatte.Visual.GUI
             Close();
         }
 
-        private void chbSelectAll_CheckedUnchecked(object sender, RoutedEventArgs e)
+        private void SelectAll_CheckedUnchecked(object sender, RoutedEventArgs e)
         {
             Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
             foreach (Appearance a in _views[tabOptions.SelectedIndex])
             {
-                selection(a, chbSelectAll.IsChecked.Value);
+                selection(a, ((CheckBox)sender).IsChecked.Value);
             }
         }
 
