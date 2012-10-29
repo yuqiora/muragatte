@@ -109,7 +109,7 @@ namespace Muragatte.Thesis.GUI
         private void spbStyles_Click(object sender, RoutedEventArgs e)
         {
             Visual.DefaultValues.Scale = 5;
-            Visual.GUI.VisualOptionsWindow.StyleEditorDialog(GetStyles);
+            Visual.GUI.VisualOptionsWindow.StyleEditorDialog(this, GetStyles);
         }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)

@@ -39,6 +39,11 @@ namespace Muragatte.Visual.Shapes
             get { return "o-"; }
         }
 
+        public override ShapeLabel Label
+        {
+            get { return ShapeLabel.PointingCircle; }
+        }
+
         public static PointingCircleShape Instance
         {
             get { return _shape; }

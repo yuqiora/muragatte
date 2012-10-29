@@ -22,9 +22,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -71,6 +72,9 @@
     <Compile Include="src\Visual.Converters\ObjectToBoolConverter.cs" />
     <Compile Include="src\Visual.Converters\TabToSelectionVisibilityConverter.cs" />
     <Compile Include="src\Visual.Converters\ShapeToSymbolConverter.cs" />
+    <Compile Include="src\Visual.IO\XmlColor.cs" />
+    <Compile Include="src\Visual.IO\XmlShape.cs" />
+    <Compile Include="src\Visual.IO\XmlStyles.cs" />
     <Compile Include="src\Visual.Shapes\Coordinates.cs" />
     <Compile Include="src\Visual.Shapes\ArcShape.cs" />
     <Compile Include="src\Visual.Shapes\EllipseShape.cs" />
@@ -79,6 +83,7 @@
     <Compile Include="src\Visual.Shapes\QuadPixelShape.cs" />
     <Compile Include="src\Visual.Shapes\RectangleShape.cs" />
     <Compile Include="src\Visual.Shapes\Shape.cs" />
+    <Compile Include="src\Visual.Shapes\ShapeLabel.cs" />
     <Compile Include="src\Visual.Shapes\TriangleShape.cs" />
     <Compile Include="src\Visual.Styles\NeighbourhoodStyle.cs" />
     <Compile Include="src\Visual.Styles\Style.cs" />
@@ -143,6 +148,10 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -150,4 +159,18 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen
+      BuildAssemblyName="$(TargetFileName)"
+      BuildAssemblyPath="$(OutputPath)"
+      References="@(ReferencePath)"
+      ShouldGenerateSerializer="true"
+      UseProxyTypes="false"
+      KeyContainer="$(KeyContainerName)"
+      KeyFile="$(KeyOriginatorFile)"
+      DelaySign="$(DelaySign)"
+      ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
 </Project>

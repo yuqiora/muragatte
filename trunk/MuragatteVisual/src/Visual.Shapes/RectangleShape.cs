@@ -39,6 +39,11 @@ namespace Muragatte.Visual.Shapes
             get { return "[]"; }
         }
 
+        public override ShapeLabel Label
+        {
+            get { return ShapeLabel.Rectangle; }
+        }
+
         public static RectangleShape Instance
         {
             get { return _shape; }

@@ -15,7 +15,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 using Muragatte.Common;
+using Muragatte.Visual.IO;
 using Muragatte.Visual.Shapes;
 
 namespace Muragatte.Visual.Styles
@@ -64,6 +66,7 @@ namespace Muragatte.Visual.Styles
 
         #region Properties
 
+        [XmlElement(Type = typeof(XmlShape))]
         public Shape Shape
         {
             get { return _shape; }
@@ -75,6 +78,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color PrimaryColor
         {
             get { return _primaryColor; }
@@ -85,6 +89,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color SecondaryColor
         {
             get { return _secondaryColor; }
@@ -95,6 +100,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(ElementName = "Radius")]
         public double UnitRadius
         {
             get { return _dUnitRadius; }
@@ -106,6 +112,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlIgnore]
         public int Radius
         {
             get { return _iRadius; }
