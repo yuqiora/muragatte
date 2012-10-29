@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Xml.Serialization;
+using Muragatte.Visual.IO;
 
 namespace Muragatte.Visual.Styles
 {
@@ -21,7 +23,7 @@ namespace Muragatte.Visual.Styles
     {
         #region Fields
 
-        protected Color _color = DefaultValues.AGENT_COLOR;
+        private Color _color = DefaultValues.AGENT_COLOR;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,6 +44,7 @@ namespace Muragatte.Visual.Styles
 
         #region Properties
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color Color
         {
             get { return _color; }
@@ -56,7 +59,7 @@ namespace Muragatte.Visual.Styles
 
         #region Methods
 
-        protected void NotifyPropertyChanged(String propertyName)
+        private void NotifyPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
             {

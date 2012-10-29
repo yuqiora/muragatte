@@ -48,6 +48,11 @@ namespace Muragatte.Visual.Shapes
             get { return "(<"; }
         }
 
+        public override ShapeLabel Label
+        {
+            get { return ShapeLabel.Arc; }
+        }
+
         public static ArcShape Instance
         {
             get { return _shape; }

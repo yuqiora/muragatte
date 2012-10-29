@@ -15,8 +15,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
+using Muragatte.Visual.IO;
 using Muragatte.Visual.Shapes;
 
 namespace Muragatte.Visual.Styles
@@ -68,34 +70,9 @@ namespace Muragatte.Visual.Styles
             _shape = shape;
             _primaryColor = primaryColor;
             _secondaryColor = secondaryColor;
-            if (neighbourhood == null)
-            {
-                _neighbourhood = new NeighbourhoodStyle();
-            }
-            else
-            {
-                _neighbourhood = neighbourhood;
-                _bNeighbourhood = true;
-            }
-            Color c = primaryColor.NotTransparent() ? primaryColor : secondaryColor;
-            if (track == null)
-            {
-                _track = new TrackStyle(c);
-            }
-            else
-            {
-                _track = track;
-                _bTrack = true;
-            }
-            if (trail == null)
-            {
-                _trail = new TrailStyle(c, DefaultValues.TRAIL_LENGTH);
-            }
-            else
-            {
-                _trail = trail;
-                _bTrail = true;
-            }
+            NullNeighbourhood = neighbourhood;
+            NullTrack = track;
+            NullTrail = trail;
             Rescale(DefaultValues.Scale);
         }
 
@@ -115,6 +92,7 @@ namespace Muragatte.Visual.Styles
 
         #region Properties
 
+        [XmlAttribute]
         public string Name
         {
             get { return _sName; }
@@ -125,6 +103,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(Type = typeof(XmlShape))]
         public Shape Shape
         {
             get { return _shape; }
@@ -136,16 +115,19 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlIgnore]
         public int Width
         {
             get { return _iWidth; }
         }
 
+        [XmlIgnore]
         public int Height
         {
             get { return _iHeight; }
         }
 
+        [XmlElement(ElementName = "Width")]
         public double UnitWidth
         {
             get { return _dUnitWidth; }
@@ -158,6 +140,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(ElementName = "Height")]
         public double UnitHeight
         {
             get { return _dUnitHeight; }
@@ -170,6 +153,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color PrimaryColor
         {
             get { return _primaryColor; }
@@ -180,6 +164,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color SecondaryColor
         {
             get { return _secondaryColor; }
@@ -190,24 +175,28 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlIgnore]
         public NeighbourhoodStyle Neighbourhood
         {
             get { return _neighbourhood; }
             set { _neighbourhood = value; }
         }
 
+        [XmlIgnore]
         public TrackStyle Track
         {
             get { return _track; }
             set { _track = value; }
         }
 
+        [XmlIgnore]
         public TrailStyle Trail
         {
             get { return _trail; }
             set { _trail = value; }
         }
 
+        [XmlIgnore]
         public bool HasNeighbourhood
         {
             get { return _bNeighbourhood; }
@@ -218,6 +207,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlIgnore]
         public bool HasTrack
         {
             get { return _bTrack; }
@@ -228,6 +218,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
+        [XmlIgnore]
         public bool HasTrail
         {
             get { return _bTrail; }
@@ -235,6 +226,63 @@ namespace Muragatte.Visual.Styles
             {
                 _bTrail = value;
                 NotifyPropertyChanged("HasTrail");
+            }
+        }
+
+        [XmlElement(ElementName = "Neighbourhood", IsNullable = false)]
+        public NeighbourhoodStyle NullNeighbourhood
+        {
+            get { return _bNeighbourhood ? _neighbourhood : null; }
+            set
+            {
+                if (value == null)
+                {
+                    _neighbourhood = new NeighbourhoodStyle();
+                    HasNeighbourhood = false;
+                }
+                else
+                {
+                    _neighbourhood = value;
+                    HasNeighbourhood = true;
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Track", IsNullable = false)]
+        public TrackStyle NullTrack
+        {
+            get { return _bTrack ? _track : null; }
+            set
+            {
+                if (value == null)
+                {
+                    _track = new TrackStyle(_primaryColor.NotTransparent() ? _primaryColor : _secondaryColor);
+                    HasTrack = false;
+                }
+                else
+                {
+                    _track = value;
+                    HasTrack = true;
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Trail", IsNullable = false)]
+        public TrailStyle NullTrail
+        {
+            get { return _bTrail ? _trail : null; }
+            set
+            {
+                if (value == null)
+                {
+                    _trail = new TrailStyle(_primaryColor.NotTransparent() ? _primaryColor : _secondaryColor, DefaultValues.TRAIL_LENGTH);
+                    HasTrail = false;
+                }
+                else
+                {
+                    _trail = value;
+                    HasTrail = true;
+                }
             }
         }
 

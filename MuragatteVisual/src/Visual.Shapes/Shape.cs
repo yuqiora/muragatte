@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Visual.Shapes
@@ -29,6 +30,8 @@ namespace Muragatte.Visual.Shapes
         #region Properties
 
         public abstract string Symbol { get; }
+
+        public abstract ShapeLabel Label { get; }
 
         #endregion
 

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Muragatte.Common
 {
@@ -49,43 +50,53 @@ namespace Muragatte.Common
 
         #region Properties
 
+        [XmlAttribute]
         public double X
         {
             get { return _dX; }
             set { _dX = value; }
         }
 
+        [XmlAttribute]
         public double Y
         {
             get { return _dY; }
             set { _dY = value; }
         }
 
+        [XmlIgnore]
         public double Length
         {
             get { return Math.Sqrt(_dX * _dX + _dY * _dY); }
         }
 
+        [XmlIgnore]
         public double LengthSquared
         {
             get { return _dX * _dX + _dY * _dY; }
         }
 
+        [XmlIgnore]
         public int Xi
         {
             get { return (int)_dX; }
+            set { _dX = value; }
         }
 
+        [XmlIgnore]
         public int Yi
         {
             get { return (int)_dY; }
+            set { _dY = value; }
         }
 
+        [XmlIgnore]
         public bool IsZero
         {
             get { return _dX == 0 && _dY == 0; }
         }
 
+        [XmlIgnore]
         public Angle Angle
         {
             get { return new Angle(this); }

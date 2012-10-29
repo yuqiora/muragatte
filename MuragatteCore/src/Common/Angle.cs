@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Muragatte.Common
 {
@@ -47,6 +48,7 @@ namespace Muragatte.Common
 
         #region Properties
 
+        [XmlText]
         public double Degrees
         {
             get { return _dDegrees; }
@@ -57,6 +59,7 @@ namespace Muragatte.Common
             }
         }
 
+        [XmlIgnore]
         public int DegreesI
         {
             get { return (int)_dDegrees; }
@@ -67,6 +70,7 @@ namespace Muragatte.Common
             }
         }
 
+        [XmlIgnore]
         public double Radians
         {
             get { return _dDegrees * (Math.PI / 180.0); }
@@ -77,6 +81,7 @@ namespace Muragatte.Common
             }
         }
 
+        [XmlIgnore]
         public bool IsZero
         {
             get { return _dDegrees == 0; }

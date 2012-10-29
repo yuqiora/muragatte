@@ -14,24 +14,29 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Xml.Serialization;
+using Muragatte.Visual.IO;
 
 namespace Muragatte.Visual.Styles
 {
-    public class TrailStyle : TrackStyle
+    public class TrailStyle : INotifyPropertyChanged
     {
         #region Fields
 
+        private Color _color = DefaultValues.AGENT_COLOR;
         private int _iLength = DefaultValues.TRAIL_LENGTH;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         #region Constructors
 
-        public TrailStyle() : base() { }
+        public TrailStyle() { }
 
         public TrailStyle(Color color, int length)
-            : base(color)
         {
+            _color = color;
             _iLength = length;
         }
 
@@ -41,6 +46,17 @@ namespace Muragatte.Visual.Styles
 
         #region Properties
 
+        [XmlElement(Type = typeof(XmlColor))]
+        public Color Color
+        {
+            get { return _color; }
+            set
+            {
+                _color = value;
+                NotifyPropertyChanged("Color");
+            }
+        }
+
         public int Length
         {
             get { return _iLength; }
@@ -48,6 +64,18 @@ namespace Muragatte.Visual.Styles
             {
                 _iLength = value;
                 NotifyPropertyChanged("Length");
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
