@@ -114,11 +114,7 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <TabControl Margin="5" Name="tabOptions" SelectionChanged="tabOptions_SelectionChanged" TabStripPlacement="Left" Grid.Column="0">
+        <TabControl Margin="5" Name="tabOptions" SelectionChanged="tabOptions_SelectionChanged" TabStripPlacement="Left">
             <TabItem Header="General" Name="titGeneral">
                 <DockPanel>
                     <GroupBox Header="Visualization" Margin="5" Name="grbVisualization" DockPanel.Dock="Left">
@@ -161,7 +157,7 @@
             <TabItem Header="Environment" Name="titEnvironment" IsEnabled="{Binding ElementName=clbEnvironmentList, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbEnvironmentList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" Grid.Column="0" ItemsSource="{Binding Path=EnvironmentView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
@@ -178,7 +174,7 @@
             <TabItem Header="Agents" Name="titAgents" IsEnabled="{Binding ElementName=clbAgentsList, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbAgentsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=AgentsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
@@ -200,7 +196,7 @@
             <TabItem Header="Neighbourhoods" Name="titNeighbourhoods" IsEnabled="{Binding ElementName=clbNeighbourhoodsEnabled, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="5" Height="300" ItemsSource="{Binding Path=NeighbourhoodsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
@@ -252,7 +248,7 @@
             <TabItem Header="Tracks" Name="titTracks" IsEnabled="{Binding ElementName=clbTracksEnabled, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbTracksEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=TracksView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
@@ -291,7 +287,7 @@
             <TabItem Header="Trails" Name="titTrails" IsEnabled="{Binding ElementName=clbTrailsEnabled, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbTrailsEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=TrailsView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
@@ -332,7 +328,7 @@
             <TabItem Header="Centroids" Name="titCentroids" IsEnabled="{Binding ElementName=clbCentroidsList, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbCentroidsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=CentroidsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
@@ -349,7 +345,7 @@
             <TabItem Header="Highlighting" Name="titHighlighting" IsEnabled="{Binding ElementName=clbHighlightEnabled, Path=HasItems}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <xtk:CheckListBox Name="clbHighlightEnabled" Margin="5" Height="300" Grid.Column="0" SelectedMemberPath="IsHighlighted" ItemsSource="{Binding Path=EnabledElementsView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
@@ -442,7 +438,7 @@
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
-                    <StackPanel>
+                    <StackPanel DockPanel.Dock="Left">
                         <GroupBox Name="grbStylesTrack" Margin="2">
                             <GroupBox.Header>
                                 <CheckBox Content="Track" Height="16" Name="chbStylesTrackEnabled" IsChecked="{Binding Path=SelectedItem.HasTrack, ElementName=lboStyleEditorList}" />

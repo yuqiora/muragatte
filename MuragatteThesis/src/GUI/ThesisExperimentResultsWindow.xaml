@@ -115,22 +115,22 @@
                                     <TextBlock Text="Min" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.Overall.Minimum}" />
                                     <TextBlock Text="{Binding Path=StrayCount.Overall.Minimum}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Minimum}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Minimum}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Avg" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.Overall.Average, StringFormat=\{0:F2\}}" />
                                     <TextBlock Text="{Binding Path=StrayCount.Overall.Average, StringFormat=\{0:F2\}}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Average, StringFormat=\{0:F2\}}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Average, StringFormat=\{0:F2\}}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
                                     <TextBlock Text="Max" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.Overall.Maximum}" />
                                     <TextBlock Text="{Binding Path=StrayCount.Overall.Maximum}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Maximum}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.Overall.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.Overall.Maximum}" />
                                 </StackPanel>
                             </Grid>
                             <Grid Grid.Column="3" Grid.Row="1" Margin="4,0,0,0">
@@ -143,22 +143,22 @@
                                     <TextBlock Text="Min" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.End.Minimum}" />
                                     <TextBlock Text="{Binding Path=StrayCount.End.Minimum}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Minimum}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.End.Minimum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Minimum}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Avg" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.End.Average, StringFormat=\{0:F2\}}" />
                                     <TextBlock Text="{Binding Path=StrayCount.End.Average, StringFormat=\{0:F2\}}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Average, StringFormat=\{0:F2\}}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.End.Average, StringFormat=\{0:F2\}}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Average, StringFormat=\{0:F2\}}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
                                     <TextBlock Text="Max" FontSize="10" />
                                     <TextBlock Text="{Binding Path=GroupCount.End.Maximum}" />
                                     <TextBlock Text="{Binding Path=StrayCount.End.Maximum}" />
-                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Maximum}" />
                                     <TextBlock Text="{Binding Path=StrayGoalCount.End.Maximum}" />
+                                    <TextBlock Text="{Binding Path=StrayWanderCount.End.Maximum}" />
                                 </StackPanel>
                             </Grid>
                         </Grid>

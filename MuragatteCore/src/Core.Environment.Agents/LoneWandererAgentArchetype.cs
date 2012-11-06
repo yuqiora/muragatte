@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -21,9 +22,22 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
+        public LoneWandererAgentArchetype() : base() { }
+
         public LoneWandererAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, LoneWandererAgentArgs args)
             : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        #endregion
+
+        #region Properties
+
+        [XmlElement(Type = typeof(LoneWandererAgentArgs))]
+        public override AgentArgs Specifics
+        {
+            get { return _args; }
+            set { if (value is LoneWandererAgentArgs) _args = value; }
+        }
 
         #endregion
 

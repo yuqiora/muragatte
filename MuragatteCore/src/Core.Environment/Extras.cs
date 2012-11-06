@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -25,6 +26,8 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
+
+        public Extras() : base() { _dRadius = DEFAULT_RADIUS; }
 
         public Extras(int id, MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model)
@@ -51,6 +54,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlElement]
         public override double Width
         {
             get { return 2 * _dRadius; }
@@ -61,6 +65,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlElement]
         public override double Height
         {
             get { return 2 * _dRadius; }

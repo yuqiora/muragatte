@@ -28,6 +28,7 @@ using Muragatte.Core.Environment;
 using Muragatte.Core.Environment.Agents;
 using Muragatte.Core.Storage;
 using Muragatte.Random;
+using Muragatte.Thesis.IO;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -40,6 +41,7 @@ namespace Muragatte.Thesis.GUI
 
         private ObservableCollection<ObservedArchetype> _archetypes = null;
         private ObservableCollection<SpawnSpot> _spawnSpots = null;
+        private ObservableCollection<Element> _stationaryElements = null;
         private SpeciesCollection _species = null;
         private List<Metric> _metrics = new List<Metric>() { Metric.Euclidean, Metric.Manhattan, Metric.Maximum };
         private List<Distribution> _distributions = new List<Distribution>() { Distribution.None, Distribution.Uniform, Distribution.Gaussian };
@@ -52,11 +54,14 @@ namespace Muragatte.Thesis.GUI
         private Neighbourhood _defaultNeighbourhood = new Neighbourhood(10, new Angle(135));
         private Angle _defaultTurningAngle = new Angle(60);
 
+        private XmlArchetypesArchiver _xml = null;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         #region Constructors
+        
         public ThesisArchetypesEditorWindow(ObservableCollection<ObservedArchetype> archetypes, Scene scene, SpeciesCollection species)
         {
             InitializeComponent();
@@ -65,9 +70,12 @@ namespace Muragatte.Thesis.GUI
             _archetypes = archetypes;
             _species = species;
             _spawnSpots = scene.SpawnSpots;
+            _stationaryElements = scene.StationaryElements;
 
             _goalsView.Source = scene.StationaryElements;
             GoalsView.Filter += new Predicate<object>(o => (o as Element) is Goal);
+
+            _xml = new XmlArchetypesArchiver(this);
         }
 
         #endregion
@@ -195,6 +203,21 @@ namespace Muragatte.Thesis.GUI
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
                 new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
                 new LoneWandererAgentArgs()));
+        }
+
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Load();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Save(new XmlArchetypesRoot(_archetypes));
+        }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            _archetypes.Clear();
         }
 
         #endregion

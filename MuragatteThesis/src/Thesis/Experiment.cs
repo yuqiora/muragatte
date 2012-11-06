@@ -27,23 +27,25 @@ namespace Muragatte.Thesis
     {
         #region Fields
 
-        private string _sName;
-        private string _sPath;
-        private int _iRepeatCount;
-        private InstanceDefinition _definition;
+        private string _sName = string.Empty;
+        private string _sPath = string.Empty;
+        private int _iRepeatCount = 1;
+        private InstanceDefinition _definition = null;
         private List<Instance> _instances = new List<Instance>();
-        private ObservableCollection<Style> _styles;
+        private ObservableCollection<Style> _styles = null;
         private bool _bComplete = false;
         private bool _bCanceled = false;
         private ExperimentResults _results = null;
-        private uint _uiSeed;
-        private RandomMT _random;
+        private uint _uiSeed = 0;
+        private RandomMT _random = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         #region Constructors
+
+        public Experiment() { }
 
         public Experiment(string name, string path, int repeat, InstanceDefinition definition, IEnumerable<Style> styles, uint seed)
         {
@@ -53,7 +55,6 @@ namespace Muragatte.Thesis
             _definition = definition;
             _styles = styles == null ? new ObservableCollection<Style>() : new ObservableCollection<Style>(styles);
             _uiSeed = seed;
-            _random = new RandomMT(_uiSeed);
         }
 
         #endregion
@@ -90,6 +91,16 @@ namespace Muragatte.Thesis
             }
         }
 
+        public uint Seed
+        {
+            get { return _uiSeed; }
+            set
+            {
+                _uiSeed = value;
+                NotifyPropertyChanged("Seed");
+            }
+        }
+
         public List<Instance> Instances
         {
             get { return _instances; }
@@ -117,16 +128,6 @@ namespace Muragatte.Thesis
             {
                 _bCanceled= value;
                 NotifyPropertyChanged("IsCanceled");
-            }
-        }
-
-        public uint Seed
-        {
-            get { return _uiSeed; }
-            set
-            {
-                _uiSeed=value;
-                NotifyPropertyChanged("Seed");
             }
         }
 
@@ -178,6 +179,7 @@ namespace Muragatte.Thesis
         {
             if (!_bComplete)
             {
+                _random = new RandomMT(_uiSeed);
                 for (int i = 0; i < _iRepeatCount; i++)
                 {
                     CreateNewInstance(i);
@@ -198,8 +200,6 @@ namespace Muragatte.Thesis
         {
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
         }
-
-        //private void ProcessResults() { }
 
         private void NotifyPropertyChanged(String propertyName)
         {

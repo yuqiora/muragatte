@@ -20,6 +20,8 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
+        public AttractSpot() : base() { }
+
         public AttractSpot(int id, MultiAgentSystem model, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model, species, radius) { }
 

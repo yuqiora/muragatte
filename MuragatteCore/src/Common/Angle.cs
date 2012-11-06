@@ -81,7 +81,6 @@ namespace Muragatte.Common
             }
         }
 
-        [XmlIgnore]
         public bool IsZero
         {
             get { return _dDegrees == 0; }

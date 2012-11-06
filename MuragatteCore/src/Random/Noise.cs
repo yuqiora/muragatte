@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Random
@@ -31,6 +32,8 @@ namespace Muragatte.Random
 
         #region Constructors
 
+        public Noise() : this(null, 0, 0) { }
+
         public Noise(RandomMT random, double a, double b)
         {
             _random = random;
@@ -42,6 +45,7 @@ namespace Muragatte.Random
 
         #region Properties
 
+        [XmlIgnore]
         public double A
         {
             get { return _dA; }
@@ -52,6 +56,7 @@ namespace Muragatte.Random
             }
         }
 
+        [XmlIgnore]
         public double B
         {
             get { return _dB; }

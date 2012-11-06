@@ -17,6 +17,7 @@ using System.Text;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.IO;
 
 namespace Muragatte.Thesis
 {
@@ -24,10 +25,11 @@ namespace Muragatte.Thesis
     {
         #region Fields
 
-        private double _dTimePerStep;
-        private int _iLength;
+        private double _dTimePerStep = 1;
+        private int _iLength = 100;
         private Scene _scene = null;
-        private SpeciesCollection _species;
+        private SpeciesCollection _species = null;
+        private IStorage _storage = null;
         private ObservableCollection<ObservedArchetype> _archetypes = new ObservableCollection<ObservedArchetype>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -36,12 +38,15 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public InstanceDefinition(double timePerStep, int length, Scene scene, SpeciesCollection species, IEnumerable<ObservedArchetype> archetypes)
+        public InstanceDefinition() { }
+
+        public InstanceDefinition(double timePerStep, int length, Scene scene, SpeciesCollection species, IStorage storage, IEnumerable<ObservedArchetype> archetypes)
         {
             _dTimePerStep = timePerStep;
             _iLength = length;
             _scene = scene;
             _species = species;
+            _storage = storage;
             _archetypes = archetypes == null ? new ObservableCollection<ObservedArchetype>() : new ObservableCollection<ObservedArchetype>(archetypes);
         }
 
@@ -74,6 +79,16 @@ namespace Muragatte.Thesis
             get { return _scene; }
         }
 
+        public IStorage Storage
+        {
+            get { return _storage; }
+            set
+            {
+                _storage = value;
+                NotifyPropertyChanged("Storage");
+            }
+        }
+
         public SpeciesCollection Species
         {
             get { return _species; }
@@ -103,7 +118,7 @@ namespace Muragatte.Thesis
 
         public Instance CreateInstance(int number, uint seed)
         {
-            return new Instance(number, _iLength, _dTimePerStep, _scene, _archetypes, _species, seed);
+            return new Instance(number, _iLength, _dTimePerStep, _storage, _scene, _archetypes, _species, seed);
         }
 
         private void NotifyPropertyChanged(String propertyName)

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -21,7 +22,27 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public EllipseSpawnSpot(Vector2 position, double width, double height) : base(position, width, height) { }
+        public EllipseSpawnSpot() : base() { }
+
+        public EllipseSpawnSpot(string name, Vector2 position, double width, double height) : base(name, position, width, height) { }
+
+        #endregion
+
+        #region Properties
+
+        [XmlAttribute]
+        public override double Width
+        {
+            get { return base.Width; }
+            set { base.Width = value; }
+        }
+
+        [XmlAttribute]
+        public override double Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
 
         #endregion
 

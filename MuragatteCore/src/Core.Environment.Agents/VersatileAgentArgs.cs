@@ -12,7 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Core.Environment.SteeringUtils;
+using Muragatte.IO;
 using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
@@ -35,6 +37,8 @@ namespace Muragatte.Core.Environment.Agents
         #endregion
 
         #region Constructors
+
+        public VersatileAgentArgs() : this(null, new Neighbourhood()) { }
 
         public VersatileAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1, 1) { }
 
@@ -82,12 +86,14 @@ namespace Muragatte.Core.Environment.Agents
             get { return true; }
         }
 
+        [XmlElement(Type = typeof(XmlGoalReference), IsNullable = false)]
         public override Goal Goal
         {
             get { return _goal; }
             set { _goal = value; }
         }
 
+        [XmlIgnore]
         public override Dictionary<string, Neighbourhood> Neighbourhoods
         {
             get { return _neighbourhoods; }

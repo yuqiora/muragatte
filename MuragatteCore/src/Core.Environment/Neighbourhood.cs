@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -22,7 +23,7 @@ namespace Muragatte.Core.Environment
         #region Fields
 
         protected Agent _source = null;
-        protected double _dRange = 0;
+        protected double _dRange = 1;
         protected Angle _angle = Angle.Deg180;
         protected Metric _metric = Metric.Euclidean;
 
@@ -31,6 +32,8 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
+
+        public Neighbourhood() { }
 
         public Neighbourhood(double range, Metric metric = Metric.Euclidean)
         {
@@ -59,12 +62,14 @@ namespace Muragatte.Core.Environment
 
         #region Properties
         
+        [XmlIgnore]
         public Agent Source
         {
             get { return _source; }
             set { _source = value; }
         }
 
+        [XmlAttribute]
         public double Range
         {
             get { return _dRange; }
@@ -75,6 +80,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public Angle Angle
         {
             get { return _angle; }
@@ -85,6 +91,14 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute("Angle")]
+        public double AngleDegrees
+        {
+            get { return _angle.Degrees; }
+            set { _angle.Degrees = value; }
+        }
+
+        [XmlAttribute]
         public Metric Metric
         {
             get { return _metric; }

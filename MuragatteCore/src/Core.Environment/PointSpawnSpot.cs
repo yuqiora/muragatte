@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -21,18 +22,22 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public PointSpawnSpot(Vector2 position) : base(position, 1, 1) { }
+        public PointSpawnSpot() : base() { }
+
+        public PointSpawnSpot(string name, Vector2 position) : base(name, position, 1, 1) { }
 
         #endregion
 
         #region Properties
 
+        [XmlIgnore]
         public override double Width
         {
             get { return 1; }
             set { }
         }
 
+        [XmlIgnore]
         public override double Height
         {
             get { return 1; }

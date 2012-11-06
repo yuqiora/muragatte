@@ -100,7 +100,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
-        [XmlElement(ElementName = "Radius")]
+        [XmlElement("Radius")]
         public double UnitRadius
         {
             get { return _dUnitRadius; }

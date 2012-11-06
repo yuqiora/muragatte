@@ -37,20 +37,19 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public Instance(int number, int length, double timePerStep, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
+        public Instance(int number, int length, double timePerStep, IStorage storage, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
         {
             _iNumber = number;
             _iLength = length;
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
-            //storage type fixed for now, might be selectable in the future
-            _mas = new MultiAgentSystem(new SimpleBruteForceStorage(), scene, species, _random, timePerStep);
+            _mas = new MultiAgentSystem(storage.NewInstance(), scene, species, _random, timePerStep);
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }
 
         public Instance(int number, int length, InstanceDefinition definition, uint seed)
-            : this(number, length, definition.TimePerStep, definition.Scene, definition.Archetypes, definition.Species, seed) { }
+            : this(number, length, definition.TimePerStep, definition.Storage, definition.Scene, definition.Archetypes, definition.Species, seed) { }
 
         #endregion
 

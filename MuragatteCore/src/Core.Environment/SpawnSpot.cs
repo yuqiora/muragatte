@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -22,6 +23,7 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
+        protected string _sName;
         protected Vector2 _position;
         protected double _dWidth;
         protected double _dHeight;
@@ -32,8 +34,11 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public SpawnSpot(Vector2 position, double width, double height)
+        public SpawnSpot() : this("Spawn", Vector2.Zero, 1, 1) { }
+
+        public SpawnSpot(string name, Vector2 position, double width, double height)
         {
+            _sName = name;
             _position = position;
             _dWidth = width;
             _dHeight = height;
@@ -43,6 +48,19 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlAttribute]
+        public string Name
+        {
+            get { return _sName; }
+            set
+            {
+                _sName = value;
+                NotifyPropertyChanged("Name");
+                NotifyPropertyChanged("Info");
+            }
+        }
+
+        [XmlIgnore]
         public Vector2 Position
         {
             get { return _position; }
@@ -56,6 +74,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public double PositionX
         {
             get { return _position.X; }
@@ -68,6 +87,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public double PositionY
         {
             get { return _position.Y; }
@@ -80,6 +100,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public virtual double Width
         {
             get { return _dWidth; }
@@ -91,6 +112,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public virtual double Height
         {
             get { return _dHeight; }
@@ -104,7 +126,7 @@ namespace Muragatte.Core.Environment
 
         public string Info
         {
-            get { return ToString(); }
+            get { return string.Format("{0} {1}", _sName, ToString()); }
         }
 
         #endregion

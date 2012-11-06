@@ -64,13 +64,11 @@ namespace Muragatte.Common
             set { _dY = value; }
         }
 
-        [XmlIgnore]
         public double Length
         {
             get { return Math.Sqrt(_dX * _dX + _dY * _dY); }
         }
 
-        [XmlIgnore]
         public double LengthSquared
         {
             get { return _dX * _dX + _dY * _dY; }
@@ -90,13 +88,11 @@ namespace Muragatte.Common
             set { _dY = value; }
         }
 
-        [XmlIgnore]
         public bool IsZero
         {
             get { return _dX == 0 && _dY == 0; }
         }
 
-        [XmlIgnore]
         public Angle Angle
         {
             get { return new Angle(this); }

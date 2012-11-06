@@ -110,6 +110,11 @@ namespace Muragatte.Core.Storage
             set { SetDefaultSpecies(value, DEFAULT_EXTRAS_LABEL); }
         }
 
+        public IEnumerable<Species> Progenitors
+        {
+            get { return _items.Where(s => s.Ancestor == null); }
+        }
+
         #endregion
 
         #region Methods
@@ -139,27 +144,44 @@ namespace Muragatte.Core.Storage
 
         public void Add(Species item)
         {
-            if (item.Ancestor == null || !_items.Contains(item.Ancestor))
+            if (!_items.Contains(item))
             {
-                _items.Add(item);
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
-            }
-            else
-            {
-                int i = _items.FindLastIndex(s => s.IsDescendantOf(item.Ancestor));
-                int index = (i < 0 ? _items.IndexOf(item.Ancestor) : i) + 1;
-                if (index >= _items.Count)
+                if (item.Ancestor == null || !_items.Contains(item.Ancestor))
                 {
-                    _items.Add(item);
-                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+                    AddLast(item);
                 }
                 else
                 {
-                    _items.Insert(index, item);
-                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
+                    int i = _items.FindLastIndex(s => s.IsDescendantOf(item.Ancestor));
+                    int index = (i < 0 ? _items.IndexOf(item.Ancestor) : i) + 1;
+                    if (index >= _items.Count)
+                    {
+                        AddLast(item);
+                    }
+                    else
+                    {
+                        AddInto(item, index);
+                    }
                 }
+                NotifyPropertyChanged("Count");
             }
-            NotifyPropertyChanged("Count");
+        }
+
+        private void AddLast(Species item)
+        {
+            _items.Add(item);
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item);
+            Add(item.Children);
+        }
+
+        private void AddInto(Species item, int index)
+        {
+            _items.Insert(index, item);
+            NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
+            foreach (Species s in item.Children)
+            {
+                Add(s);
+            }
         }
 
         public void Add(Species item, string key)
@@ -172,8 +194,15 @@ namespace Muragatte.Core.Storage
         {
             foreach (Species s in items)
             {
-                _items.Add(s);
-                NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
+                if (!_items.Contains(s))
+                {
+                    _items.Add(s);
+                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
+                    if (s.HasChildren)
+                    {
+                        Add(s.Children);
+                    }
+                }
             }
             NotifyPropertyChanged("Count");
         }
@@ -200,6 +229,10 @@ namespace Muragatte.Core.Storage
 
         private void RemoveAndNotify(Species item)
         {
+            if (item.Ancestor != null)
+            {
+                item.Ancestor.RemoveChild(item);
+            }
             int index = _items.IndexOf(item);
             _items.RemoveAt(index);
             foreach (string s in _labels)

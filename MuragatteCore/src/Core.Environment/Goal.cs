@@ -20,6 +20,8 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
+        public Goal() : base() { }
+
         public Goal(int id, MultiAgentSystem model, Species species)
             : base(id, model)
         {

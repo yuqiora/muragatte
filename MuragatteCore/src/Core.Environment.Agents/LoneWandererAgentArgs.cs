@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Core.Environment.SteeringUtils;
 using Muragatte.Random;
 
@@ -46,12 +47,14 @@ namespace Muragatte.Core.Environment.Agents
             get { return false; }
         }
 
+        [XmlIgnore]
         public override Goal Goal
         {
             get { return null; }
             set { }
         }
 
+        [XmlIgnore]
         public override Dictionary<string, Neighbourhood> Neighbourhoods
         {
             get { return null; }

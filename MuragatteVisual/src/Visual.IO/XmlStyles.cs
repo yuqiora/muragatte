@@ -18,21 +18,22 @@ using Muragatte.Visual.Styles;
 
 namespace Muragatte.Visual.IO
 {
-    [XmlRoot("Styles")]
-    public class XmlStyles
+    [XmlRoot(ElementName = "Muragatte", Namespace = "Muragatte/Styles")]
+    public class XmlStylesRoot
     {
         #region Fields
 
-        [XmlElement(ElementName = "Style")]
+        [XmlArray("Styles")]
+        [XmlArrayItem(ElementName = "Style")]
         public Style[] Items = null;
 
         #endregion
 
         #region Constructors
 
-        public XmlStyles() { }
+        public XmlStylesRoot() { }
 
-        public XmlStyles(ObservableCollection<Style> items)
+        public XmlStylesRoot(ObservableCollection<Style> items)
         {
             Items = items.ToArray();
         }

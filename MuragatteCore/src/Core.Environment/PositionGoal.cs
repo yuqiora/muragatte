@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -19,6 +20,8 @@ namespace Muragatte.Core.Environment
     public class PositionGoal : Goal
     {
         #region Constructors
+
+        public PositionGoal() : base() { }
 
         public PositionGoal(int id, MultiAgentSystem model, Species species)
             : base(id, model, species) { }
@@ -32,12 +35,14 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlIgnore]
         public override double Width
         {
             get { return 1; }
             set { }
         }
 
+        [XmlIgnore]
         public override double Height
         {
             get { return 1; }
