@@ -20,6 +20,7 @@ using Muragatte.Core.Storage.ONG;
 
 namespace Muragatte.Core.Storage
 {
+    //not complete, usage not recommended
     public class OrthantNeighbourhoodGraphStorage : IStorage
     {
         #region Fields
@@ -61,9 +62,19 @@ namespace Muragatte.Core.Storage
             get { return _items.Count; }
         }
 
+        public int CountAll
+        {
+            get { return _items.Count + _centroids.Count; }
+        }
+
         public bool IsReadOnly
         {
             get { return false; }
+        }
+
+        public StorageOptions StorageType
+        {
+            get { return StorageOptions.OrthantNeighbourhoodGraph; }
         }
 
         public Element this[int id]
@@ -321,6 +332,11 @@ namespace Muragatte.Core.Storage
         public void Rebuild()
         {
             _ong.Rebuild();
+        }
+
+        public IStorage NewInstance()
+        {
+            return new OrthantNeighbourhoodGraphStorage();
         }
 
         #endregion

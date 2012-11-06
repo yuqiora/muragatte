@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Core.Storage;
 
@@ -28,7 +29,7 @@ namespace Muragatte.Core.Environment
 
         #region Fields
 
-        protected int _iElementID = -1;
+        protected int _iElementID = 0;
         protected MultiAgentSystem _model = null;
         protected Vector2 _position = Vector2.Zero;
         protected bool _bEnabled = true;
@@ -39,6 +40,8 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
+
+        public Element() { }
 
         public Element(int id, MultiAgentSystem model)
         {
@@ -59,11 +62,14 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlAttribute]
         public int ID
         {
             get { return _iElementID; }
+            set { if (_model == null) _iElementID = value; }
         }
 
+        [XmlIgnore]
         public MultiAgentSystem Model
         {
             get { return _model; }
@@ -82,6 +88,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public double PositionX
         {
             get { return _position.X; }
@@ -93,6 +100,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public double PositionY
         {
             get { return _position.Y; }
@@ -104,18 +112,21 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public bool IsEnabled
         {
             get { return _bEnabled; }
             set { _bEnabled = value; }
         }
 
+        [XmlElement(Type = typeof(IO.XmlSpeciesReference), IsNullable = false)]
         public Species Species
         {
             get { return _species; }
             set { _species = value; }
         }
 
+        [XmlIgnore]
         public virtual Group Group
         {
             get { return null; }
@@ -126,12 +137,16 @@ namespace Muragatte.Core.Environment
 
         #region Abstract Properties
 
+        [XmlIgnore]
         public abstract Vector2 Direction { get; set; }
 
+        [XmlIgnore]
         public abstract double Speed { get; set; }
 
+        [XmlIgnore]
         public abstract double Width { get; set; }
 
+        [XmlIgnore]
         public abstract double Height { get; set; }
 
         public abstract double Radius { get; }

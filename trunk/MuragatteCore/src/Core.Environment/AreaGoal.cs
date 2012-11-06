@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -20,13 +21,14 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        private double _dWidth = 0;
-        private double _dHeight = 0;
-
+        private double _dWidth = 1;
+        private double _dHeight = 1;
 
         #endregion
 
         #region Constructors
+
+        public AreaGoal() : base() { }
 
         public AreaGoal(int id, MultiAgentSystem model, Species species, double width, double height)
             : base(id, model, species)
@@ -53,6 +55,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlElement]
         public override double Width
         {
             get { return _dWidth; }
@@ -63,6 +66,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlElement]
         public override double Height
         {
             get { return _dHeight; }

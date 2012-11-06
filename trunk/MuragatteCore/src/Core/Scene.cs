@@ -13,8 +13,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
+using Muragatte.IO;
 
 namespace Muragatte.Core
 {
@@ -29,6 +31,8 @@ namespace Muragatte.Core
         #endregion
 
         #region Constructors
+
+        public Scene() : this(new Region(), null, null) { }
 
         public Scene(Region region) : this(region, null, null) { }
 
@@ -52,11 +56,13 @@ namespace Muragatte.Core
             get { return _region; }
         }
 
+        [XmlIgnore]
         public ObservableCollection<SpawnSpot> SpawnSpots
         {
             get { return _spawn; }
         }
 
+        [XmlIgnore]
         public ObservableCollection<Element> StationaryElements
         {
             get { return _stationary; }
@@ -71,7 +77,7 @@ namespace Muragatte.Core
             if (spawnSpots == null || spawnSpots.Count() == 0)
             {
                 ObservableCollection<SpawnSpot> result = new ObservableCollection<SpawnSpot>();
-                result.Add(new RectangleSpawnSpot(new Vector2(_region.Width / 2.0, _region.Height / 2.0), _region.Width * 0.9, _region.Height * 0.9));
+                result.Add(new RectangleSpawnSpot("Anywhere", new Vector2(_region.Width / 2.0, _region.Height / 2.0), _region.Width * 0.9, _region.Height * 0.9));
                 return result;
             }
             else
@@ -88,6 +94,27 @@ namespace Muragatte.Core
                 result.Add(e.CloneTo(model));
             }
             return result;
+        }
+
+        public void Load(Scene other)
+        {
+            Load(other._region, other._spawn, other._stationary);
+        }
+
+        public void Load(Region region, IEnumerable<SpawnSpot> spawnSpots, IEnumerable<Element> stationaryElements)
+        {
+            _region.Load(region);
+            ReloadCollection(_spawn, spawnSpots);
+            ReloadCollection(_stationary, stationaryElements);
+        }
+
+        private void ReloadCollection<T>(ObservableCollection<T> collection, IEnumerable<T> newContent)
+        {
+            collection.Clear();
+            foreach (T x in newContent)
+            {
+                collection.Add(x);
+            }
         }
 
         #endregion

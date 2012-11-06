@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -25,6 +26,8 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Constructors
+
+        public Guidepost() : base() { _direction = Vector2.X0Y1; }
 
         public Guidepost(int id, MultiAgentSystem model, Vector2 direction, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model, species, radius)
@@ -48,6 +51,14 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlElement(ElementName = "Direction")]
+        public Angle XmlAngleDirection
+        {
+            get { return new Angle(_direction); }
+            set { _direction = new Vector2(value, true); }
+        }
+        
+        [XmlIgnore]
         public override Vector2 Direction
         {
             get { return _direction; }

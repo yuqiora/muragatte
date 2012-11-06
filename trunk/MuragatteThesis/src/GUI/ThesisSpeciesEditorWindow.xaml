@@ -20,24 +20,27 @@
     <DockPanel>
         <Button Content="Close" Height="23" Name="btnClose" Width="80" DockPanel.Dock="Bottom" Margin="5" Click="btnClose_Click" />
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5" HorizontalAlignment="Center">
-            <Button Content="New" Height="23" Name="btnNew" Width="75" Click="btnNew_Click" />
-            <Button Content="Sub" Height="23" Name="btnSub" Width="75" Click="btnSub_Click" />
-            <Button Content="Delete" Height="23" Name="btnDelete" Width="75" Click="btnDelete_Click" />
+            <Button Content="Load" Height="23" Name="btnLoad" Width="55" Click="btnLoad_Click" />
+            <Button Content="Save" Height="23" Name="btnSave" Width="55" Click="btnSave_Click" />
+            <Button Content="New" Height="23" Name="btnNew" Width="55" Click="btnNew_Click" />
+            <Button Content="Sub" Height="23" Name="btnSub" Width="55" Click="btnSub_Click" />
+            <Button Content="Delete" Height="23" Name="btnDelete" Width="55" Click="btnDelete_Click" />
+            <Button Content="Clear" Height="23" Name="btnClear" Width="55" Click="btnClear_Click" />
         </StackPanel>
-        <ListBox Height="180" Name="lboSpecies" MinWidth="100" Margin="5" DockPanel.Dock="Left" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="FullName" />
+        <ListBox Height="180" Name="lboSpecies" MinWidth="120" Margin="5" DockPanel.Dock="Left" ItemsSource="{Binding GetSpecies}" DisplayMemberPath="FullName" />
         <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="180" Height="23" Margin="0,10,0,0" Text="{Binding Path=SelectedValue.Name, ElementName=lboSpecies}" DockPanel.Dock="Top" ToolTip="Name" />
         <GroupBox Header="Defaults" Name="grbDefaults" Margin="5" Width="190">
-            <Grid>
+            <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Name="txbDefaultsAgents" Text="Agents:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
                 <TextBlock Name="txbDefaultsGoals" Text="Goals:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />

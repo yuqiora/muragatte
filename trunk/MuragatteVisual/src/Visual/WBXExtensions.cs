@@ -24,12 +24,12 @@ namespace Muragatte.Visual
 
         public static void SetPixel(this WriteableBitmap wb, Vector2 position, Color color)
         {
-            wb.SetPixel(position.Xi, position.Yi, color);
+            if (wb.Covers(position)) wb.SetPixel(position.Xi, position.Yi, color);
         }
 
         public static void SetPixel(this WriteableBitmap wb, Vector2 position, byte a, Color color)
         {
-            wb.SetPixel(position.Xi, position.Yi, a, color);
+            if (wb.Covers(position)) wb.SetPixel(position.Xi, position.Yi, a, color);
         }
 
         #endregion
@@ -148,6 +148,11 @@ namespace Muragatte.Visual
         public static Vector2 Center(this WriteableBitmap wb)
         {
             return new Vector2(wb.PixelWidth / 2, wb.PixelHeight / 2);
+        }
+
+        public static bool Covers(this WriteableBitmap wb, Vector2 position)
+        {
+            return position.Xi >= 0 && position.Xi < wb.PixelWidth && position.Yi >= 0 && position.Yi < wb.PixelHeight;
         }
 
         #endregion

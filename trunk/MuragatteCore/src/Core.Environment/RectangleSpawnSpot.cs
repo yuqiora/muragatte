@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -21,9 +22,29 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
-        public RectangleSpawnSpot(Vector2 position, double width, double height) : base(position, width, height) { }
+        public RectangleSpawnSpot() : base() { }
 
-        public RectangleSpawnSpot(Vector2 position, double size) : this(position, size, size) { }
+        public RectangleSpawnSpot(string name, Vector2 position, double width, double height) : base(name, position, width, height) { }
+
+        public RectangleSpawnSpot(string name, Vector2 position, double size) : this(name, position, size, size) { }
+
+        #endregion
+
+        #region Properties
+
+        [XmlAttribute]
+        public override double Width
+        {
+            get { return base.Width; }
+            set { base.Width = value; }
+        }
+
+        [XmlAttribute]
+        public override double Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
 
         #endregion
 

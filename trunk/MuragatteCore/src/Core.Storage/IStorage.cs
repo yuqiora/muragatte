@@ -20,6 +20,10 @@ namespace Muragatte.Core.Storage
     {
         #region Properties
 
+        int CountAll { get; }
+
+        StorageOptions StorageType { get; }
+
         Element this[int id] { get; }
 
         IEnumerable<Element> Items { get; }
@@ -63,6 +67,8 @@ namespace Muragatte.Core.Storage
         void Update();
 
         void Rebuild();
+
+        IStorage NewInstance();
         
         #endregion
     }

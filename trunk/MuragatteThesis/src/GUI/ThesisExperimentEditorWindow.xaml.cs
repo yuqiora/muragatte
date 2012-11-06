@@ -24,6 +24,7 @@ using System.Windows.Shapes;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.Thesis.IO;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -39,6 +40,10 @@ namespace Muragatte.Thesis.GUI
         private Scene _scene = null;
         private SpeciesCollection _species = null;
         private ObservableCollection<ObservedArchetype> _archetypes = null;
+        private List<Type> _storageTypes = new List<Type>();
+        private IStorage _storage = null;
+
+        private XmlExperimentArchiver _xml = null;
 
         #endregion
 
@@ -46,6 +51,8 @@ namespace Muragatte.Thesis.GUI
 
         public ThesisExperimentEditorWindow(ThesisMainWindow main)
         {
+            FillStorageTypesList();
+
             InitializeComponent();
             DataContext = this;
 
@@ -54,13 +61,17 @@ namespace Muragatte.Thesis.GUI
             {
                 _styles = new ObservableCollection<Visual.Styles.Style>();
                 _scene = new Scene(new Region(100, true));
-                _species = new SpeciesCollection(true);
+                _species = new SpeciesCollection();
                 _archetypes = new ObservableCollection<ObservedArchetype>();
+                _storage = new SimpleBruteForceStorage();
             }
             else
             {
+                btnLoad.Visibility = System.Windows.Visibility.Collapsed;
                 btnCancel.Visibility = System.Windows.Visibility.Collapsed;
             }
+
+            _xml = new XmlExperimentArchiver(this);
         }
 
         #endregion
@@ -97,6 +108,27 @@ namespace Muragatte.Thesis.GUI
             get { return GetExperiment == null ? _archetypes : GetExperiment.Definition.Archetypes; }
         }
 
+        public List<Type> GetStorageTypes
+        {
+            get { return _storageTypes; }
+        }
+
+        public IStorage SelectedStorage
+        {
+            get { return GetExperiment == null ? _storage : GetExperiment.Definition.Storage; }
+            set
+            {
+                if (GetExperiment == null)
+                {
+                    _storage = value;
+                }
+                else
+                {
+                    GetExperiment.Definition.Storage = value;
+                }
+            }
+        }
+
         #endregion
 
         #region Events
@@ -116,9 +148,7 @@ namespace Muragatte.Thesis.GUI
         {
             if (GetExperiment == null)
             {
-                _wndThesis.Experiment = new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
-                    new InstanceDefinition(dudTimePerStep.Value.Value, iudLength.Value.Value, _scene, _species, _archetypes),
-                    _styles, (uint)dudSeed.Value.Value);
+                _wndThesis.Experiment = NewExperiment();
             }
             Close();
         }
@@ -143,14 +173,54 @@ namespace Muragatte.Thesis.GUI
             OpenEditorDialog(new ThesisArchetypesEditorWindow(GetArchetypes, GetScene, GetSpecies));
         }
 
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Load();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Save(new XmlExperimentRoot(GetExperiment ?? NewExperiment()));
+        }
+
         #endregion
 
         #region Methods
+
+        private Experiment NewExperiment()
+        {
+            return new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
+                new InstanceDefinition(dudTimePerStep.Value.Value, iudLength.Value.Value, _scene, _species, _storage, _archetypes),
+                _styles, (uint)dudSeed.Value.Value);
+        }
+
+        private void FillStorageTypesList()
+        {
+            _storageTypes.Add(typeof(SimpleBruteForceStorage));
+            //ong
+        }
 
         private void OpenEditorDialog(Window editor)
         {
             editor.Owner = this;
             editor.ShowDialog();
+        }
+
+        public void LoadExperiment(XmlExperiment xe)
+        {
+            txtName.Text = xe.Name;
+            iudRepeat.Value = xe.Repeat;
+            iudLength.Value = xe.Length;
+            dudTimePerStep.Value = xe.TimePerStep;
+            dudSeed.Value = xe.Seed;
+            _storage = xe.Storage.ToStorage();
+            _styles.Clear();
+            xe.ApplyToStyles(_styles);
+            _species.Clear();
+            xe.KnownSpecies.ApplyToCollection(_species);
+            _scene.Load(xe.Scene);
+            _archetypes.Clear();
+            xe.ApplyToArchetypes(_archetypes);
         }
 
         #endregion

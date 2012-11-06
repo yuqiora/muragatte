@@ -127,7 +127,7 @@ namespace Muragatte.Visual.Styles
             get { return _iHeight; }
         }
 
-        [XmlElement(ElementName = "Width")]
+        [XmlElement("Width")]
         public double UnitWidth
         {
             get { return _dUnitWidth; }
@@ -140,7 +140,7 @@ namespace Muragatte.Visual.Styles
             }
         }
 
-        [XmlElement(ElementName = "Height")]
+        [XmlElement("Height")]
         public double UnitHeight
         {
             get { return _dUnitHeight; }

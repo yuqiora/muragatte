@@ -20,6 +20,8 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
+        public EllipseObstacle() : base() { }
+
         public EllipseObstacle(int id, MultiAgentSystem model, Species species, double size)
             : base(id, model, species, size, size) { }
 

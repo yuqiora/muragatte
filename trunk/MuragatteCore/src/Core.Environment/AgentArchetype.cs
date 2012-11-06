@@ -13,7 +13,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
+using Muragatte.IO;
 using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
@@ -22,21 +24,23 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected string _sName;
-        protected int _iCount;
-        protected SpawnSpot _spawnPosition;
-        protected NoisedDouble _noisedDirection;
-        protected NoisedDouble _noisedSpeed;
-        protected Species _species;
-        protected Neighbourhood _fieldOfView;
-        protected Angle _turningAngle;
-        protected AgentArgs _args;
+        protected string _sName = null;
+        protected int _iCount = 1;
+        protected SpawnSpot _spawnPosition = null;
+        protected NoisedDouble _noisedDirection = null;
+        protected NoisedDouble _noisedSpeed = null;
+        protected Species _species = null;
+        protected Neighbourhood _fieldOfView = null;
+        protected Angle _turningAngle = Angle.Zero;
+        protected AgentArgs _args = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
         #region Constructors
+
+        public AgentArchetype() { }
 
         public AgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
@@ -56,6 +60,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlAttribute]
         public string Name
         {
             get { return _sName; }
@@ -67,6 +72,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public int Count
         {
             get { return _iCount; }
@@ -83,24 +89,28 @@ namespace Muragatte.Core.Environment
             get { return string.Format("{0} ({1}x)", _sName, _iCount); }
         }
 
+        [XmlElement(ElementName = "SpawnAt", Type = typeof(XmlSpawnSpotReference))]
         public SpawnSpot SpawnPosition
         {
             get { return _spawnPosition; }
             set { _spawnPosition = value; }
         }
 
+        [XmlElement("Direction")]
         public NoisedDouble NoisedDirection
         {
             get { return _noisedDirection; }
             set { _noisedDirection = value; }
         }
 
+        [XmlElement("Speed")]
         public NoisedDouble NoisedSpeed
         {
             get { return _noisedSpeed; }
             set { _noisedSpeed = value; }
         }
 
+        [XmlElement(Type = typeof(XmlSpeciesReference))]
         public Species Species
         {
             get { return _species; }
@@ -119,11 +129,14 @@ namespace Muragatte.Core.Environment
             set { _turningAngle = value; }
         }
 
-        public AgentArgs Specifics
-        {
-            get { return _args; }
-            set { _args = value; }
-        }
+        //public AgentArgs Specifics
+        //{
+        //    get { return _args; }
+        //    set { _args = value; }
+        //}
+
+        [XmlIgnore]
+        public abstract AgentArgs Specifics { get; set; }
 
         #endregion
 

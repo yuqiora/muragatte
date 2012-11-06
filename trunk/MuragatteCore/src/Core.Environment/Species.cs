@@ -22,7 +22,8 @@ namespace Muragatte.Core.Environment
 
         private string _sName = null;
         private Species _ancestor = null;
-        private Dictionary<Species, ElementNature> _relationships = new Dictionary<Species, ElementNature>();
+        private Dictionary<string, ElementNature> _relationships = new Dictionary<string, ElementNature>();
+        private List<Species> _children = new List<Species>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,12 +31,26 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
+        public Species() : this("") { }
+
         public Species(string name) : this(name, null) { }
 
         public Species(string name, Species ancestor)
         {
             _sName = name;
             _ancestor = ancestor;
+        }
+
+        public Species(string name, Species ancestor, IEnumerable<Species> subspecies)
+            : this(name, ancestor)
+        {
+            if (subspecies != null)
+            {
+                foreach (Species s in subspecies)
+                {
+                    AddChild(s);
+                }
+            }
         }
 
         #endregion
@@ -63,31 +78,61 @@ namespace Muragatte.Core.Environment
             get { return _ancestor; }
         }
 
+        public bool HasChildren
+        {
+            get { return _children.Count > 0; }
+        }
+
+        public IEnumerable<Species> Children
+        {
+            get { return _children; }
+        }
+
+        public Dictionary<string, ElementNature> Relationships
+        {
+            get { return _relationships; }
+        }
+
         #endregion
 
         #region Methods
 
+        public void AddChild(Species species)
+        {
+            species._ancestor = this;
+            _children.Add(species);
+        }
+
+        public void RemoveChild(Species species)
+        {
+            if (_children.Contains(species))
+            {
+                species._ancestor = null;
+                _children.Remove(species);
+            }
+        }
+
         public bool FormRelationship(Species species, ElementNature nature)
         {
-            if (_relationships.ContainsKey(species))
+            if (_relationships.ContainsKey(species.FullName))
             { return false; }
             else
             {
-                _relationships.Add(species, nature);
+                _relationships.Add(species.FullName, nature);
                 return true;
             }
         }
 
         public bool RevokeRelationship(Species species)
         {
-            return _relationships.Remove(species);
+            return _relationships.Remove(species.FullName);
         }
 
         public bool ChangeRelationship(Species species, ElementNature nature)
         {
-            if (_relationships.ContainsKey(species))
+            if (_relationships.ContainsKey(species.FullName))
             {
-                _relationships[species] = nature;
+                _relationships[species.FullName] = nature;
                 return true;
             }
             else
@@ -96,7 +141,7 @@ namespace Muragatte.Core.Environment
 
         public bool RelationshipWith(Species species, out ElementNature nature)
         {
-            bool isSpecified = _relationships.TryGetValue(species, out nature);
+            bool isSpecified = _relationships.TryGetValue(species.FullName, out nature);
             if (!isSpecified)
             {
                 if (species._ancestor == null)
@@ -113,7 +158,9 @@ namespace Muragatte.Core.Environment
 
         public Species CreateSubSpecies(string name)
         {
-            return new Species(name, this);
+            Species s = new Species(name, this);
+            AddChild(s);
+            return s;
         }
 
         public bool IsDescendantOf(Species species)

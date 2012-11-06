@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
+using Muragatte.IO;
 using Muragatte.Random;
 
 namespace Muragatte.Core.Environment
@@ -28,13 +30,15 @@ namespace Muragatte.Core.Environment
         #region Fields
 
         protected Dictionary<string, double> _modifiers = new Dictionary<string, double>();
-        protected Distribution _distribution;
-        protected double _dNoiseArgA;
-        protected double _dNoiseArgB;
+        protected Distribution _distribution = Distribution.None;
+        protected double _dNoiseArgA = 0;
+        protected double _dNoiseArgB = 0;
 
         #endregion
 
         #region Constructors
+
+        public AgentArgs() { }
 
         public AgentArgs(Distribution distribution, double noiseA, double noiseB)
         {
@@ -53,19 +57,6 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
-        public abstract bool HasGoal { get; }
-
-        public abstract bool HasNeighbourhoods { get; }
-
-        public abstract Goal Goal { get; set; }
-
-        public abstract Dictionary<string, Neighbourhood> Neighbourhoods { get; }
-
-        public Dictionary<string, double> Modifiers
-        {
-            get { return _modifiers; }
-        }
-
         public Distribution Distribution
         {
             get { return _distribution; }
@@ -82,6 +73,53 @@ namespace Muragatte.Core.Environment
         {
             get { return _dNoiseArgB; }
             set { _dNoiseArgB = value; }
+        }
+
+        public abstract bool HasGoal { get; }
+
+        public abstract bool HasNeighbourhoods { get; }
+
+        [XmlIgnore]
+        public abstract Goal Goal { get; set; }
+
+        [XmlIgnore]
+        public abstract Dictionary<string, Neighbourhood> Neighbourhoods { get; }
+
+        [XmlIgnore]
+        public Dictionary<string, double> Modifiers
+        {
+            get { return _modifiers; }
+        }
+
+        [XmlArray("Neighbourhoods", IsNullable = false)]
+        [XmlArrayItem(ElementName = "Neighbourhood", Type = typeof(XmlAgentArgsNeighbourhood))]
+        public KeyValuePair<string, Neighbourhood>[] XmlNeighbourhoods
+        {
+            get { return Neighbourhoods == null ? null : Neighbourhoods.ToArray(); }
+            set
+            {
+                if (Neighbourhoods != null)
+                {
+                    foreach (KeyValuePair<string, Neighbourhood> n in value)
+                    {
+                        if (Neighbourhoods.ContainsKey(n.Key)) Neighbourhoods[n.Key] = n.Value;
+                    }
+                }
+            }
+        }
+
+        [XmlArray("Modifiers")]
+        [XmlArrayItem(ElementName = "Modifier", Type = typeof(XmlAgentArgsModifier))]
+        public KeyValuePair<string, double>[] XmlModifiers
+        {
+            get { return _modifiers.ToArray(); }
+            set
+            {
+                foreach (KeyValuePair<string, double> m in value)
+                {
+                    if (_modifiers.ContainsKey(m.Key)) _modifiers[m.Key] = m.Value;
+                }
+            }
         }
 
         #endregion

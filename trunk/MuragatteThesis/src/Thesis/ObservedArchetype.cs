@@ -13,8 +13,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
+using Muragatte.Core.Environment.Agents;
 
 namespace Muragatte.Thesis
 {
@@ -23,7 +25,7 @@ namespace Muragatte.Thesis
         #region Fields
 
         private bool _bObserved = false;
-        private AgentArchetype _archetype;
+        private AgentArchetype _archetype = null;
         private ArchetypeOverviewInfo _overviewInfo = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -31,6 +33,8 @@ namespace Muragatte.Thesis
         #endregion
 
         #region Constructors
+
+        public ObservedArchetype() { }
 
         public ObservedArchetype(AgentArchetype archetype)
         {
@@ -41,6 +45,7 @@ namespace Muragatte.Thesis
 
         #region Properties
 
+        [XmlAttribute]
         public bool IsObserved
         {
             get { return _bObserved; }
@@ -51,9 +56,14 @@ namespace Muragatte.Thesis
             }
         }
 
+        [XmlElement(ElementName = "Boid", Type = typeof(BoidAgentArchetype)),
+        XmlElement(ElementName = "AdvancedBoid", Type = typeof(AdvancedBoidAgentArchetype)),
+        XmlElement(ElementName = "Versatile", Type = typeof(VersatileAgentArchetype)),
+        XmlElement(ElementName = "LoneWanderer", Type = typeof(LoneWandererAgentArchetype))]
         public AgentArchetype Archetype
         {
             get { return _archetype; }
+            set { _archetype = value; }
         }
 
         public ArchetypeOverviewInfo OverviewInfo

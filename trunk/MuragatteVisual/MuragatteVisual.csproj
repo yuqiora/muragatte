@@ -72,9 +72,11 @@
     <Compile Include="src\Visual.Converters\ObjectToBoolConverter.cs" />
     <Compile Include="src\Visual.Converters\TabToSelectionVisibilityConverter.cs" />
     <Compile Include="src\Visual.Converters\ShapeToSymbolConverter.cs" />
+    <Compile Include="src\Visual.IO\XmlBaseArchiver.cs" />
     <Compile Include="src\Visual.IO\XmlColor.cs" />
     <Compile Include="src\Visual.IO\XmlShape.cs" />
     <Compile Include="src\Visual.IO\XmlStyles.cs" />
+    <Compile Include="src\Visual.IO\XmlStylesArchiver.cs" />
     <Compile Include="src\Visual.Shapes\Coordinates.cs" />
     <Compile Include="src\Visual.Shapes\ArcShape.cs" />
     <Compile Include="src\Visual.Shapes\EllipseShape.cs" />
@@ -160,16 +162,7 @@
   </Target>
   -->
   <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
-    <SGen
-      BuildAssemblyName="$(TargetFileName)"
-      BuildAssemblyPath="$(OutputPath)"
-      References="@(ReferencePath)"
-      ShouldGenerateSerializer="true"
-      UseProxyTypes="false"
-      KeyContainer="$(KeyContainerName)"
-      KeyFile="$(KeyOriginatorFile)"
-      DelaySign="$(DelaySign)"
-      ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
       <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
     </SGen>
   </Target>

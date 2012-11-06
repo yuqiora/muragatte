@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -24,16 +23,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Xml;
-using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Core.Environment;
 using Muragatte.Visual.IO;
 using Muragatte.Visual.Shapes;
-using Muragatte.Visual.Styles;
 using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.Toolkit.Primitives;
-using Microsoft.Win32;
 
 namespace Muragatte.Visual.GUI
 {
@@ -66,6 +61,8 @@ namespace Muragatte.Visual.GUI
 
         private ObservableCollection<int?> _groups = new ObservableCollection<int?>();
 
+        private XmlStylesArchiver _xml = null;
+
         #endregion
 
         #region Constructors
@@ -79,6 +76,7 @@ namespace Muragatte.Visual.GUI
             {
                 btnClose.Visibility = System.Windows.Visibility.Visible;
                 btnClose.IsEnabled = true;
+                this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
             }
             else
             {
@@ -103,6 +101,7 @@ namespace Muragatte.Visual.GUI
             }
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
             imgStylesPreview.Source = _wbStylePreview;
+            _xml = new XmlStylesArchiver(this);
         }
 
         #endregion
@@ -314,34 +313,12 @@ namespace Muragatte.Visual.GUI
 
         private void btnStylesSave_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.FileName = "Styles";
-            dialog.DefaultExt = ".xml";
-            dialog.Filter = "XML Files (.xml)|*.xml";
-            bool? result = dialog.ShowDialog();
-            if (result == true)
-            {
-                XmlSerializer ser = new XmlSerializer(typeof(XmlStyles));
-                StreamWriter writer = new StreamWriter(dialog.FileName);
-                ser.Serialize(writer, new XmlStyles(_styles));
-                writer.Close();
-            }
+            _xml.Save(new XmlStylesRoot(_styles));
         }
 
         private void btnStylesLoad_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".xml";
-            dialog.Filter = "XML Files (.xml)|*.xml";
-            bool? result = dialog.ShowDialog();
-            if (result == true)
-            {
-                XmlSerializer ser = new XmlSerializer(typeof(XmlStyles));
-                FileStream stream = new FileStream(dialog.FileName, FileMode.Open);
-                XmlStyles xs = (XmlStyles)ser.Deserialize(stream);
-                xs.AddToCollection(_styles);
-                stream.Close();
-            }
+            _xml.Load();
         }
 
         #endregion

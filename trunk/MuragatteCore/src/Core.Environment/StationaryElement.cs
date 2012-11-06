@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -19,6 +20,8 @@ namespace Muragatte.Core.Environment
     public abstract class StationaryElement : Element
     {
         #region Constructors
+
+        public StationaryElement() : base() { }
 
         public StationaryElement(int id, MultiAgentSystem model) : base(id, model) { }
 
@@ -30,12 +33,14 @@ namespace Muragatte.Core.Environment
 
         #region Properties
 
+        [XmlIgnore]
         public override Vector2 Direction
         {
             get { return Vector2.Zero; }
             set { }
         }
 
+        [XmlIgnore]
         public override double Speed
         {
             get { return 0; }

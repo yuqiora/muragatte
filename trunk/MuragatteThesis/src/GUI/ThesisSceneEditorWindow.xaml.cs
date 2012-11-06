@@ -24,7 +24,8 @@ using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
-using Muragatte.Visual;
+using Muragatte.IO;
+using Muragatte.Thesis.IO;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -38,6 +39,8 @@ namespace Muragatte.Thesis.GUI
         private Scene _scene = null;
         private SpeciesCollection _species = null;
         private ScenePreview _preview;
+
+        private XmlSceneArchiver _xml = null;
 
         #endregion
 
@@ -56,6 +59,8 @@ namespace Muragatte.Thesis.GUI
             chbHorizontalBorders.IsChecked = _scene.Region.IsBorderedHorizontally;
             chbVerticalBorders.IsChecked = _scene.Region.IsBorderedVertically;
             CreatePreview(_scene.Region.Width, _scene.Region.Height);
+
+            _xml = new XmlSceneArchiver(this);
         }
 
         #endregion
@@ -96,17 +101,17 @@ namespace Muragatte.Thesis.GUI
 
         private void btnSpawnNewPoint_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new PointSpawnSpot(PreviewCenter));
+            NewSpawnSpot(new PointSpawnSpot("Point", PreviewCenter));
         }
 
         private void btnSpawnNewEllipse_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new EllipseSpawnSpot(PreviewCenter, 5, 5));
+            NewSpawnSpot(new EllipseSpawnSpot("Ellipse", PreviewCenter, 5, 5));
         }
 
         private void btnSpawnNewRectangle_Click(object sender, RoutedEventArgs e)
         {
-            NewSpawnSpot(new RectangleSpawnSpot(PreviewCenter, 5, 5));
+            NewSpawnSpot(new RectangleSpawnSpot("Rectangle", PreviewCenter, 5, 5));
         }
 
         private void btnStationaryDelete_Click(object sender, RoutedEventArgs e)
@@ -152,13 +157,9 @@ namespace Muragatte.Thesis.GUI
             NewStationaryElement(new Guidepost(NewStationaryElementID(), null, PreviewCenter, Vector2.X0Y1, null));
         }
 
-        private void btnRegionApply_Click(object sender, RoutedEventArgs e)
+        private void RegionSize_LostFocus(object sender, RoutedEventArgs e)
         {
-            _scene.Region.Width = iudRegionWidth.Value.Value;
-            _scene.Region.Height = iudRegionHeight.Value.Value;
-            _scene.Region.IsBorderedHorizontally = chbHorizontalBorders.IsChecked.Value;
-            _scene.Region.IsBorderedVertically = chbVerticalBorders.IsChecked.Value;
-            CreatePreview(iudRegionWidth.Value.Value, iudRegionHeight.Value.Value);
+            CreatePreview(_scene.Region.Width, _scene.Region.Height);
         }
 
         private void btnRescale_Click(object sender, RoutedEventArgs e)
@@ -171,6 +172,16 @@ namespace Muragatte.Thesis.GUI
         private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             RedrawPreview();
+        }
+
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Load();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Save(new XmlSceneRoot(_scene));
         }
 
         #endregion
@@ -217,6 +228,12 @@ namespace Muragatte.Thesis.GUI
             _preview.Clear();
             _preview.DrawStationaryElement(_scene.StationaryElements);
             _preview.DrawSpawnSpot(_scene.SpawnSpots);
+        }
+
+        public void LoadScene(XmlScene xs)
+        {
+            _scene.Load(xs.Region, xs.SpawnSpots, xs.StationaryElements);
+            CreatePreview(_scene.Region.Width, _scene.Region.Height);
         }
 
         #endregion

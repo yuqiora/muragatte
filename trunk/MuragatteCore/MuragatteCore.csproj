@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -108,8 +109,22 @@
     <Compile Include="src\Core.Storage\OrthantNeighbourhoodGraphStorage.cs" />
     <Compile Include="src\Core.Storage\SimpleBruteForce.cs" />
     <Compile Include="src\Core.Storage\SpeciesCollection.cs" />
+    <Compile Include="src\Core.Storage\StorageOptions.cs" />
     <Compile Include="src\Core\MultiAgentSystem.cs" />
     <Compile Include="src\Core\Scene.cs" />
+    <Compile Include="src\IO\XmlAgentArgsModifier.cs" />
+    <Compile Include="src\IO\XmlAgentArgsNeighbourhood.cs" />
+    <Compile Include="src\IO\XmlGoalReference.cs" />
+    <Compile Include="src\IO\XmlLoadSave.cs" />
+    <Compile Include="src\IO\XmlScene.cs" />
+    <Compile Include="src\IO\XmlSceneRoot.cs" />
+    <Compile Include="src\IO\XmlSpawnSpotReference.cs" />
+    <Compile Include="src\IO\XmlSpecies.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollectionDefaults.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollectionRoot.cs" />
+    <Compile Include="src\IO\XmlSpeciesReference.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollection.cs" />
+    <Compile Include="src\IO\XmlSpeciesRelation.cs" />
     <Compile Include="src\Random\Distribution.cs" />
     <Compile Include="src\Random\GaussianNoise.cs" />
     <Compile Include="src\Random\Noise.cs" />
@@ -118,9 +133,7 @@
     <Compile Include="src\Random\UniformNoise.cs" />
     <Compile Include="src\Random\ZeroNoise.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\IO\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -129,4 +142,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
 </Project>

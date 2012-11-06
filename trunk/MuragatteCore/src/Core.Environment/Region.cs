@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 
 namespace Muragatte.Core.Environment
@@ -55,6 +56,7 @@ namespace Muragatte.Core.Environment
 
         #region Properties
         
+        [XmlAttribute]
         public int Width
         {
             get { return _iWidth; }
@@ -65,6 +67,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public int Height
         {
             get { return _iHeight; }
@@ -75,6 +78,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlIgnore]
         public bool IsBordered
         {
             get { return _bBorderedHorizontal && _bBorderedVertical; }
@@ -88,6 +92,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public bool IsBorderedHorizontally
         {
             get { return _bBorderedHorizontal; }
@@ -99,6 +104,7 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        [XmlAttribute]
         public bool IsBorderedVertically
         {
             get { return _bBorderedVertical; }
@@ -157,6 +163,14 @@ namespace Muragatte.Core.Environment
                 return borders ? tmp : value % size;
             }
             return value;
+        }
+
+        public void Load(Region other)
+        {
+            Width = other._iWidth;
+            Height = other._iHeight;
+            IsBorderedHorizontally = other._bBorderedHorizontal;
+            IsBorderedVertically = other._bBorderedVertical;
         }
 
         private void NotifyPropertyChanged(String propertyName)

@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -83,6 +84,14 @@
     <Compile Include="src\Thesis.Converters\DirectionToDegreesConverter.cs" />
     <Compile Include="src\Thesis.Converters\IntToBoolConverter.cs" />
     <Compile Include="src\Thesis.Converters\NoiseToDistributionConverter.cs" />
+    <Compile Include="src\Thesis.Converters\StorageToTypeConverter.cs" />
+    <Compile Include="src\Thesis.IO\XmlArchetypesArchiver.cs" />
+    <Compile Include="src\Thesis.IO\XmlArchetypesRoot.cs" />
+    <Compile Include="src\Thesis.IO\XmlExperiment.cs" />
+    <Compile Include="src\Thesis.IO\XmlExperimentArchiver.cs" />
+    <Compile Include="src\Thesis.IO\XmlExperimentRoot.cs" />
+    <Compile Include="src\Thesis.IO\XmlSceneArchiver.cs" />
+    <Compile Include="src\Thesis.IO\XmlSpeciesArchiver.cs" />
     <Compile Include="src\Thesis.Results\DoubleNumericSummary.cs" />
     <Compile Include="src\Thesis.Results\ExperimentResults.cs" />
     <Compile Include="src\Thesis.Results\ExtendedNumericSummary.cs" />
@@ -181,4 +190,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
 </Project>

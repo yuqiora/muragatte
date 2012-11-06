@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Muragatte.Common;
 using Muragatte.Random;
 
@@ -21,9 +22,22 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
+        public BoidAgentArchetype() : base() { }
+
         public BoidAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, BoidAgentArgs args)
             : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        #endregion
+
+        #region Properties
+
+        [XmlElement(Type = typeof(BoidAgentArgs))]
+        public override AgentArgs Specifics
+        {
+            get { return _args; }
+            set { if (value is BoidAgentArgs) _args = value; }
+        }
 
         #endregion
 
@@ -44,9 +58,22 @@ namespace Muragatte.Core.Environment.Agents
     {
         #region Constructors
 
+        public AdvancedBoidAgentArchetype() : base() { }
+
         public AdvancedBoidAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
             NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, AdvancedBoidAgentArgs args)
             : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
+
+        #endregion
+
+        #region Properties
+
+        [XmlElement(Type = typeof(AdvancedBoidAgentArgs))]
+        public override AgentArgs Specifics
+        {
+            get { return _args; }
+            set { if (value is AdvancedBoidAgentArgs) _args = value; }
+        }
 
         #endregion
 

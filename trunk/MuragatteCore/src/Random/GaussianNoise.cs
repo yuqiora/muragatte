@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Muragatte.Random
 {
@@ -19,18 +20,22 @@ namespace Muragatte.Random
     {
         #region Constructors
 
+        public GaussianNoise() : base() { }
+
         public GaussianNoise(RandomMT random, double deviation, double limit) : base(random, deviation, limit) { }
 
         #endregion
 
         #region Properties
 
+        [XmlAttribute]
         public double Deviation
         {
             get { return _dA; }
             set { _dA = value; }
         }
 
+        [XmlAttribute]
         public double Limit
         {
             get { return _dB; }

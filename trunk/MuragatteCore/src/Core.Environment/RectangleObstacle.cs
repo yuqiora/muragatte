@@ -20,6 +20,8 @@ namespace Muragatte.Core.Environment
     {
         #region Constructors
 
+        public RectangleObstacle() : base() { }
+
         public RectangleObstacle(int id, MultiAgentSystem model, Species species, double size)
             : base(id, model, species, size, size) { }
 
@@ -37,6 +39,7 @@ namespace Muragatte.Core.Environment
         #endregion
 
         #region Properties
+
 
         public override double Radius
         {

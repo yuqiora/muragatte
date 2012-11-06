@@ -57,6 +57,11 @@ namespace Muragatte.Core.Storage
             get { return false; }
         }
 
+        public StorageOptions StorageType
+        {
+            get { return StorageOptions.SimpleBruteForce; }
+        }
+
         public Element this[int id]
         {
             get
@@ -259,6 +264,11 @@ namespace Muragatte.Core.Storage
         public void Update() { }
 
         public void Rebuild() { }
+
+        public IStorage NewInstance()
+        {
+            return new SimpleBruteForceStorage();
+        }
 
         private void NotifyCollectionChanged(NotifyCollectionChangedAction action, Element changedItem)
         {

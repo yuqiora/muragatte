@@ -22,6 +22,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.IO;
+using Muragatte.Thesis.IO;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -34,6 +36,8 @@ namespace Muragatte.Thesis.GUI
 
         private SpeciesCollection _species = null;
 
+        private XmlSpeciesArchiver _xml = null;
+
         #endregion
 
         #region Constructors
@@ -44,6 +48,8 @@ namespace Muragatte.Thesis.GUI
             DataContext = this;
 
             _species = species ?? new SpeciesCollection(true);
+
+            _xml = new XmlSpeciesArchiver(this);
         }
 
         #endregion
@@ -87,6 +93,21 @@ namespace Muragatte.Thesis.GUI
             {
                 _species.Remove(((Species)lboSpecies.SelectedItem));
             }
+        }
+
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Load();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            _xml.Save(new XmlSpeciesCollectionRoot(_species));
+        }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            _species.Clear();
         }
 
         #endregion

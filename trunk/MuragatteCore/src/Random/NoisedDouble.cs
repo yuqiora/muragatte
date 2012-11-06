@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Muragatte.Random
 {
@@ -28,6 +29,8 @@ namespace Muragatte.Random
         #endregion
 
         #region Constructors
+
+        public NoisedDouble() : this(1, new ZeroNoise()) { }
 
         public NoisedDouble(double baseValue) : this(baseValue, new ZeroNoise()) { }
 
@@ -65,6 +68,9 @@ namespace Muragatte.Random
             }
         }
 
+        [XmlElement(Type = typeof(UniformNoise)),
+        XmlElement(Type = typeof(GaussianNoise)),
+        XmlElement(Type = typeof(ZeroNoise))]
         public Noise Noise
         {
             get { return _noise; }

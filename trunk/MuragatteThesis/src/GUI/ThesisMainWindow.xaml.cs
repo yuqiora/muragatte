@@ -167,14 +167,20 @@ namespace Muragatte.Thesis.GUI
             _experiment.PostProcessing();
         }
 
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         #endregion
 
         #region Methods
 
+        /*
         private void PredefinedSampleBoids()
         {
             List<SpawnSpot> spawns = new List<SpawnSpot>();
-            SpawnSpot spawn = new RectangleSpawnSpot(new Vector2(70, 70), 120);
+            SpawnSpot spawn = new RectangleSpawnSpot("Anywhere", new Vector2(70, 70), 120);
             spawns.Add(spawn);
 
             SpeciesCollection species = new SpeciesCollection();
@@ -194,15 +200,15 @@ namespace Muragatte.Thesis.GUI
             styles.Add(new Visual.Styles.Style(Visual.DefaultValues.CENTROID_STYLE, "Centroid"));
 
             _experiment = new Experiment("Boids Sample", "", 5,
-                new InstanceDefinition(0.25, 1000, new Scene(new Region(140, false),
-                    spawns, new List<Element>()), species, archetypes),
+                new InstanceDefinition(0.25, 1000, new Scene(new Region(140, false), spawns,
+                    new List<Element>()), species, new SimpleBruteForceStorage(), archetypes),
                 styles, _random.UInt());
         }
 
         private void PredefinedSampleThesis()
         {
             List<SpawnSpot> spawns = new List<SpawnSpot>();
-            SpawnSpot spawn = new EllipseSpawnSpot(new Vector2(70, 120), 30, 30);
+            SpawnSpot spawn = new EllipseSpawnSpot("Swarm", new Vector2(70, 120), 30, 30);
             spawns.Add(spawn);
 
             SpeciesCollection species = new SpeciesCollection();
@@ -216,13 +222,13 @@ namespace Muragatte.Thesis.GUI
             Species goalI = goal.CreateSubSpecies("gI");
             Species centroid = new Core.Environment.Species("Centroid");
             species.Add(boid, SpeciesCollection.DEFAULT_AGENTS_LABEL);
-            species.Add(naive);
-            species.Add(guide);
-            species.Add(intruder);
+            //species.Add(naive);
+            //species.Add(guide);
+            //species.Add(intruder);
             species.Add(obstacle, SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
             species.Add(goal, SpeciesCollection.DEFAULT_GOALS_LABEL);
-            species.Add(goalG);
-            species.Add(goalI);
+            //species.Add(goalG);
+            //species.Add(goalI);
             species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
             List<Element> stationaries = new List<Element>();
@@ -265,14 +271,14 @@ namespace Muragatte.Thesis.GUI
                 new Visual.Styles.TrackStyle(Colors.DimGray), new Visual.Styles.TrailStyle(Colors.Silver, 10)));
 
             _experiment = new Experiment("Thesis Sample", "", 5,
-                new InstanceDefinition(0.2, 1250, new Scene(new Region(140, true), spawns, stationaries), species, archetypes),
+                new InstanceDefinition(0.2, 1250, new Scene(new Region(140, true), spawns, stationaries), species, new SimpleBruteForceStorage(), archetypes),
                 styles, _random.UInt());
         }
 
         private void PredefinedSampleThesis2()
         {
             List<SpawnSpot> spawns = new List<SpawnSpot>();
-            SpawnSpot spawn = new EllipseSpawnSpot(new Vector2(125, 205), 50, 50);
+            SpawnSpot spawn = new EllipseSpawnSpot("Swarm", new Vector2(125, 205), 50, 50);
             spawns.Add(spawn);
 
             SpeciesCollection species = new SpeciesCollection();
@@ -286,13 +292,13 @@ namespace Muragatte.Thesis.GUI
             Species goalI = goal.CreateSubSpecies("gI");
             Species centroid = new Species("Centroid");
             species.Add(boid, SpeciesCollection.DEFAULT_AGENTS_LABEL);
-            species.Add(naive);
-            species.Add(guide);
-            species.Add(intruder);
+            //species.Add(naive);
+            //species.Add(guide);
+            //species.Add(intruder);
             species.Add(obstacle, SpeciesCollection.DEFAULT_OBSTACLES_LABEL);
             species.Add(goal, SpeciesCollection.DEFAULT_GOALS_LABEL);
-            species.Add(goalG);
-            species.Add(goalI);
+            //species.Add(goalG);
+            //species.Add(goalI);
             species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
             List<Element> stationaries = new List<Element>();
@@ -334,9 +340,10 @@ namespace Muragatte.Thesis.GUI
                 new Visual.Styles.TrackStyle(Colors.DimGray), new Visual.Styles.TrailStyle(Colors.Silver, 10)));
 
             _experiment = new Experiment("Thesis Sample", "", 5,
-                new InstanceDefinition(0.2, 1250, new Scene(new Region(250, true), spawns, stationaries), species, archetypes),
+                new InstanceDefinition(0.2, 1250, new Scene(new Region(250, true), spawns, stationaries), species, new SimpleBruteForceStorage(), archetypes),
                 styles, _random.UInt());
         }
+        */
 
         private void UpdateProgressInfo(int cycle, int step)
         {
@@ -373,6 +380,7 @@ namespace Muragatte.Thesis.GUI
 
         #endregion
 
+        /*
         private void btnBoidsSample_Click(object sender, RoutedEventArgs e)
         {
             PredefinedSampleBoids();
@@ -390,5 +398,6 @@ namespace Muragatte.Thesis.GUI
             PredefinedSampleThesis2();
             ShowExperimentSummary();
         }
+        */
     }
 }
