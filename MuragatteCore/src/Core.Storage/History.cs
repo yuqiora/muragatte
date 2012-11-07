@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Muragatte.Common;
-//using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
 {
@@ -22,7 +21,6 @@ namespace Muragatte.Core.Storage
         #region Fields
 
         private List<HistoryRecord> _records = new List<HistoryRecord>();
-        //private Dictionary<int, string> _speciesTable = new Dictionary<int, string>();
 
         #endregion
 
@@ -101,12 +99,6 @@ namespace Muragatte.Core.Storage
         public List<Vector2> GetElementPositions(int id, int count)
         {
             return GetElementPositions(id, 0, count);
-            //List<Vector2> positions = new List<Vector2>();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    positions.Add(_records[i][id].Position);
-            //}
-            //return positions;
         }
 
         public List<Vector2> GetElementPositions(int id, int start, int count)
@@ -118,14 +110,6 @@ namespace Muragatte.Core.Storage
             }
             return positions;
         }
-
-        //public void Archive(IEnumerable<Species> species)
-        //{
-        //    foreach (Species s in species)
-        //    {
-        //        _speciesTable.Add(s.ID, s.CreateName);
-        //    }
-        //}
 
         #endregion
     }

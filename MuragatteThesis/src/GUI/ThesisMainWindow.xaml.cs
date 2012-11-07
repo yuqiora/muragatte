@@ -24,12 +24,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Muragatte.Random;
 
-using Muragatte.Common;
-using Muragatte.Core;
-using Muragatte.Core.Environment;
-using Muragatte.Core.Environment.Agents;
+//using Muragatte.Common;
+//using Muragatte.Core;
+//using Muragatte.Core.Environment;
+//using Muragatte.Core.Environment.Agents;
 using Muragatte.Core.Storage;
-using Muragatte.Visual;
+//using Muragatte.Visual;
+
+using System.IO;
+using Muragatte.IO;
+using Muragatte.Thesis.IO;
+using Ionic.Zip;
 
 namespace Muragatte.Thesis.GUI
 {
@@ -140,6 +145,7 @@ namespace Muragatte.Thesis.GUI
         {
             binProgress.IsBusy = false;
             btnResults.IsEnabled = _experiment.IsComplete;
+            ArchiveExperiment();
         }
 
         void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -376,6 +382,51 @@ namespace Muragatte.Thesis.GUI
         {
             window.Owner = this;
             window.ShowDialog();
+        }
+
+        private void ArchiveExperiment()
+        {
+            //if (Directory.Exists(_experiment.Name))
+            //{
+            //    foreach (string f in Directory.GetFiles(_experiment.Name))
+            //    {
+            //        File.Delete(f);
+            //    }
+            //    Directory.Delete(_experiment.Name, true);
+            //}
+            DirectoryInfo di = Directory.CreateDirectory(_experiment.Name);
+            XmlLoadSave<XmlExperimentRoot> _xml = new XmlLoadSave<XmlExperimentRoot>();
+            _xml.Save(System.IO.Path.Combine(di.FullName, "settings.xml"), new XmlExperimentRoot(_experiment));
+            DirectoryInfo diR = di.CreateSubdirectory(@"Results");
+            DirectoryInfo diH = di.CreateSubdirectory(@"History");
+            int instanceDigitLength = _experiment.RepeatCount.ToString().Length;
+            int stepDigitLength = _experiment.Definition.Length.ToString().Length;
+            string instanceFileNameFormat = "Instance_{0:D" + instanceDigitLength + "}.zip";
+            string stepFileNameFormat = "Step_{0:D" + stepDigitLength + "}.txt";
+            for (int i = 0; i < _experiment.RepeatCount; i++)
+            {
+                using (ZipFile zip = new ZipFile())
+                {
+                    foreach (HistoryRecord r in _experiment.Instances[i].Model.History)
+                    {
+                        string path = System.IO.Path.Combine(diH.FullName, string.Format(stepFileNameFormat, r.Step));
+                        using (StreamWriter writer = File.CreateText(path))
+                        {
+                            writer.WriteLine(ElementStatus.Header);
+                            foreach (ElementStatus es in r)
+                            {
+                                writer.WriteLine(es);
+                            }
+                        }
+                        zip.AddFile(path, "");
+                    }
+                    zip.Save(System.IO.Path.Combine(diH.FullName, string.Format(instanceFileNameFormat, i)));
+                    foreach (string f in Directory.GetFiles(diH.FullName, "*.txt"))
+                    {
+                        File.Delete(f);
+                    }
+                }
+            }
         }
 
         #endregion

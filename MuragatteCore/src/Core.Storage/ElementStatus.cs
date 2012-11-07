@@ -20,6 +20,8 @@ namespace Muragatte.Core.Storage
     {
         #region Fields
 
+        public static readonly string Header = "Id PositionX PositionY Direction Speed IsEnabled Species Group";
+
         private int _iElementID;
         private Vector2 _position;
         private Vector2 _direction;
@@ -117,7 +119,8 @@ namespace Muragatte.Core.Storage
         {
             //return string.Format("{0} {1} {2} {3} {4} {5} {6}{7}",
             //    _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID, ModifiersToString());
-            return string.Format("{0} {1} {2} {3} {4} {5} {6}", _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID);
+            //return string.Format("{0} {1} {2} {3} {4} {5} {6}", _iElementID, _position, _direction, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID);
+            return string.Format("{0} {1} {2} {3} {4} {5} {6}", _iElementID, _position, _direction.Angle.Degrees, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID);
         }
 
         #endregion

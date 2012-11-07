@@ -354,7 +354,7 @@ namespace Muragatte.Visual
 
         private HistoryRecord CurrentSituation()
         {
-            HistoryRecord record = new HistoryRecord();
+            HistoryRecord record = new HistoryRecord(0);
             foreach (Element e in _visual.GetModel.Elements)
             {
                 record.Add(e.ReportStatus());

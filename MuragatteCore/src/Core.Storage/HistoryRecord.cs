@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Muragatte.Common;
 using Muragatte.Core.Environment;
 
 namespace Muragatte.Core.Storage
@@ -20,6 +21,9 @@ namespace Muragatte.Core.Storage
     {
         #region Fields
 
+        public static readonly ElementStatus DummyStatus = new ElementStatus(0, Vector2.Zero, Vector2.X0Y1, 0, false, string.Empty, -1);
+
+        private int _iStep = 0;
         private Dictionary<int, ElementStatus> _items = new Dictionary<int, ElementStatus>();
         private List<Group> _groups = null;
         private List<Agent> _strays = null;
@@ -28,15 +32,28 @@ namespace Muragatte.Core.Storage
 
         #region Constructors
 
-        public HistoryRecord() { }
+        public HistoryRecord(int step)
+        {
+            _iStep = step;
+        }
 
         #endregion
 
         #region Properties
 
+        public int Step
+        {
+            get { return _iStep; }
+        }
+
         public ElementStatus this[int id]
         {
-            get { return _items[id]; }
+            get
+            {
+                ElementStatus es;
+                if (!_items.TryGetValue(id, out es)) es = DummyStatus;
+                return es;
+            }
         }
 
         public IEnumerable<Group> Groups

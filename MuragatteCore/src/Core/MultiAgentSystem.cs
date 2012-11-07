@@ -160,10 +160,9 @@ namespace Muragatte.Core
         {
             _storage.Initialize();
             CreateCentroids();
-            HistoryRecord record = new HistoryRecord();
+            HistoryRecord record = new HistoryRecord(0);
             ReportStatus(record);
             _history.Add(record);
-            //_history.Archive(_species.Values);
         }
 
         private void ReportStatus(HistoryRecord record)
@@ -211,7 +210,7 @@ namespace Muragatte.Core
             {
                 e.Update();
             }
-            HistoryRecord record = new HistoryRecord();
+            HistoryRecord record = new HistoryRecord(_iSteps + 1);
             foreach (Element e in _storage.Items)
             {
                 e.ConfirmUpdate();

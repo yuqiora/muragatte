@@ -47,7 +47,7 @@ namespace Muragatte.Visual
         private List<Coordinates> _neighbourhoodCoordinates = null;
 
         private HistoryViewer _historyViewer = null;
-        private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, "", -1);
+        //private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, "", -1);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -279,7 +279,7 @@ namespace Muragatte.Visual
 
         private ElementStatus FromHistory
         {
-            get { return _historyViewer.IsEmpty ? _dummyStatus : _historyViewer.Current[_element.ID]; }
+            get { return _historyViewer.IsEmpty ? HistoryRecord.DummyStatus : _historyViewer.Current[_element.ID]; }
         }
 
         #endregion
