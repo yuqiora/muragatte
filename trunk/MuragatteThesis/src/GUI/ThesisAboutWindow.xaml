@@ -35,12 +35,12 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Name="txbRandomOpsVersion" Text="RandomOps v" Grid.Column="0" />
-            <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://www.hvass-labs.org/projects/randomops/cs/">
-                <Hyperlink NavigateUri="http://www.hvass-labs.org/projects/randomops/cs/" Click="Hyperlink_Click">www</Hyperlink>
+            <TextBlock Name="txbDotNetZipVersion" Text="DotNetZip v" Grid.Column="0" />
+            <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://dotnetzip.codeplex.com/">
+                <Hyperlink NavigateUri="http://dotnetzip.codeplex.com/" Click="Hyperlink_Click">www</Hyperlink>
             </TextBlock>
         </Grid>
-        <TextBlock Text="Copyright © 2003-2010 Magnus Erik Hvass Pedersen" FontSize="10" />
+        <TextBlock Text="Copyright © 2006-2011 Dino Chiesa" FontSize="10" />
         <Grid Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -52,6 +52,17 @@
             </TextBlock>
         </Grid>
         <TextBlock Text="Copyright © 2010-2012 Xceed Software Inc." FontSize="10" />
+        <Grid Margin="0,5,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="txbRandomOpsVersion" Text="RandomOps v" Grid.Column="0" />
+            <TextBlock Grid.Column="1" HorizontalAlignment="Right" ToolTip="http://www.hvass-labs.org/projects/randomops/cs/">
+                <Hyperlink NavigateUri="http://www.hvass-labs.org/projects/randomops/cs/" Click="Hyperlink_Click">www</Hyperlink>
+            </TextBlock>
+        </Grid>
+        <TextBlock Text="Copyright © 2003-2010 Magnus Erik Hvass Pedersen" FontSize="10" />
         <Grid Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />

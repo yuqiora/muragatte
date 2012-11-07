@@ -35,17 +35,20 @@ namespace Muragatte.IO
 
         public T Load(string path)
         {
-            FileStream stream = new FileStream(path, FileMode.Open);
-            T item = (T)_serializer.Deserialize(stream);
-            stream.Close();
+            T item;
+            using (FileStream stream = new FileStream(path, FileMode.Open))
+            {
+                item = (T)_serializer.Deserialize(stream);
+            }
             return item;
         }
 
         public void Save(string path, T item)
         {
-            StreamWriter writer = new StreamWriter(path);
-            _serializer.Serialize(writer, item);
-            writer.Close();
+            using (StreamWriter writer = new StreamWriter(path))
+            {
+                _serializer.Serialize(writer, item);
+            }
         }
 
         #endregion

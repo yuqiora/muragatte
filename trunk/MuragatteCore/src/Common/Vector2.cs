@@ -159,7 +159,12 @@ namespace Muragatte.Common
 
         public override string ToString()
         {
-            return string.Format("{0} {1}", _dX, _dY);
+            return ToString(' ');
+        }
+
+        public string ToString(char delimeter)
+        {
+            return string.Format("{0}{1}{2}", _dX, delimeter, _dY);
         }
         
         #endregion
