@@ -237,8 +237,8 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <TextBlock Text="Goal End Distance:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" />
-                            <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left">
+                            <TextBlock Text="Goal End Distance:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" Visibility="{Binding Path=IsEndGoalDefined, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Visibility="{Binding Path=IsEndGoalDefined, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Grid.Resources>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -281,7 +281,7 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Name="grbExperimentObserved">
+                    <GroupBox Name="grbExperimentObserved" IsEnabled="{Binding Path=Results.HasAnyObserved}">
                         <GroupBox.Header>
                             <CheckBox Content="Observed" Height="16" Name="chbExperimentObserved" />
                         </GroupBox.Header>
@@ -662,7 +662,7 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Name="grbInstanceObserved">
+                    <GroupBox Name="grbInstanceObserved" IsEnabled="{Binding Path=Results.InstanceDetails/HasAnyObserved}">
                         <GroupBox.Header>
                             <CheckBox Content="Observed" Height="16" Name="chbInstanceObserved" />
                         </GroupBox.Header>
@@ -874,7 +874,7 @@
                             </ContentControl>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Name="grbStepObserved">
+                    <GroupBox Name="grbStepObserved" IsEnabled="{Binding Path=Results.InstanceDetails/StepDetails/HasAnyObserved}">
                         <GroupBox.Header>
                             <CheckBox Content="Observed" Height="16" Name="chbStepObserved" />
                         </GroupBox.Header>

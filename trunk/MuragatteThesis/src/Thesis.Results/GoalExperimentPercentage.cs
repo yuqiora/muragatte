@@ -101,6 +101,11 @@ namespace Muragatte.Thesis.Results
             return 100d * value / count;
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} {3}", GoalName, _dStart, _dPercent, _dEnd);
+        }
+
         #endregion
     }
 }

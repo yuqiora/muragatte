@@ -41,15 +41,16 @@ namespace Muragatte.Thesis.GUI
     /// <summary>
     /// Interaction logic for ThesisMainWindow.xaml
     /// </summary>
-    public partial class ThesisMainWindow : Window
+    public partial class ThesisMainWindow : Window, INotifyPropertyChanged
     {
         #region Fields
 
         private RandomMT _random = new RandomMT();
-        //private Experiment _experiment = new Experiment("", "", 1, new InstanceDefinition(1, 1, new Core.Scene(new Core.Environment.Region(100, true)), new Core.Storage.SpeciesCollection(), new List<Core.Environment.AgentArchetype>()), new List<Visual.Styles.Style>(), 0);
         private Experiment _experiment = null;
 
-        private BackgroundWorker _worker = new BackgroundWorker();
+        private ExperimentArchiver _archiver = new ExperimentArchiver();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -57,11 +58,8 @@ namespace Muragatte.Thesis.GUI
 
         public ThesisMainWindow()
         {
-            _worker.WorkerReportsProgress = true;
-            _worker.WorkerSupportsCancellation = true;
-            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
-            _worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
-            _worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
+            _archiver.Worker.ProgressChanged += new ProgressChangedEventHandler(ExperimentLoadSave_ProgressChanged);
+            _archiver.Worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ExperimentLoadSave_Completed);
 
             InitializeComponent();
             DataContext = this;
@@ -74,7 +72,16 @@ namespace Muragatte.Thesis.GUI
         public Experiment Experiment
         {
             get { return _experiment; }
-            set { _experiment = value; }
+            set
+            {
+                _experiment = value;
+                if (_experiment != null)
+                {
+                    _experiment.Worker.ProgressChanged += new ProgressChangedEventHandler(ExperimentInProgress_ProgressChanged);
+                    _experiment.Worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ExperimentInProgress_Completed);
+                }
+                NotifyPropertyChanged("Experiment");
+            }
         }
 
         public RandomMT Random
@@ -94,25 +101,26 @@ namespace Muragatte.Thesis.GUI
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
             OpenDialogWindow(new ThesisExperimentEditorWindow(this));
-            ShowExperimentSummary();
         }
 
         private void btnRun_Click(object sender, RoutedEventArgs e)
         {
-            if (_experiment != null && !_worker.IsBusy)
+            if (_experiment != null)
             {
-                UpdateProgressInfo(0, 0);
+                grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
+                txbSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
+                prbSave.Visibility = System.Windows.Visibility.Collapsed;
                 binProgress.IsBusy = true;
-                _worker.RunWorkerAsync();
+                _experiment.RunAsync();
             }
         }
 
-        private void btnModify_Click(object sender, RoutedEventArgs e)
+        private void btnDetails_Click(object sender, RoutedEventArgs e)
         {
             if (_experiment != null)
             {
+                if (_experiment.Status == ExperimentStatus.Canceled) _experiment.Reset();
                 OpenDialogWindow(new ThesisExperimentEditorWindow(this));
-                ShowExperimentSummary();
             }
         }
 
@@ -124,58 +132,57 @@ namespace Muragatte.Thesis.GUI
             }
         }
 
-        private void btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            _experiment.Reset();
-        }
-
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            _experiment = null;
-            ShowExperimentSummary();
+            Experiment = null;
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            _worker.CancelAsync();
-            _experiment.Cancel();
+            _experiment.CancelAsync();
         }
 
-        void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void ExperimentInProgress_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //binProgress.IsBusy = false;
+            if (_experiment.IsComplete)
+            {
+                grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
+                txbSaveInfo.Visibility = System.Windows.Visibility.Visible;
+                prbSave.Visibility = System.Windows.Visibility.Visible;
+                _archiver.Save(_experiment);
+            }
+            else
+            {
+                binProgress.IsBusy = false;
+            }
+        }
+
+        private void ExperimentInProgress_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ExperimentProgress progress = (ExperimentProgress)e.UserState;
+            UpdateProgressInfo(progress);
+        }
+
+        private void ExperimentLoadSave_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             binProgress.IsBusy = false;
-            btnResults.IsEnabled = _experiment.IsComplete;
-            ArchiveExperiment();
+            prbSave.Value = 0;
         }
 
-        void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void ExperimentLoadSave_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Tuple<int, int> info = e.UserState as Tuple<int, int>;
-            UpdateProgressInfo(info.Item1, info.Item2);
-        }
-
-        void _worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            _experiment.PreProcessing();
-            for (int i = 0; i < _experiment.RepeatCount; i++)
-            {
-                if (_worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                while (!_experiment.Instances[i].IsComplete)
-                {
-                    _experiment.Instances[i].Update();
-                    _worker.ReportProgress(0, new Tuple<int, int>(i, _experiment.Instances[i].Model.StepCount));
-                }
-            }
-            _experiment.PostProcessing();
+            prbSave.Value = (double)e.UserState;
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            //save completed (settings + results + history + snapshots)
         }
 
         #endregion
@@ -351,31 +358,12 @@ namespace Muragatte.Thesis.GUI
         }
         */
 
-        private void UpdateProgressInfo(int cycle, int step)
+        private void UpdateProgressInfo(ExperimentProgress progress)
         {
-            int length = _experiment.Definition.Length;
-            int repeat = _experiment.RepeatCount;
-            txbInstanceProgress.Text = string.Format("{0} / {1}", step, length);
-            prbInstance.Value = 100d * step / length;
-            txbExperimentProgress.Text = string.Format("{0} / {1}", cycle, repeat);
-            prbExperiment.Value = 100d * (cycle * length + step) / (repeat * length);
-        }
-
-        private void ShowExperimentSummary()
-        {
-            if (_experiment != null)
-            {
-                grbExperimentSummary.Header = _experiment.Name;
-                txbPath.Text = "Location: " + _experiment.Path;
-                txbTotalSteps.Text = string.Format("Cycles x Length: {0}x{1}", _experiment.RepeatCount, _experiment.Definition.Length);
-                lboArchetypes.ItemsSource = _experiment.Definition.Archetypes;
-                btnResults.IsEnabled = _experiment.IsComplete;
-                grbExperimentSummary.Visibility = System.Windows.Visibility.Visible;
-            }
-            else
-            {
-                grbExperimentSummary.Visibility = System.Windows.Visibility.Collapsed;
-            }
+            txbInstanceProgress.Text = string.Format("{0} / {1}", progress.Step, progress.Length);
+            prbInstance.Value = progress.InstancePercent;
+            txbExperimentProgress.Text = string.Format("{0} / {1}", progress.Instance, progress.Repeat);
+            prbExperiment.Value = progress.ExperimentPercent;
         }
 
         private void OpenDialogWindow(Window window)
@@ -384,48 +372,11 @@ namespace Muragatte.Thesis.GUI
             window.ShowDialog();
         }
 
-        private void ArchiveExperiment()
+        private void NotifyPropertyChanged(String propertyName)
         {
-            //if (Directory.Exists(_experiment.Name))
-            //{
-            //    foreach (string f in Directory.GetFiles(_experiment.Name))
-            //    {
-            //        File.Delete(f);
-            //    }
-            //    Directory.Delete(_experiment.Name, true);
-            //}
-            DirectoryInfo di = Directory.CreateDirectory(_experiment.Name);
-            XmlLoadSave<XmlExperimentRoot> _xml = new XmlLoadSave<XmlExperimentRoot>();
-            _xml.Save(System.IO.Path.Combine(di.FullName, "settings.xml"), new XmlExperimentRoot(_experiment));
-            DirectoryInfo diR = di.CreateSubdirectory(@"Results");
-            DirectoryInfo diH = di.CreateSubdirectory(@"History");
-            int instanceDigitLength = _experiment.RepeatCount.ToString().Length;
-            int stepDigitLength = _experiment.Definition.Length.ToString().Length;
-            string instanceFileNameFormat = "Instance_{0:D" + instanceDigitLength + "}.zip";
-            string stepFileNameFormat = "Step_{0:D" + stepDigitLength + "}.txt";
-            for (int i = 0; i < _experiment.RepeatCount; i++)
+            if (PropertyChanged != null)
             {
-                using (ZipFile zip = new ZipFile())
-                {
-                    foreach (HistoryRecord r in _experiment.Instances[i].Model.History)
-                    {
-                        string path = System.IO.Path.Combine(diH.FullName, string.Format(stepFileNameFormat, r.Step));
-                        using (StreamWriter writer = File.CreateText(path))
-                        {
-                            writer.WriteLine(ElementStatus.Header);
-                            foreach (ElementStatus es in r)
-                            {
-                                writer.WriteLine(es);
-                            }
-                        }
-                        zip.AddFile(path, "");
-                    }
-                    zip.Save(System.IO.Path.Combine(diH.FullName, string.Format(instanceFileNameFormat, i)));
-                    foreach (string f in Directory.GetFiles(diH.FullName, "*.txt"))
-                    {
-                        File.Delete(f);
-                    }
-                }
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
