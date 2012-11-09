@@ -112,6 +112,11 @@ namespace Muragatte.Thesis.Results
             UpdateEndAverage(endCount);
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}", _start, _overall, _end);
+        }
+
         #endregion
     }
 }

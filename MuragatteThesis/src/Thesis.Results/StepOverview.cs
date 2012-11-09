@@ -105,6 +105,11 @@ namespace Muragatte.Thesis.Results
             get { return _observed; }
         }
 
+        public bool HasAnyObserved
+        {
+            get { return _observed.Count > 0; }
+        }
+
         #endregion
 
         #region Methods

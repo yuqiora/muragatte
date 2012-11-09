@@ -109,6 +109,7 @@
     <Compile Include="src\Thesis.Results\StepOverview.cs" />
     <Compile Include="src\Thesis\ArchetypeOverviewInfo.cs" />
     <Compile Include="src\Thesis\Experiment.cs" />
+    <Compile Include="src\Thesis\ExperimentProgress.cs" />
     <Compile Include="src\Thesis\Instance.cs" />
     <Compile Include="src\Thesis\InstanceDefinition.cs" />
     <Compile Include="src\Thesis\ObservedArchetype.cs" />

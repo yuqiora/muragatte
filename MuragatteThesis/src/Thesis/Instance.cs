@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Muragatte.Core;
@@ -99,6 +100,25 @@ namespace Muragatte.Thesis
                 }
                 ProcessResults();
                 _bComplete = true;
+            }
+        }
+
+        public void RunAsync(BackgroundWorker worker, ExperimentProgress progress)
+        {
+            if (!_bComplete)
+            {
+                progress.UpdateInstance(_iNumber);
+                for (int i = 0; i < _iLength; i++)
+                {
+                    if (worker.CancellationPending) break;
+                    _mas.Update();
+                    worker.ReportProgress(0, progress.Next());
+                }
+                if (!worker.CancellationPending)
+                {
+                    ProcessResults();
+                    _bComplete = true;
+                }
             }
         }
 

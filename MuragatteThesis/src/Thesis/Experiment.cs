@@ -23,6 +23,14 @@ using Muragatte.Visual.Styles;
 
 namespace Muragatte.Thesis
 {
+    public enum ExperimentStatus
+    {
+        Loaded,
+        Completed,
+        Canceled,
+        InProgress
+    }
+
     public class Experiment : INotifyPropertyChanged
     {
         #region Fields
@@ -33,11 +41,11 @@ namespace Muragatte.Thesis
         private InstanceDefinition _definition = null;
         private List<Instance> _instances = new List<Instance>();
         private ObservableCollection<Style> _styles = null;
-        private bool _bComplete = false;
-        private bool _bCanceled = false;
+        private ExperimentStatus _status = ExperimentStatus.Loaded;
         private ExperimentResults _results = null;
         private uint _uiSeed = 0;
         private RandomMT _random = null;
+        private BackgroundWorker _worker = new BackgroundWorker();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,7 +53,10 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public Experiment() { }
+        public Experiment()
+        {
+            InitializeWorker();
+        }
 
         public Experiment(string name, string path, int repeat, InstanceDefinition definition, IEnumerable<Style> styles, uint seed)
         {
@@ -55,6 +66,7 @@ namespace Muragatte.Thesis
             _definition = definition;
             _styles = styles == null ? new ObservableCollection<Style>() : new ObservableCollection<Style>(styles);
             _uiSeed = seed;
+            InitializeWorker();
         }
 
         #endregion
@@ -111,24 +123,26 @@ namespace Muragatte.Thesis
             get { return _styles; }
         }
 
-        public bool IsComplete
+        public ExperimentStatus Status
         {
-            get { return _bComplete; }
+            get { return _status; }
             private set
             {
-                _bComplete = value;
+                _status = value;
+                NotifyPropertyChanged("Status");
                 NotifyPropertyChanged("IsComplete");
+                NotifyPropertyChanged("CanRun");
             }
         }
 
-        public bool IsCanceled
+        public bool IsComplete
         {
-            get { return _bCanceled; }
-            private set
-            {
-                _bCanceled= value;
-                NotifyPropertyChanged("IsCanceled");
-            }
+            get { return _status == ExperimentStatus.Completed; }
+        }
+
+        public bool CanRun
+        {
+            get { return _status == ExperimentStatus.Loaded || _status == ExperimentStatus.Canceled; }
         }
 
         public ExperimentResults Results
@@ -141,13 +155,19 @@ namespace Muragatte.Thesis
             get { return _definition; }
         }
 
+        public BackgroundWorker Worker
+        {
+            get { return _worker; }
+        }
+
         #endregion
 
         #region Methods
 
-        public void Cancel()
+        public void CancelAsync()
         {
-            IsCanceled = true;
+            Status = ExperimentStatus.Canceled;
+            _worker.CancelAsync();
         }
 
         public void Reset()
@@ -158,13 +178,13 @@ namespace Muragatte.Thesis
             }
             _instances.Clear();
             _results = null;
-            IsComplete = false;
-            IsCanceled = false;
+            Status = ExperimentStatus.Loaded;
         }
 
         public void Run()
         {
-            if (!_bComplete)
+            if (_status == ExperimentStatus.Canceled) Reset();
+            if (_status == ExperimentStatus.Loaded)
             {
                 PreProcessing();
                 for (int i = 0; i < _iRepeatCount; i++)
@@ -175,10 +195,19 @@ namespace Muragatte.Thesis
             }
         }
 
-        public void PreProcessing()
+        public void RunAsync()
         {
-            if (!_bComplete)
+            if (CanRun && !_worker.IsBusy)
             {
+                _worker.RunWorkerAsync();
+            }
+        }
+
+        private void PreProcessing()
+        {
+            if (_status == ExperimentStatus.Loaded)
+            {
+                Status = ExperimentStatus.InProgress;
                 _random = new RandomMT(_uiSeed);
                 for (int i = 0; i < _iRepeatCount; i++)
                 {
@@ -187,18 +216,46 @@ namespace Muragatte.Thesis
             }
         }
 
-        public void PostProcessing()
+        private void PostProcessing()
         {
-            if (!_bComplete && !_bCanceled)
+            if (_status == ExperimentStatus.InProgress)
             {
                 _results = new ExperimentResults(_instances);
-                IsComplete = true;
+                Status = ExperimentStatus.Completed;
             }
         }
 
         private void CreateNewInstance(int number)
         {
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
+        }
+
+        private void InitializeWorker()
+        {
+            _worker.WorkerReportsProgress = true;
+            _worker.WorkerSupportsCancellation = true;
+            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+        }
+
+        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (_status == ExperimentStatus.Canceled) Reset();
+            if (_status == ExperimentStatus.Loaded)
+            {
+                ExperimentProgress progress = new ExperimentProgress(_iRepeatCount, _definition.Length);
+                _worker.ReportProgress(0, progress);
+                PreProcessing();
+                for (int i = 0; i < _iRepeatCount; i++)
+                {
+                    if (_worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        break;
+                    }
+                    _instances[i].RunAsync(_worker, progress);
+                }
+                PostProcessing();
+            }
         }
 
         private void NotifyPropertyChanged(String propertyName)
