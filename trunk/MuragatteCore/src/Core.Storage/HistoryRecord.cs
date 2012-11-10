@@ -90,6 +90,36 @@ namespace Muragatte.Core.Storage
             _groups = null;
         }
 
+        public void CreateGroupsAndStrays(IEnumerable<Agent> agents)
+        {
+            if (_groups == null && _strays == null)
+            {
+                _strays = new List<Agent>();
+                _groups = new List<Group>();
+                Dictionary<int, List<Agent>> grouping = new Dictionary<int, List<Agent>>();
+                foreach (Agent a in agents)
+                {
+                    ElementStatus es;
+                    if (_items.TryGetValue(a.ID, out es))
+                    {
+                        if (es.GroupID < 0)
+                        {
+                            _strays.Add(a);
+                        }
+                        else
+                        {
+                            if (!grouping.ContainsKey(es.GroupID)) grouping.Add(es.GroupID, new List<Agent>());
+                            grouping[es.GroupID].Add(a);
+                        }
+                    }
+                }
+                foreach (KeyValuePair<int, List<Agent>> g in grouping)
+                {
+                    _groups.Add(new Group(g.Key, g.Value));
+                }
+            }
+        }
+
         public IEnumerator<ElementStatus> GetEnumerator()
         {
             return _items.Values.GetEnumerator();

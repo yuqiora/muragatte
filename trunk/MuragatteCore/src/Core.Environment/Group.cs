@@ -41,6 +41,12 @@ namespace Muragatte.Core.Environment
             }
         }
 
+        public Group(int id, IEnumerable<Agent> agents)
+        {
+            _iGroupID = id;
+            _members.AddRange(agents);
+        }
+
         #endregion
 
         #region Properties

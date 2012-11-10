@@ -157,6 +157,21 @@ namespace Muragatte.Thesis
             _results = new InstanceResults(_iNumber, _mas.History, _mas.Substeps, _observedInfos);
         }
 
+        public void FinishLoading()
+        {
+            _mas.LoadedTo(_iLength);
+            ProcessResults();
+            //foreach (Element e in _mas.Elements)
+            //{
+            //    e.LoadStatus(_mas.History.Last()[e.ID]);
+            //}
+            //foreach (Centroid c in _mas.Elements.Centroids)
+            //{
+            //    c.LoadStatus(_mas.History.Last()[c.ID]);
+            //}
+            _bComplete = true;
+        }
+
         #endregion
     }
 }
