@@ -88,6 +88,7 @@
     <Compile Include="src\Thesis.Converters\IntToBoolConverter.cs" />
     <Compile Include="src\Thesis.Converters\NoiseToDistributionConverter.cs" />
     <Compile Include="src\Thesis.Converters\StorageToTypeConverter.cs" />
+    <Compile Include="src\Thesis.IO\CompletedExperimentArchiver.cs" />
     <Compile Include="src\Thesis.IO\XmlArchetypesArchiver.cs" />
     <Compile Include="src\Thesis.IO\XmlArchetypesRoot.cs" />
     <Compile Include="src\Thesis.IO\XmlExperiment.cs" />

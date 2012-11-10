@@ -25,10 +25,11 @@ namespace Muragatte.Thesis
 {
     public enum ExperimentStatus
     {
-        Loaded,
+        Loading,
+        Ready,
+        InProgress,
         Completed,
-        Canceled,
-        InProgress
+        Canceled
     }
 
     public class Experiment : INotifyPropertyChanged
@@ -41,7 +42,7 @@ namespace Muragatte.Thesis
         private InstanceDefinition _definition = null;
         private List<Instance> _instances = new List<Instance>();
         private ObservableCollection<Style> _styles = null;
-        private ExperimentStatus _status = ExperimentStatus.Loaded;
+        private ExperimentStatus _status = ExperimentStatus.Ready;
         private ExperimentResults _results = null;
         private uint _uiSeed = 0;
         private RandomMT _random = null;
@@ -142,7 +143,7 @@ namespace Muragatte.Thesis
 
         public bool CanRun
         {
-            get { return _status == ExperimentStatus.Loaded || _status == ExperimentStatus.Canceled; }
+            get { return _status == ExperimentStatus.Ready || _status == ExperimentStatus.Canceled; }
         }
 
         public ExperimentResults Results
@@ -178,13 +179,13 @@ namespace Muragatte.Thesis
             }
             _instances.Clear();
             _results = null;
-            Status = ExperimentStatus.Loaded;
+            Status = ExperimentStatus.Ready;
         }
 
         public void Run()
         {
             if (_status == ExperimentStatus.Canceled) Reset();
-            if (_status == ExperimentStatus.Loaded)
+            if (_status == ExperimentStatus.Ready)
             {
                 PreProcessing();
                 for (int i = 0; i < _iRepeatCount; i++)
@@ -203,9 +204,9 @@ namespace Muragatte.Thesis
             }
         }
 
-        public void PreProcessing()
+        private void PreProcessing()
         {
-            if (_status == ExperimentStatus.Loaded)
+            if (_status == ExperimentStatus.Ready)
             {
                 Status = ExperimentStatus.InProgress;
                 _random = new RandomMT(_uiSeed);
@@ -218,7 +219,7 @@ namespace Muragatte.Thesis
 
         private void PostProcessing()
         {
-            if (_status == ExperimentStatus.InProgress)
+            if (_status == ExperimentStatus.InProgress || _status == ExperimentStatus.Loading)
             {
                 _results = new ExperimentResults(_instances);
                 Status = ExperimentStatus.Completed;
@@ -228,6 +229,16 @@ namespace Muragatte.Thesis
         private void CreateNewInstance(int number)
         {
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
+        }
+
+        public void StartLoading()
+        {
+            PreProcessing();
+            foreach (Instance i in _instances)
+            {
+                i.Model.History.Clear();
+            }
+            Status = ExperimentStatus.Loading;
         }
 
         public void FinishLoading()
@@ -249,7 +260,7 @@ namespace Muragatte.Thesis
         private void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
             if (_status == ExperimentStatus.Canceled) Reset();
-            if (_status == ExperimentStatus.Loaded)
+            if (_status == ExperimentStatus.Ready)
             {
                 ExperimentProgress progress = new ExperimentProgress(_iRepeatCount, _definition.Length);
                 _worker.ReportProgress(0, progress);

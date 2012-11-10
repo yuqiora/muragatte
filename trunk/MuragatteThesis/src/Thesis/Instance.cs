@@ -44,7 +44,7 @@ namespace Muragatte.Thesis
             _iLength = length;
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
-            _mas = new MultiAgentSystem(storage.NewInstance(), scene, species, _random, timePerStep);
+            _mas = new MultiAgentSystem(number, storage.NewInstance(), scene, species, _random, timePerStep);
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }
@@ -160,15 +160,8 @@ namespace Muragatte.Thesis
         public void FinishLoading()
         {
             _mas.LoadedTo(_iLength);
+            _mas.LoadCurrentElementStatus();
             ProcessResults();
-            //foreach (Element e in _mas.Elements)
-            //{
-            //    e.LoadStatus(_mas.History.Last()[e.ID]);
-            //}
-            //foreach (Centroid c in _mas.Elements.Centroids)
-            //{
-            //    c.LoadStatus(_mas.History.Last()[c.ID]);
-            //}
             _bComplete = true;
         }
 

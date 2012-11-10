@@ -108,10 +108,6 @@ namespace Muragatte.Thesis.GUI
             if (_experiment != null)
             {
                 ShowExperimentRunProgress();
-                //grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
-                //txbLoadSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
-                //prbLoadSave.Visibility = System.Windows.Visibility.Collapsed;
-                //binProgress.IsBusy = true;
                 _experiment.RunAsync();
             }
         }
@@ -145,14 +141,11 @@ namespace Muragatte.Thesis.GUI
 
         private void ExperimentInProgress_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
-            //binProgress.IsBusy = false;
             if (_experiment.IsComplete)
             {
                 ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
-                //grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
-                //txbLoadSaveInfo.Visibility = System.Windows.Visibility.Visible;
-                //prbLoadSave.Visibility = System.Windows.Visibility.Visible;
                 _archiver.Save(_experiment);
+                if (!_archiver.Worker.IsBusy) binProgress.IsBusy = false;
             }
             else
             {
@@ -186,15 +179,20 @@ namespace Muragatte.Thesis.GUI
         {
             ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
             _archiver.SaveAt(_experiment);
+            if (!_archiver.Worker.IsBusy) binProgress.IsBusy = false;
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
             Experiment openExp;
+            ShowLoadSaveProgress(CompletedExperimentArchiver.LOAD_INFO);
             if (_archiver.Load(out openExp))
             {
-                ShowLoadSaveProgress(CompletedExperimentArchiver.LOAD_INFO);
                 Experiment = openExp;
+            }
+            else
+            {
+                binProgress.IsBusy = false;
             }
         }
 
@@ -373,18 +371,20 @@ namespace Muragatte.Thesis.GUI
 
         private void ShowExperimentRunProgress()
         {
-            grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
-            txbLoadSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
-            prbLoadSave.Visibility = System.Windows.Visibility.Collapsed;
-            binProgress.IsBusy = true;
+            ShowProgress(System.Windows.Visibility.Visible, System.Windows.Visibility.Collapsed);
         }
 
         private void ShowLoadSaveProgress(string info)
         {
             txbLoadSaveInfo.Text = info;
-            grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
-            txbLoadSaveInfo.Visibility = System.Windows.Visibility.Visible;
-            prbLoadSave.Visibility = System.Windows.Visibility.Visible;
+            ShowProgress(System.Windows.Visibility.Collapsed, System.Windows.Visibility.Visible);
+        }
+
+        private void ShowProgress(System.Windows.Visibility runInfo, System.Windows.Visibility loadSave)
+        {
+            grdExperimentRunProgressInfo.Visibility = runInfo;
+            txbLoadSaveInfo.Visibility = loadSave;
+            prbLoadSave.Visibility = loadSave;
             binProgress.IsBusy = true;
         }
 

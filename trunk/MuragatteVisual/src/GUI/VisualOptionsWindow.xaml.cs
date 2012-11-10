@@ -269,7 +269,7 @@ namespace Muragatte.Visual.GUI
             RedrawStylePreview();
         }
 
-        private void VisualItemList_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        private void VisualItemList_ItemSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
             RedrawCurrentIfStopped();
         }
@@ -293,7 +293,7 @@ namespace Muragatte.Visual.GUI
             }
         }
 
-        private void SelectSpecies_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        private void SelectSpecies_ItemSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
             Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
             foreach (Appearance a in _views[tabOptions.SelectedIndex])
@@ -302,7 +302,7 @@ namespace Muragatte.Visual.GUI
             }
         }
 
-        private void SelectGroups_SelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
+        private void SelectGroups_ItemSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
             Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
             foreach (Appearance a in _views[tabOptions.SelectedIndex])

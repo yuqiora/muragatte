@@ -212,18 +212,14 @@ namespace Muragatte.Thesis.Results
             Dictionary<Goal, int> goals = new Dictionary<Goal, int>();
             foreach (StepOverview so in _stepDetails)
             {
-                _groupCount.UpdateMinMaxSum(so.GroupCount);
-                _strayCount.UpdateMinMaxSum(so.StrayCount);
-                _strayWanderCount.UpdateMinMaxSum(so.StrayWanderCount);
-                _strayGoalCount.UpdateMinMaxSum(so.StrayGoalCount);
-                _mainGroupSize.UpdateMinMaxSum(so.MainGroup.Size);
-                if (!so.MainGroup.HasGoal)
+                UpdateSummaryMinMaxSum(so);
+                if (so.MainGroup.HasGoal)
                 {
-                    noGoal++;
+                    AnotherGoal(goals, so.MainGroup.MajorityGoal);
                 }
                 else
                 {
-                    AnotherGoal(goals, so.MainGroup.MajorityGoal);
+                    noGoal++;
                 }
             }
             GoalPercentage(noGoal, goals, _stepDetails.Count);
@@ -262,6 +258,15 @@ namespace Muragatte.Thesis.Results
             {
                 _mainGroupGoalPercentage.Add(new GoalInstancePercentage(g.Key, 100d * g.Value / count));
             }
+        }
+
+        private void UpdateSummaryMinMaxSum(StepOverview so)
+        {
+            _groupCount.UpdateMinMaxSum(so.GroupCount);
+            _strayCount.UpdateMinMaxSum(so.StrayCount);
+            _strayWanderCount.UpdateMinMaxSum(so.StrayWanderCount);
+            _strayGoalCount.UpdateMinMaxSum(so.StrayGoalCount);
+            _mainGroupSize.UpdateMinMaxSum(so.MainGroup.Size);
         }
 
         private void UpdateSummaryAverage(double count)

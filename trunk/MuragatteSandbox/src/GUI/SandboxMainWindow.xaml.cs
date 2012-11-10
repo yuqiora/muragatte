@@ -140,7 +140,7 @@ namespace Muragatte.Sandbox.GUI
             int height = int.Parse(txtHeight.Text);
             _scatteredSpawn = new RectangleSpawnSpot("Scattered", new Vector2(width / 2.0, height / 2.0), width, height);
             _groupedSpawn = new EllipseSpawnSpot("Grouped", new Vector2(width / 2.0, height / 2.0), width / 5.0, height / 5.0);
-            _mas = new MultiAgentSystem(/*new OrthantNeighbourhoodGraphStorage()/*/ new SimpleBruteForceStorage(), new Region(
+            _mas = new MultiAgentSystem(0, /*new OrthantNeighbourhoodGraphStorage()/*/ new SimpleBruteForceStorage(), new Region(
                 width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), _random, TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
             if (_visual != null)
@@ -170,7 +170,7 @@ namespace Muragatte.Sandbox.GUI
 
         private void btnScatter_Click(object sender, RoutedEventArgs e)
         {
-            _mas.Scatter();
+            //_mas.Scatter();
         }
 
         private void btnGroup_Click(object sender, RoutedEventArgs e)
@@ -360,9 +360,9 @@ namespace Muragatte.Sandbox.GUI
         {
             //double fov = double.Parse(txtFieldOfView.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
             //_mas.GroupStart(fov * 3);
-            double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
-            double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa;
-            _mas.GroupStart(size);
+            //double pa = double.Parse(txtPersonalArea.Text, System.Globalization.NumberFormatInfo.InvariantInfo);
+            //double size = Math.Sqrt(int.Parse(txtAgentCount.Text)) * pa;
+            //_mas.GroupStart(size);
         }
 
         private SpawnSpot StartingPosition()
