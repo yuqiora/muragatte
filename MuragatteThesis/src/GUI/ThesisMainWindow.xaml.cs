@@ -48,7 +48,7 @@ namespace Muragatte.Thesis.GUI
         private RandomMT _random = new RandomMT();
         private Experiment _experiment = null;
 
-        private ExperimentArchiver _archiver = new ExperimentArchiver();
+        private CompletedExperimentArchiver _archiver = new CompletedExperimentArchiver();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -107,10 +107,11 @@ namespace Muragatte.Thesis.GUI
         {
             if (_experiment != null)
             {
-                grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
-                txbSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
-                prbSave.Visibility = System.Windows.Visibility.Collapsed;
-                binProgress.IsBusy = true;
+                ShowExperimentRunProgress();
+                //grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
+                //txbLoadSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
+                //prbLoadSave.Visibility = System.Windows.Visibility.Collapsed;
+                //binProgress.IsBusy = true;
                 _experiment.RunAsync();
             }
         }
@@ -147,9 +148,10 @@ namespace Muragatte.Thesis.GUI
             //binProgress.IsBusy = false;
             if (_experiment.IsComplete)
             {
-                grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
-                txbSaveInfo.Visibility = System.Windows.Visibility.Visible;
-                prbSave.Visibility = System.Windows.Visibility.Visible;
+                ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
+                //grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
+                //txbLoadSaveInfo.Visibility = System.Windows.Visibility.Visible;
+                //prbLoadSave.Visibility = System.Windows.Visibility.Visible;
                 _archiver.Save(_experiment);
             }
             else
@@ -167,12 +169,12 @@ namespace Muragatte.Thesis.GUI
         private void ExperimentLoadSave_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             binProgress.IsBusy = false;
-            prbSave.Value = 0;
+            prbLoadSave.Value = 0;
         }
 
         private void ExperimentLoadSave_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            prbSave.Value = (double)e.UserState;
+            prbLoadSave.Value = (double)e.UserState;
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -182,7 +184,18 @@ namespace Muragatte.Thesis.GUI
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            //save completed (settings + results + history + snapshots)
+            ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
+            _archiver.SaveAt(_experiment);
+        }
+
+        private void btnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            Experiment openExp;
+            if (_archiver.Load(out openExp))
+            {
+                ShowLoadSaveProgress(CompletedExperimentArchiver.LOAD_INFO);
+                Experiment = openExp;
+            }
         }
 
         #endregion
@@ -357,6 +370,23 @@ namespace Muragatte.Thesis.GUI
                 styles, _random.UInt());
         }
         */
+
+        private void ShowExperimentRunProgress()
+        {
+            grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Visible;
+            txbLoadSaveInfo.Visibility = System.Windows.Visibility.Collapsed;
+            prbLoadSave.Visibility = System.Windows.Visibility.Collapsed;
+            binProgress.IsBusy = true;
+        }
+
+        private void ShowLoadSaveProgress(string info)
+        {
+            txbLoadSaveInfo.Text = info;
+            grdExperimentRunProgressInfo.Visibility = System.Windows.Visibility.Collapsed;
+            txbLoadSaveInfo.Visibility = System.Windows.Visibility.Visible;
+            prbLoadSave.Visibility = System.Windows.Visibility.Visible;
+            binProgress.IsBusy = true;
+        }
 
         private void UpdateProgressInfo(ExperimentProgress progress)
         {

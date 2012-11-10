@@ -203,7 +203,7 @@ namespace Muragatte.Thesis
             }
         }
 
-        private void PreProcessing()
+        public void PreProcessing()
         {
             if (_status == ExperimentStatus.Loaded)
             {
@@ -228,6 +228,15 @@ namespace Muragatte.Thesis
         private void CreateNewInstance(int number)
         {
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
+        }
+
+        public void FinishLoading()
+        {
+            foreach (Instance i in _instances)
+            {
+                i.FinishLoading();
+            }
+            PostProcessing();
         }
 
         private void InitializeWorker()

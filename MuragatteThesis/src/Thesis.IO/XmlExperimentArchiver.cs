@@ -18,8 +18,10 @@ using Muragatte.Visual.IO;
 using System.ComponentModel;
 using System.IO;
 using Ionic.Zip;
+using Ionic.Zlib;
 using Muragatte.IO;
 using Muragatte.Core.Storage;
+using Microsoft.Win32;
 
 namespace Muragatte.Thesis.IO
 {
@@ -41,10 +43,36 @@ namespace Muragatte.Thesis.IO
         #endregion
     }
 
-    public class ExperimentArchiver
+    public enum ArchiverMode
     {
+        Load,
+        Save
+    }
+
+    public class CompletedExperimentArchiver
+    {
+        #region Constants
+
+        public const string LOAD_INFO = "Loading in progress...";
+        public const string SAVE_INFO = "Saving in progress...";
+
+        private const string SETTINGS_FILENAME = @"Settings.xml";
+        private const string RESULTS_DIRECTORY = @"Results";
+        private const string HISTORY_DIRECTORY = @"History";
+        private const string INSTANCE_FILENAME_BASE = "Instance_";
+        private const string INSTANCE_FILES = INSTANCE_FILENAME_BASE + "*.zip";
+        private const string STEP_FILENAME_BASE = "Step_";
+
+        #endregion
+
         #region Fields
 
+        private Experiment _experiment = null;
+        private CompressionLevel _compression = CompressionLevel.Default;
+        private string _sPath = string.Empty;
+
+        private OpenFileDialog _loadDlg = new OpenFileDialog();
+        private SaveFileDialog _saveDlg = new SaveFileDialog();
         private XmlLoadSave<XmlExperimentRoot> _xml = new XmlLoadSave<XmlExperimentRoot>();
         private BackgroundWorker _worker = new BackgroundWorker();
 
@@ -52,8 +80,9 @@ namespace Muragatte.Thesis.IO
 
         #region Constructors
 
-        public ExperimentArchiver()
+        public CompletedExperimentArchiver()
         {
+            InitializeLoadSaveDialogs();
             InitializeWorker();
         }
 
@@ -66,19 +95,114 @@ namespace Muragatte.Thesis.IO
             get { return _worker; }
         }
 
+        public Experiment Experiment
+        {
+            get { return _experiment; }
+        }
+
         #endregion
 
         #region Methods
 
-        public void Save(Experiment experiment)
+        public bool Load(out Experiment experiment)
+        {
+            experiment = null;
+            bool? result = _loadDlg.ShowDialog();
+            if (result == true)
+            {
+                _sPath = Path.GetDirectoryName(_loadDlg.FileName);
+                string histDir = Path.Combine(_sPath, HISTORY_DIRECTORY);
+                if (Directory.Exists(histDir) && Directory.GetFiles(histDir, INSTANCE_FILES).Length > 0)
+                {
+                    _experiment = _xml.Load(Path.Combine(_sPath, SETTINGS_FILENAME)).Experiment.ToExperiment();
+                    _experiment.PreProcessing();
+                    experiment = _experiment;
+                    _worker.RunWorkerAsync(ArchiverMode.Load);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void LoadAsync()
+        {
+            string histDir = Path.Combine(_sPath, HISTORY_DIRECTORY);
+            string tempDir = Path.Combine(histDir, "temp");
+            foreach (string f in Directory.GetFiles(histDir, INSTANCE_FILES))
+            {
+                using (ZipFile zip = ZipFile.Read(f))
+                {
+                    int instance = int.Parse(Path.GetFileNameWithoutExtension(f).Substring(INSTANCE_FILENAME_BASE.Length));
+                    foreach (ZipEntry e in zip)
+                    {
+                        e.Extract(tempDir, ExtractExistingFileAction.OverwriteSilently);
+                        int step = int.Parse(Path.GetFileNameWithoutExtension(e.FileName).Substring(STEP_FILENAME_BASE.Length));
+                        HistoryRecord record = new HistoryRecord(step);
+                        using (StreamReader reader = new StreamReader(Path.Combine(tempDir, e.FileName)))
+                        {
+                            reader.ReadLine();
+                            while (!reader.EndOfStream)
+                            {
+                                record.Add(ElementStatus.FromString(reader.ReadLine()));
+                            }
+                            record.CreateGroupsAndStrays(_experiment.Instances[instance].Model.Elements.Agents);
+                        }
+                        _experiment.Instances[instance].Model.History.Add(record);
+                        _worker.ReportProgress(0, 100d * (instance * zip.Count + step) / (zip.Count * _experiment.RepeatCount));
+                    }
+                    //zip.ExtractAll(tempDir, ExtractExistingFileAction.OverwriteSilently);
+                    //foreach (string txt in Directory.GetFiles(tempDir))
+                    //{
+                    //    int step = int.Parse(Path.GetFileNameWithoutExtension(txt).Substring(STEP_FILENAME_BASE.Length));
+                    //    HistoryRecord record = new HistoryRecord(step);
+                    //    using (StreamReader reader = new StreamReader(txt))
+                    //    {
+                    //        reader.ReadLine();
+                    //        while (!reader.EndOfStream)
+                    //        {
+                    //            record.Add(ElementStatus.FromString(reader.ReadLine()));
+                    //        }
+                    //    }
+                    //    _experiment.Instances[instance].Model.History.Add(record);
+                    //    _worker.ReportProgress(0, 100d * (instance * zip.Count + step) / (zip.Count * _experiment.RepeatCount));
+                    //}
+                }
+                DeleteFiles(tempDir);
+            }
+            Directory.Delete(tempDir);
+            _experiment.FinishLoading();
+        }
+
+        public void SaveAt(Experiment experiment, CompressionLevel compression = CompressionLevel.Default)
         {
             if (experiment != null && experiment.IsComplete && !_worker.IsBusy)
             {
-                _worker.RunWorkerAsync(experiment);
+                _saveDlg.FileName = experiment.Name;
+                bool? result = _saveDlg.ShowDialog();
+                if (result == true)
+                {
+                    Save(experiment, Path.GetDirectoryName(_saveDlg.FileName), compression);
+                }
             }
         }
 
-        private void SaveAsync(Experiment experiment)
+        public void Save(Experiment experiment, CompressionLevel compression = CompressionLevel.Default)
+        {
+            if (experiment != null && experiment.IsComplete && !_worker.IsBusy)
+            {
+                Save(experiment, Directory.GetCurrentDirectory(), compression);
+            }
+        }
+
+        private void Save(Experiment experiment, string path, CompressionLevel compression)
+        {
+            _compression = compression;
+            _experiment = experiment;
+            _sPath = path;
+            _worker.RunWorkerAsync(ArchiverMode.Save);
+        }
+
+        private void SaveAsync()
         {
             //if (Directory.Exists(_experiment.Name))
             //{
@@ -88,19 +212,19 @@ namespace Muragatte.Thesis.IO
             //    }
             //    Directory.Delete(_experiment.Name, true);
             //}
-            DirectoryInfo di = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), experiment.Name));
-            _xml.Save(Path.Combine(di.FullName, "Settings.xml"), new XmlExperimentRoot(experiment));
+            DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_sPath, _experiment.Name));
+            _xml.Save(Path.Combine(di.FullName, SETTINGS_FILENAME), new XmlExperimentRoot(_experiment));
 
             #region Results
-            DirectoryInfo diR = di.CreateSubdirectory(@"Results");
+            DirectoryInfo diR = di.CreateSubdirectory(RESULTS_DIRECTORY);
             #region General
             using (StreamWriter writer = File.CreateText(Path.Combine(diR.FullName, "General.txt")))
             {
                 writer.WriteLine("Count {0}{3} {0}{4} {0}{5} {1}{3} {1}{4} {1}{5} {2}{3} {2}{4} {2}{5}", "Start", "Overall", "End", "Min", "Avg", "Max");
-                writer.WriteLine("GroupCount {0}", experiment.Results.GroupCount);
-                writer.WriteLine("StrayTotal {0}", experiment.Results.StrayCount);
-                writer.WriteLine("StrayGoal {0}", experiment.Results.StrayGoalCount);
-                writer.WriteLine("StrayWander {0}", experiment.Results.StrayWanderCount);
+                writer.WriteLine("GroupCount {0}", _experiment.Results.GroupCount);
+                writer.WriteLine("StrayTotal {0}", _experiment.Results.StrayCount);
+                writer.WriteLine("StrayGoal {0}", _experiment.Results.StrayGoalCount);
+                writer.WriteLine("StrayWander {0}", _experiment.Results.StrayWanderCount);
             }
             #endregion
             #region Main Group
@@ -108,30 +232,30 @@ namespace Muragatte.Thesis.IO
             {
                 writer.WriteLine("SIZE");
                 writer.WriteLine("Time Min Avg Max");
-                writer.WriteLine("Start {0}", experiment.Results.MainGroupSize.Start);
-                writer.WriteLine("Overall {0}", experiment.Results.MainGroupSize.Overall);
-                writer.WriteLine("End {0}", experiment.Results.MainGroupSize.End);
+                writer.WriteLine("Start {0}", _experiment.Results.MainGroupSize.Start);
+                writer.WriteLine("Overall {0}", _experiment.Results.MainGroupSize.Overall);
+                writer.WriteLine("End {0}", _experiment.Results.MainGroupSize.End);
                 writer.WriteLine();
-                if (experiment.Results.IsEndGoalDefined)
+                if (_experiment.Results.IsEndGoalDefined)
                 {
                     writer.WriteLine("GOAL END DISTANCE");
                     writer.WriteLine("At Min Avg Max");
-                    writer.WriteLine("Minimum {0}", experiment.Results.MainGroupGoalEndDistanceMinimum);
-                    writer.WriteLine("Average {0}", experiment.Results.MainGroupGoalEndDistanceAverage);
-                    writer.WriteLine("Maximum {0}", experiment.Results.MainGroupGoalEndDistanceMaximum);
-                    writer.WriteLine("Centroid {0}", experiment.Results.MainGroupGoalEndDistanceCentroid);
+                    writer.WriteLine("Minimum {0}", _experiment.Results.MainGroupGoalEndDistanceMinimum);
+                    writer.WriteLine("Average {0}", _experiment.Results.MainGroupGoalEndDistanceAverage);
+                    writer.WriteLine("Maximum {0}", _experiment.Results.MainGroupGoalEndDistanceMaximum);
+                    writer.WriteLine("Centroid {0}", _experiment.Results.MainGroupGoalEndDistanceCentroid);
                     writer.WriteLine();
                 }
                 writer.WriteLine("MAJORITY GOAL");
                 writer.WriteLine("Goal Start Overall End");
-                foreach (Results.GoalExperimentPercentage gep in experiment.Results.MainGroupGoalPercentage)
+                foreach (Results.GoalExperimentPercentage gep in _experiment.Results.MainGroupGoalPercentage)
                 {
                     writer.WriteLine(gep);
                 }
             }
             #endregion
             #region Observed
-            foreach (Results.ObservedArchetypeExperimentSummary os in experiment.Results.Observed)
+            foreach (Results.ObservedArchetypeExperimentSummary os in _experiment.Results.Observed)
             {
                 using (StreamWriter writer = File.CreateText(Path.Combine(diR.FullName, string.Format("Observed_{0}.txt", os.Name.Replace(" ", string.Empty)))))
                 {
@@ -166,16 +290,17 @@ namespace Muragatte.Thesis.IO
             #endregion
 
             #region History
-            DirectoryInfo diH = di.CreateSubdirectory(@"History");
-            string instanceFileNameFormat = "Instance_{0:D" + experiment.RepeatCount.ToString().Length + "}.zip";
-            string stepFileNameFormat = "Step_{0:D" + experiment.Definition.Length.ToString().Length + "}.txt";
-            int records = experiment.Instances.Last().Model.History.Count;
-            for (int i = 0; i < experiment.RepeatCount; i++)
+            DirectoryInfo diH = di.CreateSubdirectory(HISTORY_DIRECTORY);
+            string instanceFileNameFormat = INSTANCE_FILENAME_BASE + "{0:D" + _experiment.RepeatCount.ToString().Length + "}.zip";
+            string stepFileNameFormat = STEP_FILENAME_BASE + "{0:D" + _experiment.Definition.Length.ToString().Length + "}.txt";
+            int records = _experiment.Instances.Last().Model.History.Count;
+            for (int i = 0; i < _experiment.RepeatCount; i++)
             {
                 int rc = 0;
                 using (ZipFile zip = new ZipFile())
                 {
-                    foreach (HistoryRecord r in experiment.Instances[i].Model.History)
+                    zip.CompressionLevel = _compression;
+                    foreach (HistoryRecord r in _experiment.Instances[i].Model.History)
                     {
                         string filePath = Path.Combine(diH.FullName, string.Format(stepFileNameFormat, r.Step));
                         using (StreamWriter writer = File.CreateText(filePath))
@@ -188,7 +313,7 @@ namespace Muragatte.Thesis.IO
                         }
                         zip.AddFile(filePath, "");
                         rc++;
-                        _worker.ReportProgress(0, 100d * (i * records + rc) / (records * experiment.RepeatCount));
+                        _worker.ReportProgress(0, 100d * (i * records + rc) / (records * _experiment.RepeatCount));
                     }
                     zip.Save(System.IO.Path.Combine(diH.FullName, string.Format(instanceFileNameFormat, i)));
                     foreach (string f in Directory.GetFiles(diH.FullName, "*.txt"))
@@ -196,7 +321,7 @@ namespace Muragatte.Thesis.IO
                         File.Delete(f);
                     }
                 }
-                _worker.ReportProgress(0, 100d * (i + 1) / experiment.RepeatCount);
+                _worker.ReportProgress(0, 100d * (i + 1) / _experiment.RepeatCount);
             }
             #endregion
 
@@ -209,22 +334,50 @@ namespace Muragatte.Thesis.IO
             {
                 DeleteExisting(d);
             }
+            DeleteFiles(directoryPath);
+            Directory.Delete(directoryPath);
+        }
+
+        private void DeleteFiles(string directoryPath)
+        {
             foreach (string f in Directory.GetFiles(directoryPath))
             {
                 File.Delete(f);
             }
-            Directory.Delete(directoryPath);
+        }
+
+        private void InitializeLoadSaveDialogs()
+        {
+            _loadDlg.Title = "Open Completed Experiment";
+            _loadDlg.FileName = SETTINGS_FILENAME;
+            _loadDlg.DefaultExt = ".xml";
+            _loadDlg.Filter = "XML Files (.xml)|*.xml";
+
+            _saveDlg.Title = "Save Completed Experiment";
+            _saveDlg.DefaultExt = ".xml";
+            _saveDlg.Filter = "XML Files (.xml)|*.xml";
         }
 
         private void InitializeWorker()
         {
             _worker.WorkerReportsProgress = true;
-            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+            _worker.DoWork += new DoWorkEventHandler(Archiver_LoadSave);
         }
 
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        private void Archiver_LoadSave(object sender, DoWorkEventArgs e)
         {
-            SaveAsync((Experiment)e.Argument);
+            ArchiverMode mode = (ArchiverMode)e.Argument;
+            switch (mode)
+            {
+                case ArchiverMode.Load:
+                    LoadAsync();
+                    break;
+                case ArchiverMode.Save:
+                    SaveAsync();
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion

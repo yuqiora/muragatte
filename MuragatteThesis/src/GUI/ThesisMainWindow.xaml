@@ -35,8 +35,8 @@
                         <TextBlock Name="txbExperimentProgress" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" />
                         <Button Name="btnCancel" Content="Cancel" Width="75" Height="23" Grid.Row="3" Click="btnCancel_Click" />
                     </Grid>
-                    <TextBlock Name="txbSaveInfo" Text="Saving in progress..." FontWeight="Bold" HorizontalAlignment="Center" Visibility="Collapsed" />
-                    <ProgressBar Name="prbSave" Height="15" Visibility="Collapsed" />
+                    <TextBlock Name="txbLoadSaveInfo" Text="Saving in progress..." FontWeight="Bold" HorizontalAlignment="Center" Visibility="Collapsed" />
+                    <ProgressBar Name="prbLoadSave" Height="15" Visibility="Collapsed" />
                 </StackPanel>
             </xtk:BusyIndicator.BusyContent>
             <xtk:BusyIndicator.ProgressBarStyle>
@@ -47,7 +47,7 @@
             <DockPanel Margin="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Top">
                     <Button Content="New" Height="23" Name="btnNew" Width="75" Click="btnNew_Click" />
-                    <Button Content="Open" Height="23" Name="btnOpen" Width="75" IsEnabled="False" />
+                    <Button Content="Open" Height="23" Name="btnOpen" Width="75" Click="btnOpen_Click" />
                     <Button Content="Exit" Height="23" Name="btnExit" Width="75" Click="btnExit_Click" />
                     <Button Content="About" Height="23" Name="btnAbout" Width="75" Margin="10,0,0,0" Click="btnAbout_Click" />
                 </StackPanel>

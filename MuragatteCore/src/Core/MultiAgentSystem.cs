@@ -165,6 +165,11 @@ namespace Muragatte.Core
             _history.Add(record);
         }
 
+        public void LoadedTo(int stepCount)
+        {
+            StepCount = stepCount;
+        }
+
         private void ReportStatus(HistoryRecord record)
         {
             ReportStatus(_storage, record);

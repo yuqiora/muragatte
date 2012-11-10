@@ -123,6 +123,22 @@ namespace Muragatte.Core.Storage
             return string.Format("{0} {1} {2} {3} {4} {5} {6}", _iElementID, _position, _direction.Angle.Degrees, _dSpeed, _bEnabled, _sSpeciesName, _iGroupID);
         }
 
+        public static ElementStatus FromString(string info)
+        {
+            string[] items = info.Split(' ');
+            int id, group;
+            double posX, posY, angle, speed;
+            bool enabled;
+            if (items.Length == 8 && int.TryParse(items[0], out id) &&
+                double.TryParse(items[1], out posX) && double.TryParse(items[2], out posY) &&
+                double.TryParse(items[3], out angle) && double.TryParse(items[4], out speed) &&
+                bool.TryParse(items[5], out enabled) && int.TryParse(items[7], out group))
+            {
+                return new ElementStatus(id, new Vector2(posX, posY), new Vector2(new Angle(angle), true), speed, enabled, items[6], group);
+            }
+            else return null;
+        }
+
         #endregion
     }
 }
