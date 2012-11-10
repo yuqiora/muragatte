@@ -25,6 +25,7 @@ namespace Muragatte.Core
     {
         #region Fields
 
+        private int _iInstance = 0;
         private int _iSteps = 0;
         private double _dTimePerStep;
         private IStorage _storage;
@@ -41,11 +42,12 @@ namespace Muragatte.Core
 
         #region Constructors
 
-        public MultiAgentSystem(IStorage storage, Region region, RandomMT random, double timePerStep = 1)
-            : this(storage, region, new SpeciesCollection(true), random, timePerStep) { }
+        public MultiAgentSystem(int instance, IStorage storage, Region region, RandomMT random, double timePerStep = 1)
+            : this(instance, storage, region, new SpeciesCollection(true), random, timePerStep) { }
 
-        public MultiAgentSystem(IStorage storage, Region region, SpeciesCollection species, RandomMT random, double timePerStep = 1)
+        public MultiAgentSystem(int instance, IStorage storage, Region region, SpeciesCollection species, RandomMT random, double timePerStep = 1)
         {
+            _iInstance = instance;
             _storage = storage;
             _region = region;
             _species = species;
@@ -53,11 +55,11 @@ namespace Muragatte.Core
             _dTimePerStep = timePerStep;
         }
 
-        public MultiAgentSystem(IStorage storage, Scene scene, RandomMT random, double timePerStep = 1)
-            : this(storage, scene, new SpeciesCollection(true), random, timePerStep) { }
+        public MultiAgentSystem(int instance, IStorage storage, Scene scene, RandomMT random, double timePerStep = 1)
+            : this(instance, storage, scene, new SpeciesCollection(true), random, timePerStep) { }
 
-        public MultiAgentSystem(IStorage storage, Scene scene, SpeciesCollection species, RandomMT random, double timePerStep = 1)
-            : this(storage, scene.Region, species, random, timePerStep)
+        public MultiAgentSystem(int instance, IStorage storage, Scene scene, SpeciesCollection species, RandomMT random, double timePerStep = 1)
+            : this(instance, storage, scene.Region, species, random, timePerStep)
         {
             _storage.Add(scene.ApplyStationaryElements(this));
         }
@@ -65,7 +67,12 @@ namespace Muragatte.Core
         #endregion
 
         #region Properties
-        
+
+        public int Instance
+        {
+            get { return _iInstance; }
+        }
+
         public int StepCount
         {
             get { return _iSteps; }
@@ -144,15 +151,25 @@ namespace Muragatte.Core
 
         private void LoadInitialElementStatus()
         {
-            LoadInitialElementStatus(_storage);
-            LoadInitialElementStatus(_storage.Centroids);
+            LoadElementStatus(0);
         }
 
-        private void LoadInitialElementStatus(IEnumerable<Element> items)
+        public void LoadCurrentElementStatus()
+        {
+            LoadElementStatus(_history.Last().Step);
+        }
+
+        private void LoadElementStatus(int step)
+        {
+            LoadElementStatus(_storage, step);
+            LoadElementStatus(_storage.Centroids, step);
+        }
+
+        private void LoadElementStatus(IEnumerable<Element> items, int step)
         {
             foreach (Element e in items)
             {
-                e.LoadStatus(_history[0][e.ID]);
+                e.LoadStatus(_history[step][e.ID]);
             }
         }
 
@@ -185,29 +202,29 @@ namespace Muragatte.Core
             }
         }
 
-        //will be removed
-        public void Scatter()
-        {
-            IEnumerable<Agent> agents = _storage.Agents;
-            foreach (Agent a in agents)
-            {
-                a.SetMovementInfo(
-                    _random.UniformVector(0, _region.Width, 0, Region.Height),
-                    _random.NormalizedVector());
-            }
-        }
+        ////will be removed
+        //public void Scatter()
+        //{
+        //    IEnumerable<Agent> agents = _storage.Agents;
+        //    foreach (Agent a in agents)
+        //    {
+        //        a.SetMovementInfo(
+        //            _random.UniformVector(0, _region.Width, 0, Region.Height),
+        //            _random.NormalizedVector());
+        //    }
+        //}
 
-        //will be removed
-        public void GroupStart(double size)
-        {
-            IEnumerable<Agent> agents = _storage.Agents;
-            Vector2 direction = _random.NormalizedVector();
-            foreach (Agent a in agents)
-            {
-                Vector2 position = _random.Disk(new Vector2(_region.Width / 2, Region.Height / 2), size, size);
-                a.SetMovementInfo(position, direction + _random.GaussAngle(5));
-            }
-        }
+        ////will be removed
+        //public void GroupStart(double size)
+        //{
+        //    IEnumerable<Agent> agents = _storage.Agents;
+        //    Vector2 direction = _random.NormalizedVector();
+        //    foreach (Agent a in agents)
+        //    {
+        //        Vector2 position = _random.Disk(new Vector2(_region.Width / 2, Region.Height / 2), size, size);
+        //        a.SetMovementInfo(position, direction + _random.GaussAngle(5));
+        //    }
+        //}
 
         public void Update()
         {

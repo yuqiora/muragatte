@@ -160,12 +160,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbEnvironmentList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" Grid.Column="0" ItemsSource="{Binding Path=EnvironmentView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
+                    <xtk:CheckListBox Name="clbEnvironmentList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" Grid.Column="0" ItemsSource="{Binding Path=EnvironmentView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
                     <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
                         <CheckBox Content="Select All" Height="16" Name="chbEnvironmentSelectAll" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Species" Height="280" Name="grbEnvironmentSelectSpecies">
                             <Grid>
-                                <xtk:CheckListBox Name="clbEnvironmentSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox Name="clbEnvironmentSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -177,17 +177,17 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbAgentsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=AgentsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
+                    <xtk:CheckListBox Name="clbAgentsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=AgentsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
                     <StackPanel Margin="5" Grid.Column="1" VerticalAlignment="Center">
                         <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Species" Height="140">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="Groups" Height="140" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -199,7 +199,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="5" Height="300" ItemsSource="{Binding Path=NeighbourhoodsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
+                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="5" Height="300" ItemsSource="{Binding Path=NeighbourhoodsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -234,12 +234,12 @@
                         <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Species" Height="140">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="Groups" Height="140" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -251,7 +251,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbTracksEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=TracksView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
+                    <xtk:CheckListBox Name="clbTracksEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=TracksView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -273,12 +273,12 @@
                         <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Species" Height="140">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="Groups" Height="140" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -290,7 +290,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbTrailsEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=TrailsView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
+                    <xtk:CheckListBox Name="clbTrailsEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=TrailsView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -314,12 +314,12 @@
                         <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Species" Height="140">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="Groups" Height="140" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -331,12 +331,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbCentroidsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=CentroidsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged" />
+                    <xtk:CheckListBox Name="clbCentroidsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=CentroidsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
                     <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
                         <CheckBox Content="Select All" Height="16" Name="chbCentroidsSelectAll" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
                         <GroupBox Header="Groups" Height="280" Name="grbCentroidsSelectGroups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox Name="clbCentroidsSelectGroups" ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox Name="clbCentroidsSelectGroups" ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -348,7 +348,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <xtk:CheckListBox Name="clbHighlightEnabled" Margin="5" Height="300" Grid.Column="0" SelectedMemberPath="IsHighlighted" ItemsSource="{Binding Path=EnabledElementsView}" Grid.IsSharedSizeScope="True" SelectedItemChanged="VisualItemList_SelectedItemChanged">
+                    <xtk:CheckListBox Name="clbHighlightEnabled" Margin="5" Height="300" Grid.Column="0" SelectedMemberPath="IsHighlighted" ItemsSource="{Binding Path=EnabledElementsView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
                         <xtk:CheckListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -384,12 +384,12 @@
                         </StackPanel>
                         <GroupBox Header="Species" Height="140" Name="grbHighlightSelectSpecies">
                             <Grid>
-                                <xtk:CheckListBox Name="clbHighlightSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" SelectedItemChanged="SelectSpecies_SelectedItemChanged" />
+                                <xtk:CheckListBox Name="clbHighlightSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                         <GroupBox Header="Groups" Height="140" Name="grbHighlightSelectGroups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
                             <Grid>
-                                <xtk:CheckListBox Name="clbHighlightSelectGroups" ItemsSource="{Binding GetGroups}" SelectedItemChanged="SelectGroups_SelectedItemChanged" />
+                                <xtk:CheckListBox Name="clbHighlightSelectGroups" ItemsSource="{Binding GetGroups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>

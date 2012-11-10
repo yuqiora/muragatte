@@ -143,14 +143,14 @@ namespace Muragatte.Thesis.GUI
             }
         }
 
-        public double SelectedArgsModifierValue
+        public double? SelectedArgsModifierValue
         {
-            get { return _selectedArgsModifierLabel != null ? _selectedArchetype.Specifics.Modifiers[_selectedArgsModifierLabel] : double.NaN; }
+            get { return _selectedArgsModifierLabel != null ? _selectedArchetype.Specifics.Modifiers[_selectedArgsModifierLabel] : (double?)null; }
             set
             {
-                if (_selectedArgsModifierLabel != null)
+                if (_selectedArgsModifierLabel != null && value.HasValue)
                 {
-                    _selectedArchetype.Specifics.Modifiers[_selectedArgsModifierLabel] = value;
+                    _selectedArchetype.Specifics.Modifiers[_selectedArgsModifierLabel] = value.Value;
                     NotifyPropertyChanged("SelectedArgsModifierValue");
                 }
             }

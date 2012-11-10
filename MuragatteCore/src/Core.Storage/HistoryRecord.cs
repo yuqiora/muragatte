@@ -88,6 +88,7 @@ namespace Muragatte.Core.Storage
         {
             _items.Clear();
             _groups = null;
+            _strays = null;
         }
 
         public void CreateGroupsAndStrays(IEnumerable<Agent> agents)

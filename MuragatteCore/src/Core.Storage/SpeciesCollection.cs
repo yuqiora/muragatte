@@ -192,19 +192,22 @@ namespace Muragatte.Core.Storage
 
         public void Add(IEnumerable<Species> items)
         {
-            foreach (Species s in items)
+            if (items != null)
             {
-                if (!_items.Contains(s))
+                foreach (Species s in items)
                 {
-                    _items.Add(s);
-                    NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
-                    if (s.HasChildren)
+                    if (!_items.Contains(s))
                     {
-                        Add(s.Children);
+                        _items.Add(s);
+                        NotifyCollectionChanged(NotifyCollectionChangedAction.Add, s);
+                        if (s.HasChildren)
+                        {
+                            Add(s.Children);
+                        }
                     }
                 }
+                NotifyPropertyChanged("Count");
             }
-            NotifyPropertyChanged("Count");
         }
 
         public bool Remove(Species item)
