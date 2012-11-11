@@ -61,9 +61,19 @@ namespace Muragatte.Core.Storage
             get { return _groups; }
         }
 
+        public int GroupCount
+        {
+            get { return _groups == null ? 0 : _groups.Count; }
+        }
+
         public IEnumerable<Agent> StrayAgents
         {
             get { return _strays; }
+        }
+
+        public int StrayCount
+        {
+            get { return _strays == null ? 0 : _strays.Count; }
         }
 
         #endregion
