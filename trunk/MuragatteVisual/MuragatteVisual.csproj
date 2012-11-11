@@ -72,6 +72,7 @@
     <Compile Include="src\Visual.Converters\ObjectToBoolConverter.cs" />
     <Compile Include="src\Visual.Converters\TabToSelectionVisibilityConverter.cs" />
     <Compile Include="src\Visual.Converters\ShapeToSymbolConverter.cs" />
+    <Compile Include="src\Visual.IO\SnapshotSaver.cs" />
     <Compile Include="src\Visual.IO\XmlBaseArchiver.cs" />
     <Compile Include="src\Visual.IO\XmlColor.cs" />
     <Compile Include="src\Visual.IO\XmlShape.cs" />

@@ -59,9 +59,8 @@ namespace Muragatte.Visual.GUI
 
         private readonly List<Shapes.Shape> _shapes = null;
 
-        private ObservableCollection<int?> _groups = new ObservableCollection<int?>();
-
         private XmlStylesArchiver _xml = null;
+        private SnapshotSaver _snapshot = new SnapshotSaver();
 
         #endregion
 
@@ -107,6 +106,11 @@ namespace Muragatte.Visual.GUI
         #endregion
 
         #region Properties
+
+        public IEnumerable<Appearance> GetAppearances
+        {
+            get { return _appearances; }
+        }
 
         public ICollectionView EnvironmentView
         {
@@ -158,9 +162,9 @@ namespace Muragatte.Visual.GUI
             get { return _visual; }
         }
 
-        public ObservableCollection<int?> GetGroups
+        public HistoryViewer History
         {
-            get { return _groups; }
+            get { return _historyViewer; }
         }
 
         #endregion
@@ -199,8 +203,8 @@ namespace Muragatte.Visual.GUI
                 if (e.RemovedItems.Contains(tabOptions.Items[0])) RevertScale();
                 if (tabOptions.SelectedIndex > 0 && tabOptions.SelectedIndex < _views.Count)
                 {
-                    _views[tabOptions.SelectedIndex].Refresh();
-                    if (!_visual.GetPlayback.IsPlaying) UpdateGroups();
+                    //_views[tabOptions.SelectedIndex].Refresh();
+                    //if (!_visual.GetPlayback.IsPlaying) UpdateGroups();
                 }
             }
         }
@@ -296,19 +300,26 @@ namespace Muragatte.Visual.GUI
         private void SelectSpecies_ItemSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
             Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            string species = (e.Item as Species).FullName;
             foreach (Appearance a in _views[tabOptions.SelectedIndex])
             {
-                if (a.Species == (e.Item as Species).FullName) selection(a, e.IsSelected);
+                if (a.Species == species || a.Species.StartsWith(species)) selection(a, e.IsSelected);
             }
         }
 
         private void SelectGroups_ItemSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
         {
-            Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
-            foreach (Appearance a in _views[tabOptions.SelectedIndex])
-            {
-                if (a.Group == (int?)e.Item) selection(a, e.IsSelected);
-            }
+            GroupSelectionChanged(((Group)e.Item).ID, e.IsSelected);
+            //Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            //foreach (Appearance a in _views[tabOptions.SelectedIndex])
+            //{
+            //    if (a.Group == (int?)e.Item) selection(a, e.IsSelected);
+            //}
+        }
+
+        private void SelectStrays_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            GroupSelectionChanged(null, ((CheckBox)sender).IsChecked.Value);
         }
 
         private void btnStylesSave_Click(object sender, RoutedEventArgs e)
@@ -319,6 +330,23 @@ namespace Muragatte.Visual.GUI
         private void btnStylesLoad_Click(object sender, RoutedEventArgs e)
         {
             _xml.Load();
+        }
+
+        private void btnSnapshotSaveCurrent_Click(object sender, RoutedEventArgs e)
+        {
+            _snapshot.Save(_visual.GetCanvas.Image);
+        }
+
+        private void dudSnapshotScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (dudScale.Value.HasValue)
+            {
+                txbSnapshotSize.Text = string.Format("{0} x {1}", dudScale.Value.Value * _visual.GetCanvas.UnitWidth, dudScale.Value.Value * _visual.GetCanvas.UnitHeight);
+            }
+            else
+            {
+                txbSnapshotSize.Text = "pxW x pxH";
+            }
         }
 
         #endregion
@@ -335,24 +363,26 @@ namespace Muragatte.Visual.GUI
             if (_currentScale != value)
             {
                 DefaultValues.Scale = value;
-                foreach (Styles.Style s in _styles)
-                {
-                    s.Rescale(value);
-                }
-                foreach (Appearance a in _appearances)
-                {
-                    a.Rescale(value);
-                }
+                RescaleStyles(value);
+                RescaleAppearances(value);
                 _visual.GetCanvas.Rescale(value);
                 _currentScale = value;
             }
         }
 
-        private void RescaleStyles(double value)
+        public void RescaleStyles(double value)
         {
             foreach (Styles.Style s in _styles)
             {
                 s.Rescale(value);
+            }
+        }
+
+        public void RescaleAppearances(double value)
+        {
+            foreach (Appearance a in _appearances)
+            {
+                a.Rescale(value);
             }
         }
 
@@ -382,7 +412,8 @@ namespace Muragatte.Visual.GUI
 
         private Appearance ElementToAppearance(Element e)
         {
-            Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
+            Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && s.Name == e.Species.FullName);
+            //Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
             if (style == null)
             {
                 string name = e.Species == null ? e.GetType().ToString() : e.Species.FullName;
@@ -528,13 +559,12 @@ namespace Muragatte.Visual.GUI
             }
         }
 
-        private void UpdateGroups()
+        private void GroupSelectionChanged(int? id, bool isSelected)
         {
-            _groups.Clear();
-            _groups.Add((int?)null);
-            foreach (Group g in _historyViewer.Current.Groups)
+            Action<Appearance, bool> selection = SelectSpecified(tabOptions.SelectedIndex);
+            foreach (Appearance a in _views[tabOptions.SelectedIndex])
             {
-                _groups.Add(g.ID);
+                if (a.Group == id) selection(a, isSelected);
             }
         }
 

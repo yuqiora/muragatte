@@ -27,18 +27,18 @@ namespace Muragatte.Visual
     {
         #region Fields
 
-        private WriteableBitmap _wb = null;
-        private int _iUnitWidth = 1;
-        private int _iUnitHeight = 1;
-        private double _dScale = 1;
-        private bool _bEnvironment = true;
-        private bool _bNeighbourhoods = false;
-        private bool _bTracks = false;
-        private bool _bTrails = false;
-        private bool _bAgents = true;
-        private bool _bCentroids = false;
-        private Visualization _visual = null;
-        private Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
+        protected WriteableBitmap _wb = null;
+        protected int _iUnitWidth = 1;
+        protected int _iUnitHeight = 1;
+        protected double _dScale = 1;
+        protected bool _bEnvironment = true;
+        protected bool _bNeighbourhoods = false;
+        protected bool _bTracks = false;
+        protected bool _bTrails = false;
+        protected bool _bAgents = true;
+        protected bool _bCentroids = false;
+        protected Visualization _visual = null;
+        protected Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,7 +62,7 @@ namespace Muragatte.Visual
 
         #region Properties
 
-        public WriteableBitmap Image
+        public virtual WriteableBitmap Image
         {
             get { return _wb; }
         }
@@ -191,12 +191,12 @@ namespace Muragatte.Visual
             //DrawONG();
         }
 
-        public void Redraw(History history)
+        public virtual void Redraw(History history)
         {
             Redraw(history, history.Count - 1);
         }
 
-        public void Redraw(History history, int step)
+        public virtual void Redraw(History history, int step)
         {
             if (step >= history.Count)
             {
@@ -236,7 +236,7 @@ namespace Muragatte.Visual
             }
         }
 
-        private void DrawNeighbourhoods(HistoryRecord record)
+        protected void DrawNeighbourhoods(HistoryRecord record)
         {
             if (_bNeighbourhoods)
             {
@@ -251,12 +251,12 @@ namespace Muragatte.Visual
             }
         }
 
-        private void DrawEnvironment(HistoryRecord record)
+        protected void DrawEnvironment(HistoryRecord record)
         {
             DrawElements(record, _bEnvironment, _visual.GetOptions.EnvironmentView);
         }
 
-        private void DrawTracks(History history, int step)
+        protected void DrawTracks(History history, int step)
         {
             if (_bTracks)
             {
@@ -275,7 +275,7 @@ namespace Muragatte.Visual
             }
         }
 
-        private void DrawTrails(History history, int step)
+        protected void DrawTrails(History history, int step)
         {
             if (_bTrails)
             {
@@ -297,12 +297,12 @@ namespace Muragatte.Visual
             }
         }
 
-        private void DrawAgents(HistoryRecord record)
+        protected void DrawAgents(HistoryRecord record)
         {
             DrawElements(record, _bAgents, _visual.GetOptions.AgentsView);
         }
 
-        private void DrawCentroids(HistoryRecord record)
+        protected void DrawCentroids(HistoryRecord record)
         {
             DrawElements(record, _bCentroids, _visual.GetOptions.CentroidsView);
         }

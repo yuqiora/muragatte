@@ -47,7 +47,6 @@ namespace Muragatte.Visual
         private List<Coordinates> _neighbourhoodCoordinates = null;
 
         private HistoryViewer _historyViewer = null;
-        //private static ElementStatus _dummyStatus = new ElementStatus(-1, Vector2.Zero, Vector2.Zero, 0, false, "", -1);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
