@@ -60,7 +60,8 @@ namespace Muragatte.Visual.GUI
         private readonly List<Shapes.Shape> _shapes = null;
 
         private XmlStylesArchiver _xml = null;
-        private SnapshotSaver _snapshot = new SnapshotSaver();
+        private SnapshotSaver _snapshotSaver = new SnapshotSaver();
+        private Snapshot _snapshot = null;
 
         #endregion
 
@@ -85,6 +86,7 @@ namespace Muragatte.Visual.GUI
                 FillWidthHeight(lblUnitSize, _visual.GetCanvas.UnitWidth, _visual.GetCanvas.UnitHeight);
                 dudScale.Value = _visual.GetCanvas.Scale;
                 _currentScale = _visual.GetCanvas.Scale;
+                _snapshot = new Snapshot(visualization);
 
                 _visual.GetModel.Elements.CollectionChanged += ModelElementStorageUpdated;
             }
@@ -101,6 +103,7 @@ namespace Muragatte.Visual.GUI
             _wbStylePreview = BitmapFactory.New((int)imgStylesPreview.Width, (int)imgStylesPreview.Height);
             imgStylesPreview.Source = _wbStylePreview;
             _xml = new XmlStylesArchiver(this);
+
         }
 
         #endregion
@@ -167,6 +170,11 @@ namespace Muragatte.Visual.GUI
             get { return _historyViewer; }
         }
 
+        public Snapshot GetSnapshot
+        {
+            get { return _snapshot; }
+        }
+
         #endregion
 
         #region Events
@@ -174,6 +182,11 @@ namespace Muragatte.Visual.GUI
         private void btnDefaultBackgroundColor_Click(object sender, RoutedEventArgs e)
         {
             cpiBackgroundColor.SelectedColor = DefaultValues.BACKGROUND_COLOR;
+        }
+
+        private void cpiBackgroundColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            RedrawCurrentIfStopped();
         }
 
         private void btnHighlightColorDefault_Click(object sender, RoutedEventArgs e)
@@ -201,11 +214,10 @@ namespace Muragatte.Visual.GUI
             if (tabOptions == e.OriginalSource)
             {
                 if (e.RemovedItems.Contains(tabOptions.Items[0])) RevertScale();
-                if (tabOptions.SelectedIndex > 0 && tabOptions.SelectedIndex < _views.Count)
-                {
-                    //_views[tabOptions.SelectedIndex].Refresh();
-                    //if (!_visual.GetPlayback.IsPlaying) UpdateGroups();
-                }
+                //if (tabOptions.SelectedIndex > 0 && tabOptions.SelectedIndex < _views.Count)
+                //{
+                //    _views[tabOptions.SelectedIndex].Refresh();
+                //}
             }
         }
 
@@ -334,19 +346,29 @@ namespace Muragatte.Visual.GUI
 
         private void btnSnapshotSaveCurrent_Click(object sender, RoutedEventArgs e)
         {
-            _snapshot.Save(_visual.GetCanvas.Image);
+            _snapshotSaver.Save(_visual.GetCanvas.Image);
         }
 
         private void dudSnapshotScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (dudScale.Value.HasValue)
+            if (dudSnapshotScale.Value.HasValue)
             {
-                txbSnapshotSize.Text = string.Format("{0} x {1}", dudScale.Value.Value * _visual.GetCanvas.UnitWidth, dudScale.Value.Value * _visual.GetCanvas.UnitHeight);
+                txbSnapshotSize.Text = string.Format("{0} x {1}", dudSnapshotScale.Value.Value * _visual.GetCanvas.UnitWidth, dudSnapshotScale.Value.Value * _visual.GetCanvas.UnitHeight);
             }
             else
             {
                 txbSnapshotSize.Text = "pxW x pxH";
             }
+        }
+
+        private void btnSnapshotPreview_Click(object sender, RoutedEventArgs e)
+        {
+            _visual.ShowSnapshotPreview(_snapshot);
+        }
+
+        private void btnSnapshotSaveCustom_Click(object sender, RoutedEventArgs e)
+        {
+            _snapshotSaver.Save(_snapshot);
         }
 
         #endregion
@@ -367,6 +389,7 @@ namespace Muragatte.Visual.GUI
                 RescaleAppearances(value);
                 _visual.GetCanvas.Rescale(value);
                 _currentScale = value;
+                RedrawCurrentIfStopped();
             }
         }
 

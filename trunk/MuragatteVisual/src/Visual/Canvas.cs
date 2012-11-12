@@ -37,6 +37,7 @@ namespace Muragatte.Visual
         protected bool _bTrails = false;
         protected bool _bAgents = true;
         protected bool _bCentroids = false;
+        protected bool _bHighlighting = true;
         protected Visualization _visual = null;
         protected Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
 
@@ -152,6 +153,16 @@ namespace Muragatte.Visual
             }
         }
 
+        public bool IsHighlightingEnabled
+        {
+            get { return _bHighlighting; }
+            set
+            {
+                _bHighlighting = value;
+                NotifyPropertyChanged("IsHighlightingEnabled");
+            }
+        }
+
         public Color BackgroundColor
         {
             get { return _backgroundColor; }
@@ -181,7 +192,7 @@ namespace Muragatte.Visual
             _wb.Clear(_backgroundColor);
         }
 
-        public void Redraw()
+        public virtual void Redraw()
         {
             HistoryRecord record = CurrentSituation();
             Clear();
@@ -189,6 +200,11 @@ namespace Muragatte.Visual
             DrawEnvironment(record);
             DrawAgents(record);
             //DrawONG();
+        }
+
+        public virtual void Redraw(int step)
+        {
+            Redraw(_visual.GetModel.History, step);
         }
 
         public virtual void Redraw(History history)
@@ -207,6 +223,12 @@ namespace Muragatte.Visual
                 Redraw();
                 return;
             }
+            RedrawLayers(history, step);
+            //DrawONG();
+        }
+
+        protected void RedrawLayers(History history, int step)
+        {
             Clear();
             DrawNeighbourhoods(history[step]);
             DrawEnvironment(history[step]);
@@ -214,7 +236,6 @@ namespace Muragatte.Visual
             DrawTrails(history, step);
             DrawAgents(history[step]);
             DrawCentroids(history[step]);
-            //DrawONG();
         }
 
         private void DrawElements(HistoryRecord record, bool enabled, ICollectionView items)
@@ -224,7 +245,7 @@ namespace Muragatte.Visual
                 foreach (Appearance a in items)
                 {
                     ElementStatus es = record[a.ID];
-                    if (es.IsEnabled && a.IsEnabled)
+                    if (es.IsEnabled && IsSpecifiedElementEnabled(a))
                     {
                         if (a.IsHighlighted)
                         {
@@ -236,14 +257,14 @@ namespace Muragatte.Visual
             }
         }
 
-        protected void DrawNeighbourhoods(HistoryRecord record)
+        private void DrawNeighbourhoods(HistoryRecord record)
         {
             if (_bNeighbourhoods)
             {
                 foreach (Appearance a in _visual.GetOptions.NeighbourhoodsView)
                 {
                     ElementStatus es = record[a.ID];
-                    if (es.IsEnabled && a.IsNeighbourhoodEnabled)
+                    if (es.IsEnabled && IsSpecifiedNeighbourhoodEnabled(a))
                     {
                         a.DrawNeighbourhood(_wb, es.Position * _dScale, es.Direction);
                     }
@@ -251,19 +272,19 @@ namespace Muragatte.Visual
             }
         }
 
-        protected void DrawEnvironment(HistoryRecord record)
+        private void DrawEnvironment(HistoryRecord record)
         {
             DrawElements(record, _bEnvironment, _visual.GetOptions.EnvironmentView);
         }
 
-        protected void DrawTracks(History history, int step)
+        private void DrawTracks(History history, int step)
         {
             if (_bTracks)
             {
                 int time = Math.Min(step, history.Count);
                 foreach (Appearance a in _visual.GetOptions.TracksView)
                 {
-                    if (a.IsTrackEnabled)
+                    if (IsSpecifiedTrackEnabled(a))
                     {
                         List<int[]> segments = TrackLinePoints(history.GetElementPositions(a.ID, time));
                         foreach (int[] segment in segments)
@@ -275,14 +296,14 @@ namespace Muragatte.Visual
             }
         }
 
-        protected void DrawTrails(History history, int step)
+        private void DrawTrails(History history, int step)
         {
             if (_bTrails)
             {
                 int substep = _visual.GetModel.Substeps;
                 foreach (Appearance a in _visual.GetOptions.TrailsView)
                 {
-                    if (a.IsTrailEnabled)
+                    if (IsSpecifiedTrailEnabled(a))
                     {
                         byte alphaInc = (byte)(byte.MaxValue / (a.Style.Trail.Length + 1));
                         byte alpha = alphaInc;
@@ -297,21 +318,44 @@ namespace Muragatte.Visual
             }
         }
 
-        protected void DrawAgents(HistoryRecord record)
+        private void DrawAgents(HistoryRecord record)
         {
             DrawElements(record, _bAgents, _visual.GetOptions.AgentsView);
         }
 
-        protected void DrawCentroids(HistoryRecord record)
+        private void DrawCentroids(HistoryRecord record)
         {
             DrawElements(record, _bCentroids, _visual.GetOptions.CentroidsView);
         }
 
         private void DrawHighlight(Appearance a, ElementStatus es)
         {
-            Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
-                _visual.GetOptions.cpiHighlightColor.SelectedColor, Colors.Transparent,
-                (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+            if (_bHighlighting)
+            {
+                Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
+                    _visual.GetOptions.cpiHighlightColor.SelectedColor, Colors.Transparent,
+                    (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+            }
+        }
+
+        protected virtual bool IsSpecifiedElementEnabled(Appearance a)
+        {
+            return a.IsEnabled;
+        }
+
+        protected virtual bool IsSpecifiedNeighbourhoodEnabled(Appearance a)
+        {
+            return a.IsNeighbourhoodEnabled;
+        }
+
+        protected virtual bool IsSpecifiedTrackEnabled(Appearance a)
+        {
+            return a.IsTrackEnabled;
+        }
+
+        protected virtual bool IsSpecifiedTrailEnabled(Appearance a)
+        {
+            return a.IsTrailEnabled;
         }
 
         private List<int[]> TrackLinePoints(List<Vector2> positions)
@@ -356,6 +400,10 @@ namespace Muragatte.Visual
         {
             HistoryRecord record = new HistoryRecord(0);
             foreach (Element e in _visual.GetModel.Elements)
+            {
+                record.Add(e.ReportStatus());
+            }
+            foreach (Element e in _visual.GetModel.Elements.Centroids)
             {
                 record.Add(e.ReportStatus());
             }

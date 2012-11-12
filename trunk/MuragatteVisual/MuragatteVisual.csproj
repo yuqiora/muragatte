@@ -100,6 +100,7 @@
     <Compile Include="src\Visual\HistoryViewer.cs" />
     <Compile Include="src\Visual\Particle.cs" />
     <Compile Include="src\Visual\ParticleFactory.cs" />
+    <Compile Include="src\Visual\Snapshot.cs" />
     <Compile Include="src\Visual\Visualization.cs" />
     <Compile Include="src\Visual\WBXExtensions.cs" />
     <Page Include="src\GUI\VisualCanvasWindow.xaml">
