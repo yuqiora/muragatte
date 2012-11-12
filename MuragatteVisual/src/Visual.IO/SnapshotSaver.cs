@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using Muragatte.Core.Storage;
 
 namespace Muragatte.Visual.IO
 {
@@ -70,13 +71,45 @@ namespace Muragatte.Visual.IO
 
         public void Save(Snapshot snapshot)
         {
-            //redraw snapshot
-            Save(snapshot.Image);
+            Save(snapshot, snapshot.Step);
         }
 
         public void Save(string filename, Snapshot snapshot)
         {
-            //redraw snapshot
+            Save(filename, snapshot, snapshot.Step);
+        }
+
+        public void Save(Snapshot snapshot, int step)
+        {
+            snapshot.Redraw(step);
+            Save(snapshot.Image);
+        }
+
+        public void Save(string filename, Snapshot snapshot, int step)
+        {
+            snapshot.Redraw(step);
+            Save(filename, snapshot.Image);
+        }
+
+        public void Save(Snapshot snapshot, History history)
+        {
+            Save(snapshot, history, snapshot.Step);
+        }
+
+        public void Save(string filename, Snapshot snapshot, History history)
+        {
+            Save(filename, snapshot, history, snapshot.Step);
+        }
+
+        public void Save(Snapshot snapshot, History history, int step)
+        {
+            snapshot.Redraw(history, step);
+            Save(snapshot.Image);
+        }
+
+        public void Save(string filename, Snapshot snapshot, History history, int step)
+        {
+            snapshot.Redraw(history, step);
             Save(filename, snapshot.Image);
         }
 

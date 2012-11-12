@@ -119,18 +119,18 @@
                 <DockPanel>
                     <GroupBox Header="Visualization" Margin="5" Name="grbVisualization" DockPanel.Dock="Left">
                         <StackPanel Margin="5">
-                            <CheckBox Content="Enabled" Height="16" Name="chbVisualizationEnabled" IsChecked="True" />
-                            <CheckBox Content="Environment" Height="16" Margin="0,10,0,0" Name="chbGeneralEnvironment" IsChecked="{Binding Path=GetVisual.GetCanvas.IsEnvironmentEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Environment" Height="16" Name="chbGeneralEnvironment" IsChecked="{Binding Path=GetVisual.GetCanvas.IsEnvironmentEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                             <CheckBox Content="Agents" Height="16" Margin="0,10,0,0" Name="chbGeneralAgents" IsChecked="{Binding Path=GetVisual.GetCanvas.IsAgentsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                             <CheckBox Content="Neighbourhoods" Height="16" Margin="0,10,0,0" Name="chbGeneralNeighbourhoods" IsChecked="{Binding Path=GetVisual.GetCanvas.IsNeighbourhoodsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                             <CheckBox Content="Tracks" Height="16" Margin="0,10,0,0" Name="chbGeneralTracks" IsChecked="{Binding Path=GetVisual.GetCanvas.IsTracksEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                             <CheckBox Content="Trails" Height="16" Margin="0,10,0,0" Name="chbGeneralTrails" IsChecked="{Binding Path=GetVisual.GetCanvas.IsTrailsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                             <CheckBox Content="Centroids" Height="16" Margin="0,10,0,0" Name="chbGeneralCentroids" IsChecked="{Binding Path=GetVisual.GetCanvas.IsCentroidsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Highlighting" Height="16" Margin="0,10,0,0" Name="chbVisualizationHighlight" IsChecked="{Binding Path=GetVisual.GetCanvas.IsHighlightingEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Background Color" Margin="0,5,5,5" Name="grbBackgroundColor" DockPanel.Dock="Top">
                         <StackPanel Orientation="Horizontal"  Margin="5">
-                            <xtk:ColorPicker Name="cpiBackgroundColor" Height="23" Width="120" SelectedColor="{Binding Path=GetVisual.GetCanvas.BackgroundColor}" DisplayColorAndName="True" />
+                            <xtk:ColorPicker Name="cpiBackgroundColor" Height="23" Width="120" SelectedColor="{Binding Path=GetVisual.GetCanvas.BackgroundColor}" DisplayColorAndName="True" SelectedColorChanged="cpiBackgroundColor_SelectedColorChanged" />
                             <Button Content="Default" Height="23" Name="btnDefaultBackgroundColor" Width="60" Click="btnDefaultBackgroundColor_Click" />
                         </StackPanel>
                     </GroupBox>
@@ -424,19 +424,20 @@
                 <StackPanel Margin="5">
                     <Button Name="btnSnapshotSaveCurrent" Content="Save Current" Width="100" Height="23" Click="btnSnapshotSaveCurrent_Click" />
                     <Separator Margin="5" />
-                    <Button Name="btnSnapshotSaveCustom" Content="Save Custom" Width="100" Height="23" />
+                    <Button Name="btnSnapshotSaveCustom" Content="Save Custom" Width="100" Height="23" Click="btnSnapshotSaveCustom_Click" />
+                    <Button Name="btnSnapshotPreview" Content="Show Preview" Width="100" Height="23" Margin="0,0,0,5" Click="btnSnapshotPreview_Click" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="At " VerticalAlignment="Center" />
-                        <xtk:IntegerUpDown Name="iudSnapshotFrame" Watermark="Frame" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=GetVisual.GetModel.StepCount}" />
+                        <xtk:IntegerUpDown Name="iudSnapshotFrame" Watermark="Frame" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=GetVisual.GetModel.StepCount}" DefaultValue="0" Value="{Binding Path=GetSnapshot.Step, UpdateSourceTrigger=PropertyChanged}" ToolTip="Frame" />
                     </StackPanel>
-                    <CheckBox Name="chbSnapshotFlip" Content="Flip" />
+                    <CheckBox Name="chbSnapshotFlip" Content="Flip Horizontally" IsChecked="{Binding Path=GetSnapshot.DrawFlipped}" />
                     <Grid>
-                        <xtk:DoubleUpDown Name="dudSnapshotScale" Watermark="Scale" Height="23" Width="60" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_SCALE}" HorizontalAlignment="Left" ValueChanged="dudSnapshotScale_ValueChanged" />
+                        <xtk:DoubleUpDown Name="dudSnapshotScale" Watermark="Scale" Height="23" Width="60" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_SCALE}" DefaultValue="1" HorizontalAlignment="Left" ValueChanged="dudSnapshotScale_ValueChanged" Value="{Binding Path=GetSnapshot.Scale, UpdateSourceTrigger=PropertyChanged}" ToolTip="Scale" />
                         <TextBlock Name="txbSnapshotSize" Text="pxW x pxH" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     </Grid>
                     <GroupBox>
                         <GroupBox.Header>
-                            <CheckBox Name="chbSnapshotCustomVisuals" Content="Custom Visuals" />
+                            <CheckBox Name="chbSnapshotCustomVisuals" Content="Custom Visuals" IsChecked="{Binding Path=GetSnapshot.UseCustomVisuals}" />
                         </GroupBox.Header>
                         <Grid IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotCustomVisuals}">
                             <Grid.Resources>
@@ -467,18 +468,18 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <xtk:ColorPicker Name="cpiSnapshotBackgroundColor" DisplayColorAndName="True" Height="23" Width="120" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="2" ToolTip="Background Color" />
-                            <CheckBox Name="chbSnapshotEnvironment" IsChecked="True" Grid.Row="1" ToolTip="Environment" />
-                            <xtk:CheckComboBox Name="ccbSnapshotEnvironment" ToolTip="Environment" Grid.Row="1" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotEnvironment}" />
-                            <CheckBox Name="chbSnapshotAgents" IsChecked="True" Grid.Row="2" ToolTip="Agents" />
-                            <xtk:CheckComboBox Name="ccbSnapshotAgents" ToolTip="Agents" Grid.Row="2" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotAgents}" />
-                            <CheckBox Name="chbSnapshotNeighbourhoods" Grid.Row="3" ToolTip="Neighbourhoods" />
-                            <xtk:CheckComboBox Name="ccbSnapshotNeighbourhoods" ToolTip="Neighbourhoods" Grid.Row="3" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotNeighbourhoods}" />
-                            <CheckBox Name="chbSnapshotTracks" Grid.Row="4" ToolTip="Tracks" />
-                            <xtk:CheckComboBox Name="ccbSnapshotTracks" ToolTip="Tracks" Grid.Row="4" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTracks}" />
-                            <CheckBox Name="chbSnapshotTrails" Grid.Row="5" ToolTip="Trails" />
-                            <xtk:CheckComboBox Name="ccbSnapshotTrails" ToolTip="Trails" Grid.Row="5" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTrails}" />
-                            <CheckBox Name="chbSnapshotCentroids" Content="Centroids" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
+                            <xtk:ColorPicker Name="cpiSnapshotBackgroundColor" DisplayColorAndName="True" Height="23" Width="120" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="2" ToolTip="Background Color" SelectedColor="{Binding Path=GetSnapshot.BackgroundColor}" />
+                            <CheckBox Name="chbSnapshotEnvironment" Grid.Row="1" ToolTip="Environment" IsChecked="{Binding Path=GetSnapshot.IsEnvironmentEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotEnvironment" ToolTip="Environment" Grid.Row="1" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotEnvironment}" SelectedValue="{Binding Path=GetSnapshot.StationaryString}" />
+                            <CheckBox Name="chbSnapshotAgents" Grid.Row="2" ToolTip="Agents" IsChecked="{Binding Path=GetSnapshot.IsAgentsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotAgents" ToolTip="Agents" Grid.Row="2" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotAgents}" SelectedValue="{Binding Path=GetSnapshot.AgentsString}" />
+                            <CheckBox Name="chbSnapshotNeighbourhoods" Grid.Row="3" ToolTip="Neighbourhoods" IsChecked="{Binding Path=GetSnapshot.IsNeighbourhoodsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotNeighbourhoods" ToolTip="Neighbourhoods" Grid.Row="3" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotNeighbourhoods}" SelectedValue="{Binding Path=GetSnapshot.NeighbourhoodsString}" />
+                            <CheckBox Name="chbSnapshotTracks" Grid.Row="4" ToolTip="Tracks" IsChecked="{Binding Path=GetSnapshot.IsTracksEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotTracks" ToolTip="Tracks" Grid.Row="4" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTracks}" SelectedValue="{Binding Path=GetSnapshot.TracksString}" />
+                            <CheckBox Name="chbSnapshotTrails" Grid.Row="5" ToolTip="Trails" IsChecked="{Binding Path=GetSnapshot.IsTrailsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotTrails" ToolTip="Trails" Grid.Row="5" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTrails}" SelectedValue="{Binding Path=GetSnapshot.TrailsString}" />
+                            <CheckBox Name="chbSnapshotCentroids" Content="Centroids" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Left" IsChecked="{Binding Path=GetSnapshot.IsCentroidsEnabled}" />
                         </Grid>
                     </GroupBox>
                 </StackPanel>

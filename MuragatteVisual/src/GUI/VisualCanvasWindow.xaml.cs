@@ -37,11 +37,6 @@ namespace Muragatte.Visual.GUI
 
         #region Constructors
 
-        //public VisualCanvasWindow()
-        //{
-        //    InitializeComponent();
-        //}
-
         public VisualCanvasWindow(Visualization visualization, Canvas canvas)
         {
             InitializeComponent();
@@ -55,9 +50,12 @@ namespace Muragatte.Visual.GUI
 
         public void Initialize(Canvas canvas)
         {
-            imgCanvas.Width = canvas.PixelWidth;
-            imgCanvas.Height = canvas.PixelHeight;
-            imgCanvas.Source = canvas.Image;
+            if (canvas != null)
+            {
+                imgCanvas.Width = canvas.PixelWidth;
+                imgCanvas.Height = canvas.PixelHeight;
+                imgCanvas.Source = canvas.Image;
+            }
         }
 
         #endregion
