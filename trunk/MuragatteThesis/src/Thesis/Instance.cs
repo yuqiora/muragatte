@@ -25,7 +25,6 @@ namespace Muragatte.Thesis
     {
         #region Fields
 
-        private int _iNumber;
         private int _iLength;
         private MultiAgentSystem _mas;
         private bool _bComplete = false;
@@ -38,19 +37,20 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public Instance(int number, int length, double timePerStep, IStorage storage, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
+        public Instance(int number, int length, double timePerStep, bool keepSubsteps, IStorage storage, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
         {
-            _iNumber = number;
             _iLength = length;
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
-            _mas = new MultiAgentSystem(number, storage.NewInstance(), scene, species, _random, timePerStep);
+            _mas = new MultiAgentSystem(number, keepSubsteps ? HistoryMode.KeepAll : HistoryMode.NoSubsteps,
+                storage.NewInstance(), scene, species, _random, timePerStep);
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }
 
         public Instance(int number, int length, InstanceDefinition definition, uint seed)
-            : this(number, length, definition.TimePerStep, definition.Storage, definition.Scene, definition.Archetypes, definition.Species, seed) { }
+            : this(number, length, definition.TimePerStep, definition.KeepSubsteps, definition.Storage,
+            definition.Scene, definition.Archetypes, definition.Species, seed) { }
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace Muragatte.Thesis
 
         public int Number
         {
-            get { return _iNumber; }
+            get { return _mas.Instance; }
         }
 
         public int Length
@@ -107,7 +107,7 @@ namespace Muragatte.Thesis
         {
             if (!_bComplete)
             {
-                progress.UpdateInstance(_iNumber);
+                progress.UpdateInstance(_mas.Instance);
                 for (int i = 0; i < _iLength; i++)
                 {
                     if (worker.CancellationPending) break;
@@ -154,7 +154,7 @@ namespace Muragatte.Thesis
 
         private void ProcessResults()
         {
-            _results = new InstanceResults(_iNumber, _mas.History, _mas.Substeps, _observedInfos);
+            _results = new InstanceResults(_mas.Instance, _mas.History, _mas.Substeps, _observedInfos);
         }
 
         public void FinishLoading()

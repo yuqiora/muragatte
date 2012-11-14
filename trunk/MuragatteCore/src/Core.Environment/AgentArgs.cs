@@ -147,7 +147,12 @@ namespace Muragatte.Core.Environment
             return clones;
         }
 
-        public abstract AgentArgs Clone();
+        protected Goal GetProperGoal(Goal goal, MultiAgentSystem model)
+        {
+            return goal == null ? null : (Goal)model.Elements[goal.ID];
+        }
+
+        public abstract AgentArgs Clone(MultiAgentSystem model);
 
         #endregion
     }

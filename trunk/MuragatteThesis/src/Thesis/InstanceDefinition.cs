@@ -27,6 +27,7 @@ namespace Muragatte.Thesis
 
         private double _dTimePerStep = 1;
         private int _iLength = 100;
+        private bool _bKeepSubsteps = false;
         private Scene _scene = null;
         private SpeciesCollection _species = null;
         private IStorage _storage = null;
@@ -40,10 +41,11 @@ namespace Muragatte.Thesis
 
         public InstanceDefinition() { }
 
-        public InstanceDefinition(double timePerStep, int length, Scene scene, SpeciesCollection species, IStorage storage, IEnumerable<ObservedArchetype> archetypes)
+        public InstanceDefinition(double timePerStep, int length, bool keepSubsteps, Scene scene, SpeciesCollection species, IStorage storage, IEnumerable<ObservedArchetype> archetypes)
         {
             _dTimePerStep = timePerStep;
             _iLength = length;
+            _bKeepSubsteps = keepSubsteps;
             _scene = scene;
             _species = species;
             _storage = storage;
@@ -71,6 +73,16 @@ namespace Muragatte.Thesis
             {
                 _iLength = value;
                 NotifyPropertyChanged("Length");
+            }
+        }
+
+        public bool KeepSubsteps
+        {
+            get { return _bKeepSubsteps; }
+            set
+            {
+                _bKeepSubsteps = value;
+                NotifyPropertyChanged("KeepSubsteps");
             }
         }
 
@@ -118,7 +130,7 @@ namespace Muragatte.Thesis
 
         public Instance CreateInstance(int number, uint seed)
         {
-            return new Instance(number, _iLength, _dTimePerStep, _storage, _scene, _archetypes, _species, seed);
+            return new Instance(number, _iLength, _dTimePerStep, _bKeepSubsteps, _storage, _scene, _archetypes, _species, seed);
         }
 
         private void NotifyPropertyChanged(String propertyName)

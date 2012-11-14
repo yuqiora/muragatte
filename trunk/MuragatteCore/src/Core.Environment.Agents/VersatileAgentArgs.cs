@@ -65,10 +65,10 @@ namespace Muragatte.Core.Environment.Agents
             _modifiers.Add(WanderSteering.LABEL, wander);
         }
 
-        protected VersatileAgentArgs(VersatileAgentArgs args)
+        protected VersatileAgentArgs(VersatileAgentArgs args, MultiAgentSystem model)
             : base(args)
         {
-            _goal = args._goal;
+            _goal = GetProperGoal(_goal, model);
             _neighbourhoods = GetNeigbourhoodClones(args._neighbourhoods);
         }
 
@@ -103,9 +103,9 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override AgentArgs Clone()
+        public override AgentArgs Clone(MultiAgentSystem model)
         {
-            return new VersatileAgentArgs(this);
+            return new VersatileAgentArgs(this, model);
         }
 
         #endregion

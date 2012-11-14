@@ -104,6 +104,14 @@ namespace Muragatte.Visual
 
         #region Blit
 
+        public static void Blit(this WriteableBitmap wb, WriteableBitmap source)
+        {
+            wb.Blit(
+                new System.Windows.Rect(0, 0, wb.PixelWidth, wb.PixelHeight),
+                source,
+                new System.Windows.Rect(0, 0, source.PixelWidth, source.PixelHeight));
+        }
+
         public static void Blit(this WriteableBitmap wb, Vector2 position, WriteableBitmap source)
         {
             wb.Blit(

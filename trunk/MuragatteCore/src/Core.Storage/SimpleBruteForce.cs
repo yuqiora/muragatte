@@ -66,8 +66,9 @@ namespace Muragatte.Core.Storage
         {
             get
             {
-                int index = _items.FindIndex(e => e.ID == id);
-                return index < 0 ? null : _items[index];
+                return id >= 0 ? _items.FirstOrDefault(e => e.ID == id) : _centroids.FirstOrDefault(c => c.ID == id);
+                //int index = _items.FindIndex(e => e.ID == id);
+                //return index < 0 ? null : _items[index];
             }
         }
 

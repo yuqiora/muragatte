@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Muragatte.Core.Storage;
+
+using System.ComponentModel;
+using System.Windows.Media;
 
 namespace Muragatte.Visual
 {
@@ -39,6 +43,8 @@ namespace Muragatte.Visual
         #endregion
 
         #region Constructors
+
+        public Snapshot(int width, int height) : this(width, height, null) { }
 
         public Snapshot(int width, int height, Visualization visualization)
             : base(width, height, 1, visualization)
@@ -157,7 +163,7 @@ namespace Muragatte.Visual
 
         #region Methods
 
-        private void ScaleBack()
+        protected void ScaleBack()
         {
             RescaleStylesAndAppearances(DefaultValues.Scale);
         }
@@ -167,9 +173,14 @@ namespace Muragatte.Visual
             return enabled && (species.Count == 0 || species.Any(s => a.Species != null && a.Species.StartsWith(s)));
         }
 
-        private void Rescale()
+        protected WriteableBitmap CreateBitmap()
         {
-            _wb = BitmapFactory.New((int)(_iUnitWidth * _dScale), (int)(_iUnitHeight * _dScale));
+            return BitmapFactory.New((int)(_iUnitWidth * _dScale), (int)(_iUnitHeight * _dScale)); ;
+        }
+
+        protected virtual void Rescale()
+        {
+            _wb = CreateBitmap();
             RescaleStylesAndAppearances(_dScale);
         }
 
@@ -184,17 +195,15 @@ namespace Muragatte.Visual
             Redraw(_visual.GetModel.History, _iStep);
         }
 
-        public override void Redraw(Core.Storage.History history)
+        public override void Redraw(History history)
         {
             Redraw(history, _iStep);
         }
 
-        public override void Redraw(Core.Storage.History history, int step)
+        public override void Redraw(History history, int step)
         {
             if (history.Count > 0)
             {
-                if (step < 0) step = 0;
-                if (step >= history.Count) step = history.Count - 1;
                 Rescale();
                 RedrawLayers(history, step);
                 ScaleBack();
@@ -238,6 +247,141 @@ namespace Muragatte.Visual
             collection.Clear();
             collection.UnionWith(items);
             NotifyPropertyChanged(propertyName);
+        }
+
+        public void SetVisualization(Visualization visual)
+        {
+            if (visual != null) _visual = visual;
+        }
+
+        #endregion
+    }
+
+    public class LayeredSnapshot : Snapshot
+    {
+        #region Fields
+
+        private byte _alpha = byte.MaxValue;
+        private WriteableBitmap _wbL = null;
+
+        private BackgroundWorker _worker = new BackgroundWorker();
+
+        #endregion
+
+        #region Constructors
+
+        public LayeredSnapshot(int width, int height, Visualization visual)
+            : base(width, height, visual)
+        {
+            _worker.WorkerReportsProgress = true;
+            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+        }
+
+        public LayeredSnapshot(Visualization visual)
+            : this(visual.GetCanvas.UnitWidth, visual.GetCanvas.UnitHeight, visual) { }
+
+        #endregion
+
+        #region Properties
+
+        public byte Alpha
+        {
+            get { return _alpha; }
+            set
+            {
+                _alpha = value;
+                NotifyPropertyChanged("Alpha");
+            }
+        }
+
+        public BackgroundWorker Worker
+        {
+            get { return _worker; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        protected override void Rescale()
+        {
+            _wbL = CreateBitmap();
+            base.Rescale();
+        }
+
+        private void CombineLayers(byte alpha)
+        {
+            ApplyAlpha(_wb, alpha);
+            _wbL.Blit(_wb);
+            _wb = CreateBitmap();
+        }
+
+        private void ApplyAlpha(WriteableBitmap wb, byte alpha)
+        {
+            wb.ForEach((x, y, color) => color.WithA(alpha));
+        }
+
+        public void Redraw(IEnumerable<History> histories)
+        {
+            if (histories.Count() > 0)
+            {
+                Rescale();
+                _wbL.Clear(_backgroundColor);
+                foreach (History h in histories)
+                {
+                    RedrawLayers(h, Step);
+                    CombineLayers(_alpha);
+                }
+                ScaleBack();
+                _wb = _wbL;
+            }
+        }
+
+        public void Redraw(IEnumerable<History> histories, byte alpha)
+        {
+            Alpha = alpha;
+            Redraw(histories);
+        }
+
+        public void Redraw(IEnumerable<History> histories, int step, byte alpha)
+        {
+            Step = step;
+            Redraw(histories, alpha);
+        }
+
+        public void RedrawAsync(IEnumerable<History> histories)
+        {
+            if (histories.Count() > 0) _worker.RunWorkerAsync(histories);
+        }
+
+        public void RedrawAsync(IEnumerable<History> histories, byte alpha)
+        {
+            Alpha = alpha;
+            RedrawAsync(histories);
+        }
+
+        public void RedrawAsync(IEnumerable<History> histories, int step, byte alpha)
+        {
+            Step = step;
+            RedrawAsync(histories, alpha);
+        }
+
+        void _worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            IEnumerable<History> histories = (IEnumerable<History>)e.Argument;
+            double progress = 0;
+            double progressInc = 100d / histories.Count();
+            Rescale();
+            _wbL.Clear(_backgroundColor);
+            foreach (History h in histories)
+            {
+                RedrawLayers(h, Step);
+                CombineLayers(_alpha);
+                progress += progressInc;
+                _worker.ReportProgress(0, progress);
+            }
+            ScaleBack();
+            _wb = _wbL;
         }
 
         #endregion

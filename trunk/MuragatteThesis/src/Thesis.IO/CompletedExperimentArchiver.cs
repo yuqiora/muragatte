@@ -136,7 +136,7 @@ namespace Muragatte.Thesis.IO
                         e.Extract(tempDir, ExtractExistingFileAction.OverwriteSilently);
                         int step = int.Parse(Path.GetFileNameWithoutExtension(e.FileName).Substring(HISTORY_STEP_FILENAME_BASE.Length));
                         LoadHistoryRecord(step, instance, Path.Combine(tempDir, e.FileName));
-                        _worker.ReportProgress(0, 100d * (instance * zip.Count + step) / (zip.Count * _experiment.RepeatCount));
+                        _worker.ReportProgress(0, 100d * (instance * _experiment.Definition.Length + step) / (_experiment.Definition.Length * _experiment.RepeatCount));
                     }
                 }
                 DeleteFiles(tempDir);

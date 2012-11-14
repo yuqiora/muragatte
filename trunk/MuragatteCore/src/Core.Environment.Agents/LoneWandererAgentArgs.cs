@@ -64,7 +64,7 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override AgentArgs Clone()
+        public override AgentArgs Clone(MultiAgentSystem model)
         {
             return new LoneWandererAgentArgs(this);
         }

@@ -16,11 +16,21 @@ using Muragatte.Common;
 
 namespace Muragatte.Core.Storage
 {
+    public enum HistoryMode
+    {
+        KeepAll,
+        LastOnly,
+        NoSubsteps
+    }
+
     public class History : IEnumerable<HistoryRecord>
     {
         #region Fields
 
-        private List<HistoryRecord> _records = new List<HistoryRecord>();
+        private SortedDictionary<int, HistoryRecord> _records = new SortedDictionary<int, HistoryRecord>();
+        private HistoryMode _mode = HistoryMode.KeepAll;
+        private int _iSubsteps = 1;
+        private int _iLastStep = -1;
 
         #endregion
 
@@ -28,9 +38,15 @@ namespace Muragatte.Core.Storage
 
         public History() { }
 
+        public History(HistoryMode mode, int substeps)
+        {
+            _mode = mode;
+            _iSubsteps = _mode == HistoryMode.NoSubsteps ? substeps : 1;
+        }
+
         public History(IEnumerable<HistoryRecord> records)
         {
-            _records.AddRange(records);
+            Add(records);
         }
 
         #endregion
@@ -42,23 +58,51 @@ namespace Muragatte.Core.Storage
             get { return _records.Count; }
         }
 
-        public HistoryRecord this[int index]
+        public HistoryMode Mode
         {
-            get { return _records[index]; }
+            get { return _mode; }
+        }
+
+        public int Length
+        {
+            get { return _iLastStep; }
+        }
+
+        public HistoryRecord this[int step]
+        {
+            get
+            {
+                if (_mode == HistoryMode.LastOnly) return _records.Values.FirstOrDefault();
+                if (_mode == HistoryMode.NoSubsteps && step % _iSubsteps > 0) step = ((step / _iSubsteps) + 1) * _iSubsteps;
+                if (step < 0) step = 0;
+                if (step > _iLastStep) step = _iLastStep;
+                return _records[step];
+            }
         }
 
         #endregion
 
         #region Methods
 
+        private void AddRecord(HistoryRecord record)
+        {
+            _records.Add(record.Step, record);
+            if (record.Step > _iLastStep) _iLastStep = record.Step;
+        }
+
         public void Add(HistoryRecord record)
         {
-            _records.Add(record);
+            if (_mode == HistoryMode.LastOnly) _records.Clear();
+            if (_mode == HistoryMode.NoSubsteps && record.Step % _iSubsteps > 0) return;
+            AddRecord(record);
         }
 
         public void Add(IEnumerable<HistoryRecord> records)
         {
-            _records.AddRange(records);
+            foreach (HistoryRecord r in records)
+            {
+                Add(r);
+            }
         }
 
         public void Clear()
@@ -68,7 +112,7 @@ namespace Muragatte.Core.Storage
 
         public IEnumerator<HistoryRecord> GetEnumerator()
         {
-            return _records.GetEnumerator();
+            return _records.Values.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -78,15 +122,10 @@ namespace Muragatte.Core.Storage
 
         public IEnumerable<ElementStatus> GetElementInfo(int id)
         {
-            return GetElementInfo(id, _records.Count);
-        }
-
-        public IEnumerable<ElementStatus> GetElementInfo(int id, int count)
-        {
             List<ElementStatus> result = new List<ElementStatus>();
-            for (int i = 0; i < count; i++)
+            foreach (HistoryRecord r in _records.Values)
             {
-                result.Add(_records[i][id]);
+                result.Add(r[id]);
             }
             return result;
         }
@@ -104,7 +143,7 @@ namespace Muragatte.Core.Storage
         public List<Vector2> GetElementPositions(int id, int start, int count)
         {
             List<Vector2> positions = new List<Vector2>();
-            for (int i = start; i < start + count; i++)
+            for (int i = start; i < start + count; i += _iSubsteps)
             {
                 positions.Add(_records[i][id].Position);
             }

@@ -64,9 +64,10 @@ namespace Muragatte.Visual.GUI
 
             iudDelay.Value = DEFAULT_DELAY;
             int substeps = _visual.GetModel.Substeps;
-            if (substeps == 1)
+            if (substeps == 1 || _visual.GetModel.History.Mode == Core.Storage.HistoryMode.NoSubsteps)
             {
                 chbSkipSubsteps.IsEnabled = false;
+                FrameIncrement = substeps;
             }
             else
             {
@@ -85,6 +86,16 @@ namespace Muragatte.Visual.GUI
             {
                 _bPlaying = value;
                 NotifyPropertyChanged("IsPlaying");
+            }
+        }
+
+        public int FrameIncrement
+        {
+            get { return _iFrameIncrement; }
+            set
+            {
+                _iFrameIncrement = value;
+                NotifyPropertyChanged("FrameIncrement");
             }
         }
 
@@ -164,12 +175,12 @@ namespace Muragatte.Visual.GUI
 
         private void chbSkipSubsteps_Checked(object sender, RoutedEventArgs e)
         {
-            _iFrameIncrement = _visual.GetModel.Substeps;
+            FrameIncrement = _visual.GetModel.Substeps;
         }
 
         private void chbSkipSubsteps_Unchecked(object sender, RoutedEventArgs e)
         {
-            _iFrameIncrement = 1;
+            FrameIncrement = 1;
         }
 
         #endregion

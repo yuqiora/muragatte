@@ -38,6 +38,9 @@ namespace Muragatte.Thesis.IO
         [XmlAttribute]
         public double TimePerStep = 1;
 
+        [XmlAttribute]
+        public bool KeepSubsteps = false;
+
         public uint Seed = 0;
 
         public StorageOptions Storage = StorageOptions.SimpleBruteForce;
@@ -65,6 +68,7 @@ namespace Muragatte.Thesis.IO
             Repeat = experiment.RepeatCount;
             Length = experiment.Definition.Length;
             TimePerStep = experiment.Definition.TimePerStep;
+            KeepSubsteps = experiment.Definition.KeepSubsteps;
             Seed = experiment.Seed;
             Storage = experiment.Definition.Storage.StorageType;
             Styles = experiment.Styles.ToArray();
@@ -80,7 +84,7 @@ namespace Muragatte.Thesis.IO
         public Experiment ToExperiment()
         {
             return new Experiment(Name, string.Empty, Repeat,
-                new InstanceDefinition(TimePerStep, Length, Scene, KnownSpecies, Storage.ToStorage(), Archetypes),
+                new InstanceDefinition(TimePerStep, Length, KeepSubsteps, Scene, KnownSpecies, Storage.ToStorage(), Archetypes),
                 new ObservableCollection<Style>(Styles), Seed);
         }
 

@@ -193,17 +193,16 @@ namespace Muragatte.Thesis.Results
 
         private void CreateStepDetails(History history, int substeps, List<ArchetypeOverviewInfo> observedInfo)
         {
-            for (int i = 0; i < history.Count; i += substeps)
+            for (int i = 0; i <= history.Length; i += substeps)
             {
                 AddStepOverview(i, history, observedInfo);
             }
-            int last = history.Count - 1;
-            if (_stepDetails.Last().Step != last) AddStepOverview(last, history, observedInfo);
+            if (_stepDetails.Last().Step != history.Length) AddStepOverview(history.Length, history, observedInfo);
         }
 
         private void AddStepOverview(int step, History history, List<ArchetypeOverviewInfo> observedInfo)
         {
-            _stepDetails.Add(new StepOverview(step, history[step], observedInfo));
+            _stepDetails.Add(new StepOverview(history[step], observedInfo));
         }
 
         private void StepsSummary()

@@ -399,7 +399,7 @@
                     </xtk:CheckListBox>
                     <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
-                            <xtk:ColorPicker Name="cpiHighlightColor" Height="23" Width="120" SelectedColor="{x:Static mv:DefaultValues.HIGHLIGHT_COLOR}" DisplayColorAndName="True" />
+                            <xtk:ColorPicker Name="cpiHighlightColor" Height="23" Width="120" SelectedColor="{Binding Path=GetVisual.GetCanvas.HighlightColor}" DisplayColorAndName="True" />
                             <Button Content="Default" Height="23" Name="btnHighlightColorDefault" Width="60" Click="btnHighlightColorDefault_Click" />
                         </StackPanel>
                         <GroupBox Header="Species" Height="140" Name="grbHighlightSelectSpecies">
