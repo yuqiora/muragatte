@@ -37,11 +37,11 @@
             <CheckBox Content="_Automatic delay" Height="16" Name="chbAutoDelay" Grid.Column="1" Grid.Row="0" Checked="chbAutoDelay_Checked" Unchecked="chbAutoDelay_Unchecked" Margin="5,0" />
             <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" >
                 <Label Content="_Frame:" Name="lblFrame" Target="{Binding ElementName=dudFrame}" />
-                <xtk:DoubleUpDown Name="dudFrame" Height="23" Width="60" Minimum="0" Text="F0" Value="{Binding Path=Value, ElementName=sldFrame, Mode=TwoWay, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding Path=GetModel.StepCount}" />
+                <xtk:DoubleUpDown Name="dudFrame" Height="23" Width="60" Minimum="0" Text="F0" Value="{Binding Path=Value, ElementName=sldFrame, Mode=TwoWay, IsAsync=True, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding Path=GetModel.StepCount}" Increment="{Binding FrameIncrement}" />
                 <TextBlock Text="{Binding Path=GetModel.StepCount, StringFormat='{} of {0}'}" VerticalAlignment="Center" />
             </StackPanel>
             <CheckBox Content="_Skip substeps" Height="16" Name="chbSkipSubsteps" Grid.Column="1" Grid.Row="1" Checked="chbSkipSubsteps_Checked" Unchecked="chbSkipSubsteps_Unchecked" Margin="5,0" />
         </Grid>
-        <Slider Height="23" HorizontalAlignment="Center" Name="sldFrame" Width="320" TickPlacement="None" IsMoveToPointEnabled="True" LargeChange="10" SmallChange="1" TickFrequency="1" ValueChanged="sldFrame_ValueChanged" IsSnapToTickEnabled="True" Maximum="{Binding Path=GetModel.StepCount}" />
+        <Slider Height="23" HorizontalAlignment="Center" Name="sldFrame" Width="320" TickPlacement="None" IsMoveToPointEnabled="True" LargeChange="10" SmallChange="1" TickFrequency="{Binding FrameIncrement}" ValueChanged="sldFrame_ValueChanged" IsSnapToTickEnabled="True" Maximum="{Binding Path=GetModel.StepCount}" />
     </StackPanel>
 </Window>

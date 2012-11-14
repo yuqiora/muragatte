@@ -42,6 +42,7 @@ namespace Muragatte.Thesis.GUI
         private ObservableCollection<ObservedArchetype> _archetypes = null;
         private List<Type> _storageTypes = new List<Type>();
         private IStorage _storage = null;
+        private List<double> _timePerStepOptions = new List<double>() { 0.1, 0.2, 0.25, 0.5, 1 };
 
         private XmlExperimentArchiver _xml = null;
 
@@ -129,6 +130,11 @@ namespace Muragatte.Thesis.GUI
             }
         }
 
+        public List<double> GetTimePerStepOptions
+        {
+            get { return _timePerStepOptions; }
+        }
+
         #endregion
 
         #region Events
@@ -190,7 +196,8 @@ namespace Muragatte.Thesis.GUI
         private Experiment NewExperiment()
         {
             return new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
-                new InstanceDefinition(dudTimePerStep.Value.Value, iudLength.Value.Value, _scene, _species, _storage, _archetypes),
+                new InstanceDefinition((double)cmbTimePerStep.SelectedItem, iudLength.Value.Value,
+                    chbKeepSubsteps.IsChecked.Value, _scene, _species, _storage, _archetypes),
                 _styles, (uint)dudSeed.Value.Value);
         }
 
@@ -211,7 +218,8 @@ namespace Muragatte.Thesis.GUI
             txtName.Text = xe.Name;
             iudRepeat.Value = xe.Repeat;
             iudLength.Value = xe.Length;
-            dudTimePerStep.Value = xe.TimePerStep;
+            cmbTimePerStep.SelectedItem = xe.TimePerStep;
+            chbKeepSubsteps.IsChecked = xe.KeepSubsteps;
             dudSeed.Value = xe.Seed;
             _storage = xe.Storage.ToStorage();
             _styles.Clear();

@@ -66,7 +66,7 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override AgentArgs Clone()
+        public override AgentArgs Clone(MultiAgentSystem model)
         {
             return new BoidAgentArgs(this);
         }
@@ -110,10 +110,10 @@ namespace Muragatte.Core.Environment.Agents
             _modifiers.Add(MOD_ASSERTIVITY, assertivity);
         }
 
-        protected AdvancedBoidAgentArgs(AdvancedBoidAgentArgs args)
+        protected AdvancedBoidAgentArgs(AdvancedBoidAgentArgs args, MultiAgentSystem model)
             : base(args)
         {
-            _goal = args._goal;
+            _goal = GetProperGoal(args._goal, model);
             _neighbourhoods = GetNeigbourhoodClones(args._neighbourhoods);
         }
 
@@ -148,9 +148,9 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Methods
 
-        public override AgentArgs Clone()
+        public override AgentArgs Clone(MultiAgentSystem model)
         {
-            return new AdvancedBoidAgentArgs(this);
+            return new AdvancedBoidAgentArgs(this, model);
         }
 
         #endregion

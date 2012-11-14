@@ -140,8 +140,9 @@ namespace Muragatte.Sandbox.GUI
             int height = int.Parse(txtHeight.Text);
             _scatteredSpawn = new RectangleSpawnSpot("Scattered", new Vector2(width / 2.0, height / 2.0), width, height);
             _groupedSpawn = new EllipseSpawnSpot("Grouped", new Vector2(width / 2.0, height / 2.0), width / 5.0, height / 5.0);
-            _mas = new MultiAgentSystem(0, /*new OrthantNeighbourhoodGraphStorage()/*/ new SimpleBruteForceStorage(), new Region(
-                width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value), _random, TIME_PER_STEP);
+            _mas = new MultiAgentSystem(0, HistoryMode.KeepAll, /*new OrthantNeighbourhoodGraphStorage()/*/ new SimpleBruteForceStorage(),
+                new Region( width, height, chbHorizontal.IsChecked.Value, chbVertical.IsChecked.Value),
+                _random, TIME_PER_STEP);
             double scale = double.Parse(txtScale.Text);
             if (_visual != null)
             {

@@ -33,9 +33,9 @@ namespace Muragatte.Thesis.Results
 
         #region Constructors
 
-        public StepOverview(int step, HistoryRecord record, List<ArchetypeOverviewInfo> observedInfo)
+        public StepOverview(HistoryRecord record, List<ArchetypeOverviewInfo> observedInfo)
         {
-            _iStep = step;
+            _iStep = record.Step;
             _strays = record.StrayAgents;
             _iStrayWander = StraysWander.Count();
             _iStrayGoal = StraysGoal.Count();

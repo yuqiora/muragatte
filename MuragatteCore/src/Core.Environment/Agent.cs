@@ -56,7 +56,7 @@ namespace Muragatte.Core.Environment
 
         protected Agent(Agent other, MultiAgentSystem model)
             : this(other._iElementID, model, other._position, other._direction, other._dSpeed,
-            other._species, other._fieldOfView.Clone(), other._dTurningAngle, other._args.Clone()) { }
+            other._species, other._fieldOfView.Clone(), other._dTurningAngle, other._args.Clone(model)) { }
         
         #endregion
 

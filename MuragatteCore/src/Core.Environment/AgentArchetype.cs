@@ -129,12 +129,6 @@ namespace Muragatte.Core.Environment
             set { _turningAngle = value; }
         }
 
-        //public AgentArgs Specifics
-        //{
-        //    get { return _args; }
-        //    set { _args = value; }
-        //}
-
         [XmlIgnore]
         public abstract AgentArgs Specifics { get; set; }
 

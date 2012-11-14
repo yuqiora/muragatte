@@ -307,6 +307,7 @@ namespace Muragatte.Visual
                 if (_style.PrimaryColor.NotTransparent())
                 {
                     primary = _style.Trail.Color.WithA(alpha);
+                    if (_style.SecondaryColor.NotTransparent()) secondary = _style.SecondaryColor.WithA(alpha);
                 }
                 else
                 {

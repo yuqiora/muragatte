@@ -42,10 +42,10 @@ namespace Muragatte.Core
 
         #region Constructors
 
-        public MultiAgentSystem(int instance, IStorage storage, Region region, RandomMT random, double timePerStep = 1)
-            : this(instance, storage, region, new SpeciesCollection(true), random, timePerStep) { }
+        public MultiAgentSystem(int instance, HistoryMode mode, IStorage storage, Region region, RandomMT random, double timePerStep = 1)
+            : this(instance, mode, storage, region, new SpeciesCollection(true), random, timePerStep) { }
 
-        public MultiAgentSystem(int instance, IStorage storage, Region region, SpeciesCollection species, RandomMT random, double timePerStep = 1)
+        public MultiAgentSystem(int instance, HistoryMode mode, IStorage storage, Region region, SpeciesCollection species, RandomMT random, double timePerStep = 1)
         {
             _iInstance = instance;
             _storage = storage;
@@ -53,13 +53,14 @@ namespace Muragatte.Core
             _species = species;
             _random = random;
             _dTimePerStep = timePerStep;
+            _history = new History(mode, Substeps);
         }
 
-        public MultiAgentSystem(int instance, IStorage storage, Scene scene, RandomMT random, double timePerStep = 1)
-            : this(instance, storage, scene, new SpeciesCollection(true), random, timePerStep) { }
+        public MultiAgentSystem(int instance, HistoryMode mode, IStorage storage, Scene scene, RandomMT random, double timePerStep = 1)
+            : this(instance, mode, storage, scene, new SpeciesCollection(true), random, timePerStep) { }
 
-        public MultiAgentSystem(int instance, IStorage storage, Scene scene, SpeciesCollection species, RandomMT random, double timePerStep = 1)
-            : this(instance, storage, scene.Region, species, random, timePerStep)
+        public MultiAgentSystem(int instance, HistoryMode mode, IStorage storage, Scene scene, SpeciesCollection species, RandomMT random, double timePerStep = 1)
+            : this(instance, mode, storage, scene.Region, species, random, timePerStep)
         {
             _storage.Add(scene.ApplyStationaryElements(this));
         }
@@ -177,14 +178,22 @@ namespace Muragatte.Core
         {
             _storage.Initialize();
             CreateCentroids();
-            HistoryRecord record = new HistoryRecord(0);
-            ReportStatus(record);
-            _history.Add(record);
+            ExpandHistory(0);
         }
 
         public void LoadedTo(int stepCount)
         {
             StepCount = stepCount;
+        }
+
+        private void ExpandHistory(int step)
+        {
+            if (_history.Mode != HistoryMode.NoSubsteps || step % Substeps == 0)
+            {
+                HistoryRecord record = new HistoryRecord(step);
+                ReportStatus(record);
+                _history.Add(record);
+            }
         }
 
         private void ReportStatus(HistoryRecord record)
@@ -232,44 +241,45 @@ namespace Muragatte.Core
             {
                 e.Update();
             }
-            HistoryRecord record = new HistoryRecord(_iSteps + 1);
             foreach (Element e in _storage.Items)
             {
                 e.ConfirmUpdate();
             }
             _storage.Update();
-            UpdateGroupsAndCentroids();
-            ReportStatus(record);
-            _history.Add(record);
             StepCount++;
+            UpdateGroupsAndCentroids();
+            ExpandHistory(_iSteps);
         }
 
         private void UpdateGroupsAndCentroids()
         {
-            foreach (Centroid c in _storage.Centroids)
+            if (_history.Mode != HistoryMode.NoSubsteps || _iSteps % Substeps == 0)
             {
-                c.Update();
-            }
-            _groups.Clear();
-            _strays.Clear();
-            foreach (Agent a in _storage.Agents)
-            {
-                if (a.Group == null)
+                foreach (Centroid c in _storage.Centroids)
                 {
-                    IEnumerable<Agent> members = a.GroupSearch();
-                    if (members.Count() > 0)
+                    c.Update();
+                }
+                _groups.Clear();
+                _strays.Clear();
+                foreach (Agent a in _storage.Agents)
+                {
+                    if (a.Group == null)
                     {
-                        _groups.Add(new Group(a, members));
-                    }
-                    else
-                    {
-                        _strays.Add(a);
+                        IEnumerable<Agent> members = a.GroupSearch();
+                        if (members.Count() > 0)
+                        {
+                            _groups.Add(new Group(a, members));
+                        }
+                        else
+                        {
+                            _strays.Add(a);
+                        }
                     }
                 }
-            }
-            foreach (Centroid c in _storage.Centroids)
-            {
-                c.ConfirmUpdate();
+                foreach (Centroid c in _storage.Centroids)
+                {
+                    c.ConfirmUpdate();
+                }
             }
         }
 

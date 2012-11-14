@@ -40,6 +40,7 @@ namespace Muragatte.Visual
         protected bool _bHighlighting = true;
         protected Visualization _visual = null;
         protected Color _backgroundColor = DefaultValues.BACKGROUND_COLOR;
+        protected Color _highlightColor = DefaultValues.HIGHLIGHT_COLOR;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -173,6 +174,16 @@ namespace Muragatte.Visual
             }
         }
 
+        public Color HighlightColor
+        {
+            get { return _highlightColor; }
+            set
+            {
+                _highlightColor = value;
+                NotifyPropertyChanged("HighlightColor");
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -214,10 +225,10 @@ namespace Muragatte.Visual
 
         public virtual void Redraw(History history, int step)
         {
-            if (step >= history.Count)
-            {
-                return;
-            }
+            //if (step >= history.Count)
+            //{
+            //    return;
+            //}
             if (history.Count == 0)
             {
                 Redraw();
@@ -281,7 +292,7 @@ namespace Muragatte.Visual
         {
             if (_bTracks)
             {
-                int time = Math.Min(step, history.Count);
+                int time = Math.Min(step, history.Length);
                 foreach (Appearance a in _visual.GetOptions.TracksView)
                 {
                     if (IsSpecifiedTrackEnabled(a))
@@ -300,7 +311,7 @@ namespace Muragatte.Visual
         {
             if (_bTrails)
             {
-                int substep = _visual.GetModel.Substeps;
+                int substep = _visual.GetModel.Substeps * 2;
                 foreach (Appearance a in _visual.GetOptions.TrailsView)
                 {
                     if (IsSpecifiedTrailEnabled(a))
@@ -332,9 +343,8 @@ namespace Muragatte.Visual
         {
             if (_bHighlighting)
             {
-                Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle,
-                    _visual.GetOptions.cpiHighlightColor.SelectedColor, Colors.Transparent,
-                    (int)Math.Ceiling(a.Width * 1.5), (int)Math.Ceiling(a.Height * 1.5));
+                Shapes.EllipseShape.Instance.Draw(_wb, es.Position * _dScale, es.Direction.Angle, _highlightColor,
+                    Colors.Transparent, (int)(a.Width + 2 * _dScale), (int)(a.Height + 2 * _dScale));
             }
         }
 
@@ -360,7 +370,6 @@ namespace Muragatte.Visual
 
         private List<int[]> TrackLinePoints(List<Vector2> positions)
         {
-            //int limit = Math.Min(UnitWidth, UnitHeight) / 3;
             int limit = (int)(_dScale * 3);
             List<int[]> points = new List<int[]>();
             if (positions.Count > 0)
