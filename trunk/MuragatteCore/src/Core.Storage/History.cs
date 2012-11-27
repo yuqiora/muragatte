@@ -68,6 +68,11 @@ namespace Muragatte.Core.Storage
             get { return _iLastStep; }
         }
 
+        public HistoryRecord Last
+        {
+            get { return _records[_iLastStep]; }
+        }
+
         public HistoryRecord this[int step]
         {
             get

@@ -151,7 +151,7 @@ namespace Muragatte.Thesis.Results
             {
                 if (es.GroupID == mainGroup) _iInMainGroup = 1;
                 GroupOverview go = groupDetails.Find(g => g.ID == es.GroupID);
-                _iSharedGroupGoal = _goal == null || _goal == go.MajorityGoal ? 1 : 0;
+                _iSharedGroupGoal = _goal == null || _goal.Equals(go.MajorityGoal) ? 1 : 0;
                 _iMajorityGroupSize = go.Size;
                 _iGroupCount = 1;
             }
@@ -178,7 +178,7 @@ namespace Muragatte.Thesis.Results
                 else
                 {
                     if (es.GroupID == mainGroup) _iInMainGroup++;
-                    if (_goal == null || _goal == groupDetails.Find(g => g.ID == es.GroupID).MajorityGoal) _iSharedGroupGoal++;
+                    if (_goal == null || _goal.Equals(groupDetails.Find(g => g.ID == es.GroupID).MajorityGoal)) _iSharedGroupGoal++;
                     if (groups.ContainsKey(es.GroupID))
                     {
                         groups[es.GroupID]++;

@@ -89,7 +89,8 @@ namespace Muragatte.Visual
 
         public string Species
         {
-            get { return FromHistory.SpeciesName == null ? string.Empty : _element.Model.Species[FromHistory.SpeciesName].FullName; }
+            get { return FromHistory.SpeciesName ?? string.Empty; }
+            //get { return FromHistory.SpeciesName == null ? string.Empty : _element.Model.Species[FromHistory.SpeciesName].FullName; }
         }
 
         public double UnitWidth

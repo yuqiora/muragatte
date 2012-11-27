@@ -122,7 +122,7 @@ namespace Muragatte.Thesis.Results
                 _groupDetails.Add(go);
                 if (_mainGroup == null || go.Size > _mainGroup.Size) _mainGroup = go;
             }
-            _mainGroup.IsMain = true;
+            if (_mainGroup != null) _mainGroup.IsMain = true;
         }
 
         #endregion

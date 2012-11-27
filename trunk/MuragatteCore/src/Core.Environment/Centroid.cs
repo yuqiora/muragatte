@@ -24,7 +24,6 @@ namespace Muragatte.Core.Environment
         private Vector2 _direction = new Vector2(0, 1);
         private double _dSpeed = 1;
         private Group _group = null;
-        private bool _bInGroup = false;
 
         #endregion
 
@@ -44,7 +43,11 @@ namespace Muragatte.Core.Environment
             SetSpecies(species, Storage.SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
         }
 
-        public Centroid(int id, Agent source) : this(id, source.Model, source.Position, source.Direction, source.Speed, null) { }
+        public Centroid(int id, Agent source)
+            : this(id, source.Model, source.Position, source.Direction, source.Speed, null)
+        {
+            _bEnabled = false;
+        }
 
         protected Centroid(Centroid other, MultiAgentSystem model) :
             this(other._iElementID, model, other._position, other._direction, other._dSpeed, other._species) { }
@@ -93,12 +96,6 @@ namespace Muragatte.Core.Environment
             set { _group = value; }
         }
 
-        public bool IsInGroup
-        {
-            get { return _bInGroup; }
-            set { _bInGroup = value; }
-        }
-
         public override ElementNature DefaultNature
         {
             get { return ElementNature.Ignored; }
@@ -111,7 +108,7 @@ namespace Muragatte.Core.Environment
 
         public bool IsGroupRepresentative
         {
-            get { return _group != null && this == _group.FirstMember.Representative; }
+            get { return _group != null && this == _group.Centroid; }
         }
 
         public override bool IsDirectable
@@ -137,7 +134,6 @@ namespace Muragatte.Core.Environment
         {
             _bEnabled = false;
             _group = null;
-            _bInGroup = false;
         }
 
         public override void ConfirmUpdate()
@@ -146,8 +142,8 @@ namespace Muragatte.Core.Environment
             {
                 if (_bEnabled)
                 {
-                    _position = new Vector2(0, 0);
-                    _direction = new Vector2(0, 0);
+                    _position = Vector2.Zero;
+                    _direction = Vector2.Zero;
                     _dSpeed = 0;
                     foreach (Agent a in _group)
                     {
@@ -161,9 +157,9 @@ namespace Muragatte.Core.Environment
                 }
                 else
                 {
-                    _position = _group.FirstMember.Representative._position;
-                    _direction = _group.FirstMember.Representative._direction;
-                    _dSpeed = _group.FirstMember.Representative._dSpeed;
+                    _position = _group.Centroid._position;
+                    _direction = _group.Centroid._direction;
+                    _dSpeed = _group.Centroid._dSpeed;
                 }
             }
         }

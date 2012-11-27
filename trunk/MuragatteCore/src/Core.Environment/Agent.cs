@@ -32,6 +32,8 @@ namespace Muragatte.Core.Environment
         protected Dictionary<string, Steering> _steering = new Dictionary<string, Steering>();
         protected AgentArgs _args = null;
         protected Noise _noise;
+        protected Group _group = null;
+        protected bool _bFlagged = false;
         
         #endregion
 
@@ -124,8 +126,8 @@ namespace Muragatte.Core.Environment
 
         public override Group Group
         {
-            get { return _representative == null ? null : _representative.Group; }
-            set { }
+            get { return _group; }
+            set { _group = value; }
         }
 
         public override string Name
@@ -205,22 +207,17 @@ namespace Muragatte.Core.Environment
         public void CreateRepresentative()
         {
             _representative = new Centroid(-_iElementID, this);
-        }
-
-        public void CreateRepresentative(int id)
-        {
-
-            _representative = new Centroid(id, this);
+            _model.Elements.Add(_representative);
         }
 
         protected bool IsGroupCandidate(Agent a)
         {
-            return a.IsEnabled && !a.Representative.IsInGroup && (_fieldOfView.Covers(a) || a.FieldOfView.Covers(this));
+            return a.IsEnabled && !a._bFlagged && (_fieldOfView.Covers(a) || a.FieldOfView.Covers(this));
         }
 
         public IEnumerable<Agent> GroupSearch()
         {
-            _representative.IsInGroup = true;
+            _bFlagged = true;
             IEnumerable<Agent> candidates = _model.Elements.RangeSearch<Agent>(this, VisibleRange, e => IsGroupCandidate((Agent)e));
             HashSet<Agent> members = new HashSet<Agent>(candidates);
             foreach (Agent a in candidates)
@@ -255,10 +252,17 @@ namespace Muragatte.Core.Environment
             _steering.Add(steering.Name, steering);
         }
 
+        public void ResetGroup()
+        {
+            _bFlagged = false;
+            _group = null;
+        }
+
         public override void ConfirmUpdate()
         {
             Position = _model.Region.Outside(_altPosition);
             _direction = _altDirection;
+            ResetGroup();
         }
 
         public override void Update()
