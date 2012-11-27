@@ -241,7 +241,7 @@ namespace Muragatte.Core.Environment
 
         public virtual bool Equals(Element e)
         {
-            return _iElementID == e._iElementID;
+            return e != null && _iElementID == e._iElementID;
         }
 
         public virtual bool IntersectsWith(Vector2 p1, Vector2 p2, out Vector2 ip)

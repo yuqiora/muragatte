@@ -30,8 +30,7 @@ namespace Muragatte.Core.Environment
         public Group(Agent source, IEnumerable<Agent> agents)
         {
             _iGroupID = source.ID;
-            Add(source);
-            source.Representative.IsEnabled = true;
+            AddSource(source);
             if (agents != null)
             {
                 foreach (Agent a in agents)
@@ -44,6 +43,7 @@ namespace Muragatte.Core.Environment
         public Group(int id, IEnumerable<Agent> agents)
         {
             _iGroupID = id;
+            UpdateSourceRepresentative(agents.First());
             _members.AddRange(agents);
         }
 
@@ -75,17 +75,31 @@ namespace Muragatte.Core.Environment
 
         #region Methods
 
+        private void AddSource(Agent source)
+        {
+            Add(source);
+            UpdateSourceRepresentative(source);
+        }
+
+        private void UpdateSourceRepresentative(Agent source)
+        {
+            if (source.Representative == null) source.CreateRepresentative();
+            source.Representative.IsEnabled = true;
+            source.Representative.Group = this;
+        }
+
         public void Add(Agent agent)
         {
             _members.Add(agent);
-            agent.Representative.Group = this;
+            agent.Group = this;
         }
 
         public void Clear()
         {
             foreach (Agent a in _members)
             {
-                a.Representative.Group = null;
+                a.ResetGroup();
+                if (a.Representative != null) a.Representative.Group = null;
             }
             _members.Clear();
         }

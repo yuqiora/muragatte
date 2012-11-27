@@ -160,7 +160,6 @@ namespace Muragatte.Thesis
         public void FinishLoading()
         {
             _mas.LoadedTo(_iLength);
-            _mas.LoadCurrentElementStatus();
             ProcessResults();
             _bComplete = true;
         }

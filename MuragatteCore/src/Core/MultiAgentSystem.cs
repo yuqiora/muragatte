@@ -157,7 +157,7 @@ namespace Muragatte.Core
 
         public void LoadCurrentElementStatus()
         {
-            LoadElementStatus(_history.Last().Step);
+            LoadElementStatus(_history.Last.Step);
         }
 
         private void LoadElementStatus(int step)
@@ -177,13 +177,29 @@ namespace Muragatte.Core
         public void Initialize()
         {
             _storage.Initialize();
-            CreateCentroids();
+            UpdateGroupsAndCentroids();
             ExpandHistory(0);
         }
 
         public void LoadedTo(int stepCount)
         {
             StepCount = stepCount;
+            LoadCurrentElementStatus();
+            LoadCurrentGroups();
+        }
+
+        private void LoadCurrentGroups()
+        {
+            _groups.AddRange(_history.Last.Groups);
+            _strays.AddRange(_history.Last.StrayAgents);
+            foreach (Group g in _groups)
+            {
+                g.Centroid.Group = g;
+                foreach (Agent a in g)
+                {
+                    a.Group = g;
+                }
+            }
         }
 
         private void ExpandHistory(int step)
@@ -281,16 +297,6 @@ namespace Muragatte.Core
                     c.ConfirmUpdate();
                 }
             }
-        }
-
-        private void CreateCentroids()
-        {
-            foreach (Agent a in _storage.Agents)
-            {
-                a.CreateRepresentative();
-                _storage.Add(a.Representative);
-            }
-            UpdateGroupsAndCentroids();
         }
 
         private void NotifyPropertyChanged(String propertyName)
