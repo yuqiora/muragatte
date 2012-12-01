@@ -41,9 +41,11 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #region Methods
 
-        protected override Vector2 SteerToOther(Element other, double weight)
+        protected override Vector2 SteerToOther(Element other, double weight, bool normalize)
         {
-            return weight * (other.PredictPositionAfter() - _element.Position);
+            Vector2 v = other.PredictPositionAfter() - _element.Position;
+            if (normalize) v.Normalize();
+            return weight * v;
         }
 
         #endregion

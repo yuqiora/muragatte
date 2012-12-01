@@ -41,14 +41,15 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #region Methods
 
-        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight)
+        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight, bool average)
         {
             Vector2 x = Vector2.Zero;
             foreach (Element e in others)
             {
                 x += Vector2.Normalized(e.GetPosition() - _element.Position);
             }
-            return weight * x / others.Count();
+            if (average) x /= others.Count();
+            return weight * x;
         }
 
         #endregion

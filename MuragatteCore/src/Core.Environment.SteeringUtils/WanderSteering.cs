@@ -52,21 +52,22 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #region Methods
 
-        public override Vector2 Steer(double weight)
+        public override Vector2 Steer(double weight, bool normalize = false)
         {
             double x = _element is Agent ? ((Agent)_element).TurningAngle.Degrees * _element.Model.TimePerStep : 0;
-            return _element.Direction + _random.UniformAngle(-x, x) + _random.GaussAngle(weight);
-            //return _element.Direction + _random.GaussAngle(weight);
+            Vector2 v = _element.Direction + _random.UniformAngle(-x, x) + _random.GaussAngle(weight);
+            if (normalize) v.Normalize();
+            return v;
         }
 
-        public override Vector2 Steer(Element other, double weight)
+        public override Vector2 Steer(Element other, double weight, bool normalize = false)
         {
-            return Steer(weight);
+            return Steer(weight, normalize);
         }
 
-        public override Vector2 Steer(IEnumerable<Element> others, double weight)
+        public override Vector2 Steer(IEnumerable<Element> others, double weight, bool average = false)
         {
-            return Steer(weight);
+            return Steer(weight, average);
         }
 
         #endregion

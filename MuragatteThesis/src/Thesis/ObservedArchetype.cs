@@ -56,10 +56,14 @@ namespace Muragatte.Thesis
             }
         }
 
-        [XmlElement(ElementName = "Boid", Type = typeof(BoidAgentArchetype)),
+        [XmlElement(ElementName = "SimpleBoid", Type = typeof(SimpleBoidAgentArchetype)),
+        XmlElement(ElementName = "ClassicBoid", Type = typeof(ClassicBoidAgentArchetype)),
         XmlElement(ElementName = "AdvancedBoid", Type = typeof(AdvancedBoidAgentArchetype)),
         XmlElement(ElementName = "Versatile", Type = typeof(VersatileAgentArchetype)),
-        XmlElement(ElementName = "LoneWanderer", Type = typeof(LoneWandererAgentArchetype))]
+        XmlElement(ElementName = "LoneWanderer", Type = typeof(LoneWandererAgentArchetype)),
+        XmlElement(ElementName = "Couzin2005", Type = typeof(Couzin2005AgentArchetype)),
+        XmlElement(ElementName = "Conradt2009", Type = typeof(Conradt2009AgentArchetype)),
+        XmlElement(ElementName = "Vejmola2013", Type = typeof(Vejmola2013AgentArchetype))]
         public AgentArchetype Archetype
         {
             get { return _archetype; }

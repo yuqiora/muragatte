@@ -54,32 +54,37 @@ namespace Muragatte.Core.Environment.SteeringUtils
             }
         }
 
+        protected virtual Vector2 DefaultSteer
+        {
+            get { return Vector2.Zero; }
+        }
+
         public abstract string Name { get; }
 
         #endregion
 
         #region Methods
 
-        public virtual Vector2 Steer()
+        public virtual Vector2 Steer(bool normalize = false)
         {
-            return Steer(_dWeight);
+            return Steer(_dWeight, normalize);
         }
 
-        public virtual Vector2 Steer(Element other)
+        public virtual Vector2 Steer(Element other, bool normalize = false)
         {
-            return Steer(other, _dWeight);
+            return Steer(other, _dWeight, normalize);
         }
 
-        public virtual Vector2 Steer(IEnumerable<Element> others)
+        public virtual Vector2 Steer(IEnumerable<Element> others, bool average = false)
         {
-            return Steer(others, _dWeight);
+            return Steer(others, _dWeight, average);
         }
 
-        public abstract Vector2 Steer(double weight);
+        public abstract Vector2 Steer(double weight, bool normalize = false);
 
-        public abstract Vector2 Steer(Element other, double weight);
+        public abstract Vector2 Steer(Element other, double weight, bool normalize = false);
 
-        public abstract Vector2 Steer(IEnumerable<Element> others, double weight);
+        public abstract Vector2 Steer(IEnumerable<Element> others, double weight, bool average = false);
 
         #endregion
     }

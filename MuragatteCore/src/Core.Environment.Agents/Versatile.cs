@@ -49,10 +49,10 @@ namespace Muragatte.Core.Environment.Agents
             get { return _args.Neighbourhoods[VersatileAgentArgs.NEIGH_PERSONAL_AREA]; }
         }
 
-        public double Assertivity
+        public double Assertiveness
         {
-            get { return _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVITY]; }
-            set { _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVITY] = value; }
+            get { return _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVENESS]; }
+            set { _args.Modifiers[VersatileAgentArgs.MOD_ASSERTIVENESS] = value; }
         }
 
         public double Credibility
@@ -240,11 +240,7 @@ namespace Muragatte.Core.Environment.Agents
             else
             {
                 Vector2 avoid = Avoid.Steer(obstacles);
-                if (!avoid.IsZero)
-                {
-                    dirDelta = avoid;
-                }
-                else
+                if (avoid.IsZero)
                 {
                     if (tooClose.Count() > 0)
                     {
@@ -254,20 +250,23 @@ namespace Muragatte.Core.Environment.Agents
                     {
                         if (companions.Count + goals.Count > 0)
                         {
-                            dirDelta = Cohesion.Steer(companions) + Alignment.Steer(companions) + Pursuit.Steer(goals);
+                            dirDelta = Cohesion.Steer(companions, true) + Alignment.Steer(companions, true) + Pursuit.Steer(goals, true);
                             if (Goal != null)
                             {
-                                dirDelta += Seek.Steer(Goal, Assertivity);
+                                dirDelta += Assertiveness * Seek.Steer(Goal, true);
                             }
                         }
                         else
                         {
-                            dirDelta = Goal == null ? Wander.Steer() : Seek.Steer(Goal, Assertivity);
+                            dirDelta = Goal == null ? Wander.Steer() : Assertiveness * Seek.Steer(Goal);
                         }
                     }
                 }
+                else
+                {
+                    dirDelta = avoid;
+                }
             }
-            dirDelta.Normalize();
             return dirDelta;
         }
 

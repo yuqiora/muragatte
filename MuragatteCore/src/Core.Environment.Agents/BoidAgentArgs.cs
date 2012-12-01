@@ -19,101 +19,44 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class BoidAgentArgs : AgentArgs
-    {
-        #region Constructors
-
-        public BoidAgentArgs() : this(1, 1, 1, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
-
-        public BoidAgentArgs(double separation, double cohesion, double alignment, Distribution distribution, double noiseA, double noiseB)
-            : base(distribution, noiseA, noiseB)
-        {
-            _modifiers.Add(SeparationSteering.LABEL, separation);
-            _modifiers.Add(CohesionSteering.LABEL, cohesion);
-            _modifiers.Add(AlignmentSteering.LABEL, alignment);
-        }
-
-        protected BoidAgentArgs(BoidAgentArgs args) : base(args) { }
-
-        #endregion
-
-        #region Properties
-
-        public override bool HasGoal
-        {
-            get { return false; }
-        }
-
-        public override bool HasNeighbourhoods
-        {
-            get { return false; }
-        }
-
-        [XmlIgnore]
-        public override Goal Goal
-        {
-            get { return null; }
-            set { }
-        }
-
-        [XmlIgnore]
-        public override Dictionary<string, Neighbourhood> Neighbourhoods
-        {
-            get { return null; }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override AgentArgs Clone(MultiAgentSystem model)
-        {
-            return new BoidAgentArgs(this);
-        }
-
-        #endregion
-    }
-
-    public class AdvancedBoidAgentArgs : BoidAgentArgs
+    public class ClassicBoidAgentArgs : SimpleBoidAgentArgs
     {
         #region Constants
 
-        public const string MOD_ASSERTIVITY = "Assertivity";
-        public const string NEIGH_PERSONAL_AREA = "Personal Area";
+        public const string NEIGH_SEPARATION_AREA = "Separation Area";
+        public const string NEIGH_COHESION_AREA = "Cohesion Area";
+        public const string NEIGH_ALIGNMENT_AREA = "Alignment Area";
 
         #endregion
 
         #region Fields
 
-        private Goal _goal;
-        private Dictionary<string, Neighbourhood> _neighbourhoods = new Dictionary<string, Neighbourhood>();
+        protected Dictionary<string, Neighbourhood> _neighbourhoods = new Dictionary<string, Neighbourhood>();
 
         #endregion
 
         #region Constructors
 
-        public AdvancedBoidAgentArgs() : this(null, new Neighbourhood()) { }
+        public ClassicBoidAgentArgs() : this(new Neighbourhood()) { }
 
-        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1) { }
+        public ClassicBoidAgentArgs(Neighbourhood fieldOfView)
+            : this(fieldOfView, fieldOfView, fieldOfView, 1, 1, 1, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
-        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity) :
-            this(goal, personalArea, assertivity, 1, 1, 1, 1, 10, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
+        public ClassicBoidAgentArgs(Neighbourhood separationArea, Neighbourhood cohesionArea, Neighbourhood alignmentArea)
+            : this(separationArea, cohesionArea, alignmentArea, 1, 1, 1, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
-        public AdvancedBoidAgentArgs(Goal goal, Neighbourhood personalArea, double assertivity, double separation, double cohesion,
-            double alignment, double obstacleAvoidance, double wander, Distribution distribution, double noiseA, double noiseB)
+        public ClassicBoidAgentArgs(Neighbourhood separationArea, Neighbourhood cohesionArea, Neighbourhood alignmentArea,
+            double separation, double cohesion, double alignment, Distribution distribution, double noiseA, double noiseB)
             : base(separation, cohesion, alignment, distribution, noiseA, noiseB)
         {
-            _goal = goal;
-            _neighbourhoods.Add(NEIGH_PERSONAL_AREA, personalArea);
-            _modifiers.Add(ObstacleAvoidanceSteering.LABEL, obstacleAvoidance);
-            _modifiers.Add(WanderSteering.LABEL, wander);
-            _modifiers.Add(MOD_ASSERTIVITY, assertivity);
+            _neighbourhoods.Add(NEIGH_SEPARATION_AREA, separationArea);
+            _neighbourhoods.Add(NEIGH_COHESION_AREA, cohesionArea);
+            _neighbourhoods.Add(NEIGH_ALIGNMENT_AREA, alignmentArea);
         }
 
-        protected AdvancedBoidAgentArgs(AdvancedBoidAgentArgs args, MultiAgentSystem model)
+        protected ClassicBoidAgentArgs(ClassicBoidAgentArgs args)
             : base(args)
         {
-            _goal = GetProperGoal(args._goal, model);
             _neighbourhoods = GetNeigbourhoodClones(args._neighbourhoods);
         }
 
@@ -121,21 +64,9 @@ namespace Muragatte.Core.Environment.Agents
 
         #region Properties
 
-        public override bool HasGoal
-        {
-            get { return true; }
-        }
-
         public override bool HasNeighbourhoods
         {
             get { return true; }
-        }
-
-        [XmlElement(Type = typeof(XmlGoalReference), IsNullable = false)]
-        public override Goal Goal
-        {
-            get { return _goal; }
-            set { _goal = value; }
         }
 
         [XmlIgnore]
@@ -150,7 +81,7 @@ namespace Muragatte.Core.Environment.Agents
 
         public override AgentArgs Clone(MultiAgentSystem model)
         {
-            return new AdvancedBoidAgentArgs(this, model);
+            return new ClassicBoidAgentArgs(this);
         }
 
         #endregion

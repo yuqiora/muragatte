@@ -57,7 +57,7 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #region Methods
 
-        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight)
+        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight, bool normalize)
         {
             int ytox = 0;
             Vector2 lineOfSight = _dRange * _element.Direction;
@@ -95,7 +95,13 @@ namespace Muragatte.Core.Environment.SteeringUtils
                     }
                 }
             }
-            return nearest < lineOfSight.Length ? weight * ytox * Vector2.Perpendicular(_element.Position - nearestPos) : Vector2.Zero;
+            if (nearest < lineOfSight.Length)
+            {
+                Vector2 v = ytox * Vector2.Perpendicular(_element.Position - nearestPos);
+                if (normalize) v.Normalize();
+                return weight * v;
+            }
+            else return Vector2.Zero;
         }
 
         #endregion

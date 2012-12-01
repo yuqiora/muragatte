@@ -107,6 +107,7 @@ namespace Muragatte.Thesis.GUI
         {
             if (_experiment != null)
             {
+                if (_experiment.Status == ExperimentStatus.Canceled) _experiment.Reset();
                 ShowExperimentRunProgress();
                 _experiment.RunAsync();
             }
@@ -116,7 +117,6 @@ namespace Muragatte.Thesis.GUI
         {
             if (_experiment != null)
             {
-                if (_experiment.Status == ExperimentStatus.Canceled) _experiment.Reset();
                 OpenDialogWindow(new ThesisExperimentEditorWindow(this));
             }
         }
@@ -214,10 +214,10 @@ namespace Muragatte.Thesis.GUI
             species.Add(centroid, SpeciesCollection.DEFAULT_CENTROIDS_LABEL);
 
             List<ObservedArchetype> archetypes = new List<ObservedArchetype>();
-            archetypes.Add(new ObservedArchetype(new BoidAgentArchetype("Boids", 50, spawn,
+            archetypes.Add(new ObservedArchetype(new SimpleBoidAgentArchetype("Boids", 50, spawn,
                 new NoisedDouble(Distribution.Uniform, _random, -180, 180), new NoisedDouble(1), boids,
                 new Neighbourhood(10, new Angle(135)), new Angle(60),
-                new BoidAgentArgs())));
+                new SimpleBoidAgentArgs())));
 
             List<Visual.Styles.Style> styles = new List<Visual.Styles.Style>();
             styles.Add(new Visual.Styles.Style(Visual.DefaultValues.AGENT_STYLE, "Boids"));

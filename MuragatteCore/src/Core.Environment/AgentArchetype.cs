@@ -132,6 +132,11 @@ namespace Muragatte.Core.Environment
         [XmlIgnore]
         public abstract AgentArgs Specifics { get; set; }
 
+        public string TypeName
+        {
+            get { return GetType().Name; }
+        }
+
         #endregion
 
         #region Methods

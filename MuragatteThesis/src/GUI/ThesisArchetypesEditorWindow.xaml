@@ -33,10 +33,14 @@
                 <xtk:DropDownButton Name="ddbNew" Content="New" Height="23" Width="65">
                     <xtk:DropDownButton.DropDownContent>
                         <StackPanel>
-                            <Button Content="Boid" Height="23" Name="btnNewBoid" Width="90" Click="btnNewBoid_Click" />
-                            <Button Content="Advanced Boid" Height="23" Name="btnNewAdvancedBoid" Width="90" Click="btnNewAdvancedBoid_Click" />
+                            <Button Content="Simple Boid" Height="23" Name="btnSimpleBoid" Width="90" Click="btnSimpleBoid_Click" />
+                            <Button Content="Classic Boid" Height="23" Name="btnClassicBoid" Width="90" Click="btnClassicBoid_Click" />
+                            <Button Content="Advanced Boid" Height="23" Name="btnAdvancedBoid" Width="90" Click="btnAdvancedBoid_Click" />
                             <Button Content="Versatile" Height="23" Name="btnVersatile" Width="90" Click="btnVersatile_Click" />
                             <Button Content="Lone Wanderer" Height="23" Name="btnLoneWanderer" Width="90" Click="btnLoneWanderer_Click" />
+                            <Button Content="Couzin2005" Height="23" Name="btnCouzin2005" Width="90" Click="btnCouzin2005_Click" />
+                            <Button Content="Conradt2009" Height="23" Name="btnConradt2009" Width="90" Click="btnConradt2009_Click" />
+                            <Button Content="Vejmola2013" Height="23" Name="btnVejmola2013" Width="90" Click="btnVejmola2013_Click" />
                         </StackPanel>
                     </xtk:DropDownButton.DropDownContent>
                 </xtk:DropDownButton>
@@ -54,7 +58,10 @@
             <xtk:WatermarkTextBox Height="23" Name="txtName" Width="150" Watermark="Name" Grid.Column="0" Text="{Binding Path=SelectedArchetype.Name}" Margin="5,0" ToolTip="Name" />
             <xtk:IntegerUpDown Name="iudCount" Height="23" Width="120" Watermark="Count" Minimum="1" Grid.Column="1" Value="{Binding Path=SelectedArchetype.Count, UpdateSourceTrigger=PropertyChanged}" ToolTip="Count" />
         </Grid>
-        <CheckBox Content="Observe" Height="16" Name="chbObserve" DockPanel.Dock="Bottom" Margin="5,0,5,5" IsChecked="{Binding Path=SelectedItem.IsObserved, ElementName=lboArchetypes}" />
+        <Grid DockPanel.Dock="Bottom" Margin="5,0,5,5">
+            <CheckBox Content="Observe" Name="chbObserve" HorizontalAlignment="Left" IsChecked="{Binding Path=SelectedItem.IsObserved, ElementName=lboArchetypes}" />
+            <TextBlock Text="{Binding Path=SelectedArchetype.TypeName}" HorizontalAlignment="Right" FontStyle="Italic" />
+        </Grid>
         <GroupBox Header="Common" DockPanel.Dock="Left">
             <StackPanel>
                 <ComboBox Height="23" Name="cmbSpawnSpot" Width="150" ItemsSource="{Binding Path=GetSpawnSpots}" SelectedItem="{Binding Path=SelectedArchetype.SpawnPosition}" ToolTip="Spawn Spot" />

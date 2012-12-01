@@ -81,7 +81,7 @@ namespace Muragatte.Thesis.GUI
         {
             if (lboSpecies.SelectedItem != null)
             {
-                Species s = new Species("Sub", (Species)lboSpecies.SelectedItem);
+                Species s = ((Species)lboSpecies.SelectedItem).CreateSubSpecies("Sub");
                 _species.Add(s);
                 lboSpecies.SelectedItem = s;
             }
