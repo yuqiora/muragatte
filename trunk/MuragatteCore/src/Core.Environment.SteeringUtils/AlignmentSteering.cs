@@ -37,18 +37,24 @@ namespace Muragatte.Core.Environment.SteeringUtils
             get { return LABEL; }
         }
 
+        protected override Vector2 DefaultSteer
+        {
+            get { return _element.Direction; }
+        }
+
         #endregion
 
         #region Methods
 
-        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight)
+        protected override Vector2 SteerToOthers(IEnumerable<Element> others, double weight, bool average)
         {
-            Vector2 x = Vector2.Zero;
+            Vector2 x = _element.Direction;
             foreach (Element e in others)
             {
                 x += e.GetDirection();
             }
-            return weight * x / others.Count();
+            if (average) x /= others.Count() + 1;
+            return weight * x;
         }
 
         #endregion

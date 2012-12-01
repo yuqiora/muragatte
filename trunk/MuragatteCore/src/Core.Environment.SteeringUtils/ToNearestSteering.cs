@@ -26,21 +26,21 @@ namespace Muragatte.Core.Environment.SteeringUtils
 
         #region Methods
 
-        public override Vector2 Steer(double weight)
+        public override Vector2 Steer(double weight, bool normalzie = false)
         {
-            return Vector2.Zero;
+            return DefaultSteer;
         }
 
-        public override Vector2 Steer(Element other, double weight)
+        public override Vector2 Steer(Element other, double weight, bool normalize = false)
         {
-            return other == null ? Vector2.Zero : SteerToOther(other, weight);
+            return other == null || weight == 0 ? DefaultSteer: SteerToOther(other, weight, normalize);
         }
 
-        public override Vector2 Steer(IEnumerable<Element> others, double weight)
+        public override Vector2 Steer(IEnumerable<Element> others, double weight, bool average = false)
         {
-            if (others == null || others.Count() == 0)
+            if (others == null || others.Count() == 0 || weight == 0)
             {
-                return Vector2.Zero;
+                return DefaultSteer;
             }
             else
             {
@@ -54,11 +54,11 @@ namespace Muragatte.Core.Environment.SteeringUtils
                         nearest = e;
                     }
                 }
-                return SteerToOther(nearest, weight);
+                return SteerToOther(nearest, weight, average);
             }
         }
 
-        protected abstract Vector2 SteerToOther(Element other, double weight);
+        protected abstract Vector2 SteerToOther(Element other, double weight, bool normalize);
 
         #endregion
     }

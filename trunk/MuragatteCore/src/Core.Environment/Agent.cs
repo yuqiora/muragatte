@@ -227,24 +227,27 @@ namespace Muragatte.Core.Environment
             return members;
         }
 
-        protected void ProperDirection()
+        protected Vector2 ProperDirection(Vector2 dirDelta)
         {
-            ContainedInRegion();
-            DirectionInBounds();
-            _altDirection.Normalize();
+            dirDelta.Normalize();
+            dirDelta = ContainedInRegion(dirDelta);
+            dirDelta = DirectionInBounds(dirDelta);
+            dirDelta += _noise.ApplyAngle();
+            return dirDelta.IsZero ? _direction : Vector2.Normalized(dirDelta);
         }
 
-        protected void ContainedInRegion()
+        protected Vector2 ContainedInRegion(Vector2 dirDelta)
         {
-            _altDirection = _model.Region.Containment(_position, _altDirection, VisibleRange);
+            return _model.Region.Containment(_position, dirDelta, VisibleRange);
         }
 
-        protected void DirectionInBounds()
+        protected Vector2 DirectionInBounds(Vector2 dirDelta)
         {
-            if (Vector2.AngleBetween(_direction, _altDirection) > _dTurningAngle * _model.TimePerStep)
+            if (Vector2.AngleBetween(_direction, dirDelta) > _dTurningAngle * _model.TimePerStep)
             {
-                _altDirection = _direction - (new Angle(_altDirection) - new Angle(_direction)).Sign() * _dTurningAngle * _model.TimePerStep;
+                return _direction - (new Angle(dirDelta) - new Angle(_direction)).Sign() * _dTurningAngle * _model.TimePerStep;
             }
+            else return dirDelta;
         }
 
         protected void AddSteering(Steering steering)
@@ -272,8 +275,7 @@ namespace Muragatte.Core.Environment
 
         protected virtual void UpdateMovement(Vector2 dirDelta)
         {
-            _altDirection = Vector2.Normalized(_direction + dirDelta + _noise.ApplyAngle());
-            ProperDirection();
+            _altDirection = ProperDirection(dirDelta);
             _altPosition = _position + _dSpeed * _model.TimePerStep * _altDirection;
         }
 

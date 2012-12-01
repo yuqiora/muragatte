@@ -18,25 +18,25 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class ClassicBoidAgentArchetype : AgentArchetype
+    public class Conradt2009AgentArchetype : AgentArchetype
     {
         #region Constructors
 
-        public ClassicBoidAgentArchetype() : base() { }
+        public Conradt2009AgentArchetype() : base() { }
 
-        public ClassicBoidAgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
-            NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, ClassicBoidAgentArgs args)
+        public Conradt2009AgentArchetype(string name, int count, SpawnSpot spawnPos, NoisedDouble direction,
+            NoisedDouble speed, Species species, Neighbourhood fieldOfView, Angle turningAngle, FlockAndSeekBaseAgentArgs args)
             : base(name, count, spawnPos, direction, speed, species, fieldOfView, turningAngle, args) { }
 
         #endregion
 
         #region Properties
 
-        [XmlElement(Type = typeof(ClassicBoidAgentArgs))]
+        [XmlElement(Type = typeof(FlockAndSeekBaseAgentArgs))]
         public override AgentArgs Specifics
         {
             get { return _args; }
-            set { if (value is ClassicBoidAgentArgs) _args = value; }
+            set { if (value is FlockAndSeekBaseAgentArgs) _args = value; }
         }
 
         #endregion
@@ -45,10 +45,10 @@ namespace Muragatte.Core.Environment.Agents
 
         protected override Agent CreateOneAgent(int id, MultiAgentSystem model)
         {
-            return new ClassicBoidAgent(id, model, _spawnPosition.Respawn(model.Random),
+            return new Conradt2009Agent(id, model, _spawnPosition.Respawn(model.Random),
                 Vector2.X0Y1 + new Angle(_noisedDirection.GetValue(model.Random)),
                 _noisedSpeed.GetValue(model.Random), _species, _fieldOfView.Clone(),
-                _turningAngle, (ClassicBoidAgentArgs)_args.Clone(model));
+                _turningAngle, (FlockAndSeekBaseAgentArgs)_args.Clone(model));
         }
 
         #endregion

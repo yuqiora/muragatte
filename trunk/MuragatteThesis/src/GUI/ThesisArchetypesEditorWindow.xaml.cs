@@ -173,20 +173,28 @@ namespace Muragatte.Thesis.GUI
             }
         }
 
-        private void btnNewBoid_Click(object sender, RoutedEventArgs e)
+        private void btnSimpleBoid_Click(object sender, RoutedEventArgs e)
         {
-            NewArchetype(new BoidAgentArchetype("Boids", 10,
+            NewArchetype(new SimpleBoidAgentArchetype("SimpleBoids", 10,
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
                 new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
-                new BoidAgentArgs()));
+                new SimpleBoidAgentArgs()));
         }
 
-        private void btnNewAdvancedBoid_Click(object sender, RoutedEventArgs e)
+        private void btnClassicBoid_Click(object sender, RoutedEventArgs e)
         {
-            NewArchetype(new AdvancedBoidAgentArchetype("Advanced Boids", 10,
+            NewArchetype(new ClassicBoidAgentArchetype("ClassicBoids", 10,
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
                 new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
-                new AdvancedBoidAgentArgs(null, new Neighbourhood(2))));
+                new ClassicBoidAgentArgs(_defaultNeighbourhood.Clone(), _defaultNeighbourhood.Clone(), _defaultNeighbourhood.Clone())));
+        }
+
+        private void btnAdvancedBoid_Click(object sender, RoutedEventArgs e)
+        {
+            NewArchetype(new AdvancedBoidAgentArchetype("AdvancedBoids", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
+                new AdvancedBoidAgentArgs(_defaultNeighbourhood.Clone(), _defaultNeighbourhood.Clone(), _defaultNeighbourhood.Clone())));
         }
 
         private void btnVersatile_Click(object sender, RoutedEventArgs e)
@@ -199,10 +207,34 @@ namespace Muragatte.Thesis.GUI
 
         private void btnLoneWanderer_Click(object sender, RoutedEventArgs e)
         {
-            NewArchetype(new LoneWandererAgentArchetype("Lone Wanderers", 10,
+            NewArchetype(new LoneWandererAgentArchetype("LoneWanderers", 10,
                 _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
                 new NoisedDouble(1), null, _defaultNeighbourhood.Clone(), _defaultTurningAngle,
                 new LoneWandererAgentArgs()));
+        }
+
+        private void btnCouzin2005_Click(object sender, RoutedEventArgs e)
+        {
+            NewArchetype(new Couzin2005AgentArchetype("Couzin2005", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, new Neighbourhood(6), Angle.FromRadians(2),
+                new FlockAndSeekBaseAgentArgs(null, new Neighbourhood(1.5), 0.5)));
+        }
+
+        private void btnConradt2009_Click(object sender, RoutedEventArgs e)
+        {
+            NewArchetype(new Conradt2009AgentArchetype("Conradt2009", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, new Neighbourhood(20), Angle.FromRadians(2),
+                new FlockAndSeekBaseAgentArgs(null, new Neighbourhood(2.5), 0.5)));
+        }
+
+        private void btnVejmola2013_Click(object sender, RoutedEventArgs e)
+        {
+            NewArchetype(new Vejmola2013AgentArchetype("Vejmola2013", 10,
+                _spawnSpots.FirstOrDefault(), new NoisedDouble(Distribution.Uniform, -180, 180),
+                new NoisedDouble(1), null, new Neighbourhood(10), Angle.FromRadians(2),
+                new Vejmola2013AgentArgs(null, new Neighbourhood(1.5), 0.5, 1)));
         }
 
         private void btnLoad_Click(object sender, RoutedEventArgs e)

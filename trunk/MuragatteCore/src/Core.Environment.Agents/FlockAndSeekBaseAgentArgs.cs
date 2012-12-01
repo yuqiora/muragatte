@@ -19,53 +19,46 @@ using Muragatte.Random;
 
 namespace Muragatte.Core.Environment.Agents
 {
-    public class VersatileAgentArgs : AgentArgs
+    public class FlockAndSeekBaseAgentArgs : AgentArgs
     {
         #region Constants
 
         public const string MOD_ASSERTIVENESS = "Assertiveness";
-        public const string MOD_CREDIBILITY = "Credibility";
         public const string NEIGH_PERSONAL_AREA = "Personal Area";
 
         #endregion
 
         #region Fields
 
-        private Goal _goal;
-        private Dictionary<string, Neighbourhood> _neighbourhoods = new Dictionary<string, Neighbourhood>();
+        protected Goal _goal;
+        protected Dictionary<string, Neighbourhood> _neighbourhoods = new Dictionary<string, Neighbourhood>();
 
         #endregion
 
         #region Constructors
 
-        public VersatileAgentArgs() : this(null, new Neighbourhood()) { }
+        public FlockAndSeekBaseAgentArgs() : this(null, new Neighbourhood()) { }
+        
+        public FlockAndSeekBaseAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1) { }
 
-        public VersatileAgentArgs(Goal goal, Neighbourhood personalArea) : this(goal, personalArea, 1, 1) { }
+        public FlockAndSeekBaseAgentArgs(Goal goal, Neighbourhood personalArea, double assertiveness)
+            : this(goal, personalArea, assertiveness, 1, 1, 1, 1, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
 
-        public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertiveness, double credibility)
-            : this(goal, personalArea, assertiveness, credibility, 1, 1, 1, 1, 1, 1, 1, 1, 10, Distribution.Gaussian, DEFAULT_DEVIATION, DEFAULT_LIMIT) { }
-
-        public VersatileAgentArgs(Goal goal, Neighbourhood personalArea, double assertiveness, double credibility,
-            double separation, double cohesion, double alignment, double obstacleAvoidance, double seek, double flee,
-            double pursuit, double evasion, double wander, Distribution distribution, double noiseA, double noiseB)
+        public FlockAndSeekBaseAgentArgs(Goal goal, Neighbourhood personalArea, double assertiveness,
+            double separation, double cohesion, double alignment, double seek,
+            Distribution distribution, double noiseA, double noiseB)
             : base(distribution, noiseA, noiseB)
         {
             _goal = goal;
             _neighbourhoods.Add(NEIGH_PERSONAL_AREA, personalArea);
             _modifiers.Add(MOD_ASSERTIVENESS, assertiveness);
-            _modifiers.Add(MOD_CREDIBILITY, credibility);
             _modifiers.Add(SeparationSteering.LABEL, separation);
             _modifiers.Add(CohesionSteering.LABEL, cohesion);
             _modifiers.Add(AlignmentSteering.LABEL, alignment);
-            _modifiers.Add(ObstacleAvoidanceSteering.LABEL, obstacleAvoidance);
             _modifiers.Add(SeekSteering.LABEL, seek);
-            _modifiers.Add(FleeSteering.LABEL, flee);
-            _modifiers.Add(PursuitSteering.LABEL, pursuit);
-            _modifiers.Add(EvasionSteering.LABEL, evasion);
-            _modifiers.Add(WanderSteering.LABEL, wander);
         }
 
-        protected VersatileAgentArgs(VersatileAgentArgs args, MultiAgentSystem model)
+        protected FlockAndSeekBaseAgentArgs(FlockAndSeekBaseAgentArgs args, MultiAgentSystem model)
             : base(args)
         {
             _goal = GetProperGoal(args._goal, model);
@@ -105,7 +98,7 @@ namespace Muragatte.Core.Environment.Agents
 
         public override AgentArgs Clone(MultiAgentSystem model)
         {
-            return new VersatileAgentArgs(this, model);
+            return new FlockAndSeekBaseAgentArgs(this, model);
         }
 
         #endregion
