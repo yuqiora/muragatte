@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CCA9E1C0-1F8D-457D-88B7-A8E8B6B803F5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Muragatte.Research</RootNamespace>
+    <AssemblyName>MuragatteResearch</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Muragatte.Research.App</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended, Version=1.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="src\Research.GUI\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="src\Research.GUI\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.GUI\ArchetypesEditorWindow.xaml.cs">
+      <DependentUpon>ArchetypesEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.GUI\ExperimentEditorWindow.xaml.cs">
+      <DependentUpon>ExperimentEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.GUI\ExperimentResultsWindow.xaml.cs">
+      <DependentUpon>ExperimentResultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.GUI\SceneEditorWindow.xaml.cs">
+      <DependentUpon>SceneEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.GUI\SpeciesEditorWindow.xaml.cs">
+      <DependentUpon>SpeciesEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Research.Converters\DirectionToDegreesConverter.cs" />
+    <Compile Include="src\Research.Converters\IntToBoolConverter.cs" />
+    <Compile Include="src\Research.Converters\NoiseToDistributionConverter.cs" />
+    <Compile Include="src\Research.Converters\StorageToTypeConverter.cs" />
+    <Compile Include="src\Research.IO\CompletedExperimentArchiver.cs" />
+    <Compile Include="src\Research.IO\XmlArchetypesArchiver.cs" />
+    <Compile Include="src\Research.IO\XmlArchetypesRoot.cs" />
+    <Compile Include="src\Research.IO\XmlExperiment.cs" />
+    <Compile Include="src\Research.IO\XmlExperimentArchiver.cs" />
+    <Compile Include="src\Research.IO\XmlExperimentRoot.cs" />
+    <Compile Include="src\Research.IO\XmlSceneArchiver.cs" />
+    <Compile Include="src\Research.IO\XmlSpeciesArchiver.cs" />
+    <Compile Include="src\Research.Results\DoubleNumericSummary.cs" />
+    <Compile Include="src\Research.Results\ExperimentResults.cs" />
+    <Compile Include="src\Research.Results\ExtendedNumericSummary.cs" />
+    <Compile Include="src\Research.Results\GoalExperimentPercentage.cs" />
+    <Compile Include="src\Research.Results\GoalInstancePercentage.cs" />
+    <Compile Include="src\Research.Results\GroupOverview.cs" />
+    <Compile Include="src\Research.Results\InstanceResults.cs" />
+    <Compile Include="src\Research.Results\NumericSummary.cs" />
+    <Compile Include="src\Research.Results\ObservedArchetypeExperimentSummary.cs" />
+    <Compile Include="src\Research.Results\ObservedArchetypeInstanceSummary.cs" />
+    <Compile Include="src\Research.Results\ObservedArchetypeOverview.cs" />
+    <Compile Include="src\Research.Results\StepOverview.cs" />
+    <Compile Include="src\Research\ArchetypeOverviewInfo.cs" />
+    <Compile Include="src\Research\Experiment.cs" />
+    <Compile Include="src\Research\ExperimentProgress.cs" />
+    <Compile Include="src\Research\Instance.cs" />
+    <Compile Include="src\Research\InstanceDefinition.cs" />
+    <Compile Include="src\Research\ObservedArchetype.cs" />
+    <Compile Include="src\Research\ScenePreview.cs" />
+    <Page Include="src\Research.GUI\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Research.GUI\ArchetypesEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Research.GUI\ExperimentEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Research.GUI\ExperimentResultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Research.GUI\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="src\Research.GUI\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Research.GUI\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="src\Research.GUI\SceneEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Research.GUI\SpeciesEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MuragatteCore\MuragatteCore.csproj">
+      <Project>{1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C}</Project>
+      <Name>MuragatteCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MuragatteVisual\MuragatteVisual.csproj">
+      <Project>{81BB9CB1-3A0A-40DA-A7E2-2D8BF7AD51E3}</Project>
+      <Name>MuragatteVisual</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
+</Project>

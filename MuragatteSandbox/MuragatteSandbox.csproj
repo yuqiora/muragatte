@@ -69,20 +69,20 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="src\GUI\App.xaml">
+    <ApplicationDefinition Include="src\Sandbox.GUI\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="src\GUI\SandboxMainWindow.xaml">
+    <Page Include="src\Sandbox.GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="src\GUI\App.xaml.cs">
+    <Compile Include="src\Sandbox.GUI\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\GUI\SandboxMainWindow.xaml.cs">
-      <DependentUpon>SandboxMainWindow.xaml</DependentUpon>
+    <Compile Include="src\Sandbox.GUI\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

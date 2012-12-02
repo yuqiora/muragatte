@@ -32,7 +32,7 @@ namespace Muragatte.Visual
 
         #region Constructors
 
-        public HistoryViewer(History history, GUI.VisualPlaybackWindow playback)
+        public HistoryViewer(History history, GUI.PlaybackWindow playback)
         {
             _history = history;
             Binding bindFrame = new Binding("Time");
