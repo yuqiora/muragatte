@@ -24,10 +24,10 @@ namespace Muragatte.Visual
 
         private MultiAgentSystem _model;
         private Canvas _canvas;
-        private GUI.VisualCanvasWindow _wndCanvas;
-        private GUI.VisualPlaybackWindow _wndPlayback;
-        private GUI.VisualOptionsWindow _wndOptions;
-        private GUI.VisualCanvasWindow _wndSnapshotPreview = null;
+        private GUI.CanvasWindow _wndCanvas;
+        private GUI.PlaybackWindow _wndPlayback;
+        private GUI.OptionsWindow _wndOptions;
+        private GUI.CanvasWindow _wndSnapshotPreview = null;
         private Window _owner = null;
 
         #endregion
@@ -49,11 +49,11 @@ namespace Muragatte.Visual
             _model = model;
             _owner = owner;
             _canvas = new Canvas(width, height, scale, this);
-            _wndCanvas = new GUI.VisualCanvasWindow(this, _canvas);
+            _wndCanvas = new GUI.CanvasWindow(this, _canvas);
             _wndCanvas.Owner = owner;
-            _wndPlayback = new GUI.VisualPlaybackWindow(this);
+            _wndPlayback = new GUI.PlaybackWindow(this);
             _wndPlayback.Owner = owner;
-            _wndOptions = new GUI.VisualOptionsWindow(this, styles);
+            _wndOptions = new GUI.OptionsWindow(this, styles);
             _wndOptions.Owner = owner;
         }
 
@@ -71,17 +71,17 @@ namespace Muragatte.Visual
             get { return _canvas; }
         }
 
-        public GUI.VisualCanvasWindow GetWindow
+        public GUI.CanvasWindow GetWindow
         {
             get { return _wndCanvas; }
         }
 
-        public GUI.VisualPlaybackWindow GetPlayback
+        public GUI.PlaybackWindow GetPlayback
         {
             get { return _wndPlayback; }
         }
 
-        public GUI.VisualOptionsWindow GetOptions
+        public GUI.OptionsWindow GetOptions
         {
             get { return _wndOptions; }
         }
@@ -144,7 +144,7 @@ namespace Muragatte.Visual
         public void ShowSnapshotPreview(Snapshot snapshot, int step)
         {
             CloseWindow(_wndSnapshotPreview);
-            _wndSnapshotPreview = new GUI.VisualCanvasWindow(this, null);
+            _wndSnapshotPreview = new GUI.CanvasWindow(this, null);
             _wndSnapshotPreview.Owner = _owner;
             _wndSnapshotPreview.Title = string.Format("Snapshot Preview: i{0} / s{1}", _model.Instance, step);
             snapshot.Redraw(_model.History, step);

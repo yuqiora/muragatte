@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuragatteThesis", "MuragatteThesis\MuragatteThesis.csproj", "{CCA9E1C0-1F8D-457D-88B7-A8E8B6B803F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuragatteResearch", "MuragatteResearch\MuragatteResearch.csproj", "{CCA9E1C0-1F8D-457D-88B7-A8E8B6B803F5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C} = {1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C}
 		{81BB9CB1-3A0A-40DA-A7E2-2D8BF7AD51E3} = {81BB9CB1-3A0A-40DA-A7E2-2D8BF7AD51E3}

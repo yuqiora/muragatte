@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
-//             Visualization Library
+//             Research Application
 //
 // Copyright (C) 2012  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
@@ -12,23 +12,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Muragatte.Visual.GUI;
+using System.Xml.Serialization;
 
-namespace Muragatte.Visual.IO
+namespace Muragatte.Research.IO
 {
-    public class XmlStylesArchiver : XmlBaseArchiver<XmlStylesRoot, OptionsWindow>
+    [XmlRoot(ElementName = "Muragatte", Namespace = "Muragatte/Experiment")]
+    public class XmlExperimentRoot
     {
-        #region Constructors
+        #region Fields
 
-        public XmlStylesArchiver(OptionsWindow owner) : base("Styles", owner) { }
+        public XmlExperiment Experiment = null;
 
         #endregion
 
-        #region Methods
+        #region Constructors
 
-        protected override void LoadPostProcessing(XmlStylesRoot item)
+        public XmlExperimentRoot() { }
+
+        public XmlExperimentRoot(Experiment experiment)
         {
-            item.AddToCollection(_owner.GetStyles);
+            Experiment = new XmlExperiment(experiment);
         }
 
         #endregion
