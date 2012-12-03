@@ -154,18 +154,21 @@ namespace Muragatte.Research.Results
                     _strayCount.UpdateOverallMinMaxSum(so.StrayCount);
                     _strayWanderCount.UpdateOverallMinMaxSum(so.StrayWanderCount);
                     _strayGoalCount.UpdateOverallMinMaxSum(so.StrayGoalCount);
-                    _mainGroupSize.UpdateOverallMinMaxSum(so.MainGroup.Size);
-                    if (so.MainGroup.HasGoal)
+                    _mainGroupSize.UpdateOverallMinMaxSum(so.MainGroup == null ? 0 : so.MainGroup.Size);
+                    if (so.MainGroup != null)
                     {
-                        if (!goals.ContainsKey(so.MainGroup.MajorityGoal))
+                        if (so.MainGroup.HasGoal)
                         {
-                            goals.Add(so.MainGroup.MajorityGoal, new GoalExperimentPercentage(so.MainGroup.MajorityGoal, 0, 0, 0));
+                            if (!goals.ContainsKey(so.MainGroup.MajorityGoal))
+                            {
+                                goals.Add(so.MainGroup.MajorityGoal, new GoalExperimentPercentage(so.MainGroup.MajorityGoal, 0, 0, 0));
+                            }
+                            goals[so.MainGroup.MajorityGoal].IncreaseOverall();
                         }
-                        goals[so.MainGroup.MajorityGoal].IncreaseOverall();
-                    }
-                    else
-                    {
-                        noGoal.IncreaseOverall();
+                        else
+                        {
+                            noGoal.IncreaseOverall();
+                        }
                     }
                 }
                 if (ir.MainGroupGoalStart == null)

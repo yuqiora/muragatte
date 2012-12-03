@@ -133,7 +133,8 @@ namespace Muragatte.Research.GUI
             if (_experiment.IsComplete)
             {
                 ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
-                _archiver.Save(_experiment);
+                if (_experiment.ExtraSetting.IsAutoSaved)
+                    _archiver.Save(_experiment, _experiment.ExtraSetting.Compression);
                 if (!_archiver.Worker.IsBusy) binProgress.IsBusy = false;
             }
             else
@@ -167,7 +168,7 @@ namespace Muragatte.Research.GUI
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             ShowLoadSaveProgress(CompletedExperimentArchiver.SAVE_INFO);
-            _archiver.SaveAt(_experiment);
+            _archiver.SaveAt(_experiment, _experiment.ExtraSetting.Compression);
             if (!_archiver.Worker.IsBusy) binProgress.IsBusy = false;
         }
 

@@ -439,7 +439,7 @@ namespace Muragatte.Visual.GUI
             //Styles.Style style = _styles.FirstOrDefault(s => e.Species != null && (s.Name == e.Species.Name || s.Name == e.Species.FullName));
             if (style == null)
             {
-                string name = e.Species == null ? e.GetType().ToString() : e.Species.FullName;
+                string name = e.Species == null ? e.GetType().Name : e.Species.FullName;
                 if (e is Agent)
                 {
                     style = new Styles.Style(DefaultValues.AGENT_STYLE, name);
@@ -532,8 +532,8 @@ namespace Muragatte.Visual.GUI
             if (selectedStyle != null)
             {
                 if (selectedStyle.HasNeighbourhood)
-                    selectedStyle.Neighbourhood.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X0Y1);
-                selectedStyle.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X0Y1);
+                    selectedStyle.Neighbourhood.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X1Y0);
+                selectedStyle.Draw(_wbStylePreview, _wbStylePreview.Center(), Vector2.X1Y0);
             }
         }
 

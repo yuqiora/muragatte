@@ -70,7 +70,7 @@ namespace Muragatte.Research.IO
             TimePerStep = experiment.Definition.TimePerStep;
             KeepSubsteps = experiment.Definition.KeepSubsteps;
             Seed = experiment.Seed;
-            Storage = experiment.Definition.Storage.StorageType;
+            Storage = experiment.Definition.Storage;
             Styles = experiment.Styles.ToArray();
             KnownSpecies = new XmlSpeciesCollection(experiment.Definition.Species);
             Scene = experiment.Definition.Scene;
@@ -83,8 +83,8 @@ namespace Muragatte.Research.IO
 
         public Experiment ToExperiment()
         {
-            return new Experiment(Name, string.Empty, Repeat,
-                new InstanceDefinition(TimePerStep, Length, KeepSubsteps, Scene, KnownSpecies, Storage.ToStorage(), Archetypes),
+            return new Experiment(Name, Repeat,
+                new InstanceDefinition(TimePerStep, Length, KeepSubsteps, Scene, KnownSpecies, Storage, Archetypes),
                 new ObservableCollection<Style>(Styles), Seed);
         }
 

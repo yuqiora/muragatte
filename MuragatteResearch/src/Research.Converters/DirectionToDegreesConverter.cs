@@ -30,7 +30,7 @@ namespace Muragatte.Research.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             double? degrees = (double?)value;
-            return degrees.HasValue ? Vector2.X0Y1 + new Angle(degrees.Value) : Vector2.Zero;
+            return degrees.HasValue ? Vector2.X1Y0 + new Angle(degrees.Value) : Vector2.Zero;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Muragatte.Visual.Shapes
 
         public override string Symbol
         {
-            get { return "(<"; }
+            get { return ">)"; }
         }
 
         public override ShapeLabel Label
@@ -155,7 +155,7 @@ namespace Muragatte.Visual.Shapes
                 x3 * cos_ar - y3 * sin_ar,
                 x3 * sin_ar + y3 * cos_ar,
                 r * Math.Cos(a2),
-                r * Math.Sin(a2)).Rotate(Vector2.Zero, _deg90);
+                r * Math.Sin(a2));//.Rotate(Vector2.Zero, _deg90);
         }
 
         public override string ToString()

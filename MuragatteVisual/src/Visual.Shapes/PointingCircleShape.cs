@@ -66,7 +66,7 @@ namespace Muragatte.Visual.Shapes
                 {
                     target.DrawEllipseCentered(position, points.P1.Xi / 2, points.P1.Yi / 2, secondaryColor);
                 }
-                Vector2 p = Coordinates.Rotate(position + new Vector2(0, points.P1.Yi), position, angle);
+                Vector2 p = Coordinates.Rotate(position + new Vector2(points.P1.Yi, 0), position, angle);
                 target.DrawLine(p, position, secondaryColor);
             }
         }

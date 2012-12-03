@@ -41,7 +41,7 @@ namespace Muragatte.Common
 
         public Angle(Vector2 vector)
         {
-            _dDegrees = Math.Atan2(vector.X, vector.Y) * (180 / Math.PI);
+            _dDegrees = Math.Atan2(vector.Y, vector.X) * 180 / Math.PI;
         }
 
         #endregion
@@ -65,19 +65,17 @@ namespace Muragatte.Common
             get { return (int)_dDegrees; }
             set
             {
-                _dDegrees = value;
-                Normalize();
+                Degrees = value;
             }
         }
 
         [XmlIgnore]
         public double Radians
         {
-            get { return _dDegrees * (Math.PI / 180.0); }
+            get { return _dDegrees * Math.PI / 180; }
             set
             {
-                _dDegrees = value * (180 / Math.PI);
-                Normalize();
+                Degrees = value * 180 / Math.PI;
             }
         }
 
@@ -144,7 +142,7 @@ namespace Muragatte.Common
                 Angle a = (Angle)obj;
                 return _dDegrees == a._dDegrees;
             }
-            else { return false; }
+            else return false;
         }
 
         public override int GetHashCode()
@@ -169,7 +167,7 @@ namespace Muragatte.Common
         public static Angle Parse(string s)
         {
             double d;
-            if (!double.TryParse(s, out d)) { d = 0; }
+            if (!double.TryParse(s, out d)) d = 0;
             return new Angle(d);
         }
 

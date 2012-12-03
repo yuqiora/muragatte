@@ -154,7 +154,7 @@ namespace Muragatte.Research.GUI
 
         private void btnStationaryNewGuidepost_Click(object sender, RoutedEventArgs e)
         {
-            NewStationaryElement(new Guidepost(NewStationaryElementID(), null, PreviewCenter, Vector2.X0Y1, null));
+            NewStationaryElement(new Guidepost(NewStationaryElementID(), null, PreviewCenter, Vector2.X1Y0, null));
         }
 
         private void RegionSize_LostFocus(object sender, RoutedEventArgs e)

@@ -174,7 +174,7 @@ namespace Muragatte.Visual.Shapes
         public static Vector2 Rotate(Vector2 point, Vector2 origin, Angle angle)
         {
             //return angle.IsZero ? point : point - origin - angle + origin;
-            return point - origin - angle + origin;
+            return point - origin + angle + origin;
         }
 
         #endregion

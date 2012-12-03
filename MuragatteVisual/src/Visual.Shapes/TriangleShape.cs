@@ -36,7 +36,7 @@ namespace Muragatte.Visual.Shapes
 
         public override string Symbol
         {
-            get { return "/\\"; }
+            get { return "|>"; }
         }
 
         public override ShapeLabel Label
@@ -68,12 +68,12 @@ namespace Muragatte.Visual.Shapes
 
         public override List<Coordinates> CreateCoordinates(int width, int height, object other = null)
         {
-            int x1 = 0;
-            int y1 = height / 2;
-            int x2 = x1 - (width / 3);
-            int y2 = y1 - height + 1;
-            int x3 = x1 + (width / 3);
-            return ListOfOne(new Coordinates(x1, y1, x2, y2, x3, y2, BitmapFactory.New(width * 2, height * 2)));
+            int x1 = width / 2;
+            int y1 = 0;
+            int x2 = x1 - width + 1;
+            int y2 = y1 - height / 3;
+            int y3 = y1 + height / 3;
+            return ListOfOne(new Coordinates(x1, y1, x2, y2, x2, y3, BitmapFactory.New(width * 2, height * 2)));
         }
 
         public override string ToString()
