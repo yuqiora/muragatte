@@ -30,7 +30,7 @@ namespace Muragatte.Research
         private bool _bKeepSubsteps = false;
         private Scene _scene = null;
         private SpeciesCollection _species = null;
-        private IStorage _storage = null;
+        private StorageOptions _storage = StorageOptions.SimpleBruteForce;
         private ObservableCollection<ObservedArchetype> _archetypes = new ObservableCollection<ObservedArchetype>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,7 +41,7 @@ namespace Muragatte.Research
 
         public InstanceDefinition() { }
 
-        public InstanceDefinition(double timePerStep, int length, bool keepSubsteps, Scene scene, SpeciesCollection species, IStorage storage, IEnumerable<ObservedArchetype> archetypes)
+        public InstanceDefinition(double timePerStep, int length, bool keepSubsteps, Scene scene, SpeciesCollection species, StorageOptions storage, IEnumerable<ObservedArchetype> archetypes)
         {
             _dTimePerStep = timePerStep;
             _iLength = length;
@@ -91,7 +91,7 @@ namespace Muragatte.Research
             get { return _scene; }
         }
 
-        public IStorage Storage
+        public StorageOptions Storage
         {
             get { return _storage; }
             set

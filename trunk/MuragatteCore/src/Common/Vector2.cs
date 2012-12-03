@@ -31,19 +31,14 @@ namespace Muragatte.Common
         {
             _dX = x;
             _dY = y;
-            if (normalize)
-            {
-                Normalize();
-            }
+            if (normalize) Normalize();
         }
 
-        public Vector2(Angle angle, bool normalize = false)
+        public Vector2(Angle angle)
         {
-            this = Vector2.X0Y1 + angle;
-            if (normalize)
-            {
-                Normalize();
-            }
+            Vector2 v = Vector2.X1Y0 + angle;
+            _dX = v._dX;
+            _dY = v._dY;
         }
 
         #endregion
@@ -178,7 +173,7 @@ namespace Muragatte.Common
 
         public static Angle AngleBetween(Vector2 a, Vector2 b)
         {
-            return new Angle(Math.Acos((a * b) / (a.Length * b.Length)) * (180 / Math.PI));
+            return new Angle(Math.Acos((a * b) / (a.Length * b.Length)) * 180 / Math.PI);
         }
 
         public static Vector2 Divide(Vector2 vector, double scalar)
@@ -271,7 +266,7 @@ namespace Muragatte.Common
 
         public static Vector2 operator +(Vector2 vector, Angle angle)
         {
-            double radians = -angle.Radians;
+            double radians = angle.Radians;
             double sin = Math.Sin(radians);
             double cos = Math.Cos(radians);
             return new Vector2(vector.X * cos - vector.Y * sin, vector.X * sin + vector.Y * cos);
@@ -314,10 +309,7 @@ namespace Muragatte.Common
 
         public static Vector2 operator -(Vector2 vector, Angle angle)
         {
-            double radians = -angle.Radians;
-            double sin = Math.Sin(radians);
-            double cos = Math.Cos(radians);
-            return new Vector2(vector.X * cos - vector.Y * sin, vector.X * sin + vector.Y * cos);
+            return vector + -angle;
         }
 
         public static Vector2 operator -(Vector2 vector)

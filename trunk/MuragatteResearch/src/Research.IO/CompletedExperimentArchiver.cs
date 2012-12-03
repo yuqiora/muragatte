@@ -164,6 +164,7 @@ namespace Muragatte.Research.IO
         {
             if (experiment != null && experiment.IsComplete && !_worker.IsBusy)
             {
+                if (experiment.ExtraSetting.Path != null) _saveDlg.InitialDirectory = experiment.ExtraSetting.Path;
                 _saveDlg.FileName = experiment.Name;
                 bool? result = _saveDlg.ShowDialog();
                 if (result == true)
@@ -177,7 +178,8 @@ namespace Muragatte.Research.IO
         {
             if (experiment != null && experiment.IsComplete && !_worker.IsBusy)
             {
-                SaveConflict(experiment, Path.Combine(Directory.GetCurrentDirectory(), experiment.Name), compression);
+                string savePath = experiment.ExtraSetting.Path ?? Directory.GetCurrentDirectory();
+                SaveConflict(experiment, Path.Combine(savePath, experiment.Name), compression);
             }
         }
 
@@ -376,8 +378,8 @@ namespace Muragatte.Research.IO
             _loadDlg.Filter = "XML Files (.xml)|*.xml";
 
             _saveDlg.Title = "Save Completed Experiment";
-            _saveDlg.DefaultExt = ".mte";
-            _saveDlg.Filter = "Muragatte Thesis Experiment (.mte)|*.mte";
+            _saveDlg.DefaultExt = ".mre";
+            _saveDlg.Filter = "Muragatte Research Experiment (.mre)|*.mre";
         }
 
         private void InitializeWorker()

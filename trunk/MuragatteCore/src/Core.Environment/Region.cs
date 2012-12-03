@@ -129,14 +129,14 @@ namespace Muragatte.Core.Environment
             if (_bBorderedVertical && (v.X < 0 || v.X >= _iWidth))
             {
                 Angle a = new Angle(new Vector2(v.X, 0));
-                offset = b - a;
+                offset = a - b;
                 offset.Normalize();
                 changed = true;
             }
             if (_bBorderedHorizontal && (v.Y < 0 || v.Y >= _iHeight))
             {
                 Angle a = new Angle(new Vector2(0, v.Y));
-                Angle c = b - a;
+                Angle c = a - b;
                 c.Normalize();
                 if (c > offset)
                 {
@@ -144,7 +144,8 @@ namespace Muragatte.Core.Environment
                 }
                 changed = true;
             }
-            return changed ? direction + offset.Sign() * Vector2.Perpendicular(v - position) : direction;
+            if (offset.IsZero) offset.Degrees = 1;
+            return changed ? direction + offset.Sign() * Vector2.Perpendicular(direction) : direction;
         }
 
         public Vector2 Outside(Vector2 position)

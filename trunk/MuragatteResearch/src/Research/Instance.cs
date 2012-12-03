@@ -37,13 +37,13 @@ namespace Muragatte.Research
 
         #region Constructors
 
-        public Instance(int number, int length, double timePerStep, bool keepSubsteps, IStorage storage, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
+        public Instance(int number, int length, double timePerStep, bool keepSubsteps, StorageOptions storage, Scene scene, IEnumerable<ObservedArchetype> archetypes, SpeciesCollection species, uint seed)
         {
             _iLength = length;
             _uiSeed = seed;
             _random = new RandomMT(_uiSeed);
             _mas = new MultiAgentSystem(number, keepSubsteps ? HistoryMode.KeepAll : HistoryMode.NoSubsteps,
-                storage.NewInstance(), scene, species, _random, timePerStep);
+                storage.ToStorage(), scene, species, _random, timePerStep);
             AgentsFromArchetypes(scene.StationaryElements.Count, archetypes);
             _mas.Initialize();
         }

@@ -104,7 +104,7 @@ namespace Muragatte.Core.Storage
                 double.TryParse(items[3], out angle) && double.TryParse(items[4], out speed) &&
                 bool.TryParse(items[5], out enabled) && int.TryParse(items[7], out group))
             {
-                return new ElementStatus(id, new Vector2(posX, posY), new Vector2(new Angle(angle), true), speed, enabled, items[6], group);
+                return new ElementStatus(id, new Vector2(posX, posY), new Vector2(new Angle(angle)), speed, enabled, items[6], group);
             }
             else return null;
         }

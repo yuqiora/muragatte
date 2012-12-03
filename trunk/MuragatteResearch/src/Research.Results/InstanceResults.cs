@@ -119,12 +119,12 @@ namespace Muragatte.Research.Results
 
         public int MainGroupSizeStart
         {
-            get { return _stepDetails[0].MainGroup.Size; }
+            get { return _stepDetails[0].MainGroup == null ? 0 : _stepDetails[0].MainGroup.Size; }
         }
 
         public int MainGroupSizeEnd
         {
-            get { return _stepDetails.Last().MainGroup.Size; }
+            get { return _stepDetails.Last().MainGroup == null ? 0 : _stepDetails.Last().MainGroup.Size; }
         }
 
         public NumericSummary MainGroupSize
@@ -134,17 +134,17 @@ namespace Muragatte.Research.Results
 
         public Goal MainGroupGoalStart
         {
-            get { return _stepDetails[0].MainGroup.MajorityGoal; }
+            get { return _stepDetails[0].MainGroup == null ? null : _stepDetails[0].MainGroup.MajorityGoal; }
         }
 
         public Goal MainGroupGoalEnd
         {
-            get { return _stepDetails.Last().MainGroup.MajorityGoal; }
+            get { return _stepDetails.Last().MainGroup == null ? null : _stepDetails.Last().MainGroup.MajorityGoal; }
         }
 
         public bool HasMainGroupGoalEnd
         {
-            get { return _stepDetails.Last().MainGroup.HasGoal; }
+            get { return _stepDetails.Last().MainGroup == null ? false : _stepDetails.Last().MainGroup.HasGoal; }
         }
 
         public IEnumerable<GoalInstancePercentage> MainGroupGoalPercentage
@@ -164,27 +164,27 @@ namespace Muragatte.Research.Results
 
         public double? MainGroupGoalEndDistanceMinimum
         {
-            get { return _stepDetails.Last().MainGroup.MinimumDistance; }
+            get { return _stepDetails.Last().MainGroup == null ? (double?)null : _stepDetails.Last().MainGroup.MinimumDistance; }
         }
 
         public double? MainGroupGoalEndDistanceMaximum
         {
-            get { return _stepDetails.Last().MainGroup.MaximumDistance; }
+            get { return _stepDetails.Last().MainGroup == null ? (double?)null : _stepDetails.Last().MainGroup.MaximumDistance; }
         }
 
         public double? MainGroupGoalEndDistanceAverage
         {
-            get { return _stepDetails.Last().MainGroup.AverageDistance; }
+            get { return _stepDetails.Last().MainGroup == null ? (double?)null : _stepDetails.Last().MainGroup.AverageDistance; }
         }
 
         public double? MainGroupGoalEndDistanceCentroid
         {
-            get { return _stepDetails.Last().MainGroup.CentroidDistance; }
+            get { return _stepDetails.Last().MainGroup == null ? (double?)null : _stepDetails.Last().MainGroup.CentroidDistance; }
         }
 
         public double? MainGroupGoalEndDistanceSum
         {
-            get { return _stepDetails.Last().MainGroup.DistanceSum; }
+            get { return _stepDetails.Last().MainGroup == null ? (double?)null : _stepDetails.Last().MainGroup.DistanceSum; }
         }
 
         #endregion
@@ -212,13 +212,16 @@ namespace Muragatte.Research.Results
             foreach (StepOverview so in _stepDetails)
             {
                 UpdateSummaryMinMaxSum(so);
-                if (so.MainGroup.HasGoal)
+                if (so.MainGroup != null)
                 {
-                    AnotherGoal(goals, so.MainGroup.MajorityGoal);
-                }
-                else
-                {
-                    noGoal++;
+                    if (so.MainGroup.HasGoal)
+                    {
+                        AnotherGoal(goals, so.MainGroup.MajorityGoal);
+                    }
+                    else
+                    {
+                        noGoal++;
+                    }
                 }
             }
             GoalPercentage(noGoal, goals, _stepDetails.Count);
@@ -265,7 +268,7 @@ namespace Muragatte.Research.Results
             _strayCount.UpdateMinMaxSum(so.StrayCount);
             _strayWanderCount.UpdateMinMaxSum(so.StrayWanderCount);
             _strayGoalCount.UpdateMinMaxSum(so.StrayGoalCount);
-            _mainGroupSize.UpdateMinMaxSum(so.MainGroup.Size);
+            _mainGroupSize.UpdateMinMaxSum(so.MainGroup == null ? 0 : so.MainGroup.Size);
         }
 
         private void UpdateSummaryAverage(double count)

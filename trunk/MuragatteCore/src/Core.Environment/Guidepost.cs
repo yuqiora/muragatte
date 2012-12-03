@@ -27,7 +27,7 @@ namespace Muragatte.Core.Environment
 
         #region Constructors
 
-        public Guidepost() : base() { _direction = Vector2.X0Y1; }
+        public Guidepost() : base() { _direction = Vector2.X1Y0; }
 
         public Guidepost(int id, MultiAgentSystem model, Vector2 direction, Species species, double radius = DEFAULT_RADIUS)
             : base(id, model, species, radius)
@@ -55,7 +55,7 @@ namespace Muragatte.Core.Environment
         public Angle XmlAngleDirection
         {
             get { return new Angle(_direction); }
-            set { _direction = new Vector2(value, true); }
+            set { _direction = new Vector2(value); }
         }
         
         [XmlIgnore]

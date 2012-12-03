@@ -40,9 +40,9 @@ namespace Muragatte.Research.GUI
         private Scene _scene = null;
         private SpeciesCollection _species = null;
         private ObservableCollection<ObservedArchetype> _archetypes = null;
-        private List<Type> _storageTypes = new List<Type>();
-        private IStorage _storage = null;
-        private List<double> _timePerStepOptions = new List<double>() { 0.1, 0.2, 0.25, 0.5, 1 };
+        private readonly List<StorageOptions> _storageOptions = new List<StorageOptions>() { StorageOptions.SimpleBruteForce };
+        private StorageOptions _storage = StorageOptions.SimpleBruteForce;
+        private readonly List<double> _timePerStepOptions = new List<double>() { 0.1, 0.2, 0.25, 0.5, 1 };
 
         private XmlExperimentArchiver _xml = null;
 
@@ -52,8 +52,6 @@ namespace Muragatte.Research.GUI
 
         public ExperimentEditorWindow(MainWindow main)
         {
-            FillStorageTypesList();
-
             InitializeComponent();
             DataContext = this;
 
@@ -64,7 +62,6 @@ namespace Muragatte.Research.GUI
                 _scene = new Scene(new Region(100, true));
                 _species = new SpeciesCollection();
                 _archetypes = new ObservableCollection<ObservedArchetype>();
-                _storage = new SimpleBruteForceStorage();
             }
             else
             {
@@ -109,12 +106,12 @@ namespace Muragatte.Research.GUI
             get { return GetExperiment == null ? _archetypes : GetExperiment.Definition.Archetypes; }
         }
 
-        public List<Type> GetStorageTypes
+        public List<StorageOptions> GetStorageOptions
         {
-            get { return _storageTypes; }
+            get { return _storageOptions; }
         }
 
-        public IStorage SelectedStorage
+        public StorageOptions SelectedStorage
         {
             get { return GetExperiment == null ? _storage : GetExperiment.Definition.Storage; }
             set
@@ -195,16 +192,10 @@ namespace Muragatte.Research.GUI
 
         private Experiment NewExperiment()
         {
-            return new Experiment(txtName.Text, txtPath.Text, iudRepeat.Value.Value,
+            return new Experiment(txtName.Text, iudRepeat.Value.Value,
                 new InstanceDefinition((double)cmbTimePerStep.SelectedItem, iudLength.Value.Value,
                     chbKeepSubsteps.IsChecked.Value, _scene, _species, _storage, _archetypes),
                 _styles, (uint)dudSeed.Value.Value);
-        }
-
-        private void FillStorageTypesList()
-        {
-            _storageTypes.Add(typeof(SimpleBruteForceStorage));
-            //ong
         }
 
         private void OpenEditorDialog(Window editor)
@@ -221,7 +212,7 @@ namespace Muragatte.Research.GUI
             cmbTimePerStep.SelectedItem = xe.TimePerStep;
             chbKeepSubsteps.IsChecked = xe.KeepSubsteps;
             dudSeed.Value = xe.Seed;
-            _storage = xe.Storage.ToStorage();
+            _storage = xe.Storage;
             _styles.Clear();
             xe.ApplyToStyles(_styles);
             _species.Clear();

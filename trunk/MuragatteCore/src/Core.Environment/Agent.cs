@@ -22,10 +22,10 @@ namespace Muragatte.Core.Environment
     {
         #region Fields
 
-        protected Vector2 _direction = Vector2.X0Y1;
+        protected Vector2 _direction = Vector2.X1Y0;
         protected double _dSpeed = 1;
         protected Vector2 _altPosition = Vector2.Zero;
-        protected Vector2 _altDirection = Vector2.X0Y1;
+        protected Vector2 _altDirection = Vector2.X1Y0;
         protected Neighbourhood _fieldOfView = null;
         protected Angle _dTurningAngle = Angle.Deg180;
         protected Centroid _representative = null;
@@ -54,7 +54,7 @@ namespace Muragatte.Core.Environment
         }
 
         public Agent(int id, MultiAgentSystem model, Species species, Neighbourhood fieldOfView, Angle turningAngle, AgentArgs args)
-            : this(id, model, Vector2.Zero, Vector2.X0Y1, 1, species, fieldOfView, turningAngle, args) { }
+            : this(id, model, Vector2.Zero, Vector2.X1Y0, 1, species, fieldOfView, turningAngle, args) { }
 
         protected Agent(Agent other, MultiAgentSystem model)
             : this(other._iElementID, model, other._position, other._direction, other._dSpeed,
@@ -245,7 +245,7 @@ namespace Muragatte.Core.Environment
         {
             if (Vector2.AngleBetween(_direction, dirDelta) > _dTurningAngle * _model.TimePerStep)
             {
-                return _direction - (new Angle(dirDelta) - new Angle(_direction)).Sign() * _dTurningAngle * _model.TimePerStep;
+                return _direction + (new Angle(dirDelta) - new Angle(_direction)).Sign() * _dTurningAngle * _model.TimePerStep;
             }
             else return dirDelta;
         }
