@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MuragatteVisual")]
-[assembly: AssemblyCopyright("Copyright ©  2012  Jiří Vejmola")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2013  Jiří Vejmola")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
