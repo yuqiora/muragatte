@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Research Application
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -14,7 +14,7 @@
         Title="About MuragatteResearch" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
     <StackPanel Margin="5">
         <TextBlock Name="txbMuragatteResearchVersion" Text="MuragatteResearch v" FontSize="14" FontWeight="Bold" Margin="0,0,0,5" />
-        <TextBlock Text="Copyright © 2012 Jiří Vejmola" />
+        <TextBlock Text="Copyright © 2012-2013 Jiří Vejmola" />
         <TextBlock Name="txbMuragatteCoreVersion" Text="MuragatteCore v" />
         <TextBlock Name="txbMuragatteVisualVersion" Text="MuragatteVisual v" />
         <Grid Width="150">

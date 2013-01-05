@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Research Application
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -159,6 +159,11 @@ namespace Muragatte.Research
 
         #region Methods
 
+        public void Cancel()
+        {
+            Status = ExperimentStatus.Canceled;
+        }
+
         public void CancelAsync()
         {
             Status = ExperimentStatus.Canceled;
@@ -198,7 +203,7 @@ namespace Muragatte.Research
             }
         }
 
-        private void PreProcessing()
+        public void PreProcessing()
         {
             if (_status == ExperimentStatus.Ready)
             {
@@ -211,7 +216,7 @@ namespace Muragatte.Research
             }
         }
 
-        private void PostProcessing()
+        public void PostProcessing()
         {
             if (_status == ExperimentStatus.InProgress || _status == ExperimentStatus.Loading)
             {
@@ -223,6 +228,16 @@ namespace Muragatte.Research
         private void CreateNewInstance(int number)
         {
             _instances.Add(_definition.CreateInstance(number, _random.UInt()));
+        }
+
+        public IEnumerable<History> GetHistories()
+        {
+            List<History> histories = new List<History>();
+            foreach (Instance i in _instances)
+            {
+                histories.Add(i.Model.History);
+            }
+            return histories;
         }
 
         public void StartLoading()
