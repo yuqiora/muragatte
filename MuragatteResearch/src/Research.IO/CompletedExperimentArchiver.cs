@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Research Application
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -42,7 +42,7 @@ namespace Muragatte.Research.IO
         public const string LOAD_INFO = "Loading in progress...";
         public const string SAVE_INFO = "Saving in progress...";
 
-        private const string SETTINGS_FILENAME = @"Settings.xml";
+        public const string SETTINGS_FILENAME = @"Settings.xml";
         
         private const string RESULTS_DIRECTORY_NAME = @"Results";
         private const string RESULTS_GENERAL_FILENAME = @"General.txt";

@@ -68,6 +68,7 @@
     <Compile Include="src\Thesis\ExperimentBatch.cs" />
     <Compile Include="src\Thesis\ExperimentBatchProgress.cs" />
     <Compile Include="src\Thesis\ThesisExperimentBatch.cs" />
+    <Compile Include="src\Thesis\ThesisExperimentPack.cs" />
     <Page Include="src\Thesis.GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

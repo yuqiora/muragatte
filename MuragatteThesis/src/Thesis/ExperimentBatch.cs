@@ -30,6 +30,7 @@ namespace Muragatte.Thesis
         #region Fields
 
         protected string _sPath = null;
+        protected StreamWriter _writer = null;
         protected int _iCount = 1;
         protected int _iRuns = 1;
         protected int _iLength = 1;
@@ -138,9 +139,17 @@ namespace Muragatte.Thesis
         {
             _sTempExpName = e.Name;
             _archiver.Save(e, e.ExtraSetting.Compression);
-            _archiver.Worker.ReportProgress(0, e.Name);
+            if (_archiver.Worker.IsBusy) _archiver.Worker.ReportProgress(0, e.Name);
             TakeSnapshot(e);
         }
+
+        protected virtual void PrepareWriter(bool withHeader)
+        {
+            _writer = new StreamWriter(_sPath, true);
+            if (withHeader) WriteBatchResultsHeader();
+        }
+
+        protected abstract void WriteBatchResultsHeader();
 
         protected abstract void TakeSnapshot(Experiment e);
 

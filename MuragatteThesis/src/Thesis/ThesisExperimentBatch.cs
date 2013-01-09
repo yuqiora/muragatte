@@ -18,10 +18,9 @@ using System.Text;
 using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
-using Muragatte.Core.Environment.Agents;
 using Muragatte.Core.Storage;
-using Muragatte.Random;
 using Muragatte.Research;
+using Muragatte.Research.Results;
 using Muragatte.Visual;
 using Muragatte.Visual.Styles;
 
@@ -31,14 +30,11 @@ namespace Muragatte.Thesis
     {
         #region Constants
 
-        private const double SNAPSHOT_SCALE = 10;
-        private const byte SNAPSHOT_ALPHA = 64;
+        private const double SNAPSHOT_SCALE = 7;
+        private const byte SNAPSHOT_ALPHA = 96;
 
         private const double GUIDE_PART = 0.2;
         private const int INTRUDER_MAX = 1;
-
-        private const double REPULSION_RANGE = 1.5;
-        private const double SPEED = 1;
 
         private const double ASSERTIVENESS_LOW = 0.1;
         private const double ASSERTIVENESS_MEDIUM = 0.35;
@@ -46,8 +42,6 @@ namespace Muragatte.Thesis
         private const double CREDIBILITY_NORMAL = 1;
         private const double CREDIBILITY_HIGH = 2;
         private const double CREDIBILITY_VERYHIGH = 5;
-
-        private static readonly Angle TURNING_ANGLE = new Angle(115);
 
         private static readonly double[] ASSERTIVENESS = { ASSERTIVENESS_LOW, ASSERTIVENESS_MEDIUM, ASSERTIVENESS_HIGH };
         private static readonly double[] CREDIBILITY = { CREDIBILITY_NORMAL, CREDIBILITY_HIGH, CREDIBILITY_VERYHIGH };
@@ -99,12 +93,23 @@ namespace Muragatte.Thesis
             get { return (Goal)_scene.StationaryElements[1]; }
         }
 
+        private int GuideCount
+        {
+            get { return (int)(_iCount * GUIDE_PART); }
+        }
+
+        private int NaiveCount
+        {
+            get { return _iCount - GuideCount - INTRUDER_MAX; }
+        }
+
         #endregion
 
         #region Methods
 
         protected override void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            PrepareWriter(!File.Exists(_sPath));
             //naive only reference (1)
             //guided reference (3-assertiveness)
             //no credibility (6 = ll + lm + lh + mm + mh + hh)
@@ -112,13 +117,12 @@ namespace Muragatte.Thesis
             int batchSize = 1 + 3 + 6 * (2 * 2 + 1);
             ExperimentBatchProgress progress = new ExperimentBatchProgress(batchSize, _iRuns, _iLength);
             //naives only reference
-            Experiment x = CreateExperiment(0, 0, 0, 0, 0, 0);
-            RunExperimentAsync(sender, e, x, progress);
+            RunExperimentAsync(sender, e, CreateExperiment(0, 0, 0, 0, 0, 0), progress);
             for (int ag = 0; ag < ASSERTIVENESS.Length; ag++)
             {
+                if (_worker.CancellationPending) break;
                 //guided reference
-                x = CreateExperiment((int)(_iCount * GUIDE_PART), 0, ASSERTIVENESS[ag], 0, CREDIBILITY_NORMAL, 0);
-                RunExperimentAsync(sender, e, x, progress);
+                RunExperimentAsync(sender, e, CreateExperiment(GuideCount, 0, ASSERTIVENESS[ag], 0, CREDIBILITY_NORMAL, 0), progress);
                 for (int ai = ag; ai < ASSERTIVENESS.Length; ai++)
                 {
                     //no credibility
@@ -127,73 +131,50 @@ namespace Muragatte.Thesis
                     {
                         for (int ci = cg; ci < CREDIBILITY.Length; ci++)
                         {
-                            x = CreateExperiment((int)(_iCount * GUIDE_PART), INTRUDER_MAX,
-                                ASSERTIVENESS[ag], ASSERTIVENESS[ai], CREDIBILITY[cg], CREDIBILITY[ci]);
-                            RunExperimentAsync(sender, e, x, progress);
+                            if (_worker.CancellationPending) break;
+                            RunExperimentAsync(sender, e, CreateExperiment(GuideCount, INTRUDER_MAX,
+                                ASSERTIVENESS[ag], ASSERTIVENESS[ai], CREDIBILITY[cg], CREDIBILITY[ci]), progress);
                         }
                     }
                 }
             }
+            _writer.Close();
         }
 
-        private void RunExperimentAsync(object sender, DoWorkEventArgs e, Experiment x, ExperimentBatchProgress progress)
+        private void RunExperimentAsync(object sender, DoWorkEventArgs e, ThesisExperimentPack x, ExperimentBatchProgress progress)
         {
-            if (x.Status == ExperimentStatus.Canceled) x.Reset();
-            if (x.Status == ExperimentStatus.Ready)
+            progress.Name = x.Experiment.Name;
+            _worker.ReportProgress(0, progress);
+            x.Experiment.PreProcessing();
+            for (int i = 0; i < _iRuns; i++)
             {
-                progress.Name = x.Name;
-                _worker.ReportProgress(0, progress);
-                x.PreProcessing();
-                for (int i = 0; i < x.RepeatCount; i++)
+                if (_worker.CancellationPending)
                 {
-                    if (_worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        x.Cancel();
-                        break;
-                    }
-                    x.Instances[i].RunAsync(_worker, progress);
+                    e.Cancel = true;
+                    x.Cancel(i);
+                    break;
                 }
-                x.PostProcessing();
-                _toSave.Enqueue(x);
-                //batch results
-                progress.UpdateExperiment(progress.Experiment + 1);
-                _worker.ReportProgress(0, progress);
+                x.Experiment.Instances[i].RunAsync(_worker, progress);
             }
+            x.PostProcessing();
+            _toSave.Enqueue(x.Experiment);
+            ProcessResults(x);
+            progress.UpdateExperiment(progress.Experiment + 1);
+            _worker.ReportProgress(0, progress);
         }
 
-        private Experiment CreateExperiment(int nG, int nI, double assertG, double assertI, double credG, double credI)
+        private ThesisExperimentPack CreateExperiment(int nG, int nI, double assertG, double assertI, double credG, double credI)
         {
-            string name = string.Format("MTE_{0}_{1}-{2}-{3}_{4}", _iCount, _iCount - nG - nI, SubgroupInfo(nG, assertG, credG),
-                SubgroupInfo(nI, assertI, credI), _fovAngle.DegreesI);
-            InstanceDefinition idef = new InstanceDefinition(_dTimePerStep, _iLength, false, _scene, _species,
-                StorageOptions.SimpleBruteForce, CreateAgents(nG, nI, assertG, assertI, credG, credI));
-            Experiment e = new Experiment(name, _iRuns, idef, _styles, _random.UInt());
-            e.ExtraSetting.Path = _sPathCompleted;
-            //e.ExtraSetting.Compression = Ionic.Zlib.CompressionLevel.BestCompression;
-            return e;
+            int nN = _iCount - nG - nI;
+            string name = string.Format("MTE_{0}_{1}-{2}-{3}", _iCount, nN, SubgroupInfo(nG, assertG, credG), SubgroupInfo(nI, assertI, credI));
+            return new ThesisExperimentPack(name, _iRuns, _iLength, _dTimePerStep, _scene, _species, _styles, _random.UInt(), _sPathCompleted,
+                nN, nG, nI, ASSERTIVENESS_LOW, assertG, assertI, CREDIBILITY_NORMAL, credG, credI, StartSpawn, GoalG, GoalI,
+                GetSpecies("Naive"), GetSpecies("Guide"), GetSpecies("Intruder"), _dFovRange, _fovAngle);
         }
 
         private string SubgroupInfo(int count, double assert, double cred)
         {
             return count == 0 ? count.ToString() : string.Format("{0}{1}{2}", count, _assertivenessSymbol[assert], _credibilitySymbol[cred]);
-        }
-
-        private IEnumerable<ObservedArchetype> CreateAgents(int nG, int nI, double assertG, double assertI, double credG, double credI)
-        {
-            List<ObservedArchetype> oas = new List<ObservedArchetype>();
-            oas.Add(CreateAgents("Naives", _iCount - nG - nI, GetSpecies("Naive"), null, ASSERTIVENESS_LOW, CREDIBILITY_NORMAL));
-            if (nG > 0) oas.Add(CreateAgents("Guides", nG, GetSpecies("Guide"), GoalG, assertG, credG));
-            if (nI > 0) oas.Add(CreateAgents("Intruders", nI, GetSpecies("Intruder"), GoalI, assertI, credI));
-            return oas;
-        }
-
-        private ObservedArchetype CreateAgents(string name, int count, Species species, Goal goal, double assertiveness, double credibility)
-        {
-            return new ObservedArchetype(new Vejmola2013AgentArchetype(name, count, StartSpawn,
-                new NoisedDouble(Distribution.Uniform, -180, 180), new NoisedDouble(1),
-                species, new Neighbourhood(_dFovRange, _fovAngle), TURNING_ANGLE,
-                new Vejmola2013AgentArgs(goal, new Neighbourhood(REPULSION_RANGE, _fovAngle), assertiveness, credibility)));
         }
 
         private Species GetSpecies(string name)
@@ -204,7 +185,7 @@ namespace Muragatte.Thesis
         protected override void SaveNext(Experiment e)
         {
             base.SaveNext(e);
-            File.Copy(Path.Combine(_sPathCompleted, e.Name, "Settings.xml"), Path.Combine(_sPathExperiments, e.Name + ".xml"));
+            File.Copy(Path.Combine(_sPathCompleted, e.Name, Research.IO.CompletedExperimentArchiver.SETTINGS_FILENAME), Path.Combine(_sPathExperiments, e.Name + ".xml"));
         }
 
         protected override void TakeSnapshot(Experiment e)
@@ -212,13 +193,14 @@ namespace Muragatte.Thesis
             //leaves something in memory upon closing, don't know what
             LayeredSnapshot ls = new LayeredSnapshot(new Visualization(e.Instances[0].Model, _scene.Region.Width, _scene.Region.Height, SNAPSHOT_SCALE, null, _styles));
             ls.Scale = SNAPSHOT_SCALE;
-            ls.DrawFlipped = true;
+            ls.DrawFlipped = false;
             ls.UseCustomVisuals = true;
             ls.IsEnvironmentEnabled = true;
             ls.IsAgentsEnabled = true;
             ls.IsNeighbourhoodsEnabled = true;
             ls.IsTracksEnabled = true;
             ls.Tracks.Add(_species.DefaultForAgents.FullName);
+            ls.IsTrailsEnabled = false;
             //async would be better, cannot be used right now (collectionview problem)
             //options:
             //- let it be as it is, GUI freezing
@@ -226,6 +208,121 @@ namespace Muragatte.Thesis
             ls.Redraw(e.GetHistories(), _iLength, SNAPSHOT_ALPHA);
             ls.SetVisualization(null);
             _snapshots.Save(Path.Combine(_sPathSnapshots, e.Name + ".png"), ls.Image);
+        }
+
+        private void ProcessResults(ThesisExperimentPack e)
+        {
+            int frag = 0;
+            int noGoal = 0;
+            int atGg = 0;
+            int atGi = 0;
+            int nearGg = 0;
+            int nearGi = 0;
+            double size = 0;
+            double sizeG = 0;
+            int groupI = 0;
+            int loneI = 0;
+            for (int i = 0; i < e.Runs; i++)
+            {
+                if (e.Experiment.Status == ExperimentStatus.Canceled) continue;
+                InstanceResults results = e.Experiment.Instances[i].Results;
+                if (results.GroupCountEnd > 1 || results.StrayCountEnd > 0) frag++;
+                if (!results.HasMainGroupGoalEnd) noGoal++;
+                ProcessResultsGoals(e, results, e.Experiment.Instances[i].Model.History.Last, ref atGg, ref atGi, ref nearGg, ref nearGi);
+                size += results.MainGroupSizeEnd;
+                ProcessResultsObserved(e, results, ref sizeG, ref groupI, ref loneI);
+            }
+            if (e.Runs > 0)
+            {
+                size /= e.Runs;
+                sizeG /= e.Runs;
+            }
+            _writer.WriteLine(string.Join("\t", _iCount, e.NaiveCount, e.GuideCount, e.IntruderCount,
+                e.AssertivenessGuide, e.AssertivenessIntruder, e.CredibilityGuide, e.CredibilityIntruder,
+                e.Runs, frag, noGoal, atGg, atGi, nearGg, nearGi, size, sizeG, groupI, loneI));
+        }
+
+        private void ProcessResultsGoals(ThesisExperimentPack e, InstanceResults results, HistoryRecord hist, ref int atGg, ref int atGi, ref int nearGg, ref int nearGi)
+        {
+            double minDistG = double.MaxValue;
+            double minDistI = double.MaxValue;
+            foreach (Agent a in results.StepDetails.Last().MainGroup.Members)
+            {
+                double distG = Vector2.Distance(GoalG.Position, hist[a.ID].Position);
+                if (distG < minDistG) minDistG = distG;
+                double distI = Vector2.Distance(GoalI.Position, hist[a.ID].Position);
+                if (distI < minDistI) minDistI = distI;
+            }
+            if (minDistG < GoalG.Radius + _dFovRange)
+            {
+                atGg++;
+                return;
+            }
+            if (minDistI < GoalI.Radius + _dFovRange)
+            {
+                atGi++;
+                return;
+            }
+            double halfGoalDist = Vector2.Distance(GoalG.Position, GoalI.Position) / 2;
+            //ElementStatus centroid = hist[results.StepDetails.Last().MainGroup.ID];
+            //Angle angleG = Vector2.AngleBetween(centroid.Direction, GoalG.Position - centroid.Position);
+            //Angle angleI = Vector2.AngleBetween(centroid.Direction, GoalI.Position - centroid.Position);
+            if (minDistG < halfGoalDist && minDistG < minDistI)
+            {
+                nearGg++;
+                return;
+            }
+            if (minDistI < halfGoalDist && minDistI < minDistG)
+            {
+                nearGi++;
+            }
+        }
+
+        private void ProcessResultsObserved(ThesisExperimentPack e, InstanceResults results, ref double sizeG, ref int groupI, ref int loneI)
+        {
+            if (e.GuideCount > 0)
+            {
+                sizeG += results.Observed[0].MajorityGroupSizeEnd;
+                if (e.IntruderCount > 0)
+                {
+                    if (results.Observed[1].MajorityGroupSizeEnd == 1)
+                    {
+                        loneI++;
+                    }
+                    else
+                    {
+                        if (results.GroupCountEnd > 1 && results.Observed[1].MajorityGroupSizeEnd > 1) groupI++;
+                    }
+                }
+            }
+        }
+
+        protected override void WriteBatchResultsHeader()
+        {
+            /*
+             * N - # of all agents
+             * Nn - # of naive agents
+             * Ng - # of guides
+             * Ni - # of intruders
+             * Ag - assertiveness of guides
+             * Ai - assertiveness of intruders
+             * Cg - credibility of guides
+             * Ci - credibility of intruders
+             * runs - runs completed (0:skipped, max:ok, <max:canceled) - not yet ready to work
+             * frag - group fragmented
+             * noGoal - main group ended without any guides or intruders
+             * at_Gg - main group ended at goal for guides
+             * at_Gi - main group ended at goal for intruders
+             * near_Gg - main group ended near goal for guides and headed there
+             * near_Gi - main group ended near goal for intruders and headed there
+             * size - average end size of main group
+             * size_g - average end size of group with most guides
+             * grp_i - average end size of group split from others with most intruders, intruder with followers after fragmentation
+             * lone_i - intruder alone
+             */
+            _writer.WriteLine(string.Join("\t",
+                "N", "Nn", "Ng", "Ni", "Ag", "Ai", "Cg", "Ci", "runs", "frag", "noGoal",
+                "at_Gg", "at_Gi", "near_Gg", "near_Gi", "size", "size_g", "grp_i", "lone_i"));
         }
 
         #endregion
