@@ -172,7 +172,7 @@ namespace Muragatte.Visual
 
         protected WriteableBitmap CreateBitmap()
         {
-            return BitmapFactory.New((int)(_iUnitWidth * _dScale), (int)(_iUnitHeight * _dScale)); ;
+            return BitmapFactory.New((int)(_iUnitWidth * _dScale), (int)(_iUnitHeight * _dScale));
         }
 
         protected virtual void Rescale()

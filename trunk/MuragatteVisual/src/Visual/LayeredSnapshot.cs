@@ -68,6 +68,7 @@ namespace Muragatte.Visual
         protected override void Rescale()
         {
             _wbL = CreateBitmap();
+            _wbL.Clear(_backgroundColor);
             base.Rescale();
         }
 
@@ -83,18 +84,23 @@ namespace Muragatte.Visual
             wb.ForEach((x, y, color) => color.Equals(_backgroundColor) ? Colors.Transparent : color.WithA(alpha));
         }
 
+        private void RemoveAlpha(WriteableBitmap wb)
+        {
+            wb.ForEach((x, y, color) => color.WithA(byte.MaxValue));
+        }
+
         public void Redraw(IEnumerable<History> histories)
         {
             if (histories.Count() > 0)
             {
                 Rescale();
-                _wbL.Clear(_backgroundColor);
                 foreach (History h in histories)
                 {
                     RedrawLayers(h, Step);
                     CombineLayers(_alpha);
                 }
                 ScaleBack();
+                RemoveAlpha(_wbL);
                 _wb = _wbL;
             }
         }
@@ -134,7 +140,7 @@ namespace Muragatte.Visual
             double progress = 0;
             double progressInc = 100d / histories.Count();
             Rescale();
-            _wbL.Clear(_backgroundColor);
+            //_wbL.Clear(_backgroundColor);
             foreach (History h in histories)
             {
                 RedrawLayers(h, Step);
@@ -143,6 +149,7 @@ namespace Muragatte.Visual
                 _worker.ReportProgress(0, progress);
             }
             ScaleBack();
+            RemoveAlpha(_wbL);
             _wb = _wbL;
         }
 

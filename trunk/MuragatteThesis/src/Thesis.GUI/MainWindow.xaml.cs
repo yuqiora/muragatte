@@ -170,7 +170,7 @@ namespace Muragatte.Thesis
         private void Archiver_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (e.UserState is double)
-                prbSaving.Value = (double)e.UserState;
+                prbSaving.Value = (double)e.UserState / (double)(batch.InQueueToSave + 1);
             else
                 txbSaving.Text = "Saving " + e.UserState.ToString();
         }

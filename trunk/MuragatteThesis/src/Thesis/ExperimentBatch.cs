@@ -43,7 +43,7 @@ namespace Muragatte.Thesis
         protected BackgroundWorker _worker = new BackgroundWorker();
         protected CompletedExperimentArchiver _archiver = new CompletedExperimentArchiver();
         protected Queue<Experiment> _toSave = new Queue<Experiment>();
-        protected string _sTempExpName = null;
+        //protected string _sTempExpName = null;
         protected SnapshotSaver _snapshots = new SnapshotSaver();
 
         protected readonly string _sPathCompleted;
@@ -94,6 +94,11 @@ namespace Muragatte.Thesis
             get { return _toSave.Count == 0; }
         }
 
+        public int InQueueToSave
+        {
+            get { return _toSave.Count; }
+        }
+
         #endregion
 
         #region Methods
@@ -137,7 +142,7 @@ namespace Muragatte.Thesis
 
         protected virtual void SaveNext(Experiment e)
         {
-            _sTempExpName = e.Name;
+            //_sTempExpName = e.Name;
             _archiver.Save(e, e.ExtraSetting.Compression);
             if (_archiver.Worker.IsBusy) _archiver.Worker.ReportProgress(0, e.Name);
             TakeSnapshot(e);

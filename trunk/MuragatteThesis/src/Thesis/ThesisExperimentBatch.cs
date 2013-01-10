@@ -19,7 +19,9 @@ using Muragatte.Common;
 using Muragatte.Core;
 using Muragatte.Core.Environment;
 using Muragatte.Core.Storage;
+using Muragatte.IO;
 using Muragatte.Research;
+using Muragatte.Research.IO;
 using Muragatte.Research.Results;
 using Muragatte.Visual;
 using Muragatte.Visual.Styles;
@@ -30,7 +32,7 @@ namespace Muragatte.Thesis
     {
         #region Constants
 
-        private const double SNAPSHOT_SCALE = 7;
+        private const double SNAPSHOT_SCALE = 5;
         private const byte SNAPSHOT_ALPHA = 96;
 
         private const double GUIDE_PART = 0.2;
@@ -54,6 +56,8 @@ namespace Muragatte.Thesis
         private Angle _fovAngle = new Angle(180);
         private readonly Dictionary<double, char> _assertivenessSymbol = new Dictionary<double, char>();
         private readonly Dictionary<double, char> _credibilitySymbol = new Dictionary<double, char>();
+
+        private XmlLoadSave<XmlExperimentRoot> _xml = new XmlLoadSave<XmlExperimentRoot>();
 
         #endregion
 
@@ -134,6 +138,8 @@ namespace Muragatte.Thesis
                             if (_worker.CancellationPending) break;
                             RunExperimentAsync(sender, e, CreateExperiment(GuideCount, INTRUDER_MAX,
                                 ASSERTIVENESS[ag], ASSERTIVENESS[ai], CREDIBILITY[cg], CREDIBILITY[ci]), progress);
+                            //first three runs only
+                            //_worker.CancelAsync();
                         }
                     }
                 }
@@ -184,8 +190,11 @@ namespace Muragatte.Thesis
 
         protected override void SaveNext(Experiment e)
         {
-            base.SaveNext(e);
-            File.Copy(Path.Combine(_sPathCompleted, e.Name, Research.IO.CompletedExperimentArchiver.SETTINGS_FILENAME), Path.Combine(_sPathExperiments, e.Name + ".xml"));
+            //base.SaveNext(e);
+            //File.Copy(Path.Combine(_sPathCompleted, e.Name, Research.IO.CompletedExperimentArchiver.SETTINGS_FILENAME), Path.Combine(_sPathExperiments, e.Name + ".xml"));
+            //_sTempExpName = e.Name;
+            _xml.Save(Path.Combine(_sPathExperiments, e.Name + ".xml"), new XmlExperimentRoot(e));
+            TakeSnapshot(e);
         }
 
         protected override void TakeSnapshot(Experiment e)
@@ -205,6 +214,7 @@ namespace Muragatte.Thesis
             //options:
             //- let it be as it is, GUI freezing
             //- find a workaround, too much time and effort?
+            //Async version would need more work and time to do right, current implementation wrong and not sufficient
             ls.Redraw(e.GetHistories(), _iLength, SNAPSHOT_ALPHA);
             ls.SetVisualization(null);
             _snapshots.Save(Path.Combine(_sPathSnapshots, e.Name + ".png"), ls.Image);
@@ -213,6 +223,9 @@ namespace Muragatte.Thesis
         private void ProcessResults(ThesisExperimentPack e)
         {
             int frag = 0;
+            int fragG = 0;
+            int fragI = 0;
+            int loneI = 0;
             int noGoal = 0;
             int atGg = 0;
             int atGi = 0;
@@ -220,8 +233,6 @@ namespace Muragatte.Thesis
             int nearGi = 0;
             double size = 0;
             double sizeG = 0;
-            int groupI = 0;
-            int loneI = 0;
             for (int i = 0; i < e.Runs; i++)
             {
                 if (e.Experiment.Status == ExperimentStatus.Canceled) continue;
@@ -230,7 +241,7 @@ namespace Muragatte.Thesis
                 if (!results.HasMainGroupGoalEnd) noGoal++;
                 ProcessResultsGoals(e, results, e.Experiment.Instances[i].Model.History.Last, ref atGg, ref atGi, ref nearGg, ref nearGi);
                 size += results.MainGroupSizeEnd;
-                ProcessResultsObserved(e, results, ref sizeG, ref groupI, ref loneI);
+                ProcessResultsObserved(e, results, ref sizeG, ref fragG, ref fragI, ref loneI);
             }
             if (e.Runs > 0)
             {
@@ -239,7 +250,7 @@ namespace Muragatte.Thesis
             }
             _writer.WriteLine(string.Join("\t", _iCount, e.NaiveCount, e.GuideCount, e.IntruderCount,
                 e.AssertivenessGuide, e.AssertivenessIntruder, e.CredibilityGuide, e.CredibilityIntruder,
-                e.Runs, frag, noGoal, atGg, atGi, nearGg, nearGi, size, sizeG, groupI, loneI));
+                e.Runs, frag, fragG, fragI, loneI, noGoal, atGg, atGi, nearGg, nearGi, size, sizeG));
         }
 
         private void ProcessResultsGoals(ThesisExperimentPack e, InstanceResults results, HistoryRecord hist, ref int atGg, ref int atGi, ref int nearGg, ref int nearGi)
@@ -278,11 +289,13 @@ namespace Muragatte.Thesis
             }
         }
 
-        private void ProcessResultsObserved(ThesisExperimentPack e, InstanceResults results, ref double sizeG, ref int groupI, ref int loneI)
+        private void ProcessResultsObserved(ThesisExperimentPack e, InstanceResults results, ref double sizeG, ref int fragG, ref int fragI, ref int loneI)
         {
             if (e.GuideCount > 0)
             {
                 sizeG += results.Observed[0].MajorityGroupSizeEnd;
+                if ((results.GroupCountEnd > 0 || results.StrayGoalCountEnd > 0)
+                    && results.Observed[0].InMainGroupCountEnd < results.Observed[0].Count) fragG++;
                 if (e.IntruderCount > 0)
                 {
                     if (results.Observed[1].MajorityGroupSizeEnd == 1)
@@ -291,7 +304,8 @@ namespace Muragatte.Thesis
                     }
                     else
                     {
-                        if (results.GroupCountEnd > 1 && results.Observed[1].MajorityGroupSizeEnd > 1) groupI++;
+                        if (results.GroupCountEnd > 1 && results.Observed[1].MajorityGroupSizeEnd > 1
+                            && results.Observed[1].InMainGroupCountEnd == 0) fragI++;
                     }
                 }
             }
@@ -310,6 +324,9 @@ namespace Muragatte.Thesis
              * Ci - credibility of intruders
              * runs - runs completed (0:skipped, max:ok, <max:canceled) - not yet ready to work
              * frag - group fragmented
+             * frag_g - a minority of agents split from initial group containing guides
+             * frag_i - a minority of agents split from initial group containing intruder
+             * lone_i - intruder alone
              * noGoal - main group ended without any guides or intruders
              * at_Gg - main group ended at goal for guides
              * at_Gi - main group ended at goal for intruders
@@ -317,12 +334,9 @@ namespace Muragatte.Thesis
              * near_Gi - main group ended near goal for intruders and headed there
              * size - average end size of main group
              * size_g - average end size of group with most guides
-             * grp_i - average end size of group split from others with most intruders, intruder with followers after fragmentation
-             * lone_i - intruder alone
              */
-            _writer.WriteLine(string.Join("\t",
-                "N", "Nn", "Ng", "Ni", "Ag", "Ai", "Cg", "Ci", "runs", "frag", "noGoal",
-                "at_Gg", "at_Gi", "near_Gg", "near_Gi", "size", "size_g", "grp_i", "lone_i"));
+            _writer.WriteLine(string.Join("\t", "N", "Nn", "Ng", "Ni", "Ag", "Ai", "Cg", "Ci", "runs", "frag",
+                "frag_g", "frag_i", "lone_i", "noGoal", "at_Gg", "at_Gi", "near_Gg", "near_Gi", "size", "size_g"));
         }
 
         #endregion
