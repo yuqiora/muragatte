@@ -76,7 +76,7 @@ namespace Muragatte.Visual
         {
             ApplyAlpha(_wb, alpha);
             _wbL.Blit(_wb);
-            _wb = CreateBitmap();
+            //_wb = CreateBitmap();
         }
 
         private void ApplyAlpha(WriteableBitmap wb, byte alpha)
@@ -140,7 +140,6 @@ namespace Muragatte.Visual
             double progress = 0;
             double progressInc = 100d / histories.Count();
             Rescale();
-            //_wbL.Clear(_backgroundColor);
             foreach (History h in histories)
             {
                 RedrawLayers(h, Step);
