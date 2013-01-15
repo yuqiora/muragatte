@@ -12,7 +12,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="MuragatteThesis" SizeToContent="WidthAndHeight">
+        Title="MuragatteThesis" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
     <Grid>
         <xtk:BusyIndicator Name="binProgress">
             <xtk:BusyIndicator.BusyContent>
@@ -103,7 +103,7 @@
                                 <Button Content="Run" Name="btnThesisRun" Height="23" Width="75" Click="btnThesisRun_Click" />
                             </StackPanel>
                             <StackPanel DockPanel.Dock="Left">
-                                <xtk:DoubleUpDown Name="dudThesisFOVRange" Width="100" Height="23" DefaultValue="6"  Minimum="1" Increment="0.5" Watermark="FOV Range" ToolTip="Field of View Range" />
+                                <xtk:DoubleUpDown Name="dudThesisFOVRange" Width="100" Height="23" DefaultValue="7"  Minimum="1" Increment="0.5" Watermark="FOV Range" ToolTip="Field of View Range" />
                                 <xtk:DoubleUpDown Name="dudThesisNeighAngle" Width="100" Height="23" DefaultValue="180" Minimum="1" Maximum="180" Watermark="Neigh Angle" ToolTip="Neighbourhood Angle" />
                             </StackPanel>
                         </DockPanel>

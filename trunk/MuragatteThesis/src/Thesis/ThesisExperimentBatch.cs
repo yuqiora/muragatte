@@ -36,17 +36,20 @@ namespace Muragatte.Thesis
         private const byte SNAPSHOT_ALPHA = 96;
 
         private const double GUIDE_PART = 0.2;
-        private const int INTRUDER_MAX = 1;
+        private const int GUIDE_COUNT = 5;
+        private const int INTRUDER_COUNT = 1;
 
         private const double ASSERTIVENESS_LOW = 0.1;
         private const double ASSERTIVENESS_MEDIUM = 0.35;
         private const double ASSERTIVENESS_HIGH = 0.85;
+        private const double ASSERTIVENESS_VERYHIGH = 2;
         private const double CREDIBILITY_NORMAL = 1;
         private const double CREDIBILITY_HIGH = 2;
         private const double CREDIBILITY_VERYHIGH = 5;
+        private const double CREDIBILITY_EXTRAHIGH = 20;
 
-        private static readonly double[] ASSERTIVENESS = { ASSERTIVENESS_LOW, ASSERTIVENESS_MEDIUM, ASSERTIVENESS_HIGH };
-        private static readonly double[] CREDIBILITY = { CREDIBILITY_NORMAL, CREDIBILITY_HIGH, CREDIBILITY_VERYHIGH };
+        private static readonly double[] ASSERTIVENESS = { ASSERTIVENESS_LOW, ASSERTIVENESS_MEDIUM, ASSERTIVENESS_HIGH, ASSERTIVENESS_VERYHIGH };
+        private static readonly double[] CREDIBILITY = { CREDIBILITY_NORMAL, CREDIBILITY_HIGH, CREDIBILITY_VERYHIGH, CREDIBILITY_EXTRAHIGH };
 
         #endregion
 
@@ -70,12 +73,14 @@ namespace Muragatte.Thesis
         {
             _dFovRange = fovRange;
             _fovAngle = new Angle(fovAngle);
-            _assertivenessSymbol.Add(ASSERTIVENESS_LOW, 'l');
-            _assertivenessSymbol.Add(ASSERTIVENESS_MEDIUM, 'm');
-            _assertivenessSymbol.Add(ASSERTIVENESS_HIGH, 'h');
-            _credibilitySymbol.Add(CREDIBILITY_NORMAL, 'n');
-            _credibilitySymbol.Add(CREDIBILITY_HIGH, 'h');
-            _credibilitySymbol.Add(CREDIBILITY_VERYHIGH, 'v');
+            _assertivenessSymbol.Add(ASSERTIVENESS_LOW, 'L');
+            _assertivenessSymbol.Add(ASSERTIVENESS_MEDIUM, 'M');
+            _assertivenessSymbol.Add(ASSERTIVENESS_HIGH, 'H');
+            _assertivenessSymbol.Add(ASSERTIVENESS_VERYHIGH, 'V');
+            _credibilitySymbol.Add(CREDIBILITY_NORMAL, 'N');
+            _credibilitySymbol.Add(CREDIBILITY_HIGH, 'H');
+            _credibilitySymbol.Add(CREDIBILITY_VERYHIGH, 'V');
+            _credibilitySymbol.Add(CREDIBILITY_EXTRAHIGH, 'X');
         }
 
         #endregion
@@ -104,7 +109,7 @@ namespace Muragatte.Thesis
 
         private int NaiveCount
         {
-            get { return _iCount - GuideCount - INTRUDER_MAX; }
+            get { return _iCount - GuideCount - INTRUDER_COUNT; }
         }
 
         #endregion
@@ -114,36 +119,83 @@ namespace Muragatte.Thesis
         protected override void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
             PrepareWriter(!File.Exists(_sPath));
+            #region MODE 2
+            ////naive only reference (1)
+            ////guided reference (3-assertiveness)
+            ////no credibility [assert_g <= assert_i] (9 = LL + LM + LH + LV + MM + MH + MV + HH + HV)
+            ////with credibility [cred_g = const; cred_i = H | V | X] (27 = 9-noCred * 3)
+            //int batchSize = 1 + 3 + (4 + 3 + 2) * 4;
+            //ExperimentBatchProgress progress = new ExperimentBatchProgress(batchSize, _iRuns, _iLength);
+            ////naives only reference
+            //RunExperimentAsync(sender, e, CreateExperiment(0, 0, 0, 0, 0, 0), progress);
+            //for (int ag = 0; ag < ASSERTIVENESS.Length - 1; ag++)
+            //{
+            //    if (_worker.CancellationPending) break;
+            //    //guided reference
+            //    RunExperimentAsync(sender, e, CreateExperiment(GuideCount, 0, ASSERTIVENESS[ag], 0, CREDIBILITY_NORMAL, 0), progress);
+            //    for (int ai = ag; ai < ASSERTIVENESS.Length; ai++)
+            //    {
+            //        //no credibility
+            //        //with credibility
+            //        for (int ci = 0; ci < CREDIBILITY.Length; ci++)
+            //        {
+            //            if (_worker.CancellationPending) break;
+            //            RunExperimentAsync(sender, e, CreateExperiment(GuideCount, INTRUDER_COUNT,
+            //                ASSERTIVENESS[ag], ASSERTIVENESS[ai], CREDIBILITY_NORMAL, CREDIBILITY[ci]), progress);
+            //            //first three runs only
+            //            //_worker.CancelAsync();
+            //        }
+            //    }
+            //}
+            #endregion
+            #region MODE 3
+            ////naive only reference (1)
+            ////guided reference (1)
+            ////with intruder (12 = 3-assertiveness * 4-credibility)
+            //int batchSize = 1 + 1 + 3 * 4;
+            //ExperimentBatchProgress progress = new ExperimentBatchProgress(batchSize, _iRuns, _iLength);
+            ////naives only reference
+            //RunExperimentAsync(sender, e, CreateExperiment(0, 0, 0, 0, 0, 0), progress);
+            //if (!_worker.CancellationPending)
+            //{
+            //    //guided reference
+            //    RunExperimentAsync(sender, e, CreateExperiment(GuideCount, 0, ASSERTIVENESS_MEDIUM, 0, CREDIBILITY_NORMAL, 0), progress);
+            //    //with intruder
+            //    for (int ai = 1; ai < ASSERTIVENESS.Length; ai++)
+            //    {
+            //        for (int ci = 0; ci < CREDIBILITY.Length; ci++)
+            //        {
+            //            if (_worker.CancellationPending) break;
+            //            RunExperimentAsync(sender, e, CreateExperiment(GuideCount, INTRUDER_COUNT,
+            //                ASSERTIVENESS_MEDIUM, ASSERTIVENESS[ai], CREDIBILITY_NORMAL, CREDIBILITY[ci]), progress);
+            //        }
+            //    }
+            //}
+            #endregion
+            #region MODE 4
             //naive only reference (1)
-            //guided reference (3-assertiveness)
-            //no credibility (6 = ll + lm + lh + mm + mh + hh)
-            //with credibility (24 = 6-noCred * 2-credGuide * 2-credIntruder)
-            int batchSize = 1 + 3 + 6 * (2 * 2 + 1);
+            //guided reference (1)
+            //with intruder (12 = 3-assertiveness * 4-credibility)
+            int batchSize = 1 + 1 + 3 * 4;
             ExperimentBatchProgress progress = new ExperimentBatchProgress(batchSize, _iRuns, _iLength);
             //naives only reference
             RunExperimentAsync(sender, e, CreateExperiment(0, 0, 0, 0, 0, 0), progress);
-            for (int ag = 0; ag < ASSERTIVENESS.Length; ag++)
+            if (!_worker.CancellationPending)
             {
-                if (_worker.CancellationPending) break;
                 //guided reference
-                RunExperimentAsync(sender, e, CreateExperiment(GuideCount, 0, ASSERTIVENESS[ag], 0, CREDIBILITY_NORMAL, 0), progress);
-                for (int ai = ag; ai < ASSERTIVENESS.Length; ai++)
+                RunExperimentAsync(sender, e, CreateExperiment(GUIDE_COUNT, 0, ASSERTIVENESS_MEDIUM, 0, CREDIBILITY_NORMAL, 0), progress);
+                //with intruder
+                for (int ai = 1; ai < ASSERTIVENESS.Length; ai++)
                 {
-                    //no credibility
-                    //with credibility
-                    for (int cg = 0; cg < CREDIBILITY.Length - 1; cg++)
+                    for (int ci = 0; ci < CREDIBILITY.Length; ci++)
                     {
-                        for (int ci = cg; ci < CREDIBILITY.Length; ci++)
-                        {
-                            if (_worker.CancellationPending) break;
-                            RunExperimentAsync(sender, e, CreateExperiment(GuideCount, INTRUDER_MAX,
-                                ASSERTIVENESS[ag], ASSERTIVENESS[ai], CREDIBILITY[cg], CREDIBILITY[ci]), progress);
-                            //first three runs only
-                            //_worker.CancelAsync();
-                        }
+                        if (_worker.CancellationPending) break;
+                        RunExperimentAsync(sender, e, CreateExperiment(GUIDE_COUNT, INTRUDER_COUNT,
+                            ASSERTIVENESS_MEDIUM, ASSERTIVENESS[ai], CREDIBILITY_NORMAL, CREDIBILITY[ci]), progress);
                     }
                 }
             }
+            #endregion
             _writer.Close();
         }
 
@@ -172,15 +224,15 @@ namespace Muragatte.Thesis
         private ThesisExperimentPack CreateExperiment(int nG, int nI, double assertG, double assertI, double credG, double credI)
         {
             int nN = _iCount - nG - nI;
-            string name = string.Format("MTE_{0}_{1}-{2}-{3}", _iCount, nN, SubgroupInfo(nG, assertG, credG), SubgroupInfo(nI, assertI, credI));
+            string name = string.Format("MTE_{0}_{1}-{2}-{3}", _iCount, nN, SubgroupInfo(nG, assertG, credG, false), SubgroupInfo(nI, assertI, credI, true));
             return new ThesisExperimentPack(name, _iRuns, _iLength, _dTimePerStep, _scene, _species, _styles, _random.UInt(), _sPathCompleted,
                 nN, nG, nI, ASSERTIVENESS_LOW, assertG, assertI, CREDIBILITY_NORMAL, credG, credI, StartSpawn, GoalG, GoalI,
                 GetSpecies("Naive"), GetSpecies("Guide"), GetSpecies("Intruder"), _dFovRange, _fovAngle);
         }
 
-        private string SubgroupInfo(int count, double assert, double cred)
+        private string SubgroupInfo(int count, double assert, double cred, bool withCred)
         {
-            return count == 0 ? count.ToString() : string.Format("{0}{1}{2}", count, _assertivenessSymbol[assert], _credibilitySymbol[cred]);
+            return count == 0 ? count.ToString() : string.Format("{0}{1}{2}", count, _assertivenessSymbol[assert], withCred ? _credibilitySymbol[cred].ToString() : string.Empty);
         }
 
         private Species GetSpecies(string name)
