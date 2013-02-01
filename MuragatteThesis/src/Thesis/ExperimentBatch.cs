@@ -34,16 +34,14 @@ namespace Muragatte.Thesis
         protected int _iCount = 1;
         protected int _iRuns = 1;
         protected int _iLength = 1;
-        protected double _dTimePerStep = 0.1;
         protected ObservableCollection<Style> _styles = null;
         protected SpeciesCollection _species = null;
         protected Scene _scene = null;
 
-        protected RandomMT _random = new RandomMT();
+        protected RandomMT _random = null;
         protected BackgroundWorker _worker = new BackgroundWorker();
         protected CompletedExperimentArchiver _archiver = new CompletedExperimentArchiver();
         protected Queue<Experiment> _toSave = new Queue<Experiment>();
-        //protected string _sTempExpName = null;
         protected SnapshotSaver _snapshots = new SnapshotSaver();
 
         protected readonly string _sPathCompleted;
@@ -55,14 +53,13 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public ExperimentBatch(string path, int count, int runs, int length, double timePerStep,
-            ObservableCollection<Style> styles, SpeciesCollection species, Scene scene)
+        public ExperimentBatch(string path, int count, int runs, int length,
+            ObservableCollection<Style> styles, SpeciesCollection species, Scene scene, uint seed)
         {
             _sPath = path;
             _iCount = count;
             _iRuns = runs;
             _iLength = length;
-            _dTimePerStep = timePerStep;
             _styles = styles;
             _species = species;
             _scene = scene;
@@ -73,6 +70,7 @@ namespace Muragatte.Thesis
             _sPathSettings = Path.Combine(Path.GetDirectoryName(_sPath), "Settings");
             _sPathExperiments = Path.Combine(Path.GetDirectoryName(_sPath), "Experiments");
             _sPathSnapshots = Path.Combine(Path.GetDirectoryName(_sPath), "Snapshots");
+            _random = new RandomMT(seed);
         }
 
         #endregion
@@ -119,11 +117,6 @@ namespace Muragatte.Thesis
             _toSave.Clear();
         }
 
-        //run + cancel methods
-        //able to continue from incomplete set based on last entry in file
-
-        //create experiment?
-
         protected void Save(Experiment e)
         {
             if (_archiver.Worker.IsBusy)
@@ -142,7 +135,6 @@ namespace Muragatte.Thesis
 
         protected virtual void SaveNext(Experiment e)
         {
-            //_sTempExpName = e.Name;
             _archiver.Save(e, e.ExtraSetting.Compression);
             if (_archiver.Worker.IsBusy) _archiver.Worker.ReportProgress(0, e.Name);
             TakeSnapshot(e);

@@ -13,6 +13,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="MuragatteThesis" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <xtk:BusyIndicator Name="binProgress">
             <xtk:BusyIndicator.BusyContent>
@@ -45,8 +48,8 @@
                         <TextBlock Name="txbBatchProgress" />
                         <TextBlock Text="Batch" FontStyle="Italic" Margin="5,0,0,0" HorizontalAlignment="Left" />
                     </Grid>
-                    <Separator Margin="5" />
-                    <Grid>
+                    <Separator Margin="5" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, ElementName=chbSaveHistory, Path=IsChecked}" />
+                    <Grid Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, ElementName=chbSaveHistory, Path=IsChecked}">
                         <ProgressBar Name="prbSaving" />
                         <TextBlock Name="txbSaving" FontStyle="Italic" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
@@ -63,22 +66,26 @@
                     <xtk:WatermarkTextBox Name="txtDataFilePath" Watermark="Path" Width="250" Height="23" ToolTip="Path" />
                     <Button Name="btnDataFilePath" Content="Data File Path" Height="23" Width="100" Click="btnDataFilePath_Click" />
                 </StackPanel>
-                <StackPanel Margin="5" DockPanel.Dock="Left">
-                    <xtk:IntegerUpDown Name="iudCount" Width="100" Height="23" DefaultValue="10" Minimum="1" Watermark="Count" ToolTip="Count" />
-                    <xtk:IntegerUpDown Name="iudRuns" Width="100" Height="23" DefaultValue="200" Minimum="1" Watermark="Runs" ToolTip="Runs" />
-                    <xtk:IntegerUpDown Name="iudLength" Width="100" Height="23" DefaultValue="2500" Minimum="1" Watermark="Length" ToolTip="Length" />
-                    <ComboBox Name="cmbTimePerStep" Width="100" Height="23" ItemsSource="{Binding GetTimePerStepOptions}" ToolTip="Time per Step" />
-                    <xtk:SplitButton Name="spbStyles" Content="Edit Styles" Height="23" Width="100" Click="spbStyles_Click">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                    <Button Content="Exit" Name="btnExit" Height="23" Width="75" Margin="5" Click="btnExit_Click" />
+                    <Button Content="Run" Name="btnRun" Height="23" Width="75" Margin="5" Click="btnRun_Click" />
+                </StackPanel>
+                <StackPanel Margin="5"  DockPanel.Dock="Left">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <xtk:DoubleUpDown Name="dudSeed" Watermark="Seed" Width="100" Height="23" Minimum="0" Maximum="{Binding MaxSeedValue}" AllowSpin="False" ShowButtonSpinner="False" MouseWheelActiveOnFocus="False" ToolTip="Seed of Pseudo-Random Number Generator" />
+                        <Button Content="?" Height="23" Name="btnRandomSeed" Width="20" Click="btnRandomSeed_Click" />
+                    </StackPanel>
+                    <xtk:SplitButton Name="spbStyles" Content="Edit Styles" Height="23" Width="120" Click="spbStyles_Click">
                         <xtk:SplitButton.DropDownContent>
                             <ListBox MaxHeight="200" Name="lboStyles" ItemsSource="{Binding GetStyles}" Margin="5" />
                         </xtk:SplitButton.DropDownContent>
                     </xtk:SplitButton>
-                    <xtk:SplitButton Name="spbSpecies" Content="Edit Species" Height="23" Width="100" Click="spbSpecies_Click">
+                    <xtk:SplitButton Name="spbSpecies" Content="Edit Species" Height="23" Width="120" Click="spbSpecies_Click">
                         <xtk:SplitButton.DropDownContent>
                             <ListBox MaxHeight="200" Name="lboSpecies" ItemsSource="{Binding GetSpecies}" Margin="5" />
                         </xtk:SplitButton.DropDownContent>
                     </xtk:SplitButton>
-                    <xtk:SplitButton Name="spbScene" Content="Edit Scene" Height="23" Width="100" Click="spbScene_Click">
+                    <xtk:SplitButton Name="spbScene" Content="Edit Scene" Height="23" Width="120" Click="spbScene_Click">
                         <xtk:SplitButton.DropDownContent>
                             <StackPanel Margin="10">
                                 <TextBlock Name="txbSceneSize">
@@ -95,26 +102,19 @@
                         </xtk:SplitButton.DropDownContent>
                     </xtk:SplitButton>
                 </StackPanel>
-                <TabControl Name="tabMode" Margin="5" >
-                    <TabItem Header="Thesis" Name="titThesis">
-                        <DockPanel>
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
-                                <Button Content="Default" Name="btnThesisDefault" Height="23" Width="75" />
-                                <Button Content="Run" Name="btnThesisRun" Height="23" Width="75" Click="btnThesisRun_Click" />
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Left">
-                                <xtk:DoubleUpDown Name="dudThesisFOVRange" Width="100" Height="23" DefaultValue="7"  Minimum="1" Increment="0.5" Watermark="FOV Range" ToolTip="Field of View Range" />
-                                <xtk:DoubleUpDown Name="dudThesisNeighAngle" Width="100" Height="23" DefaultValue="180" Minimum="1" Maximum="180" Watermark="Neigh Angle" ToolTip="Neighbourhood Angle" />
-                            </StackPanel>
-                        </DockPanel>
-                    </TabItem>
-                    <TabItem Header="Couzinetal2005" Name="titCouzin">
-                        <Grid />
-                    </TabItem>
-                    <TabItem Header="Conradtetal2009" Name="titConradt">
-                        <Grid />
-                    </TabItem>
-                </TabControl>
+                <StackPanel DockPanel.Dock="Right" Margin="5">
+                    <CheckBox Name="chbSaveHistory" Content="Save History" Height="23" />
+                    <CheckBox Name="chbTakeSnapshots" Content="Take Snapshots" Height="23" IsChecked="True" />
+                    <xtk:DoubleUpDown Name="dudSnapshotScale" Height="23" Width="100" Watermark="Snapshot Scale" ToolTip="Snapshot Scale" Minimum="1" Increment="0.5" DefaultValue="5" IsEnabled="{Binding ElementName=chbTakeSnapshots, Path=IsChacked}" />
+                    <xtk:IntegerUpDown Name="iudSnapshotAlpha" Height="23" Width="100" Watermark="Snapshot Alpha" ToolTip="Snapshot Alpha" Minimum="1" Maximum="255" DefaultValue="96" IsEnabled="{Binding ElementName=chbTakeSnapshots, Path=IsChacked}" />
+                </StackPanel>
+                <StackPanel Margin="0,5">
+                    <xtk:IntegerUpDown Name="iudCount" Width="100" Height="23" DefaultValue="10" Minimum="1" Watermark="Agent Count" ToolTip="Agent Count" />
+                    <xtk:IntegerUpDown Name="iudRuns" Width="100" Height="23" DefaultValue="200" Minimum="1" Watermark="Runs" ToolTip="Runs" />
+                    <xtk:IntegerUpDown Name="iudLength" Width="100" Height="23" DefaultValue="2500" Minimum="1" Watermark="Length" ToolTip="Length" />
+                    <xtk:DoubleUpDown Name="dudFOVRange" Width="100" Height="23" DefaultValue="6.5"  Minimum="1" Increment="0.5" Watermark="FOV Range" ToolTip="Field of View Range" />
+                    <xtk:DoubleUpDown Name="dudFOVAngle" Width="100" Height="23" DefaultValue="180" Minimum="1" Maximum="180" Watermark="FOV Angle" ToolTip="Field of View Angle" />
+                </StackPanel>
             </DockPanel>
         </xtk:BusyIndicator>
     </Grid>

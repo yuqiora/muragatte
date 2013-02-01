@@ -32,16 +32,13 @@ namespace Muragatte.Thesis
     {
         #region Constants
 
-        private const double SNAPSHOT_SCALE = 5;
-        private const byte SNAPSHOT_ALPHA = 96;
-
         private const int GUIDE_COUNT = 5;
         private const int INTRUDER_COUNT = 1;
 
         private const double ASSERTIVENESS_LOW = 0.1;
         private const double ASSERTIVENESS_MEDIUM = 0.5;
         private const double ASSERTIVENESS_HIGH = 1;
-        private const double ASSERTIVENESS_VERYHIGH = 2;
+        private const double ASSERTIVENESS_VERYHIGH = 3;
         private const double CREDIBILITY_NORMAL = 1;
         private const double CREDIBILITY_HIGH = 2;
         private const double CREDIBILITY_VERYHIGH = 5;
@@ -56,6 +53,10 @@ namespace Muragatte.Thesis
 
         private double _dFovRange = 1;
         private Angle _fovAngle = new Angle(180);
+        private bool _bArchive = false;
+        private bool _bTakeSnapshots = true;
+        private double _dSnapshotScale = 5;
+        private byte _dSnapshotAlpha = 96;
         private readonly Dictionary<double, char> _assertivenessSymbol = new Dictionary<double, char>();
         private readonly Dictionary<double, char> _credibilitySymbol = new Dictionary<double, char>();
 
@@ -65,13 +66,17 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public ThesisExperimentBatch(string path, int count, int runs, int length, double timePerStep,
-            ObservableCollection<Style> styles, SpeciesCollection species, Scene scene,
-            double fovRange, double fovAngle)
-            : base(path, count, runs, length, timePerStep, styles, species, scene)
+        public ThesisExperimentBatch(string path, int count, int runs, int length,
+            ObservableCollection<Style> styles, SpeciesCollection species, Scene scene, double fovRange,
+            double fovAngle, uint seed, bool archive, bool snapshots, double scale, byte alpha)
+            : base(path, count, runs, length, styles, species, scene, seed)
         {
             _dFovRange = fovRange;
             _fovAngle = new Angle(fovAngle);
+            _bArchive = archive;
+            _bTakeSnapshots = snapshots;
+            _dSnapshotScale = scale;
+            _dSnapshotAlpha = alpha;
             _assertivenessSymbol.Add(ASSERTIVENESS_LOW, 'L');
             _assertivenessSymbol.Add(ASSERTIVENESS_MEDIUM, 'M');
             _assertivenessSymbol.Add(ASSERTIVENESS_HIGH, 'H');
@@ -158,7 +163,7 @@ namespace Muragatte.Thesis
         {
             int nN = _iCount - nG - nI;
             string name = string.Format("MTE_{0}_{1}-{2}-{3}", _iCount, nN, nG, SubgroupInfo(nI, assertI, credI));
-            return new ThesisExperimentPack(name, _iRuns, _iLength, _dTimePerStep, _scene, _species, _styles, _random.UInt(), _sPathCompleted,
+            return new ThesisExperimentPack(name, _iRuns, _iLength, _scene, _species, _styles, _random.UInt(), _sPathCompleted,
                 nN, nG, nI, ASSERTIVENESS_LOW, ASSERTIVENESS_MEDIUM, assertI, CREDIBILITY_NORMAL, CREDIBILITY_NORMAL, credI, StartSpawn,
                 GoalG, GoalI, GetSpecies("Naive"), GetSpecies("Guide"), GetSpecies("Intruder"), _dFovRange, _fovAngle);
         }
@@ -175,34 +180,40 @@ namespace Muragatte.Thesis
 
         protected override void SaveNext(Experiment e)
         {
-            //base.SaveNext(e);
-            //File.Copy(Path.Combine(_sPathCompleted, e.Name, Research.IO.CompletedExperimentArchiver.SETTINGS_FILENAME), Path.Combine(_sPathExperiments, e.Name + ".xml"));
-            //_sTempExpName = e.Name;
-            _xml.Save(Path.Combine(_sPathExperiments, e.Name + ".xml"), new XmlExperimentRoot(e));
-            TakeSnapshot(e);
+            if (_bArchive)
+            {
+                base.SaveNext(e);
+                File.Copy(Path.Combine(_sPathCompleted, e.Name, Research.IO.CompletedExperimentArchiver.SETTINGS_FILENAME), Path.Combine(_sPathExperiments, e.Name + ".xml"));
+            }
+            else
+            {
+                _xml.Save(Path.Combine(_sPathExperiments, e.Name + ".xml"), new XmlExperimentRoot(e));
+                TakeSnapshot(e);
+            }
         }
 
         protected override void TakeSnapshot(Experiment e)
         {
-            //leaves something in memory upon closing, don't know what
-            LayeredSnapshot ls = new LayeredSnapshot(new Visualization(e.Instances[0].Model, _scene.Region.Width, _scene.Region.Height, SNAPSHOT_SCALE, null, _styles));
-            ls.Scale = SNAPSHOT_SCALE;
-            ls.DrawFlipped = false;
-            ls.UseCustomVisuals = true;
-            ls.IsEnvironmentEnabled = true;
-            ls.IsAgentsEnabled = true;
-            ls.IsNeighbourhoodsEnabled = true;
-            ls.IsTracksEnabled = true;
-            ls.Tracks.Add(_species.DefaultForAgents.FullName);
-            ls.IsTrailsEnabled = false;
-            //async would be better, cannot be used right now (collectionview problem)
-            //options:
-            //- let it be as it is, GUI freezing
-            //- find a workaround, too much time and effort?
-            //Async version would need more work and time to do right, current implementation wrong and not sufficient
-            ls.Redraw(e.GetHistories(), _iLength, SNAPSHOT_ALPHA);
-            ls.SetVisualization(null);
-            _snapshots.Save(Path.Combine(_sPathSnapshots, e.Name + ".png"), ls.Image);
+            if (_bTakeSnapshots)
+            {
+                LayeredSnapshot ls = new LayeredSnapshot(new Visualization(e.Instances[0].Model, _scene.Region.Width, _scene.Region.Height, _dSnapshotScale, null, _styles));
+                ls.Scale = _dSnapshotScale;
+                ls.DrawFlipped = false;
+                ls.UseCustomVisuals = true;
+                ls.IsEnvironmentEnabled = true;
+                ls.IsAgentsEnabled = true;
+                ls.IsNeighbourhoodsEnabled = true;
+                ls.IsTracksEnabled = true;
+                ls.Tracks.Add(_species.DefaultForAgents.FullName);
+                ls.IsTrailsEnabled = false;
+                //options:
+                //- let it be as it is, GUI freezing
+                //- find a workaround, too much time and effort?
+                //Async version would need more work and time to do right, current implementation wrong and not sufficient
+                ls.Redraw(e.GetHistories(), _iLength, _dSnapshotAlpha);
+                ls.SetVisualization(null);
+                _snapshots.Save(Path.Combine(_sPathSnapshots, e.Name + ".png"), ls.Image);
+            }
         }
 
         private void ProcessResults(ThesisExperimentPack e)
@@ -210,11 +221,11 @@ namespace Muragatte.Thesis
             foreach (Instance i in e.Experiment.Instances)
             {
                 if (!i.IsComplete) continue;
-                double ToTG = 0;
-                double ToTI = 0;
+                double distG = 0;
+                double distI = 0;
                 int sizeG = 0;
                 int sizeI = 0;
-                double distI = 0;
+                double IDist = 0;
                 InstanceResults r = i.Results;
                 if (e.GuideCount > 0)
                 {
@@ -222,21 +233,29 @@ namespace Muragatte.Thesis
                     if (e.IntruderCount > 0)
                     {
                         sizeI = r.Observed[1].MajorityGroupSizeEnd;
-                        distI = NormalizeDistance(r.Observed[1].GoalEndDistanceMinimum.Value);
+                        //IDist = NormalizeDistance(r.Observed[1].GoalEndDistanceMinimum.Value);
+                        IDist = r.Observed[1].GoalEndDistanceMinimum.Value;
                     }
                 }
-                ProcessResultsGoals(e, r, i.Model.History.Last, ref ToTG, ref ToTI);
+                ProcessResultsGoals(e, r, i.Model.History.Last, ref distG, ref distI);
                 _writer.WriteLine(string.Join("\t", i.Number, _iCount, e.NaiveCount, e.GuideCount, e.IntruderCount,
                     e.AssertivenessIntruder, e.CredibilityIntruder, r.GroupCountEnd, r.StrayCountEnd,
-                    r.MainGroupSizeEnd, sizeG, sizeI, ToTG.ToString("F3"), ToTI.ToString("F3"), distI.ToString("F3")));
+                    r.MainGroupSizeEnd, sizeG, sizeI,
+                    //NormalizeSize(r.MainGroupSizeEnd), NormalizeSize(sizeG), NormalizeSize(sizeI),
+                    distG.ToString("F3"), distI.ToString("F3"), IDist.ToString("F3")));
             }
         }
 
-        private double NormalizeDistance(double value)
-        {
-            value = value - GoalG.Radius - _dFovRange;
-            return value < 0 ? 0 : value;
-        }
+        //private double NormalizeDistance(double value)
+        //{
+        //    value = value - GoalG.Radius - _dFovRange;
+        //    return value < 0 ? 0 : value;
+        //}
+
+        //private string NormalizeSize(int value)
+        //{
+        //    return ((double)value / _iCount).ToString("F3");
+        //}
 
         private void ProcessResultsGoals(ThesisExperimentPack e, InstanceResults r, HistoryRecord h, ref double ToTG, ref double ToTI)
         {
@@ -249,8 +268,10 @@ namespace Muragatte.Thesis
                 double distI = Vector2.Distance(GoalI.Position, h[a.ID].Position);
                 if (distI < minDistI) minDistI = distI;
             }
-            ToTG = NormalizeDistance(minDistG);
-            ToTI = NormalizeDistance(minDistI);
+            //ToTG = NormalizeDistance(minDistG);
+            //ToTI = NormalizeDistance(minDistI);
+            ToTG = minDistG;
+            ToTI = minDistI;
         }
 
         protected override void WriteBatchResultsHeader()
@@ -268,12 +289,12 @@ namespace Muragatte.Thesis
              * Size - end size of main group
              * Size.g - end size of group with most guides
              * Size.i - end size of group with intruder
-             * ToTG - min distance between main group and guide goal
-             * ToTI - min distance between main group and intruder goal
-             * ToTI.i - distance between intruder and its goal
+             * Dist.g - min distance between main group and guide goal
+             * Dist.i - min distance between main group and intruder goal
+             * IDist - distance between intruder and its goal
              */
             _writer.WriteLine(string.Join("\t", "Run", "N", "N.n", "N.g", "N.i", "Assert", "Cred",
-                "Groups", "Strays", "Size", "Size.g", "Size.i", "ToTG", "ToTI", "ToTI.i"));
+                "Groups", "Strays", "Size", "Size.g", "Size.i", "Dist.g", "Dist.i", "IDist"));
         }
 
         #endregion

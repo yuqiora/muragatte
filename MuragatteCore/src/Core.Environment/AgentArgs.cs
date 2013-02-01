@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Core Library
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -23,7 +23,7 @@ namespace Muragatte.Core.Environment
         #region Constants
 
         protected const double DEFAULT_DEVIATION = 0.01 * 180 / Math.PI;    //0.01 radians
-        protected const double DEFAULT_LIMIT = 5;
+        protected const double DEFAULT_LIMIT = 180;
 
         #endregion
 

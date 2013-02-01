@@ -298,12 +298,13 @@ namespace Muragatte.Research
         #endregion
     }
 
+    //not completed
     public class ExperimentExtraSetting : INotifyPropertyChanged
     {
         #region Fields
 
         private string _sPath = null;
-        private bool _bAutoSave = true;
+        private bool _bAutoSave = false;
         private Ionic.Zlib.CompressionLevel _compression = Ionic.Zlib.CompressionLevel.Default;
         private bool _bLayeredSnapshot = true;
         private byte _lsAlpha = 128;

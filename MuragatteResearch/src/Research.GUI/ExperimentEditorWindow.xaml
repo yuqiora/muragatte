@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Research Application
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -19,7 +19,8 @@
             <Button Content="Save" Height="23" Name="btnSave" Width="75" Click="btnSave_Click" />
         </StackPanel>
         <xtk:WatermarkTextBox Name="txtName" Watermark="Name" Width="170" Height="23" Text="{Binding Path=GetExperiment.Name}" ToolTip="Name" />
-        <xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="170" Height="23" Text="{Binding Path=GetExperiment.Path}" ToolTip="Path" />
+        <CheckBox Name="chbAutoSave" Content="Save After Completion" IsChecked="{Binding Path=IsAutoSaved}" />
+        <!--<xtk:WatermarkTextBox Name="txtPath" Watermark="Path" Width="170" Height="23" Text="{Binding Path=GetExperiment.Path}" ToolTip="Path" />-->
         <Grid>
             <xtk:IntegerUpDown Name="iudRepeat" Width="80" Height="23" Minimum="1" Watermark="Repeat" Value="{Binding Path=GetExperiment.RepeatCount}" ToolTip="Repeat Count" HorizontalAlignment="Left" />
             <TextBlock Text="x" VerticalAlignment="Center" HorizontalAlignment="Center" />

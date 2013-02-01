@@ -43,11 +43,10 @@ namespace Muragatte.Thesis
         private ObservableCollection<Visual.Styles.Style> _styles = new ObservableCollection<Visual.Styles.Style>();
         private SpeciesCollection _species = new SpeciesCollection();
         private Scene _scene = new Scene();
-        private readonly List<double> _timePerStepOptions = new List<double>() { 0.1, 0.2, 0.25, 0.5, 1 };
 
         private RandomMT _random = new RandomMT();
 
-        ExperimentBatch batch = null;
+        private ExperimentBatch batch = null;
 
         #endregion
 
@@ -78,9 +77,9 @@ namespace Muragatte.Thesis
             get { return _species; }
         }
 
-        public List<double> GetTimePerStepOptions
+        public uint MaxSeedValue
         {
-            get { return _timePerStepOptions; }
+            get { return _random.RandMax; }
         }
 
         #endregion
@@ -120,13 +119,16 @@ namespace Muragatte.Thesis
             }
         }
 
-        private void btnThesisRun_Click(object sender, RoutedEventArgs e)
+        private void btnRun_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckThesisRunConditions())
+            if (CheckRunConditions())
             {
                 batch = new ThesisExperimentBatch(txtDataFilePath.Text, iudCount.Value.Value,
-                    iudRuns.Value.Value, iudLength.Value.Value, (double)cmbTimePerStep.SelectedValue,
-                    _styles, _species, _scene, dudThesisFOVRange.Value.Value, dudThesisNeighAngle.Value.Value);
+                    iudRuns.Value.Value, iudLength.Value.Value, _styles, _species, _scene,
+                    dudFOVRange.Value.Value, dudFOVAngle.Value.Value, (uint)dudSeed.Value.Value,
+                    chbSaveHistory.IsChecked.Value, chbTakeSnapshots.IsChecked.Value,
+                    dudSnapshotScale.Value.GetValueOrDefault(dudSnapshotScale.DefaultValue.Value),
+                    (byte)iudSnapshotAlpha.Value.GetValueOrDefault(iudSnapshotAlpha.DefaultValue.Value));
                 batch.Worker.ProgressChanged += new ProgressChangedEventHandler(Worker_ProgressChanged);
                 batch.Worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Worker_RunWorkerCompleted);
                 batch.Archiver.Worker.ProgressChanged += new ProgressChangedEventHandler(Archiver_ProgressChanged);
@@ -134,6 +136,11 @@ namespace Muragatte.Thesis
                 binProgress.IsBusy = true;
                 batch.RunAsync();
             }
+        }
+
+        private void btnRandomSeed_Click(object sender, RoutedEventArgs e)
+        {
+            dudSeed.Value = _random.UInt();
         }
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -180,6 +187,11 @@ namespace Muragatte.Thesis
             batch.CancelAsync();
         }
 
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         #endregion
 
         #region Methods
@@ -187,14 +199,10 @@ namespace Muragatte.Thesis
         private bool CheckRunConditions()
         {
             return !string.IsNullOrWhiteSpace(txtDataFilePath.Text) && iudCount.Value.HasValue
-                && iudRuns.Value.HasValue && iudLength.Value.HasValue && cmbTimePerStep.SelectedValue != null
-                && _styles.Count > 0 && _species.Count > 0;
-        }
-
-        private bool CheckThesisRunConditions()
-        {
-            return CheckRunConditions() && _scene.StationaryElements.OfType<Goal>().Count() == 2
-                && dudThesisFOVRange.Value.HasValue && dudThesisNeighAngle.Value.HasValue;
+                && iudRuns.Value.HasValue && iudLength.Value.HasValue
+                && _scene.StationaryElements.OfType<Goal>().Count() == 2
+                && dudFOVRange.Value.HasValue && dudFOVAngle.Value.HasValue
+                && _styles.Count > 0 && _species.Count > 0 && dudSeed.Value.HasValue;
         }
 
         #endregion

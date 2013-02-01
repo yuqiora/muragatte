@@ -27,6 +27,7 @@ namespace Muragatte.Thesis
     {
         #region Constants
 
+        private const double TIME_PER_STEP = 0.1;
         private const double REPULSION_RANGE = 1.5;
         private const double SPEED = 1;
 
@@ -53,7 +54,7 @@ namespace Muragatte.Thesis
 
         #region Constructors
 
-        public ThesisExperimentPack(string name, int runs, int length, double timePerStep,
+        public ThesisExperimentPack(string name, int runs, int length,
             Scene scene, SpeciesCollection species, IEnumerable<Style> styles, uint seed, string path,
             int nn, int ng, int ni, double an, double ag, double ai, double cn, double cg, double ci,
             SpawnSpot spawn, Goal gg, Goal gi, Species sn, Species sg, Species si, double fr, Angle fa)
@@ -68,7 +69,7 @@ namespace Muragatte.Thesis
             _dCredG = cg;
             _dCredI = ci;
             _experiment = new Experiment(name, runs,
-                new InstanceDefinition(timePerStep, length, false, scene, species, StorageOptions.SimpleBruteForce,
+                new InstanceDefinition(TIME_PER_STEP, length, false, scene, species, StorageOptions.SimpleBruteForce,
                     CreateArchetypes(spawn, sn, sg, si, gg, gi, fr, fa)), styles, seed);
             _experiment.ExtraSetting.Path = path;
         }
