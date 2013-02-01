@@ -2,7 +2,7 @@
 // Muragatte - A Toolkit for Observation of Swarm Behaviour
 //             Research Application
 //
-// Copyright (C) 2012  Jiří Vejmola.
+// Copyright (C) 2012-2013  Jiří Vejmola.
 // Developed under the MIT License. See the file license.txt for details.
 //
 // Muragatte on the internet: http://code.google.com/p/muragatte/
@@ -43,6 +43,7 @@ namespace Muragatte.Research.GUI
         private readonly List<StorageOptions> _storageOptions = new List<StorageOptions>() { StorageOptions.SimpleBruteForce };
         private StorageOptions _storage = StorageOptions.SimpleBruteForce;
         private readonly List<double> _timePerStepOptions = new List<double>() { 0.1, 0.2, 0.25, 0.5, 1 };
+        private bool _bAutoSave = false;
 
         private XmlExperimentArchiver _xml = null;
 
@@ -109,6 +110,16 @@ namespace Muragatte.Research.GUI
         public List<StorageOptions> GetStorageOptions
         {
             get { return _storageOptions; }
+        }
+
+        public bool IsAutoSaved
+        {
+            get { return GetExperiment == null ? _bAutoSave : GetExperiment.ExtraSetting.IsAutoSaved; }
+            set
+            {
+                if (GetExperiment == null) _bAutoSave = value;
+                else GetExperiment.ExtraSetting.IsAutoSaved = value;
+            }
         }
 
         public StorageOptions SelectedStorage
@@ -192,10 +203,12 @@ namespace Muragatte.Research.GUI
 
         private Experiment NewExperiment()
         {
-            return new Experiment(txtName.Text, iudRepeat.Value.Value,
+            Experiment e = new Experiment(txtName.Text, iudRepeat.Value.Value,
                 new InstanceDefinition((double)cmbTimePerStep.SelectedItem, iudLength.Value.Value,
                     chbKeepSubsteps.IsChecked.Value, _scene, _species, _storage, _archetypes),
                 _styles, (uint)dudSeed.Value.Value);
+            e.ExtraSetting.IsAutoSaved = _bAutoSave;
+            return e;
         }
 
         private void OpenEditorDialog(Window editor)

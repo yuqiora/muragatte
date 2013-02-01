@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MuragatteCore")]
-[assembly: AssemblyCopyright("Copyright ©  2012  Jiří Vejmola")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2013  Jiří Vejmola")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
