@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Muragatte</RootNamespace>
+    <AssemblyName>MuragatteCore</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RandomOps, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\RandomOps.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Common\Angle.cs" />
+    <Compile Include="src\Common\Metric.cs" />
+    <Compile Include="src\Common\Vector2.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Core.Environment.Agents\AdvancedBoidAgent.cs" />
+    <Compile Include="src\Core.Environment.Agents\AdvancedBoidAgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\AdvancedBoidAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\BoidAgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\BoidAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\Conradt2009Agent.cs" />
+    <Compile Include="src\Core.Environment.Agents\Conradt2009AgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\SimpleBoidAgent.cs" />
+    <Compile Include="src\Core.Environment.Agents\SimpleBoidAgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\SimpleBoidAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\FlockAndSeekBaseAgent.cs" />
+    <Compile Include="src\Core.Environment.Agents\Couzin2005Agent.cs" />
+    <Compile Include="src\Core.Environment.Agents\Couzin2005AgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\FlockAndSeekBaseAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\LoneWanderer.cs" />
+    <Compile Include="src\Core.Environment.Agents\LoneWandererAgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\LoneWandererAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\Vejmola2013Agent.cs" />
+    <Compile Include="src\Core.Environment.Agents\Vejmola2013AgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\Vejmola2013AgentArgs.cs" />
+    <Compile Include="src\Core.Environment.Agents\Versatile.cs" />
+    <Compile Include="src\Core.Environment.Agents\VersatileAgentArchetype.cs" />
+    <Compile Include="src\Core.Environment.Agents\VersatileAgentArgs.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\AlignmentSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\CohesionSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\EvasionSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\FleeSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\PursuitSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\SeekSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\SeparationSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\Steering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\ToNearestSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\ToNeighboursSteering.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\WanderSteering.cs" />
+    <Compile Include="src\Core.Environment\Agent.cs" />
+    <Compile Include="src\Core.Environment.Agents\Boid.cs" />
+    <Compile Include="src\Core.Environment\AgentArchetype.cs" />
+    <Compile Include="src\Core.Environment\AgentArgs.cs" />
+    <Compile Include="src\Core.Environment\AttractSpot.cs" />
+    <Compile Include="src\Core.Environment\CircularNeighbourhood.cs" />
+    <Compile Include="src\Core.Environment\Counter.cs" />
+    <Compile Include="src\Core.Environment\AreaGoal.cs" />
+    <Compile Include="src\Core.Environment\EllipseObstacle.cs" />
+    <Compile Include="src\Core.Environment\EllipseSpawnSpot.cs" />
+    <Compile Include="src\Core.Environment\Group.cs" />
+    <Compile Include="src\Core.Environment.SteeringUtils\ObstacleAvoidanceSteering.cs" />
+    <Compile Include="src\Core.Environment\Guidepost.cs" />
+    <Compile Include="src\Core.Environment\PointSpawnSpot.cs" />
+    <Compile Include="src\Core.Environment\PositionGoal.cs" />
+    <Compile Include="src\Core.Environment\Neighbourhood.cs" />
+    <Compile Include="src\Core.Environment\Centroid.cs" />
+    <Compile Include="src\Core.Environment\Element.cs" />
+    <Compile Include="src\Core.Environment\Extras.cs" />
+    <Compile Include="src\Core.Environment\Goal.cs" />
+    <Compile Include="src\Core.Environment\Misc.cs" />
+    <Compile Include="src\Core.Environment\Obstacle.cs" />
+    <Compile Include="src\Core.Environment\RectangleObstacle.cs" />
+    <Compile Include="src\Core.Environment\RectangleSpawnSpot.cs" />
+    <Compile Include="src\Core.Environment\Region.cs" />
+    <Compile Include="src\Core.Environment\RepelSpot.cs" />
+    <Compile Include="src\Core.Environment\SpawnSpot.cs" />
+    <Compile Include="src\Core.Environment\Species.cs" />
+    <Compile Include="src\Core.Environment\StationaryElement.cs" />
+    <Compile Include="src\Core.Storage.ONG\SearchRegion.cs" />
+    <Compile Include="src\Core.Storage.ONG\OrthantNeighbourhoodGraph.cs" />
+    <Compile Include="src\Core.Storage.ONG\Vertex.cs" />
+    <Compile Include="src\Core.Storage.ONG\Quadrant.cs" />
+    <Compile Include="src\Core.Storage\ElementStatus.cs" />
+    <Compile Include="src\Core.Storage\History.cs" />
+    <Compile Include="src\Core.Storage\HistoryRecord.cs" />
+    <Compile Include="src\Core.Storage\ISpareItem.cs" />
+    <Compile Include="src\Core.Storage\IStorage.cs" />
+    <Compile Include="src\Core.Storage\OrthantNeighbourhoodGraphStorage.cs" />
+    <Compile Include="src\Core.Storage\SimpleBruteForce.cs" />
+    <Compile Include="src\Core.Storage\SpeciesCollection.cs" />
+    <Compile Include="src\Core.Storage\StorageOptions.cs" />
+    <Compile Include="src\Core\MultiAgentSystem.cs" />
+    <Compile Include="src\Core\Scene.cs" />
+    <Compile Include="src\IO\XmlAgentArgsModifier.cs" />
+    <Compile Include="src\IO\XmlAgentArgsNeighbourhood.cs" />
+    <Compile Include="src\IO\XmlGoalReference.cs" />
+    <Compile Include="src\IO\XmlLoadSave.cs" />
+    <Compile Include="src\IO\XmlScene.cs" />
+    <Compile Include="src\IO\XmlSceneRoot.cs" />
+    <Compile Include="src\IO\XmlSpawnSpotReference.cs" />
+    <Compile Include="src\IO\XmlSpecies.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollectionDefaults.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollectionRoot.cs" />
+    <Compile Include="src\IO\XmlSpeciesReference.cs" />
+    <Compile Include="src\IO\XmlSpeciesCollection.cs" />
+    <Compile Include="src\IO\XmlSpeciesRelation.cs" />
+    <Compile Include="src\Random\Distribution.cs" />
+    <Compile Include="src\Random\GaussianNoise.cs" />
+    <Compile Include="src\Random\Noise.cs" />
+    <Compile Include="src\Random\NoisedDouble.cs" />
+    <Compile Include="src\Random\RandomMT.cs" />
+    <Compile Include="src\Random\UniformNoise.cs" />
+    <Compile Include="src\Random\ZeroNoise.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
+</Project>

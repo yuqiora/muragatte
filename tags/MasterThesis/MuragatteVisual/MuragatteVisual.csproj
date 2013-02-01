@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{81BB9CB1-3A0A-40DA-A7E2-2D8BF7AD51E3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Muragatte.Visual</RootNamespace>
+    <AssemblyName>MuragatteVisual</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\lib\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="WriteableBitmapEx.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\WriteableBitmapEx.Wpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Visual.GUI\OptionsWindow.xaml.cs">
+      <DependentUpon>OptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Visual.GUI\PlaybackWindow.xaml.cs">
+      <DependentUpon>PlaybackWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Visual.Converters\AngleToIntConverter.cs" />
+    <Compile Include="src\Visual.Converters\ObjectToBoolConverter.cs" />
+    <Compile Include="src\Visual.Converters\TabToSelectionVisibilityConverter.cs" />
+    <Compile Include="src\Visual.Converters\ShapeToSymbolConverter.cs" />
+    <Compile Include="src\Visual.IO\SnapshotSaver.cs" />
+    <Compile Include="src\Visual.IO\XmlBaseArchiver.cs" />
+    <Compile Include="src\Visual.IO\XmlColor.cs" />
+    <Compile Include="src\Visual.IO\XmlShape.cs" />
+    <Compile Include="src\Visual.IO\XmlStyles.cs" />
+    <Compile Include="src\Visual.IO\XmlStylesArchiver.cs" />
+    <Compile Include="src\Visual.Shapes\Coordinates.cs" />
+    <Compile Include="src\Visual.Shapes\ArcShape.cs" />
+    <Compile Include="src\Visual.Shapes\EllipseShape.cs" />
+    <Compile Include="src\Visual.Shapes\PixelShape.cs" />
+    <Compile Include="src\Visual.Shapes\PointingCircleShape.cs" />
+    <Compile Include="src\Visual.Shapes\QuadPixelShape.cs" />
+    <Compile Include="src\Visual.Shapes\RectangleShape.cs" />
+    <Compile Include="src\Visual.Shapes\Shape.cs" />
+    <Compile Include="src\Visual.Shapes\ShapeLabel.cs" />
+    <Compile Include="src\Visual.Shapes\TriangleShape.cs" />
+    <Compile Include="src\Visual.Styles\NeighbourhoodStyle.cs" />
+    <Compile Include="src\Visual.Styles\Style.cs" />
+    <Compile Include="src\Visual.Styles\TrackStyle.cs" />
+    <Compile Include="src\Visual.Styles\TrailStyle.cs" />
+    <Compile Include="src\Visual\Appearance.cs" />
+    <Compile Include="src\Visual\Canvas.cs" />
+    <Compile Include="src\Visual\ComplexParticle.cs" />
+    <Compile Include="src\Visual\DefaultValues.cs" />
+    <Compile Include="src\Visual\ElementaryParticle.cs" />
+    <Compile Include="src\Visual\HistoryViewer.cs" />
+    <Compile Include="src\Visual\LayeredSnapshot.cs" />
+    <Compile Include="src\Visual\Particle.cs" />
+    <Compile Include="src\Visual\ParticleFactory.cs" />
+    <Compile Include="src\Visual\Snapshot.cs" />
+    <Compile Include="src\Visual\Visualization.cs" />
+    <Compile Include="src\Visual\WBXExtensions.cs" />
+    <Page Include="src\Visual.GUI\CanvasWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="src\Visual.GUI\CanvasWindow.xaml.cs">
+      <DependentUpon>CanvasWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="src\Visual.GUI\OptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Visual.GUI\PlaybackWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\MuragatteCore\MuragatteCore.csproj">
+      <Project>{1C1DE949-BFDD-4CF8-AF6D-7402BEE3E91C}</Project>
+      <Name>MuragatteCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
+  </Target>
+</Project>

@@ -1,0 +1,556 @@
+﻿<!-- **********************************************************************
+// Muragatte - A Toolkit for Observation of Swarm Behaviour
+//             Visualization Library
+//
+// Copyright (C) 2012  Jiří Vejmola.
+// Developed under the MIT License. See the file license.txt for details.
+//
+// Muragatte on the internet: http://code.google.com/p/muragatte/
+*********************************************************************** -->
+
+<Window x:Class="Muragatte.Visual.GUI.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xtk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xtkc="clr-namespace:Xceed.Wpf.Toolkit.Core.Converters;assembly=WPFToolkit.Extended"
+        xmlns:mvg="clr-namespace:Muragatte.Visual.GUI"
+        xmlns:mv="clr-namespace:Muragatte.Visual"
+        xmlns:mvc="clr-namespace:Muragatte.Visual.Converters"
+        Title="Visualization Options" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ShowInTaskbar="False" ResizeMode="NoResize">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <xtkc:ColorToSolidColorBrushConverter x:Key="ColorToBrushConverter" />
+        <xtkc:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <mvc:AngleToIntConverter x:Key="AngleToIntConverter" />
+        <mvc:ObjectToBoolConverter x:Key="ObjectToBoolConverter" />
+        <mvc:ShapeToSymbolConverter x:Key="ShapeToSymbolConverter" />
+        <DataTemplate x:Key="StyleSummaryTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="NameColumn" />
+                    <ColumnDefinition SharedSizeGroup="ShapeColumn" />
+                    <ColumnDefinition SharedSizeGroup="SizeColumn" />
+                    <ColumnDefinition SharedSizeGroup="PrimaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="SecondaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodShapeColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodPrimaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodSecondaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="NeighbourhoodSizeColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrackColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrailColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="TrailLengthColumn" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name}" Margin="5,0" Grid.Column="0" ToolTip="Name" />
+                <TextBlock Text="{Binding Path=Shape, Converter={StaticResource ShapeToSymbolConverter}}" Margin="5,0" Grid.Column="1" ToolTip="Shape" FontFamily="Lucida Console" />
+                <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}x{1}">
+                            <Binding Path="UnitWidth" />
+                            <Binding Path="UnitHeight" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Ellipse Width="15" Height="15" Stroke="Black" Fill="{Binding Path=PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="3" ToolTip="Primary Color" />
+                <Ellipse Width="15" Height="15" Stroke="Black" Fill="{Binding Path=SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="4" ToolTip="Secondary Color" />
+                <TextBlock Text="{Binding Path=Neighbourhood.Shape, Converter={StaticResource ShapeToSymbolConverter}}" Margin="5,0" Grid.Column="5" ToolTip="Neighbourhood Shape" FontFamily="Lucida Console" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="12" Height="15" Stroke="Black" Fill="{Binding Path=Neighbourhood.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="6" ToolTip="Neighbourhood Primary Color" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="12" Height="15" Stroke="Black" Fill="{Binding Path=Neighbourhood.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="7" ToolTip="Neighbourhood Secondary Color" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Margin="5,0" Grid.Column="8" ToolTip="Naighbourhood Radius~Angle" Visibility="{Binding Path=HasNeighbourhood, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}~{1}">
+                            <Binding Path="Neighbourhood.UnitRadius" />
+                            <Binding Path="Neighbourhood.Angle" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Ellipse Width="10" Height="15" Stroke="Black" Fill="{Binding Path=Track.Color, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="9" ToolTip="Track Color" Visibility="{Binding Path=HasTrack, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Ellipse Width="10" Height="15" Stroke="Black" Fill="{Binding Path=Trail.Color, Converter={StaticResource ColorToBrushConverter}}" Grid.Column="10" ToolTip="Trail Color" Visibility="{Binding Path=HasTrail, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{Binding Path=Trail.Length}" Margin="5,0" Grid.Column="11" ToolTip="Trail Length" Visibility="{Binding Path=HasTrail, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ElementAppearanceTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="NameColumn" />
+                    <ColumnDefinition SharedSizeGroup="SpeciesColumn" />
+                    <ColumnDefinition SharedSizeGroup="WidthHeightColumn" />
+                    <ColumnDefinition SharedSizeGroup="PrimaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="SecondaryColorColumn" />
+                    <ColumnDefinition SharedSizeGroup="StylesColumn" />
+                    <ColumnDefinition SharedSizeGroup="GroupColumn" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Element" />
+                <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
+                <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height" VerticalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}x{1}">
+                            <Binding Path="UnitWidth" />
+                            <Binding Path="UnitHeight" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <!--<Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=Style.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Primary Color" />
+                <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=Style.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Secondary Color" />-->
+                <ComboBox ItemsSource="{Binding Path=GetStyles, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mvg:OptionsWindow}}}" Grid.Column="5" SelectedItem="{Binding Path=Style}" Grid.IsSharedSizeScope="True" Margin="5,0" ToolTip="Style" HorizontalContentAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="StyleNameColumn" />
+                                    <ColumnDefinition SharedSizeGroup="StyleShapeColumn" />
+                                    <ColumnDefinition SharedSizeGroup="StylePrimaryColorColumn" />
+                                    <ColumnDefinition SharedSizeGroup="StyleSecondaryColorColumn" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Name" />
+                                <TextBlock Text="{Binding Path=Shape, Converter={StaticResource ShapeToSymbolConverter}}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Shape" />
+                                <Ellipse Width="15" Height="15" Grid.Column="2" Stroke="Black" Fill="{Binding Path=PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Primary Color" />
+                                <Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Secondary Color" />
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="{Binding Path=Group}" Grid.Column="6" Margin="5,0" VerticalAlignment="Center" ToolTip="Group ID" />
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <TabControl Margin="5" Name="tabOptions" SelectionChanged="tabOptions_SelectionChanged" TabStripPlacement="Left">
+            <TabItem Header="General" Name="titGeneral">
+                <DockPanel>
+                    <GroupBox Header="Visualization" Margin="5" Name="grbVisualization" DockPanel.Dock="Left">
+                        <StackPanel Margin="5">
+                            <CheckBox Content="Environment" Height="16" Name="chbGeneralEnvironment" IsChecked="{Binding Path=GetVisual.GetCanvas.IsEnvironmentEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Agents" Height="16" Margin="0,10,0,0" Name="chbGeneralAgents" IsChecked="{Binding Path=GetVisual.GetCanvas.IsAgentsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Neighbourhoods" Height="16" Margin="0,10,0,0" Name="chbGeneralNeighbourhoods" IsChecked="{Binding Path=GetVisual.GetCanvas.IsNeighbourhoodsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Tracks" Height="16" Margin="0,10,0,0" Name="chbGeneralTracks" IsChecked="{Binding Path=GetVisual.GetCanvas.IsTracksEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Trails" Height="16" Margin="0,10,0,0" Name="chbGeneralTrails" IsChecked="{Binding Path=GetVisual.GetCanvas.IsTrailsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Centroids" Height="16" Margin="0,10,0,0" Name="chbGeneralCentroids" IsChecked="{Binding Path=GetVisual.GetCanvas.IsCentroidsEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                            <CheckBox Content="Highlighting" Height="16" Margin="0,10,0,0" Name="chbVisualizationHighlight" IsChecked="{Binding Path=GetVisual.GetCanvas.IsHighlightingEnabled}" Checked="VisualItemsEnabled_CheckedUnchecked" Unchecked="VisualItemsEnabled_CheckedUnchecked" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Background Color" Margin="0,5,5,5" Name="grbBackgroundColor" DockPanel.Dock="Top">
+                        <StackPanel Orientation="Horizontal"  Margin="5">
+                            <xtk:ColorPicker Name="cpiBackgroundColor" Height="23" Width="120" SelectedColor="{Binding Path=GetVisual.GetCanvas.BackgroundColor}" DisplayColorAndName="True" SelectedColorChanged="cpiBackgroundColor_SelectedColorChanged" />
+                            <Button Content="Default" Height="23" Name="btnDefaultBackgroundColor" Width="60" Click="btnDefaultBackgroundColor_Click" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Size and Scale" Margin="0,0,5,5" Name="grbSizeScale">
+                        <DockPanel Margin="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+                                <Button Content="Rescale" Height="23" Name="btnRescaleApply" Width="75" Margin="5" Click="btnRescaleApply_Click" />
+                                <Button Content="Cancel" Height="23" Name="btnRescaleCancel" Width="75" Margin="5" Click="btnRescaleCancel_Click" />
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Left">
+                                <Label Content="Unit Size (W x H):" Height="28" />
+                                <Label Content="Scale:" Height="28" />
+                                <Label Content="Pixel Size (W x H):" Height="28" />
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="x" Height="28" Name="lblUnitSize" />
+                                <xtk:DoubleUpDown Name="dudScale" Width="60" Height="23" HorizontalAlignment="Left" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_SCALE}" Margin="0,2" ValueChanged="dudScale_ValueChanged" />
+                                <Label Content="x" Height="28" Name="lblPixelSize" />
+                            </StackPanel>
+                        </DockPanel>
+                    </GroupBox>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Environment" Name="titEnvironment" IsEnabled="{Binding ElementName=clbEnvironmentList, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbEnvironmentList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" Grid.Column="0" ItemsSource="{Binding Path=EnvironmentView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
+                    <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Name="chbEnvironmentSelectAll" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Species" Height="280" Name="grbEnvironmentSelectSpecies">
+                            <Grid>
+                                <xtk:CheckListBox Name="clbEnvironmentSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Agents" Name="titAgents" IsEnabled="{Binding ElementName=clbAgentsList, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbAgentsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=AgentsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
+                    <StackPanel Margin="5" Grid.Column="1" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Species" Height="140">
+                            <Grid>
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Groups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <StackPanel>
+                                <CheckBox Checked="SelectStrays_CheckedUnchecked" Unchecked="SelectStrays_CheckedUnchecked">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Path=History.Current.StrayCount, StringFormat='{}Strays [{0}]'}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <xtk:CheckListBox Height="110" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Neighbourhoods" Name="titNeighbourhoods" IsEnabled="{Binding ElementName=clbNeighbourhoodsEnabled, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbNeighbourhoodsEnabled" Margin="5" Height="300" ItemsSource="{Binding Path=NeighbourhoodsView}" SelectedMemberPath="IsNeighbourhoodEnabled" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
+                        <xtk:CheckListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SpeciesColumn" />
+                                        <ColumnDefinition SharedSizeGroup="ShapeColumn" />
+                                        <ColumnDefinition SharedSizeGroup="PrimaryColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SecondaryColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="RadiusAngleColumn" />
+                                        <ColumnDefinition SharedSizeGroup="GroupColumn" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Name" />
+                                    <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
+                                    <TextBlock Text="{Binding Path=Style.Neighbourhood.Shape, Converter={StaticResource ShapeToSymbolConverter}}" Grid.Column="2" Margin="5,0" VerticalAlignment="Center" ToolTip="Neighbourhood Shape" />
+                                    <Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=Style.Neighbourhood.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Neighbourhood Primary Color" />
+                                    <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=Style.Neighbourhood.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Neighbourhood Secondary Color" />
+                                    <TextBlock Margin="5,0" Grid.Column="5" ToolTip="Radius~Angle">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}~{1}">
+                                                <Binding Path="UnitRadius" />
+                                                <Binding Path="NeighbourhoodAngle" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Path=Group}" Grid.Column="6" Margin="5,0" VerticalAlignment="Center" ToolTip="Group ID" />
+                                </Grid>
+                            </DataTemplate>
+                        </xtk:CheckListBox.ItemTemplate>
+                    </xtk:CheckListBox>
+                    <StackPanel Margin="5" Grid.Column="1" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Species" Height="140">
+                            <Grid>
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Groups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <StackPanel>
+                                <CheckBox Checked="SelectStrays_CheckedUnchecked" Unchecked="SelectStrays_CheckedUnchecked">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Path=History.Current.StrayCount, StringFormat='{}Strays [{0}]'}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <xtk:CheckListBox Height="110" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tracks" Name="titTracks" IsEnabled="{Binding ElementName=clbTracksEnabled, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbTracksEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrackEnabled" ItemsSource="{Binding Path=TracksView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
+                        <xtk:CheckListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SpeciesColumn" />
+                                        <ColumnDefinition SharedSizeGroup="ColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="GroupColumn" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Name" />
+                                    <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
+                                    <Ellipse Width="15" Height="15" Grid.Column="2" Stroke="Black" Fill="{Binding Path=Style.Track.Color, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Track Color" />
+                                    <TextBlock Text="{Binding Path=Group}" Grid.Column="3" Margin="5,0" VerticalAlignment="Center" ToolTip="Group ID" />
+                                </Grid>
+                            </DataTemplate>
+                        </xtk:CheckListBox.ItemTemplate>
+                    </xtk:CheckListBox>
+                    <StackPanel Margin="5" Grid.Column="1" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Species" Height="140">
+                            <Grid>
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Groups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <StackPanel>
+                                <CheckBox Checked="SelectStrays_CheckedUnchecked" Unchecked="SelectStrays_CheckedUnchecked">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Path=History.Current.StrayCount, StringFormat='{}Strays [{0}]'}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <xtk:CheckListBox Height="110" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Trails" Name="titTrails" IsEnabled="{Binding ElementName=clbTrailsEnabled, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbTrailsEnabled" Margin="5" Height="300" SelectedMemberPath="IsTrailEnabled" ItemsSource="{Binding Path=TrailsView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
+                        <xtk:CheckListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SpeciesColumn" />
+                                        <ColumnDefinition SharedSizeGroup="ColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="LengthColumn" />
+                                        <ColumnDefinition SharedSizeGroup="GroupColumn" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Name" />
+                                    <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
+                                    <Ellipse Width="15" Height="15" Grid.Column="2" Stroke="Black" Fill="{Binding Path=Style.Trail.Color, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Trail Color" />
+                                    <TextBlock Text="{Binding Path=Style.Trail.Length}" Grid.Column="3" Margin="5,0" VerticalAlignment="Center" ToolTip="Trail Length" />
+                                    <TextBlock Text="{Binding Path=Group}" Grid.Column="4" Margin="5,0" VerticalAlignment="Center" ToolTip="Group ID" />
+                                </Grid>
+                            </DataTemplate>
+                        </xtk:CheckListBox.ItemTemplate>
+                    </xtk:CheckListBox>
+                    <StackPanel Margin="5" Grid.Column="1" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Species" Height="140">
+                            <Grid>
+                                <xtk:CheckListBox ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Groups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <StackPanel>
+                                <CheckBox Checked="SelectStrays_CheckedUnchecked" Unchecked="SelectStrays_CheckedUnchecked">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Path=History.Current.StrayCount, StringFormat='{}Strays [{0}]'}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <xtk:CheckListBox Height="110" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Centroids" Name="titCentroids" IsEnabled="{Binding ElementName=clbCentroidsList, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbCentroidsList" Margin="5" Height="300" SelectedMemberPath="IsEnabled" ItemsSource="{Binding Path=CentroidsView}" ItemTemplate="{StaticResource ElementAppearanceTemplate}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged" />
+                    <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
+                        <CheckBox Content="Select All" Height="16" Name="chbCentroidsSelectAll" Checked="SelectAll_CheckedUnchecked" Unchecked="SelectAll_CheckedUnchecked" />
+                        <GroupBox Header="Groups" Height="280" Name="grbCentroidsSelectGroups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <Grid>
+                                <xtk:CheckListBox Name="clbCentroidsSelectGroups" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Highlighting" Name="titHighlighting" IsEnabled="{Binding ElementName=clbHighlightEnabled, Path=HasItems}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <xtk:CheckListBox Name="clbHighlightEnabled" Margin="5" Height="300" Grid.Column="0" SelectedMemberPath="IsHighlighted" ItemsSource="{Binding Path=EnabledElementsView}" Grid.IsSharedSizeScope="True" ItemSelectionChanged="VisualItemList_ItemSelectionChanged">
+                        <xtk:CheckListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="NameColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SpeciesColumn" />
+                                        <ColumnDefinition SharedSizeGroup="WidthHeightColumn" />
+                                        <ColumnDefinition SharedSizeGroup="PrimaryColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="SecondaryColorColumn" />
+                                        <ColumnDefinition SharedSizeGroup="GroupColumn" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path=Name}" Grid.Column="0" Margin="5,0" VerticalAlignment="Center" ToolTip="Element" />
+                                    <TextBlock Text="{Binding Path=Species}" Grid.Column="1" Margin="5,0" VerticalAlignment="Center" ToolTip="Species" />
+                                    <TextBlock Margin="5,0" Grid.Column="2" ToolTip="Width x Height">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}x{1}">
+                                                <Binding Path="UnitWidth" />
+                                                <Binding Path="UnitHeight" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <Ellipse Width="15" Height="15" Grid.Column="3" Stroke="Black" Fill="{Binding Path=Style.PrimaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Primary Color" />
+                                    <Ellipse Width="15" Height="15" Grid.Column="4" Stroke="Black" Fill="{Binding Path=Style.SecondaryColor, Converter={StaticResource ColorToBrushConverter}}" ToolTip="Secondary Color" />
+                                    <TextBlock Text="{Binding Path=Group}" Grid.Column="5" Margin="5,0" VerticalAlignment="Center" ToolTip="Group ID" />
+                                </Grid>
+                            </DataTemplate>
+                        </xtk:CheckListBox.ItemTemplate>
+                    </xtk:CheckListBox>
+                    <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <xtk:ColorPicker Name="cpiHighlightColor" Height="23" Width="120" SelectedColor="{Binding Path=GetVisual.GetCanvas.HighlightColor}" DisplayColorAndName="True" />
+                            <Button Content="Default" Height="23" Name="btnHighlightColorDefault" Width="60" Click="btnHighlightColorDefault_Click" />
+                        </StackPanel>
+                        <GroupBox Header="Species" Height="140" Name="grbHighlightSelectSpecies">
+                            <Grid>
+                                <xtk:CheckListBox Name="clbHighlightSelectSpecies" ItemsSource="{Binding Path=GetVisual.GetModel.Species}" DisplayMemberPath="FullName" ItemSelectionChanged="SelectSpecies_ItemSelectionChanged" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Groups" Name="grbHighlightSelectGroups" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                            <StackPanel>
+                                <CheckBox Checked="SelectStrays_CheckedUnchecked" Unchecked="SelectStrays_CheckedUnchecked">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Path=History.Current.StrayCount, StringFormat='{}Strays [{0}]'}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                                <xtk:CheckListBox Height="100" ItemsSource="{Binding Path=History.Current.Groups}" ItemSelectionChanged="SelectGroups_ItemSelectionChanged" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Snapshots" Name="titSnapshots" IsEnabled="{Binding Path=GetVisual.GetPlayback.IsPlaying, Converter={StaticResource InverseBoolConverter}}">
+                <StackPanel Margin="5">
+                    <Button Name="btnSnapshotSaveCurrent" Content="Save Current" Width="100" Height="23" Click="btnSnapshotSaveCurrent_Click" />
+                    <Separator Margin="5" />
+                    <Button Name="btnSnapshotSaveCustom" Content="Save Custom" Width="100" Height="23" Click="btnSnapshotSaveCustom_Click" />
+                    <Button Name="btnSnapshotPreview" Content="Show Preview" Width="100" Height="23" Margin="0,0,0,5" Click="btnSnapshotPreview_Click" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="At " VerticalAlignment="Center" />
+                        <xtk:IntegerUpDown Name="iudSnapshotFrame" Watermark="Frame" Height="23" Width="75" Minimum="0" Maximum="{Binding Path=GetVisual.GetModel.StepCount}" DefaultValue="0" Value="{Binding Path=GetSnapshot.Step, UpdateSourceTrigger=PropertyChanged}" ToolTip="Frame" />
+                    </StackPanel>
+                    <CheckBox Name="chbSnapshotFlip" Content="Flip Horizontally" IsChecked="{Binding Path=GetSnapshot.DrawFlipped}" />
+                    <Grid>
+                        <xtk:DoubleUpDown Name="dudSnapshotScale" Watermark="Scale" Height="23" Width="60" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_SCALE}" DefaultValue="1" HorizontalAlignment="Left" ValueChanged="dudSnapshotScale_ValueChanged" Value="{Binding Path=GetSnapshot.Scale, UpdateSourceTrigger=PropertyChanged}" ToolTip="Scale" />
+                        <TextBlock Name="txbSnapshotSize" Text="pxW x pxH" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    </Grid>
+                    <GroupBox>
+                        <GroupBox.Header>
+                            <CheckBox Name="chbSnapshotCustomVisuals" Content="Custom Visuals" IsChecked="{Binding Path=GetSnapshot.UseCustomVisuals}" />
+                        </GroupBox.Header>
+                        <Grid IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotCustomVisuals}">
+                            <Grid.Resources>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Grid.Column" Value="0" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                    <Setter Property="Margin" Value="0,0,5,0" />
+                                </Style>
+                                <Style TargetType="xtk:CheckComboBox">
+                                    <Setter Property="Height" Value="23" />
+                                    <Setter Property="Width" Value="120" />
+                                    <Setter Property="Grid.Column" Value="1" />
+                                    <Setter Property="ItemsSource" Value="{Binding Path=GetVisual.GetModel.Species}" />
+                                    <Setter Property="DisplayMemberPath" Value="FullName" />
+                                    <Setter Property="ValueMemberPath" Value="FullName" />
+                                </Style>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <xtk:ColorPicker Name="cpiSnapshotBackgroundColor" DisplayColorAndName="True" Height="23" Width="120" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="2" ToolTip="Background Color" SelectedColor="{Binding Path=GetSnapshot.BackgroundColor}" />
+                            <CheckBox Name="chbSnapshotEnvironment" Grid.Row="1" ToolTip="Environment" IsChecked="{Binding Path=GetSnapshot.IsEnvironmentEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotEnvironment" ToolTip="Environment" Grid.Row="1" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotEnvironment}" SelectedValue="{Binding Path=GetSnapshot.StationaryString}" />
+                            <CheckBox Name="chbSnapshotAgents" Grid.Row="2" ToolTip="Agents" IsChecked="{Binding Path=GetSnapshot.IsAgentsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotAgents" ToolTip="Agents" Grid.Row="2" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotAgents}" SelectedValue="{Binding Path=GetSnapshot.AgentsString}" />
+                            <CheckBox Name="chbSnapshotNeighbourhoods" Grid.Row="3" ToolTip="Neighbourhoods" IsChecked="{Binding Path=GetSnapshot.IsNeighbourhoodsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotNeighbourhoods" ToolTip="Neighbourhoods" Grid.Row="3" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotNeighbourhoods}" SelectedValue="{Binding Path=GetSnapshot.NeighbourhoodsString}" />
+                            <CheckBox Name="chbSnapshotTracks" Grid.Row="4" ToolTip="Tracks" IsChecked="{Binding Path=GetSnapshot.IsTracksEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotTracks" ToolTip="Tracks" Grid.Row="4" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTracks}" SelectedValue="{Binding Path=GetSnapshot.TracksString}" />
+                            <CheckBox Name="chbSnapshotTrails" Grid.Row="5" ToolTip="Trails" IsChecked="{Binding Path=GetSnapshot.IsTrailsEnabled}" />
+                            <xtk:CheckComboBox Name="ccbSnapshotTrails" ToolTip="Trails" Grid.Row="5" IsEnabled="{Binding Path=IsChecked, ElementName=chbSnapshotTrails}" SelectedValue="{Binding Path=GetSnapshot.TrailsString}" />
+                            <CheckBox Name="chbSnapshotCentroids" Content="Centroids" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Left" IsChecked="{Binding Path=GetSnapshot.IsCentroidsEnabled}" />
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Style Editor" Name="titStyleEditor">
+                <DockPanel Margin="5">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10" DockPanel.Dock="Top">
+                        <Button Content="Load" Height="23" Name="btnStylesLoad" Width="75" Click="btnStylesLoad_Click" />
+                        <Button Content="Save" Height="23" Name="btnStylesSave" Width="75" Click="btnStylesSave_Click" />
+                        <Button Content="New" Height="23" Name="btnStylesNew" Width="75" Click="btnStylesNew_Click" />
+                        <Button Content="Copy" Height="23" Name="btnStylesCopy" Width="75" Click="btnStylesCopy_Click" />
+                        <Button Content="Delete" Height="23" Name="btnStylesDelete" Width="75" Click="btnStylesDelete_Click" />
+                        <Button Content="Clear" Height="23" Name="btnStylesClear" Width="75" Click="btnStylesClear_Click" />
+                    </StackPanel>
+                    <ListBox Name="lboStyleEditorList" Margin="0,0,5,0" DockPanel.Dock="Left" Height="300" MinWidth="150" ItemsSource="{Binding Path=GetStyles}" ItemTemplate="{StaticResource StyleSummaryTemplate}" IsSynchronizedWithCurrentItem="True" Grid.IsSharedSizeScope="True" SelectionChanged="StyleEditor_SelectionChanged" />
+                    <StackPanel DockPanel.Dock="Left">
+                        <GroupBox Header="Main" Name="grbStylesMain" Margin="2">
+                            <StackPanel>
+                                <xtk:WatermarkTextBox Height="23" Name="txtStylesMainName" Width="120" Watermark="Name" Text="{Binding Path=SelectedItem.Name, ElementName=lboStyleEditorList}" ToolTip="Name" />
+                                <ComboBox Height="23" Name="cmbStylesMainShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Shape, ElementName=lboStyleEditorList}" SelectionChanged="StyleEditor_SelectionChanged" ToolTip="Shape" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <xtk:DoubleUpDown Name="dudStylesMainWidth" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Width" Value="{Binding Path=SelectedItem.UnitWidth, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" ToolTip="Width" />
+                                    <TextBlock Text=" x " VerticalAlignment="Center" />
+                                    <xtk:DoubleUpDown Name="dudStylesMainHeight" Height="23" Width="50" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Height" Value="{Binding Path=SelectedItem.UnitHeight, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" ToolTip="Height" />
+                                </StackPanel>
+                                <xtk:ColorPicker Name="cpiStylesMainPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" ToolTip="Primary Color" />
+                                <xtk:ColorPicker Name="cpiStylesMainSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" ToolTip="Secondary Color" />
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Name="grbStylesNeighbourhood" Margin="2">
+                            <GroupBox.Header>
+                                <CheckBox Content="Neighbourhood" Height="16" Name="chbStylesNeighbourhoodEnabled" IsChecked="{Binding Path=SelectedItem.HasNeighbourhood, ElementName=lboStyleEditorList}" Checked="StyleEditor_CheckedUnchecked" Unchecked="StyleEditor_CheckedUnchecked" />
+                            </GroupBox.Header>
+                            <StackPanel IsEnabled="{Binding ElementName=chbStylesNeighbourhoodEnabled, Path=IsChecked}">
+                                <ComboBox Height="23" Name="cmbStylesNeighbourhoodShape" Width="120" ItemsSource="{Binding Path=GetShapes}" SelectedItem="{Binding Path=SelectedItem.Neighbourhood.Shape, ElementName=lboStyleEditorList}" SelectionChanged="StyleEditor_SelectionChanged" ToolTip="Shape" />
+                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodPrimaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.PrimaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" ToolTip="Primary Color" />
+                                <xtk:ColorPicker Name="cpiStylesNeighbourhoodSecondaryColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Neighbourhood.SecondaryColor, ElementName=lboStyleEditorList}" DisplayColorAndName="True" SelectedColorChanged="StyleEditor_SelectedColorChanged" ToolTip="Secondary Color" />
+                                <xtk:DoubleUpDown Name="dudStylesNeighbourhoodRadius" Height="23" Width="120" Minimum="1" Increment="0.5" Maximum="{x:Static mv:DefaultValues.MAXIMUM_UNIT_SIZE}" Watermark="Radius" Value="{Binding Path=SelectedItem.Neighbourhood.UnitRadius, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" ToolTip="Radius" />
+                                <xtk:IntegerUpDown Name="iudStylesNeighbourhoodAngle" Height="23" Width="120" Minimum="1" Maximum="180" Watermark="Angle" Value="{Binding Path=SelectedItem.Neighbourhood.Angle, ElementName=lboStyleEditorList, Converter={StaticResource AngleToIntConverter}, UpdateSourceTrigger=PropertyChanged}" ValueChanged="StyleEditor_NumericValueChanged" ToolTip="Angle" />
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Left">
+                        <GroupBox Name="grbStylesTrack" Margin="2">
+                            <GroupBox.Header>
+                                <CheckBox Content="Track" Height="16" Name="chbStylesTrackEnabled" IsChecked="{Binding Path=SelectedItem.HasTrack, ElementName=lboStyleEditorList}" />
+                            </GroupBox.Header>
+                            <StackPanel IsEnabled="{Binding ElementName=chbStylesTrackEnabled, Path=IsChecked}">
+                                <xtk:ColorPicker Name="cpiStylesTrackColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Track.Color, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Name="grbStylesTrail" Margin="2">
+                            <GroupBox.Header>
+                                <CheckBox Content="Trail" Height="16" Name="chbStylesTrailEnabled" IsChecked="{Binding Path=SelectedItem.HasTrail, ElementName=lboStyleEditorList}" />
+                            </GroupBox.Header>
+                            <StackPanel IsEnabled="{Binding ElementName=chbStylesTrailEnabled, Path=IsChecked}">
+                                <xtk:ColorPicker Name="cpiStylesTrailColor" Height="23" Width="120" SelectedColor="{Binding Path=SelectedItem.Trail.Color, ElementName=lboStyleEditorList}" DisplayColorAndName="True" />
+                                <xtk:IntegerUpDown Name="iudStylesTrailLength" Height="23" Width="120" Minimum="0" Maximum="{x:Static mv:DefaultValues.MAXIMUM_TRAIL_LENGTH}" Watermark="Length" Value="{Binding Path=SelectedItem.Trail.Length, ElementName=lboStyleEditorList, UpdateSourceTrigger=PropertyChanged}" ToolTip="Length" />
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Preview" Name="grbStylesPreview" Margin="2">
+                            <Grid>
+                                <Border BorderThickness="1" BorderBrush="Black">
+                                    <Image Height="150" Width="150" Name="imgStylesPreview" Stretch="Fill" />
+                                </Border>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+        <Button Content="Close" Height="23" HorizontalAlignment="Left" Margin="5" Name="btnClose" VerticalAlignment="Bottom" Width="75" Visibility="Hidden" IsEnabled="False" Grid.Column="0" Click="btnClose_Click" />
+    </Grid>
+</Window>
